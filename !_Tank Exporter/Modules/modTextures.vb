@@ -1,0 +1,184 @@
+﻿Imports System.Windows
+Imports System.Windows.Forms
+Imports System.Drawing
+Imports System.Drawing.Drawing2D
+Imports System.Net
+Imports System.Text
+Imports System.IO
+Imports System.Xml
+Imports System.Web
+Imports Tao.OpenGl
+Imports Tao.Platform.Windows
+Imports Tao.FreeGlut
+Imports Tao.FreeGlut.Glut
+Imports Tao.DevIl
+Imports Microsoft.VisualBasic.Strings
+Imports Ionic.Zip
+
+Module modTextures
+    Public textures() As textures_
+    Public Structure textures_
+        Public c_name As String
+        Public c_id As Integer
+        Public n_name As String
+        Public n_id As Integer
+        Public gmm_name As String
+        Public gmm_id As Integer
+        Public ao_name As String
+        Public ao_id As Integer
+    End Structure
+
+    Dim mStream As MemoryStream
+    Public Sub build_textures(ByVal id As Integer)
+
+        Dim diffuse As String = _group(id).color_name
+        Dim normal As String = _group(id).normal_name
+        Dim metal As String = _group(id).metal_name
+        Dim ao_name As String = _group(id).ao_name
+        Dim i As Integer = 0
+        For i = 0 To textures.Length - 1
+            If textures(i).c_name = diffuse Then
+                _group(id).color_name = textures(i).c_name
+                _group(id).color_Id = textures(i).c_id
+                _group(id).normal_name = textures(i).n_name
+                _group(id).normal_Id = textures(i).n_id
+                _group(id).metal_name = textures(i).gmm_name
+                _group(id).metal_Id = textures(i).gmm_id
+                _group(id).ao_name = textures(i).ao_name
+                _group(id).ao_id = textures(i).ao_id
+
+
+                _group(id).texture_id = i
+                Return
+            End If
+        Next
+
+
+
+        Dim n_id, c_id, m_id, ao_id As Integer
+
+        c_id = get_texture_id(diffuse)
+        n_id = get_texture_id(normal)
+        m_id = get_texture_id(metal)
+        ao_id = get_texture_id(ao_name)
+
+
+        i = textures.Length - 1
+        ReDim Preserve textures(i + 1)
+        textures(i) = New textures_
+        textures(i).c_name = diffuse
+        textures(i).c_id = c_id
+
+        textures(i).n_name = normal
+        textures(i).n_id = n_id
+
+        textures(i).gmm_name = metal
+        textures(i).gmm_id = m_id
+
+        textures(i).ao_name = ao_name
+        textures(i).ao_id = ao_id
+
+        _group(id).texture_id = i
+
+        _group(id).color_Id = c_id
+        _group(id).normal_Id = n_id
+        _group(id).metal_Id = m_id
+        _group(id).ao_id = ao_id
+
+    End Sub
+    Private Function get_texture_id(name As String) As Integer
+        Dim id As Integer
+        If name Is Nothing Then name = ""
+        Dim ent As Ionic.Zip.ZipEntry = Nothing
+        Try
+            ent = frmMain.packages_HD(current_tank_package)(name.Replace(".dds", "_hd.dds")) ' look in tank package
+        Catch ex As Exception
+        End Try
+        If ent IsNot Nothing Then
+            mStream = New MemoryStream
+            ent.Extract(mStream)
+            id = get_texture(mStream, name)
+        Else
+            ent = frmMain.packages(current_tank_package)(name) ' look in tank package
+            If ent IsNot Nothing Then
+                mStream = New MemoryStream
+                ent.Extract(mStream)
+                id = get_texture(mStream, name)
+            Else
+                'look in shared_content.pkg
+                ent = frmMain.shared_pkg(name)
+                If ent IsNot Nothing Then
+                    mStream = New MemoryStream
+                    ent.Extract(mStream)
+                    id = get_texture(mStream, name)
+                Else
+                    ent = frmMain.shared_sandbox_pkg(name)
+                    If ent IsNot Nothing Then
+                        mStream = New MemoryStream
+                        ent.Extract(mStream)
+                        id = get_texture(mStream, name)
+                    Else
+                        log_text.AppendLine("Cant find:" + name)
+                    End If
+                End If
+            End If
+        End If
+        Return id
+    End Function
+    Public Function get_texture(ByRef ms As MemoryStream, file_path As String) As Integer
+
+        Dim texID As UInt32
+        Dim image_id As Integer
+        ms.Position = 0
+        Dim textIn(ms.Length) As Byte
+        ms.Read(textIn, 0, ms.Length)
+        texID = Ilu.iluGenImage() ' /* Generation of one image name */
+        Il.ilBindImage(texID) '; /* Binding of image name */
+        Dim success = Il.ilGetError
+
+        Il.ilLoadL(Il.IL_DDS, textIn, textIn.Length)
+        success = Il.ilGetError
+        If success = Il.IL_NO_ERROR Then
+            'Ilu.iluFlipImage()
+            Il.ilEnable(Il.IL_FILE_OVERWRITE)
+            'Ilu.iluMirror()
+            Dim width As Integer = Il.ilGetInteger(Il.IL_IMAGE_WIDTH)
+            Dim height As Integer = Il.ilGetInteger(Il.IL_IMAGE_HEIGHT)
+
+            success = Il.ilConvertImage(Il.IL_RGBA, Il.IL_UNSIGNED_BYTE) ' Convert every colour component into unsigned bytes
+            'If your image contains alpha channel you can replace IL_RGB with IL_RGBA */
+            Gl.glGenTextures(1, image_id)
+            Gl.glEnable(Gl.GL_TEXTURE_2D)
+            Gl.glBindTexture(Gl.GL_TEXTURE_2D, image_id)
+            Gl.glTexParameteri(Gl.GL_TEXTURE_2D, Gl.GL_TEXTURE_MAG_FILTER, Gl.GL_LINEAR)
+            Gl.glTexParameteri(Gl.GL_TEXTURE_2D, Gl.GL_TEXTURE_MIN_FILTER, Gl.GL_NEAREST_MIPMAP_LINEAR)
+            Gl.glTexParameteri(Gl.GL_TEXTURE_2D, Gl.GL_GENERATE_MIPMAP, Gl.GL_TRUE)
+
+            Gl.glTexParameteri(Gl.GL_TEXTURE_2D, Gl.GL_TEXTURE_WRAP_S, Gl.GL_REPEAT)
+            Gl.glTexParameteri(Gl.GL_TEXTURE_2D, Gl.GL_TEXTURE_WRAP_T, Gl.GL_REPEAT)
+
+            Gl.glTexImage2D(Gl.GL_TEXTURE_2D, 0, Il.ilGetInteger(Il.IL_IMAGE_BPP), Il.ilGetInteger(Il.IL_IMAGE_WIDTH), _
+            Il.ilGetInteger(Il.IL_IMAGE_HEIGHT), 0, Il.ilGetInteger(Il.IL_IMAGE_FORMAT), Gl.GL_UNSIGNED_BYTE, _
+            Il.ilGetData()) '  Texture specification 
+            Gl.glFinish()
+            Gl.glBindTexture(Gl.GL_TEXTURE_2D, 0)
+
+            If frmFBX.Visible Then
+                Dim abs_name = Path.GetFileNameWithoutExtension(file_path)
+                Dim save_path As String = Path.GetDirectoryName(My.Settings.fbx_path)
+                Il.ilSave(Il.IL_PNG, save_path + "\" + abs_name + ".png")
+            End If
+
+        Else
+            MsgBox("Out of memory error at :get texture:", MsgBoxStyle.Critical, "Well Shit!")
+            End
+        End If
+        Il.ilBindImage(0)
+        Ilu.iluDeleteImage(texID)
+        Return image_id
+        'ms.Close()
+        'ms.Dispose()
+        'GC.Collect()
+    End Function
+
+End Module
