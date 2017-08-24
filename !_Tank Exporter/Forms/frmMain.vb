@@ -1,4 +1,6 @@
-﻿Imports System.Windows
+﻿
+#Region "imports"
+Imports System.Windows
 Imports System.Windows.Forms
 Imports System.Drawing
 Imports System.Drawing.Drawing2D
@@ -22,8 +24,11 @@ Imports System.Runtime.CompilerServices
 Imports System.Collections.Generic
 Imports Ionic.Zip
 Imports System.Drawing.Imaging
+Imports System.Globalization
+#End Region
 
 Public Class frmMain
+#Region "variables"
     Public gl_stop As Boolean = False
     Dim update_thread As New Thread(AddressOf update_mouse)
     Public path_set As Boolean = False
@@ -62,6 +67,8 @@ Public Class frmMain
     Public poland_ds As New DataSet
     Public ussr_ds As New DataSet
     Public sweden_ds As New DataSet
+
+#End Region
 
     Private Sub frmMain_FormClosing(sender As Object, e As FormClosingEventArgs) Handles Me.FormClosing
         _Started = False
@@ -120,6 +127,9 @@ Public Class frmMain
 
 
     Private Sub frmMain_Load(sender As Object, e As EventArgs) Handles Me.Load
+        Dim nonInvariantCulture As CultureInfo = New CultureInfo("en-US")
+        nonInvariantCulture.NumberFormat.NumberDecimalSeparator = "."
+        Thread.CurrentThread.CurrentCulture = nonInvariantCulture
         cam_x = 0
         cam_y = 0
         cam_z = 10
@@ -141,8 +151,8 @@ Public Class frmMain
         info_Label.Size = MM.Size
         info_Label.Dock = DockStyle.Top
         MM.Location = New Point(0, 0)
-        info_Label.Text = "Welcome..."
-        Me.Text = " Tank Exporter Ver. " + Application.ProductVersion
+        info_Label.Text = "Welcome... Version:" + Application.ProductVersion
+        Me.Text = " Tank Exporter Version:" + Application.ProductVersion
         '---------------------------
         SplitContainer2.Panel2.Controls.Add(tanklist)
         tanklist.Visible = False
@@ -504,7 +514,7 @@ tryagain:
             Application.DoEvents()
             Return
         End If
-        Dim ts = TankList.Text
+        Dim ts = tanklist.Text
         tn.SelectedNode = Nothing
         tn.SelectedNode = e.Node
         If ts.Contains(tn.SelectedNode.Text) Then
@@ -514,7 +524,7 @@ tryagain:
             tn.SelectedNode.ForeColor = Color.White
             ts += tn.SelectedNode.Text + vbCrLf
         End If
-        TankList.Text = ts
+        tanklist.Text = ts
         tn.SelectedNode = Nothing
 
     End Sub
@@ -525,7 +535,7 @@ tryagain:
         tn.Focus()
         iconbox.BackgroundImage = icons(tn.Tag).img(e.Node.Index)
         Dim s = get_shortname(e.Node)
-        Dim ar = s.Split (":")
+        Dim ar = s.Split(":")
         tank_label.Text = ar(0)
         file_name = e.Node.Tag
     End Sub
@@ -1505,7 +1515,7 @@ tryagain:
             Return
         End If
 
-        If TankList.Text = "" Then
+        If tanklist.Text = "" Then
             Return
         End If
         Dim f As DirectoryInfo = New DirectoryInfo(Application.StartupPath + "\tanks\")
@@ -1518,7 +1528,7 @@ tryagain:
         End If
 
         Dim tank As String = ""
-        Dim ta = TankList.Text.Split(vbCr)
+        Dim ta = tanklist.Text.Split(vbCr)
         For i = 0 To ta.Length - 2
             tank = ta(i)
             tank = tank.Replace(vbLf, "")
@@ -1620,7 +1630,7 @@ make_this_tank:
         If MsgBox("Are you sure?" + vbCrLf + "This can NOT be undone!", MsgBoxStyle.YesNo, "Warning!") = MsgBoxResult.No Then
             Return
         End If
-        TankList.Text = ""
+        tanklist.Text = ""
         For Each n As TreeNode In TreeView1.Nodes
             clear_node_selection(n)
         Next
@@ -1687,7 +1697,7 @@ make_this_tank:
         If in_s = "" Then
             Return
         End If
-        TankList.Text = ""
+        tanklist.Text = ""
         file_name = ""
         Dim tank As String = ""
         '1
@@ -1820,12 +1830,12 @@ make_this_tank:
     Dim out_string As New StringBuilder
     Private Sub m_save_Click(sender As Object, e As EventArgs) Handles m_save.Click
         out_string.Length = 0
-        If TankList.Text = "" Then
+        If tanklist.Text = "" Then
             Return
         End If
         Dim tank As String = ""
         file_name = ""
-        Dim ta = TankList.Text.Split(vbCr)
+        Dim ta = tanklist.Text.Split(vbCr)
 
         For i = 0 To ta.Length - 2
             tank = ta(i)
