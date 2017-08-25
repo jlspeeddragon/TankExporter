@@ -34,7 +34,7 @@ Public Class frmMain
     Public path_set As Boolean = False
     Dim mouse As vec2
     Dim move_cam_z, M_DOWN, move_mod, z_move As Boolean
-    Public Shared packages(10) As Ionic.Zip.ZipFile
+    Public Shared packages(12) As Ionic.Zip.ZipFile
     Public Shared packages_HD(10) As Ionic.Zip.ZipFile
     Public Shared shared_pkg As Ionic.Zip.ZipFile
     Public Shared shared_sandbox_pkg As Ionic.Zip.ZipFile
@@ -416,6 +416,7 @@ tryagain:
         Dim cnt As Integer = 0
         ReDim icons(i).img(100)
         alltanks.Append("# Tier " + i.ToString("00") + vbCrLf)
+        'Get tanks fron tier packages
         For Each entry As ZipEntry In packages(i)
             If entry.FileName.Contains("normal/lod2/Chassis.model") Then
                 Dim t_name = entry.FileName
@@ -472,11 +473,11 @@ tryagain:
                 End If
             End If
         Next
+
         Application.DoEvents()
         ReDim Preserve icons(i).img(cnt)
         Application.DoEvents()
     End Sub
-
     Private Function get_user_name(ByRef ds As DataSet, ByVal fname As String) As String
 
         Try

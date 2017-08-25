@@ -110,9 +110,11 @@ Module modFBX
             End If
             If model_name.ToLower.Contains("chassis") Then
                 s_vector.Z *= -1.0
+                s_vector.X *= -1.0
             End If
             If id = object_count Then
                 s_vector.Z *= -1.0
+                s_vector.X *= -1.0
             End If
 
             'Need a layercontainer to put the texture in.

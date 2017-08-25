@@ -38,4 +38,3 @@ C:\!_Tank Exporter\!_Tank Exporter\obj\x86\Debug\!_Tank Exporter.vbproj.Generate
 C:\!_Tank Exporter\!_Tank Exporter\obj\x86\Debug\!_Tank Exporter.exe
 C:\!_Tank Exporter\!_Tank Exporter\obj\x86\Debug\!_Tank Exporter.xml
 C:\!_Tank Exporter\!_Tank Exporter\obj\x86\Debug\!_Tank Exporter.pdb
-C:\!_Tank Exporter\!_Tank Exporter\obj\x86\Debug\!_Tank Exporter.vbprojResolveAssemblyReference.cache
