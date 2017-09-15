@@ -203,7 +203,7 @@ Public Class frmMain
     End Sub
 
  
-
+    '############################################################################ form load
     Private Sub frmMain_Load(sender As Object, e As EventArgs) Handles Me.Load
         Dim nonInvariantCulture As CultureInfo = New CultureInfo("en-US")
         nonInvariantCulture.NumberFormat.NumberDecimalSeparator = "."
@@ -281,15 +281,10 @@ Public Class frmMain
         '====================================================================================================
         info_Label.Text = "Loading Data from Packages..."
         Application.DoEvents()
+
         Try
+
             gui_pkg = New Ionic.Zip.ZipFile(My.Settings.game_path + "\res\packages\gui.pkg")
-
-        Catch ex As Exception
-            log_text.AppendLine("Package GUI not loaded")
-
-        End Try
-        Try
-
             scripts_pkg = New Ionic.Zip.ZipFile(My.Settings.game_path + "\res\packages\scripts.pkg")
             shared_pkg = ZipFile.Read(My.Settings.game_path + "\res\packages\shared_content.pkg")
             shared_sandbox_pkg = ZipFile.Read(My.Settings.game_path + "\res\packages\shared_content_sandbox.pkg")
@@ -297,9 +292,14 @@ Public Class frmMain
             'packages(12) = shared_sandbox_pkg
 
         Catch ex As Exception
-            log_text.AppendLine("Package files not found")
+            MsgBox("I was unable to load required pkg files!", MsgBoxStyle.Exclamation, "Error!")
+            My.Settings.game_path = ""
+            My.Settings.res_mods_path = ""
+            My.Settings.Save()
+            End
         End Try
         '====================================================================================================
+        'MsgBox("I LOADED required pkg files!", MsgBoxStyle.Exclamation, "Error!")
         Try
             If File.Exists(Temp_Storage + "\shared_contents_build.pkg") Then
                 shared_contents_build = ZipFile.Read(Temp_Storage + "\shared_contents_build.pkg")
@@ -366,6 +366,7 @@ Public Class frmMain
         'load_camo()
         '====================================================================================================
         load_customization_files()
+        'MsgBox("Past load_customization_files", MsgBoxStyle.Exclamation, "Debug")
         load_season_icons()
         Gl.glFinish()
         'removed this load of background image.. 
@@ -2706,7 +2707,7 @@ make_this_tank:
     Private Sub m_res_mods_path_Click(sender As Object, e As EventArgs) Handles m_res_mods_path.Click
         If FolderBrowserDialog1.ShowDialog = Forms.DialogResult.OK Then
             My.Settings.res_mods_path = FolderBrowserDialog1.SelectedPath
-            If Not Directory.Exists(My.Settings.res_mods_path) Then
+            If Not File.Exists(My.Settings.res_mods_path) Then
                 MsgBox("Incorrect Path.", MsgBoxStyle.Information)
                 m_res_mods_path.PerformClick()
                 Return
@@ -2720,7 +2721,7 @@ make_this_tank:
     Private Sub M_Path_Click(sender As Object, e As EventArgs) Handles M_Path.Click
         If FolderBrowserDialog1.ShowDialog = Forms.DialogResult.OK Then
             My.Settings.game_path = FolderBrowserDialog1.SelectedPath
-            If Not Directory.Exists(My.Settings.game_path) Then
+            If Not File.Exists(My.Settings.game_path + "\paths.xml") Then
                 MsgBox("Incorrect Path.", MsgBoxStyle.Information)
                 M_Path.PerformClick()
                 Return

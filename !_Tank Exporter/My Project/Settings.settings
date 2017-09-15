@@ -12,7 +12,7 @@
       <Value Profile="(Default)">C:\</Value>
     </Setting>
     <Setting Name="res_mods_path" Type="System.String" Scope="User">
-      <Value Profile="(Default)" />
+      <Value Profile="(Default)">C:\</Value>
     </Setting>
   </Settings>
 </SettingsFile>

@@ -295,13 +295,13 @@ Module modGLbuttons
             MsgBox("Bad path to empty_camouflage textures!", MsgBoxStyle.Exclamation, "Well shit!")
         End Try
         ms.Dispose()
-        NBUTT_norm = load_png_file(Application.StartupPath + "\resourses\Nbutt_norm.png")
-        NBUTT_over = load_png_file(Application.StartupPath + "\resourses\Nbutt_over.png")
-        NBUTT_down = load_png_file(Application.StartupPath + "\resourses\Nbutt_down.png")
+        NBUTT_norm = load_png_file(Application.StartupPath + "\resources\Nbutt_norm.png")
+        NBUTT_over = load_png_file(Application.StartupPath + "\resources\Nbutt_over.png")
+        NBUTT_down = load_png_file(Application.StartupPath + "\resources\Nbutt_down.png")
 
-        CBUTT_norm = load_png_file(Application.StartupPath + "\resourses\Cbutt_norm.png")
-        CBUTT_over = load_png_file(Application.StartupPath + "\resourses\Cbutt_over.png")
-        CBUTT_down = load_png_file(Application.StartupPath + "\resourses\Cbutt_down.png")
+        CBUTT_norm = load_png_file(Application.StartupPath + "\resources\Cbutt_norm.png")
+        CBUTT_over = load_png_file(Application.StartupPath + "\resources\Cbutt_over.png")
+        CBUTT_down = load_png_file(Application.StartupPath + "\resources\Cbutt_down.png")
 
         delete_image_start += 9 ' keep track of used textures
 

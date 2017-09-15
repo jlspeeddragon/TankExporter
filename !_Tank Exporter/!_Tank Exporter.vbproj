@@ -246,6 +246,7 @@
   <ItemGroup>
     <EmbeddedResource Include="Forms\FrmCamo.resx">
       <DependentUpon>FrmCamo.vb</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\frmFBX.resx">
       <DependentUpon>frmFBX.vb</DependentUpon>
@@ -280,23 +281,23 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="resourses\Cbutt_down.png">
+    <Content Include="resources\Cbutt_down.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="resourses\Cbutt_norm.png">
+    <Content Include="resources\Cbutt_norm.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="resourses\Cbutt_over.png">
+    <Content Include="resources\Cbutt_over.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <None Include="resourses\gradiant.png" />
-    <Content Include="resourses\Nbutt_down.png">
+    <None Include="resources\gradiant.png" />
+    <Content Include="resources\Nbutt_down.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="resourses\Nbutt_norm.png">
+    <Content Include="resources\Nbutt_norm.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="resourses\Nbutt_over.png">
+    <Content Include="resources\Nbutt_over.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="tank.ico">

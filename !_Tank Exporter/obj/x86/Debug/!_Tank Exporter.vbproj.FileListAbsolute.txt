@@ -1,9 +1,15 @@
-C:\!_Tank Exporter\!_Tank Exporter\bin\x86\Debug\resourses\Cbutt_down.png
-C:\!_Tank Exporter\!_Tank Exporter\bin\x86\Debug\resourses\Cbutt_norm.png
-C:\!_Tank Exporter\!_Tank Exporter\bin\x86\Debug\resourses\Cbutt_over.png
-C:\!_Tank Exporter\!_Tank Exporter\bin\x86\Debug\resourses\Nbutt_down.png
-C:\!_Tank Exporter\!_Tank Exporter\bin\x86\Debug\resourses\Nbutt_norm.png
-C:\!_Tank Exporter\!_Tank Exporter\bin\x86\Debug\resourses\Nbutt_over.png
+C:\!_Tank Exporter\!_Tank Exporter\obj\x86\Debug\Tank_Exporter.FrmCamo.resources
+C:\!_Tank Exporter\!_Tank Exporter\obj\x86\Debug\Tank_Exporter.frmFBX.resources
+C:\!_Tank Exporter\!_Tank Exporter\obj\x86\Debug\Tank_Exporter.frmMain.resources
+C:\!_Tank Exporter\!_Tank Exporter\obj\x86\Debug\Tank_Exporter.frmEditFrag.resources
+C:\!_Tank Exporter\!_Tank Exporter\obj\x86\Debug\Tank_Exporter.frmShaderError.resources
+C:\!_Tank Exporter\!_Tank Exporter\obj\x86\Debug\!_Tank Exporter.vbproj.GenerateResource.Cache
+C:\!_Tank Exporter\!_Tank Exporter\bin\x86\Debug\resources\Cbutt_down.png
+C:\!_Tank Exporter\!_Tank Exporter\bin\x86\Debug\resources\Cbutt_norm.png
+C:\!_Tank Exporter\!_Tank Exporter\bin\x86\Debug\resources\Cbutt_over.png
+C:\!_Tank Exporter\!_Tank Exporter\bin\x86\Debug\resources\Nbutt_down.png
+C:\!_Tank Exporter\!_Tank Exporter\bin\x86\Debug\resources\Nbutt_norm.png
+C:\!_Tank Exporter\!_Tank Exporter\bin\x86\Debug\resources\Nbutt_over.png
 C:\!_Tank Exporter\!_Tank Exporter\bin\x86\Debug\tank.ico
 C:\!_Tank Exporter\!_Tank Exporter\bin\x86\Debug\banner.jpg
 C:\!_Tank Exporter\!_Tank Exporter\bin\x86\Debug\DevIL.dll
@@ -41,13 +47,7 @@ C:\!_Tank Exporter\!_Tank Exporter\bin\x86\Debug\Tao.DevIl.xml
 C:\!_Tank Exporter\!_Tank Exporter\bin\x86\Debug\Tao.FreeGlut.xml
 C:\!_Tank Exporter\!_Tank Exporter\bin\x86\Debug\Tao.OpenGl.xml
 C:\!_Tank Exporter\!_Tank Exporter\bin\x86\Debug\Tao.Platform.Windows.xml
-C:\!_Tank Exporter\!_Tank Exporter\obj\x86\Debug\Tank_Exporter.FrmCamo.resources
-C:\!_Tank Exporter\!_Tank Exporter\obj\x86\Debug\Tank_Exporter.frmFBX.resources
-C:\!_Tank Exporter\!_Tank Exporter\obj\x86\Debug\Tank_Exporter.frmMain.resources
 C:\!_Tank Exporter\!_Tank Exporter\obj\x86\Debug\Tank_Exporter.Resources.resources
-C:\!_Tank Exporter\!_Tank Exporter\obj\x86\Debug\Tank_Exporter.frmEditFrag.resources
-C:\!_Tank Exporter\!_Tank Exporter\obj\x86\Debug\Tank_Exporter.frmShaderError.resources
-C:\!_Tank Exporter\!_Tank Exporter\obj\x86\Debug\!_Tank Exporter.vbproj.GenerateResource.Cache
 C:\!_Tank Exporter\!_Tank Exporter\obj\x86\Debug\!_Tank Exporter.exe
 C:\!_Tank Exporter\!_Tank Exporter\obj\x86\Debug\!_Tank Exporter.xml
 C:\!_Tank Exporter\!_Tank Exporter\obj\x86\Debug\!_Tank Exporter.pdb
