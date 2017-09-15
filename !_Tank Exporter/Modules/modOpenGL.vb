@@ -24,10 +24,26 @@ Imports System.Collections.Generic
 Module modOpenGL
     Public pb1_hDC As System.IntPtr
     Public pb1_hRC As System.IntPtr
+    Public pb2_hDC As System.IntPtr
+    Public pb2_hRC As System.IntPtr
+    Public position0() As Single = {3.535534F, 5.0F, 3.535534F, 1.0F}
+    Public position1() As Single = {-5.0F, 6.0F, 5.0F, 1.0F}
+    Public position2() As Single = {0.0F, 10.0F, 0.0F, 1.0F}
+    Public pb2 As New Panel
     Public Sub EnableOpenGL()
+        pb2.Visible = False
+        Application.DoEvents()
+        Application.DoEvents()
+        Application.DoEvents()
         pb1_hDC = User.GetDC(frmMain.pb1.Handle)
+        pb2_hDC = User.GetDC(pb2.Handle)
+        frmMain.Controls.Add(pb2)
+        Application.DoEvents()
+        Application.DoEvents()
+        Application.DoEvents()
+        pb2.Location = frmMain.pb1.Location
         Dim pfd As Gdi.PIXELFORMATDESCRIPTOR
-        Dim PixelFormat As Integer
+        Dim PixelFormat, PixelFormat2 As Integer
 
         'ZeroMemory(pfd, Len(pfd))
         pfd.nSize = Len(pfd)
@@ -41,10 +57,12 @@ Module modOpenGL
         pfd.iLayerType = Gdi.PFD_MAIN_PLANE
 
         PixelFormat = Gdi.ChoosePixelFormat(pb1_hDC, pfd)
+        PixelFormat2 = Gdi.ChoosePixelFormat(pb2_hDC, pfd)
         If PixelFormat = 0 Then
             MessageBox.Show("Unable to retrieve pixel format")
             End
         End If
+        '---------------1
         If Not (Gdi.SetPixelFormat(pb1_hDC, PixelFormat, pfd)) Then
             MessageBox.Show("Unable to set pixel format")
             End
@@ -54,12 +72,23 @@ Module modOpenGL
             MessageBox.Show("Unable to get rendering context")
             End
         End If
+        '---------------2
+        If Not (Gdi.SetPixelFormat(pb2_hDC, PixelFormat2, pfd)) Then
+            MessageBox.Show("Unable to set pixel format 2")
+            End
+        End If
+        pb2_hRC = Wgl.wglCreateContext(pb2_hDC)
+        If pb2_hRC.ToInt32 = 0 Then
+            MessageBox.Show("Unable to get rendering context 2")
+            End
+        End If
         If Not (Wgl.wglMakeCurrent(pb1_hDC, pb1_hRC)) Then
             MessageBox.Show("Unable to make rendering context current")
             End
         End If
 
         Glut.glutInit()
+        Gl.glGetFloatv(Gl.GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, largestAnsio)
 
         Glut.glutInitDisplayMode(GLUT_RGBA Or GLUT_DOUBLE Or GLUT_MULTISAMPLE)
 
@@ -69,6 +98,8 @@ Module modOpenGL
         Gl.glEnable(Gl.GL_COLOR_MATERIAL)
         Gl.glEnable(Gl.GL_LIGHT0)
         Gl.glEnable(Gl.GL_LIGHTING)
+        Wgl.wglShareLists(pb1_hRC, pb2_hRC)
+
         gl_set_lights()
         'build_shaders()
 
@@ -81,14 +112,6 @@ Module modOpenGL
     Private far_Clip As Single = 1000.0
     Public Sub ResizeGL()
         Gl.glViewport(0, 0, frmMain.pb1.Width, frmMain.pb1.Height)
-        Gl.glMatrixMode(Gl.GL_PROJECTION) ' Select The Projection Matrix
-        Gl.glLoadIdentity() ' Reset The Projection Matrix
-
-        ' Calculate The Aspect Ratio Of The Window
-        Glu.gluPerspective(70.0F, CSng((frmMain.pb1.Width) / (frmMain.pb1.Height)), 0.02F, Far_Clip)
-
-        Gl.glMatrixMode(Gl.GL_MODELVIEW)    ' Select The Modelview Matrix
-        Gl.glLoadIdentity() ' Reset The Modelview Matrix
 
     End Sub
     Public Sub glutPrint(ByVal x As Single, ByVal y As Single, _
@@ -169,36 +192,64 @@ ByVal text As String, ByVal r As Single, ByVal g As Single, ByVal b As Single, B
         ''Gl.glEnable(Gl.GL_SMOOTH)
         ''Gl.glShadeModel(Gl.GL_SMOOTH)
         'Debug.WriteLine("GL Error B:" + Gl.glGetError().ToString)
-
-        Dim specReflection() As Single = {0.6F, 0.6F, 0.6F, 1.0F}
-        Dim specular() As Single = {0.5F, 0.5F, 0.5F, 1.0F}
-        Dim emission() As Single = {0.0F, 0.0F, 0.0F, 1.0F}
-        Dim ambient() As Single = {0.3F, 0.3F, 0.3F, 1.0F}
         Dim global_ambient() As Single = {0.2F, 0.2F, 0.2F, 1.0F}
-        Dim diffuseLight() As Single = {0.5, 0.5, 0.5, 1.0F}
+
+        Dim specular0() As Single = {0.5F, 0.5F, 0.5F, 1.0F}
+        Dim emission0() As Single = {0.0F, 0.0F, 0.0F, 1.0F}
+        Dim ambient0() As Single = {0.3F, 0.3F, 0.3F, 1.0F}
+        Dim diffuseLight0() As Single = {0.5, 0.5, 0.5, 1.0F}
+
+        Dim specular1() As Single = {0.5F, 0.5F, 0.5F, 1.0F}
+        Dim emission1() As Single = {0.0F, 0.0F, 0.0F, 1.0F}
+        Dim ambient1() As Single = {0.3F, 0.3F, 0.3F, 1.0F}
+        Dim diffuseLight1() As Single = {0.5, 0.5, 0.5, 1.0F}
+
+        Dim specular2() As Single = {0.5F, 0.5F, 0.5F, 1.0F}
+        Dim emission2() As Single = {0.0F, 0.0F, 0.0F, 1.0F}
+        Dim ambient2() As Single = {0.3F, 0.3F, 0.3F, 1.0F}
+        Dim diffuseLight2() As Single = {0.5, 0.5, 0.5, 1.0F}
+
+        Dim specReflection0() As Single = {0.6F, 0.6F, 0.6F, 1.0F}
+        Dim specReflection1() As Single = {0.6F, 0.6F, 0.6F, 1.0F}
+        Dim specReflection2() As Single = {0.6F, 0.6F, 0.6F, 1.0F}
 
         Dim mcolor() As Single = {0.2F, 0.2F, 0.2F, 1.0F}
         'Gl.glEnable(Gl.GL_SMOOTH)
         Gl.glShadeModel(Gl.GL_SMOOTH)
 
         Gl.glEnable(Gl.GL_LIGHT0)
+        Gl.glEnable(Gl.GL_LIGHT1)
+        Gl.glEnable(Gl.GL_LIGHT2)
         Gl.glEnable(Gl.GL_LIGHTING)
 
         'light 0
         Gl.glLightModelfv(Gl.GL_LIGHT_MODEL_AMBIENT, global_ambient)
-        Dim position0() As Single = {0.0F, 300.0F, 0.0F, 1.0F}
-        Dim position1() As Single = {400.0F, 100.0F, 400.0F, 1.0F}
-        Dim position2() As Single = {400.0F, 100.0F, -400.0F, 1.0F}
-        Dim position3() As Single = {-400.0F, 100.0F, -400.0F, 1.0F}
-        Dim position4() As Single = {-400.0F, 100.0F, 400.0F, 1.0F}
+
+        Dim position0() As Single = {0.0F, 30.0F, 0.0F, 1.0F}
+        Dim position1() As Single = {40.0F, 10.0F, 40.0F, 1.0F}
+        Dim position2() As Single = {40.0F, 10.0F, -40.0F, 1.0F}
+        'Dim position3() As Single = {-400.0F, 100.0F, -400.0F, 1.0F}
+        'Dim position4() As Single = {-400.0F, 100.0F, 400.0F, 1.0F}
 
         ' light 1
 
         Gl.glLightfv(Gl.GL_LIGHT0, Gl.GL_POSITION, position0)
-        Gl.glLightfv(Gl.GL_LIGHT0, Gl.GL_SPECULAR, specular)
-        Gl.glLightfv(Gl.GL_LIGHT0, Gl.GL_EMISSION, emission)
-        Gl.glLightfv(Gl.GL_LIGHT0, Gl.GL_DIFFUSE, diffuseLight)
-        Gl.glLightfv(Gl.GL_LIGHT0, Gl.GL_AMBIENT, ambient)
+        Gl.glLightfv(Gl.GL_LIGHT0, Gl.GL_SPECULAR, specular0)
+        Gl.glLightfv(Gl.GL_LIGHT0, Gl.GL_EMISSION, emission0)
+        Gl.glLightfv(Gl.GL_LIGHT0, Gl.GL_DIFFUSE, diffuseLight0)
+        Gl.glLightfv(Gl.GL_LIGHT0, Gl.GL_AMBIENT, ambient0)
+
+        Gl.glLightfv(Gl.GL_LIGHT1, Gl.GL_POSITION, position1)
+        Gl.glLightfv(Gl.GL_LIGHT1, Gl.GL_SPECULAR, specular1)
+        Gl.glLightfv(Gl.GL_LIGHT1, Gl.GL_EMISSION, emission1)
+        Gl.glLightfv(Gl.GL_LIGHT1, Gl.GL_DIFFUSE, diffuseLight1)
+        Gl.glLightfv(Gl.GL_LIGHT1, Gl.GL_AMBIENT, ambient1)
+
+        Gl.glLightfv(Gl.GL_LIGHT2, Gl.GL_POSITION, position2)
+        Gl.glLightfv(Gl.GL_LIGHT2, Gl.GL_SPECULAR, specular2)
+        Gl.glLightfv(Gl.GL_LIGHT2, Gl.GL_EMISSION, emission2)
+        Gl.glLightfv(Gl.GL_LIGHT2, Gl.GL_DIFFUSE, diffuseLight2)
+        Gl.glLightfv(Gl.GL_LIGHT2, Gl.GL_AMBIENT, ambient2)
 
 
         Gl.glLightModelfv(Gl.GL_LIGHT_MODEL_AMBIENT, global_ambient)
@@ -207,8 +258,8 @@ ByVal text As String, ByVal r As Single, ByVal g As Single, ByVal b As Single, B
         Gl.glPolygonMode(Gl.GL_FRONT, Gl.GL_FILL)
 
         Gl.glMaterialfv(Gl.GL_FRONT, Gl.GL_AMBIENT_AND_DIFFUSE, mcolor)
-        Gl.glMaterialfv(Gl.GL_FRONT, Gl.GL_SPECULAR, specReflection)
-        Gl.glMaterialfv(Gl.GL_FRONT, Gl.GL_DIFFUSE, diffuseLight)
+        Gl.glMaterialfv(Gl.GL_FRONT, Gl.GL_SPECULAR, specReflection0)
+        Gl.glMaterialfv(Gl.GL_FRONT, Gl.GL_DIFFUSE, diffuseLight0)
         Gl.glColorMaterial(Gl.GL_FRONT, Gl.GL_SPECULAR Or Gl.GL_AMBIENT_AND_DIFFUSE)
 
 

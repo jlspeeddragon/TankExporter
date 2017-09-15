@@ -1,7 +1,8 @@
 ﻿#version 130
+//tank_vertex.glsl
 //Used to light all models
 out vec3 vVertex;
-out vec3 lightDirection;
+//out vec3 lightDirection;
 out vec2 TC1;
 out mat3 TBN;
 
@@ -23,7 +24,7 @@ void main(void) {
 
     vVertex = vec3(gl_ModelViewMatrix * gl_Vertex);
 
-    lightDirection = gl_LightSource[0].position.xyz - vVertex;
+    //lightDirection = gl_LightSource[0].position.xyz - vVertex;
 
     gl_Position    = ftransform();
 

@@ -51,6 +51,7 @@ Module modFBX
         Dim pManager As FbxSdkManager
         pManager = FbxSdkManager.Create
         'create the material and texture arrays.
+
         Dim texture_count = textures.Length
         Dim lMaterials(texture_count) As FbxSurfacePhong
         Dim lTextures(texture_count) As FbxTexture
@@ -61,9 +62,14 @@ Module modFBX
             lTextures(i) = fbx_create_texture(pManager, i) 'Color Map
             lTextures_N(i) = fbx_create_texture_N(pManager, i) 'Normal Map
         Next
+
         'create manager and scene
         Dim scene As FbxScene
-        scene = FbxScene.Create(pManager, "My Scene")
+        scene = FbxScene.Create(pManager, file_name)
+        scene.SceneInfo.Author = "Exported using Coffee_'s Tank Exporter tool"
+        For i = 1 To object_count
+            scene.SceneInfo.Comment += _group(i).color_name
+        Next
         frmFBX.Label1.Visible = False
         frmFBX.Label2.Visible = True
         Dim node_list() = {FbxNode.Create(pManager, model_name)}
@@ -79,7 +85,7 @@ Module modFBX
             'End If
             mat_main = Path.GetDirectoryName(My.Settings.fbx_path) + "\" + Path.GetFileNameWithoutExtension(_group(id).color_name) + ".png"
             mat_NM = Path.GetDirectoryName(My.Settings.fbx_path) + "\" + Path.GetFileNameWithoutExtension(_group(id).normal_name) + ".png"
-            mat_uv2 = _group(id).color2_name
+            mat_uv2 = _group(id).detail_name
 
             model_name = _group(id).name
             node_list(id) = FbxNode.Create(pManager, model_name)

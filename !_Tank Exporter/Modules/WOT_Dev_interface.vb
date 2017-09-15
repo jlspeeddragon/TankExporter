@@ -33,6 +33,7 @@ Module WOT_Dev_interface
     Public in_shortnames As String
     Public in_nations As String
     Public in_types As String
+    'Public in_turrets As String
     Public tank_list(1) As tankitem_
     Public TankDataTable As New DataTable
     Public Structure tankitem_
@@ -41,6 +42,7 @@ Module WOT_Dev_interface
         Public short_name As String
         Public nation As String
         Public type As String
+        'Public turrets As String
     End Structure
     Public Sub get_tank_info_from_temp_folder()
 
@@ -96,6 +98,7 @@ Module WOT_Dev_interface
         Dim shortnames As String = "https://api.worldoftanks.com/wot/encyclopedia/vehicles/?application_id=demo&fields=short_name"
         Dim nations As String = "https://api.worldoftanks.com/wot/encyclopedia/vehicles/?application_id=demo&fields=nation"
         Dim types As String = "https://api.worldoftanks.com/wot/encyclopedia/vehicles/?application_id=demo&fields=type"
+        'Dim turrets As String = "https://api.worldoftanks.com/wot/encyclopedia/vehicles/?application_id=demo&fields=turrets"
 
         Dim reader As New StreamReader(client.OpenRead(tags))
         frmMain.info_Label.Text = "Getting Tags..."
@@ -133,6 +136,12 @@ Module WOT_Dev_interface
         'save to temp_folder
         File.WriteAllText(Temp_Storage + "\in_types.txt", in_types)
 
+        'frmMain.info_Label.Text = "Getting Turrets..."
+        'Application.DoEvents()
+        'reader = New StreamReader(client.OpenRead(turrets))
+        'in_turrets = reader.ReadToEnd
+        ''save to temp_folder
+        'File.WriteAllText(Temp_Storage + "\in_turrets.txt", in_types)
 
         reader.Dispose()
 
@@ -147,6 +156,7 @@ Module WOT_Dev_interface
         TankDataTable.Columns.Add("tier")
         TankDataTable.Columns.Add("nation")
         TankDataTable.Columns.Add("type")
+        'TankDataTable.Columns.Add("turrets")
         For Each q In tank_list
             If q.type IsNot Nothing Then
                 Dim r = TankDataTable.NewRow
@@ -174,11 +184,13 @@ Module WOT_Dev_interface
         Dim shortnames() As String
         Dim nations() As String
         Dim types() As String
+        'Dim turrets() As String
         tags = clean_file(in_tags)
         tiers = clean_file(in_tiers)
         shortnames = clean_file(in_shortnames)
         nations = clean_file(in_nations)
         types = clean_file(in_types)
+        'turrets = clean_file(in_turrets)
         ReDim tank_list(tags.Length)
         For i = 0 To tags.Length - 1
             tank_list(i) = New tankitem_
@@ -187,6 +199,7 @@ Module WOT_Dev_interface
             tank_list(i).short_name = shortnames(i)
             tank_list(i).nation = nations(i)
             tank_list(i).type = types(i)
+            'tank_list(i).turrets = turrets(i)
         Next
     End Sub
     Public Function clean_file(ByRef st As String) As Array

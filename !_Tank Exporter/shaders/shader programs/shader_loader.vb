@@ -7,6 +7,8 @@ Imports Tao.Platform.Windows
 Module shader_loader
     Public shader_list As New shader_list_
     Public Class shader_list_
+        Public normal_shader As Integer
+        Public mixer_shader As Integer
         Public tank_shader As Integer
     End Class
 
@@ -40,35 +42,6 @@ Module shader_loader
         End Sub
     End Structure
 
-    Public view_normal_mode_ As Integer
-    Public normal_mode As Integer = 0
-    Public normal_length_ As Integer
-    Public render_has_holes, render_hole_texture As Integer
-    Public c_address, n_address, a_address, t_address, c_position As Integer
-    Public c_address2, n_address2, a_address2, t_address2 As Integer
-    Public a_address3, t_address3 As Integer
-    Public a_address5 As Integer
-
-
-    Public n_address6, f_address6, a_address6, t_address6 As Integer
-    Public layer_1, layer_2, layer_3, layer_4, n_layer_1, n_layer_2, n_layer_3, n_layer_4 As Integer
-    Public main_texture, is_bumped, gamma, gamma_2 As Integer
-    Public gamma_3, branch_gamma_level_id, gamma_6, c_position3, branch_eye_pos_id, is_bumped4, is_bumped5 As Integer
-    Public layer0U, layer1U, layer2U, layer3U As Integer
-    Public layer0V, layer1V, layer2V, layer3V As Integer
-    Public gray_level_1, gray_level_2, gray_level_3, gray_level_6, branch_gray_level_id As Integer
-    Public u_mat1, u_mat2 As Integer
-    Public mixtexture As Integer
-    Public sun_lock As Boolean = False
-    Public leaf_ambient_level_id, branch_ambient_level_id, decal_ambient, model_ambient As Integer
-    Public decal_uv_wrap, decal_influence As Integer
-    Public bump_out_ As Integer
-    Public vismap_address As Integer
-    Public noise_map_address As Integer
-    Public basic_color, basic_normal, basic_color_level, basic_gamma As Integer
-    Public frond_ambient_level_id As Integer
-    Public colorMapper_mask_address, colorMapper_colorMap_address As Integer
-    ' Public color_correct_addy As Integer
 #End Region
 
 
@@ -319,21 +292,56 @@ Module shader_loader
     '==============================================================================================================
     'tank_shader
     Public tank_colorMap, tank_normalMap, tank_is_GAmap, tank_alphaTest, tank_viewPosition As Integer
-    Public tank_GMM, tank_AO As Integer
+    Public tank_GMM, tank_AO, tank_detailMap, tank_detailTiling, tank_detailPower As Integer
+    Public tank_camo, tank_use_camo, tank_tile_vec4 As Integer
+    Public tank_c0, tank_c1, tank_c2, tank_c3, tank_armorcolor, tank_camo_tiling, tank_exclude_camo As Integer
     Private Sub set_tank_shader_variables()
         tank_colorMap = Gl.glGetUniformLocation(shader_list.tank_shader, "colorMap")
         tank_normalMap = Gl.glGetUniformLocation(shader_list.tank_shader, "normalMap")
         tank_GMM = Gl.glGetUniformLocation(shader_list.tank_shader, "gmmMap")
         tank_AO = Gl.glGetUniformLocation(shader_list.tank_shader, "aoMap")
+        tank_detailMap = Gl.glGetUniformLocation(shader_list.tank_shader, "detailMap")
+        tank_camo = Gl.glGetUniformLocation(shader_list.tank_shader, "camoMap")
         tank_is_GAmap = Gl.glGetUniformLocation(shader_list.tank_shader, "is_GAmap")
         tank_alphaTest = Gl.glGetUniformLocation(shader_list.tank_shader, "alphaTest")
-        tank_viewPosition = Gl.glGetUniformLocation(shader_list.tank_shader, "viewPos")
+        tank_detailTiling = Gl.glGetUniformLocation(shader_list.tank_shader, "detailTiling")
+        tank_detailPower = Gl.glGetUniformLocation(shader_list.tank_shader, "detailPower")
+        tank_use_camo = Gl.glGetUniformLocation(shader_list.tank_shader, "use_camo")
+        tank_tile_vec4 = Gl.glGetUniformLocation(shader_list.tank_shader, "tile_vec4")
+        tank_c0 = Gl.glGetUniformLocation(shader_list.tank_shader, "c0")
+        tank_c1 = Gl.glGetUniformLocation(shader_list.tank_shader, "c1")
+        tank_c2 = Gl.glGetUniformLocation(shader_list.tank_shader, "c2")
+        tank_c3 = Gl.glGetUniformLocation(shader_list.tank_shader, "c3")
+        tank_armorcolor = Gl.glGetUniformLocation(shader_list.tank_shader, "armorcolor")
+        tank_camo_tiling = Gl.glGetUniformLocation(shader_list.tank_shader, "camo_tiliing")
+        tank_exclude_camo = Gl.glGetUniformLocation(shader_list.tank_shader, "exclude_camo")
 
     End Sub
+
+    '==============================================================================================================
+    Public normal_shader_mode As Integer
+    Public normal_shader_mode_id As Integer
+    Private Sub set_normal_shader_variables()
+        normal_shader_mode_id = Gl.glGetUniformLocation(shader_list.normal_shader, "mode")
+    End Sub
+    '==============================================================================================================
+    Public mix_camoMap, mix_c0, mix_c1, mix_c2, mix_c3, mix_armorColor
+    Private Sub set_mixer_shader_variables()
+        mix_camoMap = Gl.glGetUniformLocation(shader_list.mixer_shader, "camoMap")
+        mix_c0 = Gl.glGetUniformLocation(shader_list.mixer_shader, "c0")
+        mix_c1 = Gl.glGetUniformLocation(shader_list.mixer_shader, "c1")
+        mix_c2 = Gl.glGetUniformLocation(shader_list.mixer_shader, "c2")
+        mix_c3 = Gl.glGetUniformLocation(shader_list.mixer_shader, "c3")
+        mix_armorColor = Gl.glGetUniformLocation(shader_list.mixer_shader, "armorColor")
+
+    End Sub
+
     '==============================================================================================================
 
     Public Sub set_shader_variables()
         set_tank_shader_variables()
+        set_normal_shader_variables()
+        set_mixer_shader_variables()
         Return
 
     End Sub

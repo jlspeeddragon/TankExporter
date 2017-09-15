@@ -1,3 +1,10 @@
+C:\!_Tank Exporter\!_Tank Exporter\bin\x86\Debug\resourses\Cbutt_down.png
+C:\!_Tank Exporter\!_Tank Exporter\bin\x86\Debug\resourses\Cbutt_norm.png
+C:\!_Tank Exporter\!_Tank Exporter\bin\x86\Debug\resourses\Cbutt_over.png
+C:\!_Tank Exporter\!_Tank Exporter\bin\x86\Debug\resourses\Nbutt_down.png
+C:\!_Tank Exporter\!_Tank Exporter\bin\x86\Debug\resourses\Nbutt_norm.png
+C:\!_Tank Exporter\!_Tank Exporter\bin\x86\Debug\resourses\Nbutt_over.png
+C:\!_Tank Exporter\!_Tank Exporter\bin\x86\Debug\tank.ico
 C:\!_Tank Exporter\!_Tank Exporter\bin\x86\Debug\banner.jpg
 C:\!_Tank Exporter\!_Tank Exporter\bin\x86\Debug\DevIL.dll
 C:\!_Tank Exporter\!_Tank Exporter\bin\x86\Debug\FbxSDK.dll
@@ -11,6 +18,11 @@ C:\!_Tank Exporter\!_Tank Exporter\bin\x86\Debug\Tao.OpenGl.dll
 C:\!_Tank Exporter\!_Tank Exporter\bin\x86\Debug\Tao.Platform.Windows.dll
 C:\!_Tank Exporter\!_Tank Exporter\bin\x86\Debug\Zip\Ionic.Zip.dll
 C:\!_Tank Exporter\!_Tank Exporter\bin\x86\Debug\Zip\Ionic.Zlib.dll
+C:\!_Tank Exporter\!_Tank Exporter\bin\x86\Debug\shaders\mixer_fragment.glsl
+C:\!_Tank Exporter\!_Tank Exporter\bin\x86\Debug\shaders\mixer_vertex.glsl
+C:\!_Tank Exporter\!_Tank Exporter\bin\x86\Debug\shaders\normal_fragment.glsl
+C:\!_Tank Exporter\!_Tank Exporter\bin\x86\Debug\shaders\normal_geo.glsl
+C:\!_Tank Exporter\!_Tank Exporter\bin\x86\Debug\shaders\normal_vertex.glsl
 C:\!_Tank Exporter\!_Tank Exporter\bin\x86\Debug\shaders\tank_vertex.glsl
 C:\!_Tank Exporter\!_Tank Exporter\bin\x86\Debug\shaders\tank_fragment.glsl
 C:\!_Tank Exporter\!_Tank Exporter\bin\x86\Debug\!_Tank Exporter.exe.config
@@ -29,6 +41,7 @@ C:\!_Tank Exporter\!_Tank Exporter\bin\x86\Debug\Tao.DevIl.xml
 C:\!_Tank Exporter\!_Tank Exporter\bin\x86\Debug\Tao.FreeGlut.xml
 C:\!_Tank Exporter\!_Tank Exporter\bin\x86\Debug\Tao.OpenGl.xml
 C:\!_Tank Exporter\!_Tank Exporter\bin\x86\Debug\Tao.Platform.Windows.xml
+C:\!_Tank Exporter\!_Tank Exporter\obj\x86\Debug\Tank_Exporter.FrmCamo.resources
 C:\!_Tank Exporter\!_Tank Exporter\obj\x86\Debug\Tank_Exporter.frmFBX.resources
 C:\!_Tank Exporter\!_Tank Exporter\obj\x86\Debug\Tank_Exporter.frmMain.resources
 C:\!_Tank Exporter\!_Tank Exporter\obj\x86\Debug\Tank_Exporter.Resources.resources
@@ -38,4 +51,3 @@ C:\!_Tank Exporter\!_Tank Exporter\obj\x86\Debug\!_Tank Exporter.vbproj.Generate
 C:\!_Tank Exporter\!_Tank Exporter\obj\x86\Debug\!_Tank Exporter.exe
 C:\!_Tank Exporter\!_Tank Exporter\obj\x86\Debug\!_Tank Exporter.xml
 C:\!_Tank Exporter\!_Tank Exporter\obj\x86\Debug\!_Tank Exporter.pdb
-C:\!_Tank Exporter\!_Tank Exporter\obj\x86\Debug\!_Tank Exporter.vbprojResolveAssemblyReference.cache

@@ -31,7 +31,8 @@ Module tank_loader
 #Region "variables"
 
     Public section_names(100) As String
-
+    Public uv2_data() As uv_
+    Public uv2_data_fbx() As Single
     Dim has_uv2, has_color, has_bsp As Boolean
     Dim xmlget_mode, number_of_groups As Integer
     Public log_text As New StringBuilder
@@ -52,7 +53,6 @@ Module tank_loader
     Dim temo_text_string As String = ""
     Public turret_trans, tank_location, hull_trans As vect3
     Public turret_location, gun_trans2, gun_trans, gun_location As vect3
-    Public hull_texture, chassis_texture As String
 
     Public part_counts As part_counts_
     Public Structure part_counts_
@@ -162,6 +162,9 @@ Module tank_loader
 
     Public _object() As obj
     Public Class obj
+        Public exclude_camo As Integer
+        Public camo_tiling As vect4
+        Public use_camo As Integer
         Public matrix(16) As Single
         Public tris() As triangle = {New triangle}
         Public name As String
@@ -274,15 +277,16 @@ Module tank_loader
         Public alphaRef As Integer
         Public alphaTest As Integer
         Public color_Id As Integer
-        Public color2_Id As Integer
+        Public detail_Id As Integer
         Public color_name As String
-        Public metal_Id As Integer
-        Public metal_name As String
+        Public metalGMM_Id As Integer
+        Public metalGMM_name As String
+        Public detail_power As Single
         Public ao_name As String
         Public ao_id As Integer
         Public normal_Id As Integer
         Public normal_name As String
-        Public color2_name As String
+        Public detail_name As String
         Public multi_textured As Boolean
         Public metal_textured As Boolean
         Public bumped As Boolean
@@ -378,6 +382,9 @@ Module tank_loader
         If InStr(Path.GetFileNameWithoutExtension(file_name), "Gun_") > 0 Then
             xmlget_mode = 4
         End If
+        If InStr(Path.GetFileNameWithoutExtension(file_name), "segment") > 0 Then
+            xmlget_mode = 5
+        End If
         If xmlget_mode = 2 Or xmlget_mode = 4 Then
             has_bsp = False
         Else
@@ -391,7 +398,10 @@ Module tank_loader
         Dim t = xmldataset.Copy
         Dim geo, _stream As New DataTable
 
-        geo = t.Tables("geometry").Copy
+        If t.Tables.Contains("geometry") Then
+            geo = t.Tables("geometry").Copy
+
+        End If
         Dim has_stream As Boolean = False
         Try
             If t.Tables.Contains("stream") Then
@@ -484,7 +494,18 @@ Module tank_loader
         If entry IsNot Nothing Then
             entry.Extract(r)
         Else
-            log_text.Append("File Not Found in package.." + file_name + vbCrLf)
+            entry = frmMain.shared_pkg(file_name)
+            If entry IsNot Nothing Then
+                entry.Extract(r)
+            Else
+                entry = frmMain.shared_sandbox_pkg(file_name)
+                If entry IsNot Nothing Then
+                    entry.Extract(r)
+                Else
+
+                End If
+                log_text.Append("File Not Found in package.." + file_name + vbCrLf)
+            End If
             Return
 
         End If
@@ -939,8 +960,8 @@ next_m:
                     narray = ordered_names(sg - sub_groups).vert_name.Split(".")
 
                 End If
-                If _group(jj).color2_name Is Nothing Then
-                    _group(jj).has_uv2 = 0
+                If _group(jj).has_uv2 = 1 Then
+                    get_uv2(ordered_names(running).uv2_data, ordered_names(running).uv2_data.Length / 4)
                 End If
                 'get the textures if we are exporting
                 If frmFBX.Visible And frmFBX.export_textures.Checked Then
@@ -956,6 +977,45 @@ next_m:
 
                 _object(jj).name = n_ + "_" + jj.ToString
                 _group(jj).name = n_ + "_" + jj.ToString
+                If _object(jj).name.ToLower.Contains("chassis") Then
+                    _object(jj).camo_tiling = chassis_tiling
+                    _object(jj).use_camo = 0
+                End If
+                If hull_count = 0 Then
+                    If _object(jj).name.ToLower.Contains("hull") Then
+                        _object(jj).camo_tiling = hull_tiling
+                        _object(jj).use_camo = 0
+                        hull_count += 1
+                    End If
+                Else
+                    If _object(jj).name.ToLower.Contains("hull") Then
+                        _object(jj).camo_tiling = hull_tiling
+                        _object(jj - 1).exclude_camo = 1
+                        _object(jj).use_camo = 0
+                    End If
+
+                End If
+                If turret_count = 0 Then
+                    If _object(jj).name.ToLower.Contains("turret") Then
+                        _object(jj).camo_tiling = turret_tiling
+                        _object(jj).use_camo = 0
+                        turret_count += 1
+                    End If
+                Else
+                    If _object(jj).name.ToLower.Contains("turret") Then
+                        _object(jj).exclude_camo = 1
+                        _object(jj).use_camo = 0
+                    End If
+
+                End If
+                If _object(jj).name.ToLower.Contains("gun") Then
+                    _object(jj).camo_tiling = gun_tiling
+                    _object(jj).use_camo = 0
+                End If
+                If _object(jj).name.ToLower.Contains("segment") Then
+                    _object(jj).exclude_camo = 1
+                    _object(jj).use_camo = 0
+                End If
 
                 _object(jj).ID = jj
                 cnt = pGroups(jj - object_start).nPrimitives_
@@ -1157,23 +1217,70 @@ all_done:
     End Sub
 
     Dim mstream As New MemoryStream
+    Private Sub get_uv2(ByRef data() As Byte, ByVal size As Integer)
+        ReDim uv2_data(size - 1)
+        Dim m As New MemoryStream(data)
+        Dim br As New BinaryReader(m)
+        For i = 0 To (size - 1) / 2
+            uv2_data(i).u = br.ReadSingle
+            uv2_data(i).v = br.ReadSingle
+        Next
+    End Sub
 
     Public Function openVisual(ByVal filename As String) As Boolean
-        Dim e As ZipEntry = frmMain.packages(current_tank_package)(filename)
-        Dim mstream = New MemoryStream
-        e.Extract(mstream)
-        openXml_stream(mstream, "")
-        Dim d As DataSet = xmldataset
-        Dim tbl = d.Tables("map_")
-        Dim q = From row In tbl.AsEnumerable _
-                Select s = row.Field(Of String)("nodefullVisual")
+        Try
 
-        filename = q(0) + ".visual_processed"
-        file_name = q(0) + ".primitives_processed"
-        e = frmMain.packages(current_tank_package)(filename)
-        mstream = New MemoryStream
-        e.Extract(mstream)
-        openXml_stream(mstream, "")
+            Dim mstream = New MemoryStream
+            Dim e As ZipEntry = frmMain.packages(current_tank_package)(filename)
+            If e IsNot Nothing Then
+                e.Extract(mstream)
+            Else
+                e = frmMain.shared_pkg(filename)
+                If e IsNot Nothing Then
+                    e.Extract(mstream)
+                Else
+                    e = frmMain.shared_sandbox_pkg(filename)
+                    If e IsNot Nothing Then
+                        e.Extract(mstream)
+                    End If
+                End If
+            End If
+            'e.Extract(mstream)
+            openXml_stream(mstream, "")
+            Dim d As DataSet = xmldataset
+            Dim tbl = d.Tables("map_")
+            If tbl.Columns.Contains("nodelessVisual") Then
+                filename = filename.Replace(".model", ".visual_processed")
+                file_name = filename.Replace(".visual_processed", ".primitives_processed")
+                GoTo get_visual
+            End If
+
+
+            Dim q = From row In tbl.AsEnumerable _
+                    Select s = row.Field(Of String)("nodefullVisual")
+
+            filename = q(0) + ".visual_processed"
+            file_name = q(0) + ".primitives_processed"
+get_visual:
+            mstream = New MemoryStream
+            e = frmMain.packages(current_tank_package)(filename)
+            If e IsNot Nothing Then
+                e.Extract(mstream)
+            Else
+                e = frmMain.shared_pkg(filename)
+                If e IsNot Nothing Then
+                    e.Extract(mstream)
+                Else
+                    e = frmMain.shared_sandbox_pkg(filename)
+                    If e IsNot Nothing Then
+                        e.Extract(mstream)
+                    End If
+                End If
+            End If
+            openXml_stream(mstream, "")
+        Catch ex As Exception
+            Return False
+        End Try
 
         Return True
     End Function
@@ -1418,7 +1525,10 @@ all_done:
             _object(id).row2.z *= -1.0
 
         End If
+        If xmlget_mode = 5 Then
+            get_matrix(id, "Scene Root", "")
 
+        End If
         If xmlget_mode = 0 Then
             get_matrix(id, "Scene Root", "")
             'If frmMain.m_world_of_tanks_mode.Checked Then
@@ -1440,7 +1550,7 @@ all_done:
         _group(id).multi_textured = False
         _group(id).metal_textured = False
         _group(id).bumped = False
-        _group(id).color2_name = Nothing
+        _group(id).detail_name = Nothing
         _group(id).color_name = Nothing
         _group(id).normal_name = Nothing
         _group(id).alphaTest = 0
@@ -1452,8 +1562,8 @@ all_done:
 
 
         Try
-            _group(id).multi_textured = (_group(id).color2_name IsNot Nothing And _group(id).color_name IsNot Nothing)
-            _group(id).blend_only = (_group(id).color2_name IsNot Nothing And _group(id).color_name Is Nothing)
+            _group(id).multi_textured = (_group(id).detail_name IsNot Nothing And _group(id).color_name IsNot Nothing)
+            _group(id).blend_only = (_group(id).detail_name IsNot Nothing And _group(id).color_name Is Nothing)
             _group(id).bumped = (_group(id).normal_name IsNot Nothing)
             If InStr(_group(id).color_name, "Alpha") > 0 Then
                 _group(id).blend_only = True
@@ -1462,9 +1572,9 @@ all_done:
 
         End Try
         _group(id).color_Id = -1
-        _group(id).color2_Id = -1
+        _group(id).metalGMM_Id = -1
         _group(id).normal_Id = -1
-
+        _group(id).detail_Id = -1
         tbl_prim_group.Clear()
         If tbl_property IsNot Nothing Then
             tbl_property.Clear()
@@ -1517,8 +1627,8 @@ all_done:
                 End If
                 If li.Contains("difffuseMap2") Then
                     Dim a1 = li.Split("""")
-                    _group(id).color2_name = a1(1).Replace(".tga", ".dds")
-                    _group(id).color2_Id = -1
+                    _group(id).detail_name = a1(1).Replace(".tga", ".dds")
+                    _group(id).detail_Id = -1
                 End If
                 If li.Contains("normalMap") Then
                     Dim a1 = li.Split("""")
@@ -1552,9 +1662,9 @@ all_done:
             Dim tex1_Epos = InStr(tex1_pos, thestring, "</Texture>")
             Dim newS As String = ""
             newS = Mid(thestring, tex1_pos, tex1_Epos - tex1_pos).Replace("/", "\")
-            _group(id).color2_name = newS
+            _group(id).detail_name = newS
             'Debug.Write(newS & vbCrLf)
-            _group(id).metal_Id = -1
+            _group(id).detail_Id = -1
         End If
 
         diff_pos = InStr(primStart, thestring, "metallicGlossMap")
@@ -1563,9 +1673,9 @@ all_done:
             Dim tex1_Epos = InStr(tex1_pos, thestring, "</Texture>")
             Dim newS As String = ""
             newS = Mid(thestring, tex1_pos, tex1_Epos - tex1_pos).Replace("/", "\")
-            _group(id).color2_name = newS.Replace("tga", "dds")
+            _group(id).metalGMM_name = newS.Replace("tga", "dds")
             'Debug.Write(newS & vbCrLf)
-            _group(id).metal_Id = -1
+            _group(id).metalGMM_Id = -1
         End If
 
         diff_pos = InStr(primStart, thestring, "diffuseMap")
@@ -1576,26 +1686,19 @@ all_done:
             Dim newS As String = ""
             newS = Mid(thestring, tex1_pos, tex1_Epos - tex1_pos).Replace("/", "\")
             _group(id).color_name = newS.Replace("tga", "dds")
-            If InStr(newS, "track") > 0 Then
-                chassis_texture = newS
-            Else
-                If hull_texture.Length = 0 Then
-                    hull_texture = newS
-                End If
-            End If
             _group(id).color_Id = -1
         End If
 
         diff_pos = InStr(primStart, thestring, "difffuseMap2")
-        If diff_pos > 0 Then
-            Dim tex1_pos = InStr(diff_pos, thestring, "<Texture>") + "<texture>".Length
-            Dim tex1_Epos = InStr(tex1_pos, thestring, "</Texture>")
-            Dim newS As String = ""
-            newS = Mid(thestring, tex1_pos, tex1_Epos - tex1_pos).Replace("/", "\")
-            _group(id).color2_name = newS.Replace("tga", "dds")
-            'Debug.Write(newS & vbCrLf)
-            _group(id).color2_Id = -1
-        End If
+        'If diff_pos > 0 Then
+        '    Dim tex1_pos = InStr(diff_pos, thestring, "<Texture>") + "<texture>".Length
+        '    Dim tex1_Epos = InStr(tex1_pos, thestring, "</Texture>")
+        '    Dim newS As String = ""
+        '    newS = Mid(thestring, tex1_pos, tex1_Epos - tex1_pos).Replace("/", "\")
+        '    _group(id).detail_name = newS.Replace("tga", "dds")
+        '    'Debug.Write(newS & vbCrLf)
+        '    _group(id).detail_Id = -1
+        'End If
         diff_pos = InStr(primStart, thestring, "excludeMaskAndAOMap")
         If diff_pos > 0 Then
             Dim tex1_pos = InStr(diff_pos, thestring, "<Texture>") + "<texture>".Length
@@ -1635,9 +1738,9 @@ all_done:
             Dim tex1_Epos = InStr(tex1_pos, thestring, "</Texture>")
             Dim newS As String = ""
             newS = Mid(thestring, tex1_pos, tex1_Epos - tex1_pos).Replace("/", "\")
-            _group(id).metal_name = newS
+            _group(id).metalGMM_name = newS
             _group(id).metal_textured = True
-            _group(id).metal_Id = -1
+            _group(id).metalGMM_Id = -1
 
         End If
 
@@ -1675,6 +1778,22 @@ all_done:
             'we want to test by default
             _group(id).alphaTest = 0
             _group(id).alphaRef = 128 '?
+
+
+        End If
+        diff_pos = InStr(primStart, thestring, "g_detailPower<")
+        If diff_pos > 0 Then
+
+            Dim tex1_pos = InStr(diff_pos, thestring, "<Float>") + "<Float>".Length
+            Dim tex1_Epos = InStr(tex1_pos, thestring, "</Float>")
+            Dim newS As String = ""
+            newS = Mid(thestring, tex1_pos, tex1_Epos - tex1_pos).Replace("/", "\")
+            'Dim ar = maplist(map).models(mod_id).componets(currentP).color_name
+
+            _group(id).detail_power = CSng(newS)
+        Else
+            'we want to test by default
+            _group(id).detail_power = 0
 
 
         End If
@@ -1751,6 +1870,7 @@ all_done:
         'If Gl.glIsList(_object(i).main_display_list) Then
         '	Gl.glDeleteLists(_object(i).main_display_list, 1)
         'End If
+        Gl.glDeleteLists(_object(I).main_display_list, 1)
         _object(I).main_display_list = Gl.glGenLists(1)
         Gl.glNewList(_object(I).main_display_list, Gl.GL_COMPILE)
         main_list(_object(I).count, I)
@@ -1775,6 +1895,13 @@ all_done:
         _object(jj).tris(i).v1 = transform(_object(jj).tris(i).v1, _object(jj).matrix)
         _object(jj).tris(i).v2 = transform(_object(jj).tris(i).v2, _object(jj).matrix)
         _object(jj).tris(i).v3 = transform(_object(jj).tris(i).v3, _object(jj).matrix)
+
+        '_object(jj).tris(i).uv1 = rotate_transform_uv(_object(jj).tris(i).uv1, _object(jj).matrix)
+        '_object(jj).tris(i).uv2 = rotate_transform_uv(_object(jj).tris(i).uv2, _object(jj).matrix)
+        '_object(jj).tris(i).uv3 = rotate_transform_uv(_object(jj).tris(i).uv3, _object(jj).matrix)
+
+
+
 
         _object(jj).tris(i).n1 = rotate_transform(_object(jj).tris(i).n1, _object(jj).matrix)
         _object(jj).tris(i).n2 = rotate_transform(_object(jj).tris(i).n2, _object(jj).matrix)
@@ -1838,11 +1965,18 @@ all_done:
         vo.x = (m(0) * v.x) + (m(4) * v.y) + (m(8) * v.z)
         vo.y = (m(1) * v.x) + (m(5) * v.y) + (m(9) * v.z)
         vo.z = (m(2) * v.x) + (m(6) * v.y) + (m(10) * v.z)
-        vo.x *= -1.0
 
+        vo.x *= -1.0
         'vo.x += m(12)
         'vo.y += m(13)
         'vo.z += m(14)
+        Return vo
+
+    End Function
+    Public Function rotate_transform_uv(ByVal v As uv_, ByVal m() As Single) As uv_
+        Dim vo As New uv_
+        vo.u = (m(0) * v.u) + (m(4) * v.v)
+        vo.v = (m(1) * v.u) + (m(5) * v.v)
         Return vo
 
     End Function

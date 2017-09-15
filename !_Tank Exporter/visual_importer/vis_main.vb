@@ -84,26 +84,11 @@ Module vis_main
 
         PS.readElement(reader, xmlroot, xDoc, dictionary)
         Dim xml_string As String = xmlroot.InnerXml
-        'nasty way to do this but i dont know of a better way :(
-        'xml_string = xml_string.Replace("><", ">" + vbCrLf + "<")
-        'xml_string = xml_string.Replace("<Texture>", vbCrLf + "<Texture>")
-        'xml_string = xml_string.Replace("<Float>", vbCrLf + "<Float>")
-        'xml_string = xml_string.Replace("<material>", vbCrLf + "<material>")
-        ' xml_string = xml_string.Replace("<fx>", vbCrLf + "<fx>")
-
-        'If InStr(PackedFileName, "0") = 1 Then
-        '    PackedFileName = "Chunk_" & PackedFileName
-        'End If
 
         Dim fileS As New MemoryStream
         Dim fbw As New BinaryWriter(fileS)
         fileS.Position = 0
-        'fbw.Write("<" & PackedFileName & ">" & xml_string & "</" & PackedFileName & ">")
 
-        'Dim str_(fileS.Length) As Byte
-        'fbr.Read(str_, 0, fileS.Length)
-        'Dim data_set As New XmlDataDocument
-        'data_set.Load(str_)
         xDoc.AppendChild(xmlroot)
         Dim Id = xmlroot.Name + "/gameplayTypes"
         Dim node As XmlElement = xDoc.SelectSingleNode(Id)
@@ -156,6 +141,19 @@ Module vis_main
             node.ParentNode.RemoveChild(node)
         End If
 
+        If xDoc.InnerXml.Contains("customization") Then
+            Id = xmlroot.Name + "/inscriptions"
+            node = xDoc.SelectSingleNode(Id)
+remove_more:
+            If node IsNot Nothing Then
+                node.ParentNode.RemoveChild(node)
+            End If
+            node = xDoc.SelectSingleNode(Id)
+            If node IsNot Nothing Then
+                GoTo remove_more
+            End If
+
+        End If
         fileS.Position = 0
         xDoc.Save(fileS)
 
@@ -183,8 +181,136 @@ Module vis_main
             xmldataset.ReadXml(fileS)
 
         Catch ex As Exception
-            MsgBox("Please report this bug.", MsgBoxStyle.Exclamation, "packed XML file Error...")
+            MsgBox("Please report this bug." + ex.Message, MsgBoxStyle.Exclamation, "packed XML file Error...")
         End Try
+        'Dim sw As New StringWriter
+        'Dim xtw As New XmlTextWriter(sw)
+        'xtw.Formatting = Formatting.Indented
+        'xtw.IndentChar = vbTab
+        'xtw.Indentation = 1
+        'data_set.WriteTo(xtw)
+        'xtw.Flush()
+        fbr.Close()
+        fbw.Close()
+        fileS.Close()
+        fileS.Dispose()
+
+        'Dim f As String = File.ReadAllText("C:\wot_temp\InnerXml.xml")
+        'f = f.Replace(vbCrLf, vbLf)
+
+        'muted .. to slow
+        'File.WriteAllText("C:\wot_temp\InnerXml.xml", f)
+        'frmMain.WebBrowser1.DocumentStream = TransformXML(f, My.Resources.xml_format)
+    End Sub
+    Public Sub DecodePackedFile_2(ByVal reader As BinaryReader)
+        reader.ReadSByte()
+        Dim dictionary As List(Of String) = PS.readDictionary(reader)
+        'PackedFileName = PackedFileName.Replace("_back", "")
+        Dim xmlroot As XmlNode = xDoc.CreateNode(XmlNodeType.Element, PackedFileName, "")
+        xDoc.OuterXml.Replace("><", ">" + vbCrLf + "<")
+
+
+        PS.readElement(reader, xmlroot, xDoc, dictionary)
+        Dim xml_string As String = xmlroot.InnerXml
+
+        Dim fileS As New MemoryStream
+        Dim fbw As New BinaryWriter(fileS)
+        fileS.Position = 0
+
+        xDoc.AppendChild(xmlroot)
+        Dim Id = xmlroot.Name + "/gameplayTypes"
+        Dim node As XmlElement = xDoc.SelectSingleNode(Id)
+        If node IsNot Nothing Then
+            Dim n2 = node.SelectSingleNode("assault")
+            If n2 IsNot Nothing Then
+                node.RemoveChild(n2)
+            End If
+        End If
+        If node IsNot Nothing Then
+            Dim n2 = node.SelectSingleNode("assault2")
+            If n2 IsNot Nothing Then
+                node.RemoveChild(n2)
+            End If
+        End If
+        node = xDoc.SelectSingleNode(Id)
+        If node IsNot Nothing Then
+            Dim n2 = node.SelectSingleNode("domination")
+            If n2 IsNot Nothing Then
+                node.RemoveChild(n2)
+            End If
+        End If
+        node = xDoc.SelectSingleNode(Id)
+        If node IsNot Nothing Then
+            Dim n2 = node.SelectSingleNode("fallout")
+            If n2 IsNot Nothing Then
+                node.RemoveChild(n2)
+            End If
+        End If
+        node = xDoc.SelectSingleNode(Id)
+        If node IsNot Nothing Then
+            Dim n2 = node.SelectSingleNode("fallout2")
+            If n2 IsNot Nothing Then
+                node.RemoveChild(n2)
+            End If
+        End If
+        Id = xmlroot.Name + "/trees"
+        node = xDoc.SelectSingleNode(Id)
+        If node IsNot Nothing Then
+            node.ParentNode.RemoveChild(node)
+        End If
+        Id = xmlroot.Name + "/fallingAtoms"
+        node = xDoc.SelectSingleNode(Id)
+        If node IsNot Nothing Then
+            node.ParentNode.RemoveChild(node)
+        End If
+        Id = xmlroot.Name + "/turret0/armor"
+        node = xDoc.SelectSingleNode(Id)
+        If node IsNot Nothing Then
+            node.ParentNode.RemoveChild(node)
+        End If
+
+        If xDoc.InnerXml.Contains("customization") Then
+            Id = xmlroot.Name + "/inscriptions"
+            node = xDoc.SelectSingleNode(Id)
+remove_more:
+            If node IsNot Nothing Then
+                node.ParentNode.RemoveChild(node)
+            End If
+            node = xDoc.SelectSingleNode(Id)
+            If node IsNot Nothing Then
+                GoTo remove_more
+            End If
+
+        End If
+        fileS.Position = 0
+        xDoc.Save(fileS)
+
+        '' xDoc.Save(sfd.FileName);
+        Dim fbr As New BinaryReader(fileS)
+        fileS.Position = 0
+        TheXML_String = fbr.ReadChars(fileS.Length)
+
+        Id = xmlroot.Name + "/hull/armor"
+        node = xDoc.SelectSingleNode(Id)
+        If node IsNot Nothing Then
+            Return
+        End If
+
+        Dim da_arry = TheXML_String.Split(New String() {"<primitiveGroup>0<material>"}, StringSplitOptions.None)
+        Dim ts As String = ""
+        If da_arry.Length > 2 Then
+            For i = 0 To da_arry.Length - 2
+                ts += da_arry(i) + "<primitiveGroup>" + i.ToString + "<material>"
+            Next
+            TheXML_String = ts + da_arry(da_arry.Length - 1)
+        End If
+        fileS.Position = 0
+        'Try
+        '    xmldataset.ReadXml(fileS)
+
+        'Catch ex As Exception
+        '    MsgBox("Please report this bug." + ex.Message, MsgBoxStyle.Exclamation, "packed XML file Error...")
+        'End Try
         'Dim sw As New StringWriter
         'Dim xtw As New XmlTextWriter(sw)
         'xtw.Formatting = Formatting.Indented
@@ -238,6 +364,27 @@ Module vis_main
         Dim head As Int32 = reader.ReadInt32()
         If head = Packed_Section.Packed_Header Then
             DecodePackedFile(reader)
+        ElseIf head = Binary_Header Then
+        Else
+            If Not PackedFileName.Contains(".xml") Then
+                PackedFileName &= ".xml"
+            End If
+        End If
+        reader.Close()
+        Return True
+    End Function
+    Public Function openXml_stream_2(ByVal f As MemoryStream, ByVal PackedFileName_in As String) As Boolean
+        xDoc = New XmlDocument
+        f.Position = 0
+        xmldataset.Clear()
+        While xmldataset.Tables.Count > 0
+            xmldataset.Reset()
+        End While
+        PackedFileName = "map_" & PackedFileName_in.ToLower()
+        Dim reader As New BinaryReader(f)
+        Dim head As Int32 = reader.ReadInt32()
+        If head = Packed_Section.Packed_Header Then
+            DecodePackedFile_2(reader)
         ElseIf head = Binary_Header Then
         Else
             If Not PackedFileName.Contains(".xml") Then

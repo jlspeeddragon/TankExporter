@@ -119,7 +119,7 @@ Partial Class frmEditFrag
         '
         Me.frag_tb.AutoCompleteBracketsList = New Char() {Global.Microsoft.VisualBasic.ChrW(40), Global.Microsoft.VisualBasic.ChrW(41), Global.Microsoft.VisualBasic.ChrW(123), Global.Microsoft.VisualBasic.ChrW(125), Global.Microsoft.VisualBasic.ChrW(91), Global.Microsoft.VisualBasic.ChrW(93), Global.Microsoft.VisualBasic.ChrW(34), Global.Microsoft.VisualBasic.ChrW(34), Global.Microsoft.VisualBasic.ChrW(39), Global.Microsoft.VisualBasic.ChrW(39)}
         Me.frag_tb.AutoIndent = False
-        Me.frag_tb.AutoScrollMinSize = New System.Drawing.Size(27, 14)
+        Me.frag_tb.AutoScrollMinSize = New System.Drawing.Size(2, 14)
         Me.frag_tb.BackBrush = Nothing
         Me.frag_tb.BackColor = System.Drawing.Color.Black
         Me.frag_tb.CaretColor = System.Drawing.Color.WhiteSmoke
@@ -153,7 +153,7 @@ Partial Class frmEditFrag
         '
         Me.geo_tb.AutoCompleteBracketsList = New Char() {Global.Microsoft.VisualBasic.ChrW(40), Global.Microsoft.VisualBasic.ChrW(41), Global.Microsoft.VisualBasic.ChrW(123), Global.Microsoft.VisualBasic.ChrW(125), Global.Microsoft.VisualBasic.ChrW(91), Global.Microsoft.VisualBasic.ChrW(93), Global.Microsoft.VisualBasic.ChrW(34), Global.Microsoft.VisualBasic.ChrW(34), Global.Microsoft.VisualBasic.ChrW(39), Global.Microsoft.VisualBasic.ChrW(39)}
         Me.geo_tb.AutoIndent = False
-        Me.geo_tb.AutoScrollMinSize = New System.Drawing.Size(27, 14)
+        Me.geo_tb.AutoScrollMinSize = New System.Drawing.Size(2, 14)
         Me.geo_tb.BackBrush = Nothing
         Me.geo_tb.BackColor = System.Drawing.Color.Black
         Me.geo_tb.CaretColor = System.Drawing.Color.WhiteSmoke

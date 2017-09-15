@@ -11,7 +11,7 @@
     <AssemblyName>!_Tank Exporter</AssemblyName>
     <FileAlignment>512</FileAlignment>
     <MyType>WindowsForms</MyType>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <IsWebBootstrapper>false</IsWebBootstrapper>
     <TargetFrameworkProfile />
     <PublishUrl>publish\</PublishUrl>
@@ -24,7 +24,7 @@
     <UpdatePeriodically>false</UpdatePeriodically>
     <UpdateRequired>false</UpdateRequired>
     <MapFileExtensions>true</MapFileExtensions>
-    <ApplicationRevision>3</ApplicationRevision>
+    <ApplicationRevision>4</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
@@ -178,7 +178,14 @@
     <Import Include="Tao.Platform.Windows" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="formitems.vb">
+    <Compile Include="Forms\FrmCamo.Designer.vb">
+      <DependentUpon>FrmCamo.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\FrmCamo.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Modules\catMull_Rom.vb" />
+    <Compile Include="Modules\formitems.vb">
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Forms\frmFBX.Designer.vb">
@@ -194,7 +201,9 @@
       <DependentUpon>frmMain.vb</DependentUpon>
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="Modules\modCamouflage.vb" />
     <Compile Include="Modules\modFBX.vb" />
+    <Compile Include="Modules\modGLbuttons.vb" />
     <Compile Include="Modules\modGlobals.vb" />
     <Compile Include="Modules\modMenu.vb" />
     <Compile Include="Modules\modOpenGL.vb" />
@@ -235,6 +244,9 @@
     <Compile Include="visual_importer\vis_main.vb" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Forms\FrmCamo.resx">
+      <DependentUpon>FrmCamo.vb</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Forms\frmFBX.resx">
       <DependentUpon>frmFBX.vb</DependentUpon>
     </EmbeddedResource>
@@ -268,7 +280,28 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="ASPNETWeb.ico" />
+    <Content Include="resourses\Cbutt_down.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="resourses\Cbutt_norm.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="resourses\Cbutt_over.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <None Include="resourses\gradiant.png" />
+    <Content Include="resourses\Nbutt_down.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="resourses\Nbutt_norm.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="resourses\Nbutt_over.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="tank.ico">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="banner.jpg">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -279,6 +312,21 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <None Include="packages.config" />
+    <None Include="shaders\mixer_fragment.glsl">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="shaders\mixer_vertex.glsl">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="shaders\normal_fragment.glsl">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="shaders\normal_geo.glsl">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="shaders\normal_vertex.glsl">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="shaders\tank_vertex.glsl">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
