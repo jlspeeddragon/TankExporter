@@ -295,6 +295,9 @@ Module shader_loader
     Public tank_GMM, tank_AO, tank_detailMap, tank_detailTiling, tank_detailPower As Integer
     Public tank_camo, tank_use_camo, tank_tile_vec4 As Integer
     Public tank_c0, tank_c1, tank_c2, tank_c3, tank_armorcolor, tank_camo_tiling, tank_exclude_camo As Integer
+    Public tank_use_CM As Integer
+    Public tank_ambient, tank_specular, tank_total As Integer
+
     Private Sub set_tank_shader_variables()
         tank_colorMap = Gl.glGetUniformLocation(shader_list.tank_shader, "colorMap")
         tank_normalMap = Gl.glGetUniformLocation(shader_list.tank_shader, "normalMap")
@@ -313,8 +316,12 @@ Module shader_loader
         tank_c2 = Gl.glGetUniformLocation(shader_list.tank_shader, "c2")
         tank_c3 = Gl.glGetUniformLocation(shader_list.tank_shader, "c3")
         tank_armorcolor = Gl.glGetUniformLocation(shader_list.tank_shader, "armorcolor")
-        tank_camo_tiling = Gl.glGetUniformLocation(shader_list.tank_shader, "camo_tiliing")
+        tank_camo_tiling = Gl.glGetUniformLocation(shader_list.tank_shader, "camo_tiling")
         tank_exclude_camo = Gl.glGetUniformLocation(shader_list.tank_shader, "exclude_camo")
+        tank_use_CM = Gl.glGetUniformLocation(shader_list.tank_shader, "use_CM")
+        tank_ambient = Gl.glGetUniformLocation(shader_list.tank_shader, "A_level")
+        tank_specular = Gl.glGetUniformLocation(shader_list.tank_shader, "S_level")
+        tank_total = Gl.glGetUniformLocation(shader_list.tank_shader, "T_level")
 
     End Sub
 

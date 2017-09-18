@@ -44,7 +44,11 @@ Module modCamouflage
         'current_camo_selection = id
         For i = 1 To object_count
             If Not _object(i).name.ToLower.Contains("chassis") Then
+                _object(i).exclude_camo = 0
                 _object(i).use_camo = 1
+            Else
+                _object(i).exclude_camo = 1
+                _object(i).use_camo = 0
             End If
         Next
 
@@ -102,8 +106,19 @@ Module modCamouflage
                 c2 = row.Field(Of String)("c2"), _
                 c3 = row.Field(Of String)("c3")
 
+        Try
+            ReDim bb_texture_list(q.Count)
 
-        ReDim bb_texture_list(q.Count)
+        Catch ex As Exception
+            t.Dispose()
+            MsgBox("This tank can not have textures appied to it!", MsgBoxStyle.Information, "Not Going to happen...")
+            CAMO_BUTTONS_VISIBLE = False
+            season_Buttons_VISIBLE = False
+            frmMain.M_DOWN = False
+            BUTTON_ID = 0
+            Return
+        End Try
+
         ReDim bb_tank_tiling(q.Count)
         ReDim bb_texture_ids(q.Count)
         ReDim c0(q.Count)
@@ -122,7 +137,10 @@ Module modCamouflage
                 bb_tank_tiling(cnt) = get_vect4_no_conversion(l.tank_tiling)
 
             Catch ex As Exception
-                Exit For
+                Dim v_t As vect4
+                v_t.x = 1.0
+                v_t.y = 1.0
+                bb_tank_tiling(cnt) = v_t
             End Try
             c0(cnt) = New vect4
             c1(cnt) = New vect4
@@ -180,7 +198,7 @@ skip:
         'Debug.WriteLine("test")
     End Sub
 
-    Private Function get_vect4(ByVal s As String) As vect4
+    Public Function get_vect4(ByVal s As String) As vect4
         Dim a = s.Split(" ")
         Dim v As New vect4
         v.x = CSng(a(0)) / 255.0!

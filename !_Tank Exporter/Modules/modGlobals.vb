@@ -1,9 +1,12 @@
 ﻿Imports System.Text
 Imports System.IO
 Module modGlobals
-
+    Public exclusionMask_sd As Integer
+    Public GLOBAL_exclusionMask As Integer
     Public TESTING As Boolean = False
-
+    Public exclusionMask_name As String
+    Public exclusionMask_id As Integer
+    Public HD_TANK As Boolean
     Public path_pointer1 As Integer = 0
     Public path_pointer2 As Integer = 0
     Public path_data1(0) As path_data_

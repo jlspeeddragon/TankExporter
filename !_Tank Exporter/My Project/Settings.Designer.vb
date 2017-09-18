@@ -101,6 +101,42 @@ Namespace My
                 Me("res_mods_path") = value
             End Set
         End Property
+        
+        <Global.System.Configuration.UserScopedSettingAttribute(),  _
+         Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.Configuration.DefaultSettingValueAttribute("50")>  _
+        Public Property ambient_value() As Integer
+            Get
+                Return CType(Me("ambient_value"),Integer)
+            End Get
+            Set
+                Me("ambient_value") = value
+            End Set
+        End Property
+        
+        <Global.System.Configuration.UserScopedSettingAttribute(),  _
+         Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.Configuration.DefaultSettingValueAttribute("50")>  _
+        Public Property sepcular_value() As Integer
+            Get
+                Return CType(Me("sepcular_value"),Integer)
+            End Get
+            Set
+                Me("sepcular_value") = value
+            End Set
+        End Property
+        
+        <Global.System.Configuration.UserScopedSettingAttribute(),  _
+         Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.Configuration.DefaultSettingValueAttribute("50")>  _
+        Public Property total_value() As Integer
+            Get
+                Return CType(Me("total_value"),Integer)
+            End Get
+            Set
+                Me("total_value") = value
+            End Set
+        End Property
     End Class
 End Namespace
 

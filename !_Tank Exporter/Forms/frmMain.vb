@@ -37,7 +37,7 @@ Public Class frmMain
     Public path_set As Boolean = False
     Public res_mods_path_set As Boolean = False
     Dim mouse As vec2
-    Dim move_cam_z, M_DOWN, move_mod, z_move As Boolean
+    Public move_cam_z, M_DOWN, move_mod, z_move As Boolean
 
     Public Shared packages(12) As ZipFile
     Public Shared packages_HD(12) As ZipFile
@@ -217,6 +217,7 @@ Public Class frmMain
         tank_label.Text = ""
         Me.Show()
         SplitContainer1.SplitterDistance = 720
+        SplitContainer2.SplitterDistance = SplitContainer2.Height - 160
         Application.DoEvents()
         Me.Width = 1440
         Me.Height = 800
@@ -798,6 +799,22 @@ tryagain:
 
 
         'this is going to be a mess :(
+
+        'see if there is a exclusionmask in this file.. means its the old SD style tank.
+        For Each exclusion In docx.Descendants("exclusionMask")
+            exclusionMask_id = -1
+            Dim exclu = doc.CreateElement("exclusionMask")
+            Dim excluName = doc.CreateElement("name")
+            excluName.InnerText = exclusion.Value.ToString.Replace("/", "\")
+            If excluName.InnerText.Length > 2 And excluName.InnerText.ToLower.Contains("_CM") Then
+                GLOBAL_exclusionMask = 1
+                exclu.AppendChild(excluName)
+                root_node.AppendChild(exclu)
+            End If
+        Next
+
+
+
         Dim turret_tiling = doc.CreateElement("turret_tiling")
         Dim found_camo As Boolean = False
         For Each turret0 As XElement In docx.Descendants("turrets0")
@@ -1023,6 +1040,7 @@ tryagain:
         ms.Dispose()
         fm.Dispose()
     End Sub
+
     Private Sub load_tabs()
         Try
             For i = 1 To 10
@@ -1564,6 +1582,10 @@ tryagain:
             Gl.glUniform1i(tank_AO, 3)
             Gl.glUniform1i(tank_detailMap, 4)
             Gl.glUniform1i(tank_camo, 5)
+            Gl.glUniform1f(tank_specular, CSng(frmLighting.specular_slider.Value / 100)) ' convert to 0.0 to 1.0
+            Gl.glUniform1f(tank_ambient, CSng(frmLighting.ambient_slider.Value / 100))
+            Gl.glUniform1f(tank_total, CSng(frmLighting.total_slider.Value / 100))
+
             For jj = 1 To object_count - track_info.segment_count
                 Gl.glUniform1i(tank_is_GAmap, _object(jj).ANM)
                 Gl.glUniform1i(tank_alphaTest, _group(jj).alphaTest)
@@ -1572,6 +1594,8 @@ tryagain:
                 Gl.glUniform4f(tank_tile_vec4, _object(jj).camo_tiling.x, _object(jj).camo_tiling.y, _object(jj).camo_tiling.z, _object(jj).camo_tiling.w)
                 Gl.glUniform1i(tank_use_camo, _object(jj).use_camo)
                 Gl.glUniform1i(tank_exclude_camo, _object(jj).exclude_camo)
+                Gl.glUniform1i(tank_use_CM, GLOBAL_exclusionMask)
+                Gl.glUniform4f(tank_armorcolor, ARMORCOLOR.x, ARMORCOLOR.y, ARMORCOLOR.z, ARMORCOLOR.w)
                 If _object(jj).use_camo > 0 Then
 
                     Gl.glUniform4f(tank_c0, c0(id).x, c0(id).y, c0(id).z, c0(id).w)
@@ -1579,7 +1603,6 @@ tryagain:
                     Gl.glUniform4f(tank_c2, c2(id).x, c2(id).y, c2(id).z, c2(id).w)
                     Gl.glUniform4f(tank_c3, c3(id).x, c3(id).y, c3(id).z, c3(id).w)
                     Gl.glUniform4f(tank_camo_tiling, bb_tank_tiling(id).x, bb_tank_tiling(id).y, bb_tank_tiling(id).z, bb_tank_tiling(id).w)
-                    Gl.glUniform4f(tank_armorcolor, ARMORCOLOR.x, ARMORCOLOR.y, ARMORCOLOR.z, 1.0)
                 End If
 
 
@@ -1591,7 +1614,11 @@ tryagain:
                     Gl.glActiveTexture(Gl.GL_TEXTURE0 + 2)
                     Gl.glBindTexture(Gl.GL_TEXTURE_2D, _group(jj).metalGMM_Id)
                     Gl.glActiveTexture(Gl.GL_TEXTURE0 + 3)
-                    Gl.glBindTexture(Gl.GL_TEXTURE_2D, _group(jj).ao_id)
+                    If GLOBAL_exclusionMask = 1 And Not HD_TANK Then
+                        Gl.glBindTexture(Gl.GL_TEXTURE_2D, exclusionMask_id)
+                    Else
+                        Gl.glBindTexture(Gl.GL_TEXTURE_2D, _group(jj).ao_id)
+                    End If
                     Gl.glActiveTexture(Gl.GL_TEXTURE0 + 4)
                     Gl.glBindTexture(Gl.GL_TEXTURE_2D, _group(jj).detail_Id)
                     Gl.glActiveTexture(Gl.GL_TEXTURE0 + 5)
@@ -2210,7 +2237,9 @@ tryagain:
 
 #Region "menu_button_functions"
     Private Sub m_load_Click(sender As Object, e As EventArgs) Handles m_load.Click
+        TC1.Enabled = False
         process_tank(False) 'false .. don't save the binary tank file
+        TC1.Enabled = True
     End Sub
 
     Private Sub m_clear_temp_folder_data_Click(sender As Object, e As EventArgs) Handles m_clear_temp_folder_data.Click
@@ -2227,10 +2256,10 @@ tryagain:
                   "Are you sure?", MsgBoxStyle.YesNo, "Warning!") = MsgBoxResult.No Then
             Return
         End If
-
         If tanklist.Text = "" Then
             Return
         End If
+        TC1.Enabled = False
         Dim f As DirectoryInfo = New DirectoryInfo(Application.StartupPath + "\tanks\")
         If f.Exists Then
             For Each fi In f.GetFiles
@@ -2335,7 +2364,7 @@ make_this_tank:
             End If
         Next
         model_loaded = True
-
+        TC1.Enabled = True
 
     End Sub
 
@@ -2747,6 +2776,10 @@ make_this_tank:
 #End Region
 
     Public Sub process_tank(ByVal save_tank As Boolean)
+        'need to set these before loading anyhing
+        GLOBAL_exclusionMask = 0
+        exclusionMask_sd = -1
+        HD_TANK = True
         If Not bb_texture_list(0) = "" Then
             For i = 0 To bb_texture_list.Length - 1
                 Gl.glDeleteTextures(1, bb_texture_ids(i))
@@ -2762,9 +2795,8 @@ make_this_tank:
         season_Buttons_VISIBLE = False
         CAMO_BUTTONS_VISIBLE = False
         ReDim textures(0)
-
-        For i = 1 To 100
-            Gl.glDeleteTextures(1, delete_image_start + 1) 'start one past camo ids
+        For i = 1 To 400
+            Gl.glDeleteTextures(1, delete_image_start + 1 + i) 'start one past camo ids
             Gl.glFinish()
         Next
         Dim ar = file_name.Split(":")
@@ -2798,6 +2830,8 @@ make_this_tank:
             End Try
 
         End Try
+        '########################################################
+        'get the tank info from scripts package
         ar = file_name.Split("/")
         Dim xml_file = ar(0) + "\" + ar(1) + "\" + ar(2) + ".xml"
         Dim t As New DataSet
@@ -2807,6 +2841,29 @@ make_this_tank:
         End If
         TANK_NAME = ar(2)
         '-----------------------------------
+        'see if this is the old style tanks
+        If GLOBAL_exclusionMask = 1 Then
+            Dim et = t.Tables("exclusionMask")
+            Dim eq = From row In et.AsEnumerable _
+                     Select _
+                     na = row.Field(Of String)("name")
+            exclusionMask_name = eq(0)
+            Dim en = packages(current_tank_package)(exclusionMask_name)
+            Dim ms As New MemoryStream
+            If en Is Nothing Then
+                en = shared_pkg(exclusionMask_name)
+                If en Is Nothing Then
+                    en = shared_sandbox_pkg(exclusionMask_name)
+                End If
+            End If
+            If en IsNot Nothing Then
+                en.Extract(ms)
+                exclusionMask_id = get_texture(ms, exclusionMask_name)
+            Else
+                log_text.AppendLine("unable to locate : " + exclusionMask_name)
+            End If
+        End If
+        '-------------------------------------------------------
         'Return
         'get take part paths from table
         Dim turrets(10) As String
@@ -2825,7 +2882,8 @@ make_this_tank:
                 model = row.Field(Of String)("model"), _
                 tile = row.Field(Of String)("gun_camouflage")
         cnt = 0
-        '----- guns
+        '-------------------------------------------------------
+        'guns
         For Each thing In q
             Dim gn = thing.model
             guns(cnt) = gn
@@ -2854,7 +2912,7 @@ make_this_tank:
         ReDim Preserve guns(cnt)
         ReDim Preserve gun_tile(cnt)
         cnt = 0
-        '----------------------------------
+        '-------------------------------------------------------
         '----- turret tiling
         Try
             tbl = t.Tables("turret_tiling")
@@ -2893,7 +2951,7 @@ make_this_tank:
 
         End Try
 
-        '----------------------------------
+        '-------------------------------------------------------
         '----- turrets
         tbl = t.Tables("turret_model")
         If tbl Is Nothing Then
@@ -2915,7 +2973,7 @@ make_this_tank:
             ReDim Preserve turrets(cnt)
         End If
         cnt = 0
-        '----------------------------------
+        '-------------------------------------------------------
         '----- chassis
 
         tbl = t.Tables("chassis")
@@ -2933,7 +2991,7 @@ make_this_tank:
         End If
         ReDim Preserve chassis(cnt)
         cnt = 0
-        '----------------------------------
+        '-------------------------------------------------------
         '----- hull
         tbl = t.Tables("hull")
         Dim q3 = From row In tbl.AsEnumerable
@@ -2958,7 +3016,7 @@ make_this_tank:
         ReDim Preserve hulls(cnt)
         ReDim Preserve hull_tile(cnt)
         cnt = 0
-        '----------------------------------
+        '-------------------------------------------------------
         'Array.Sort(guns)
         'Array.Sort(turrets)
         'Array.Sort(hulls)
@@ -2988,9 +3046,51 @@ make_this_tank:
             gun_tiling = tj
         End If
         '========================================
+        Dim nation_string As String = ""
+        Select Case ar(1)
+            Case "american"
+                CURRENT_DATA_SET = 0
+                nation_string = "usa"
+            Case "british"
+                CURRENT_DATA_SET = 1
+                nation_string = "uk"
+            Case "chinese"
+                CURRENT_DATA_SET = 2
+                nation_string = "china"
+            Case "czech"
+                CURRENT_DATA_SET = 3
+                nation_string = "czech"
+            Case "french"
+                CURRENT_DATA_SET = 4
+                nation_string = "france"
+            Case "german"
+                CURRENT_DATA_SET = 5
+                nation_string = "germany"
+            Case "japan"
+                CURRENT_DATA_SET = 6
+                nation_string = "japan"
+            Case "poland"
+                CURRENT_DATA_SET = 7
+                nation_string = "poland"
+            Case "russian"
+                CURRENT_DATA_SET = 8
+                nation_string = "ussr"
+            Case "sweden"
+                CURRENT_DATA_SET = 9
+                nation_string = "sweden"
+        End Select
+        '===================================
+        Dim d = custom_tables(CURRENT_DATA_SET).Copy
+        '===================================
+
+        Dim tt = d.Tables("camouflage")
+        Dim qq = From row In tt.AsEnumerable
+        Select _
+        armorC = row.Field(Of String)("armorcolor")
+        ARMORCOLOR = get_vect4(qq(0))
 
         'reset data params
-        '---------------------
+        '-------------------------------------------------------
         If object_count > 0 Then
             For i = 1 To object_count
                 Gl.glDeleteLists(_object(i).main_display_list, 1)
@@ -3023,7 +3123,7 @@ make_this_tank:
             m_gun.PerformClick()
             m_gun.ForeColor = Color.DarkGreen
         End If
-        '---------------------
+        '-------------------------------------------------------
         If TESTING Then
 
             'test stuff to grab track stuff
@@ -3173,39 +3273,6 @@ make_this_tank:
         Next
         'get data_set camo set we will use
         'and string to scripts package
-        Dim s As String = ""
-        Select Case ar(1)
-            Case "american"
-                CURRENT_DATA_SET = 0
-                s = "usa"
-            Case "british"
-                CURRENT_DATA_SET = 1
-                s = "uk"
-            Case "chinese"
-                CURRENT_DATA_SET = 2
-                s = "china"
-            Case "czech"
-                CURRENT_DATA_SET = 3
-                s = "czech"
-            Case "french"
-                CURRENT_DATA_SET = 4
-                s = "france"
-            Case "german"
-                CURRENT_DATA_SET = 5
-                s = "germany"
-            Case "japan"
-                CURRENT_DATA_SET = 6
-                s = "japan"
-            Case "poland"
-                CURRENT_DATA_SET = 7
-                s = "poland"
-            Case "russian"
-                CURRENT_DATA_SET = 8
-                s = "ussr"
-            Case "sweden"
-                CURRENT_DATA_SET = 9
-                s = "sweden"
-        End Select
 
         If save_tank Then
 
@@ -3214,7 +3281,7 @@ make_this_tank:
             rot_limit_l = -400.0
             rot_limit_r = 400.0
 
-            Dim ent = scripts_pkg("scripts\item_defs\vehicles\" + s + "\" + ar(2) + ".xml")
+            Dim ent = scripts_pkg("scripts\item_defs\vehicles\" + nation_string + "\" + ar(2) + ".xml")
             Dim ms As New MemoryStream
             ent.Extract(ms)
             openXml_stream(ms, "")
@@ -3621,5 +3688,9 @@ make_this_tank:
 
     Private Sub pb1_Paint(sender As Object, e As PaintEventArgs) Handles pb1.Paint
         If w_changing Then draw_scene()
+    End Sub
+
+    Private Sub m_lighting_Click(sender As Object, e As EventArgs) Handles m_lighting.Click
+        frmLighting.Show()
     End Sub
 End Class

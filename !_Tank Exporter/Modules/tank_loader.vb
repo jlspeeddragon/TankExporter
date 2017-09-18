@@ -979,12 +979,14 @@ next_m:
                 _group(jj).name = n_ + "_" + jj.ToString
                 If _object(jj).name.ToLower.Contains("chassis") Then
                     _object(jj).camo_tiling = chassis_tiling
+                    _object(jj).exclude_camo = 1
                     _object(jj).use_camo = 0
                 End If
                 If hull_count = 0 Then
                     If _object(jj).name.ToLower.Contains("hull") Then
                         _object(jj).camo_tiling = hull_tiling
                         _object(jj).use_camo = 0
+                        _object(jj).exclude_camo = 0
                         hull_count += 1
                     End If
                 Else
@@ -999,6 +1001,7 @@ next_m:
                     If _object(jj).name.ToLower.Contains("turret") Then
                         _object(jj).camo_tiling = turret_tiling
                         _object(jj).use_camo = 0
+                        _object(jj).exclude_camo = 0
                         turret_count += 1
                     End If
                 Else
@@ -1011,6 +1014,7 @@ next_m:
                 If _object(jj).name.ToLower.Contains("gun") Then
                     _object(jj).camo_tiling = gun_tiling
                     _object(jj).use_camo = 0
+                    _object(jj).exclude_camo = 0
                 End If
                 If _object(jj).name.ToLower.Contains("segment") Then
                     _object(jj).exclude_camo = 1
@@ -1685,6 +1689,9 @@ get_visual:
             Dim tex1_Epos = InStr(tex1_pos, thestring, "</Texture>")
             Dim newS As String = ""
             newS = Mid(thestring, tex1_pos, tex1_Epos - tex1_pos).Replace("/", "\")
+            If newS = exclusionMask_name Then
+                GLOBAL_exclusionMask = 0
+            End If
             _group(id).color_name = newS.Replace("tga", "dds")
             _group(id).color_Id = -1
         End If
@@ -1740,6 +1747,18 @@ get_visual:
             newS = Mid(thestring, tex1_pos, tex1_Epos - tex1_pos).Replace("/", "\")
             _group(id).metalGMM_name = newS
             _group(id).metal_textured = True
+            _group(id).metalGMM_Id = -1
+
+        End If
+        diff_pos = InStr(primStart, thestring, "specularMap") 'reusing the metal texture as specMap
+        If diff_pos > 0 Then
+            HD_TANK = False
+            Dim tex1_pos = InStr(diff_pos, thestring, "<Texture>") + "<texture>".Length
+            Dim tex1_Epos = InStr(tex1_pos, thestring, "</Texture>")
+            Dim newS As String = ""
+            newS = Mid(thestring, tex1_pos, tex1_Epos - tex1_pos).Replace("/", "\")
+            _group(id).metalGMM_name = newS
+            _group(id).metal_textured = False
             _group(id).metalGMM_Id = -1
 
         End If
