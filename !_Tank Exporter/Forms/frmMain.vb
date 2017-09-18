@@ -806,7 +806,7 @@ tryagain:
             Dim exclu = doc.CreateElement("exclusionMask")
             Dim excluName = doc.CreateElement("name")
             excluName.InnerText = exclusion.Value.ToString.Replace("/", "\")
-            If excluName.InnerText.Length > 2 And excluName.InnerText.ToLower.Contains("_CM") Then
+            If excluName.InnerText.Length > 2 And excluName.InnerText.ToLower.Contains("_cm") Then
                 GLOBAL_exclusionMask = 1
                 exclu.AppendChild(excluName)
                 root_node.AppendChild(exclu)
@@ -2640,9 +2640,9 @@ make_this_tank:
         End If
         For i = 1 To object_count
             If _object(i).name.ToLower.Contains("chassis") Then
-                If i < 3 Then
-                    _object(i).visible = m_chassis.Checked
-                End If
+                'If i < 3 Then
+                _object(i).visible = m_chassis.Checked
+                'End If
             End If
         Next
     End Sub
