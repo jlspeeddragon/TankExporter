@@ -41,14 +41,14 @@ Module catMull_Rom
                 Dim V = lastPos - newPos
                 running += V.Length
                 If Z_Flipped Then
-                    If running >= track_length + track_info.segment_offset1 Then
+                    If running >= track_length + segment_length_adjusted Then
                         path_data1(path_pointer1) = New path_data_
                         track_length += segment_length_adjusted
                         path_data1(path_pointer1).pos1 = newPos
                         path_pointer1 += 1
                     End If
                 Else
-                    If running >= track_length + track_info.segment_offset1 Then
+                    If running >= track_length + segment_length_adjusted Then
                         path_data1(path_pointer1) = New path_data_
                         track_length += segment_length_adjusted
                         path_data1(path_pointer1).pos1 = newPos
@@ -92,14 +92,14 @@ Module catMull_Rom
                 Dim V = lastPos - newPos
                 running += V.Length
                 If Z_Flipped Then
-                    If running >= track_length + track_info.segment_offset1 + track_info.segment_offset2 Then
+                    If running >= track_length + track_info.segment_offset2 Then
                         path_data2(path_pointer2) = New path_data_
                         track_length += segment_length_adjusted
                         path_data2(path_pointer2).pos1 = newPos
                         path_pointer2 += 1
                     End If
                 Else
-                    If running >= track_length + (track_info.segment_offset1 + track_info.segment_offset2) Then
+                    If running >= track_length + track_info.segment_offset2 Then
                         path_data2(path_pointer2) = New path_data_
                         track_length += segment_length_adjusted
                         path_data2(path_pointer2).pos1 = newPos
@@ -170,6 +170,12 @@ Module catMull_Rom
 
                 'Find the coordinate between the end points with a Catmull-Rom spline
                 Dim newPos As SlimDX.Vector3 = GetCatmullRomPosition(t, p0, p1, p2, p3)
+                If running = 0.0 Then
+                    Gl.glPushMatrix()
+                    Gl.glTranslatef(newPos.X, newPos.Y, newPos.Z)
+                    Glut.glutSolidSphere(0.03, 20, 20)
+                    Gl.glPopMatrix()
+                End If
                 Gl.glBegin(Gl.GL_LINES)
                 Gl.glVertex3f(lastPos.X, lastPos.Y, lastPos.Z)
                 Gl.glVertex3f(newPos.X, newPos.Y, newPos.Z)

@@ -588,7 +588,7 @@ Module tank_loader
             If InStr(section_names(i), "indices") > 0 Then
                 f_name_indices = section_names(i)
             End If
-            If InStr(section_names(i), "uv2") > 0 Then
+            If InStr(section_names(i).ToLower, "uv2") > 0 Then
                 f_name_uv2 = section_names(i)
             End If
             If InStr(section_names(i), "colour") > 0 Then
@@ -816,7 +816,7 @@ next_m:
             'now that we have a count.. lets see if we need to get the uv2 coords
             If has_uv2 Then
                 If ordered_names(sg - sub_groups).uv2_name.Length > 2 Then
-                    'get_uv2(vh.nVertice_count, ordered_names(sg - sub_groups).uv2_data, BPVT_mode)
+                    get_uv2(ordered_names(sg - sub_groups).uv2_data, ordered_names(sg - sub_groups).uv2_data.Length)
                 Else
                     log_text.Append("UV2 referenced in Visual but does not exist. :" + f_name_uv2 + vbCrLf)
                     has_uv2 = False
@@ -924,8 +924,8 @@ next_m:
                         _group(k).vertices(cnt).bn = tbuf(i).bn
                     End If
                     If has_uv2 Then
-                        '_group(k).vertices(cnt).u2 = uv2(i).u
-                        '_group(k).vertices(cnt).v2 = uv2(i).v
+                        _group(k).vertices(cnt).u2 = uv2_data(i).u
+                        _group(k).vertices(cnt).v2 = uv2_data(i).v
                         _group(k).has_uv2 = 1
                     Else
                         _group(k).has_uv2 = 0
@@ -960,9 +960,9 @@ next_m:
                     narray = ordered_names(sg - sub_groups).vert_name.Split(".")
 
                 End If
-                If _group(jj).has_uv2 = 1 Then
-                    get_uv2(ordered_names(running).uv2_data, ordered_names(running).uv2_data.Length / 4)
-                End If
+                'If _group(jj).has_uv2 = 1 Then
+                '    get_uv2(ordered_names(running).uv2_data, ordered_names(running).uv2_data.Length / 4)
+                'End If
                 'get the textures if we are exporting
                 If frmFBX.Visible And frmFBX.export_textures.Checked Then
                     build_textures(jj) ' make a new texture and find out if this texture as been used... if so, exiting texture will be pointed at
@@ -1095,6 +1095,7 @@ next_m:
 
                     If has_uv2 Then
                         _object(jj).tris(i).uv1_2 = New uv_
+                        _object(jj).tris(i).uv1_2 = uv2_data(p1)
                         _object(jj).tris(i).uv2_id_1 = p1
                     End If
 
@@ -1127,6 +1128,7 @@ next_m:
 
                     If has_uv2 Then
                         _object(jj).tris(i).uv2_2 = New uv_
+                        _object(jj).tris(i).uv2_2 = uv2_data(p2)
                         _object(jj).tris(i).uv2_id_2 = p2
                     End If
 
@@ -1159,6 +1161,7 @@ next_m:
 
                     If has_uv2 Then
                         _object(jj).tris(i).uv3_2 = New uv_
+                        _object(jj).tris(i).uv3_2 = uv2_data(p3)
                         _object(jj).tris(i).uv2_id_3 = p3
                     End If
 
@@ -1222,10 +1225,11 @@ all_done:
 
     Dim mstream As New MemoryStream
     Private Sub get_uv2(ByRef data() As Byte, ByVal size As Integer)
-        ReDim uv2_data(size - 1)
+        ReDim uv2_data((size - 1) / 8)
         Dim m As New MemoryStream(data)
         Dim br As New BinaryReader(m)
-        For i = 0 To (size - 1) / 2
+        For i = 0 To ((size - 1) / 8) - 8
+            uv2_data(i) = New uv_
             uv2_data(i).u = br.ReadSingle
             uv2_data(i).v = br.ReadSingle
         Next
@@ -1948,18 +1952,21 @@ get_visual:
             Gl.glMultiTexCoord3f(1, _object(jj).tris(i).t1.x, _object(jj).tris(i).t1.y, _object(jj).tris(i).t1.z) 'tangent
             Gl.glMultiTexCoord3f(2, _object(jj).tris(i).b1.x, _object(jj).tris(i).b1.y, _object(jj).tris(i).b1.z) ' bitangent
             Gl.glMultiTexCoord2f(0, _object(jj).tris(i).uv1.u, _object(jj).tris(i).uv1.v) 'uv
+            'Gl.glMultiTexCoord2f(3, _object(jj).tris(i).uv1_2.u, _object(jj).tris(i).uv1_2.v) 'uv2
             Gl.glVertex3f(_object(jj).tris(i).v1.x, _object(jj).tris(i).v1.y, _object(jj).tris(i).v1.z) 'vertex
             '2
             Gl.glNormal3f(_object(jj).tris(i).n2.x, _object(jj).tris(i).n2.y, _object(jj).tris(i).n2.z)
             Gl.glMultiTexCoord3f(1, _object(jj).tris(i).t2.x, _object(jj).tris(i).t2.y, _object(jj).tris(i).t2.z)
             Gl.glMultiTexCoord3f(2, _object(jj).tris(i).b2.x, _object(jj).tris(i).b2.y, _object(jj).tris(i).b2.z)
             Gl.glMultiTexCoord2f(0, _object(jj).tris(i).uv2.u, _object(jj).tris(i).uv2.v)
+            'Gl.glMultiTexCoord2f(3, _object(jj).tris(i).uv2_2.u, _object(jj).tris(i).uv2_2.v) 'uv2
             Gl.glVertex3f(_object(jj).tris(i).v2.x, _object(jj).tris(i).v2.y, _object(jj).tris(i).v2.z)
             '3
             Gl.glNormal3f(_object(jj).tris(i).n3.x, _object(jj).tris(i).n3.y, _object(jj).tris(i).n3.z)
             Gl.glMultiTexCoord3f(1, _object(jj).tris(i).t3.x, _object(jj).tris(i).t3.y, _object(jj).tris(i).t3.z)
             Gl.glMultiTexCoord3f(2, _object(jj).tris(i).b3.x, _object(jj).tris(i).b3.y, _object(jj).tris(i).b3.z)
             Gl.glMultiTexCoord2f(0, _object(jj).tris(i).uv3.u, _object(jj).tris(i).uv3.v)
+            'Gl.glMultiTexCoord2f(3, _object(jj).tris(i).uv3_2.u, _object(jj).tris(i).uv3_2.v) 'uv2
             Gl.glVertex3f(_object(jj).tris(i).v3.x, _object(jj).tris(i).v3.y, _object(jj).tris(i).v3.z)
 
         Next

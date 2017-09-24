@@ -45,6 +45,12 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_20223AFACBB64E3F8842B448D47DDF5B"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_202640690E3D4CAB9639102F71065490"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -147,6 +153,12 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_A10349D338794BF4AB3B5F22CEA2002D"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_A5DD40D0854C4442B379D83A33DC35C0"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -160,6 +172,12 @@
         "Entry"
         {
         "MsmKey" = "8:_C444918297BD4CE989D7D801AC5FB556"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_C6C98DFDE0E545708114623AA2764361"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -310,7 +328,7 @@
         "DisplayName" = "8:Release"
         "IsDebugOnly" = "11:FALSE"
         "IsReleaseOnly" = "11:TRUE"
-        "OutputFilename" = "8:..\\TankExporter_006.msi"
+        "OutputFilename" = "8:..\\TankExporter_007.msi"
         "PackageFilesAs" = "3:2"
         "PackageFileSize" = "3:-2147483648"
         "CabType" = "3:1"
@@ -467,6 +485,26 @@
             "TargetName" = "8:normal_geo.glsl"
             "Tag" = "8:"
             "Folder" = "8:_1B07A285BAA74365A2EBEF572AC0A089"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_20223AFACBB64E3F8842B448D47DDF5B"
+            {
+            "SourcePath" = "8:..\\!_Tank Exporter\\html\\MainPage.html"
+            "TargetName" = "8:MainPage.html"
+            "Tag" = "8:"
+            "Folder" = "8:_87C614F83BA1480492E90F368FEAFD06"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -845,6 +883,26 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_A10349D338794BF4AB3B5F22CEA2002D"
+            {
+            "SourcePath" = "8:..\\!_Tank Exporter\\html\\imgs\\transparent_fill.png"
+            "TargetName" = "8:transparent_fill.png"
+            "Tag" = "8:"
+            "Folder" = "8:_589FDE83079A4FB68CA57637595D2D5A"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_A5DD40D0854C4442B379D83A33DC35C0"
             {
             "SourcePath" = "8:..\\!_Tank Exporter\\resources\\gradiant.png"
@@ -891,6 +949,26 @@
             "TargetName" = "8:ILUT.dll"
             "Tag" = "8:"
             "Folder" = "8:_9BBCA850C4D847C495C4D74DD189C10E"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_C6C98DFDE0E545708114623AA2764361"
+            {
+            "SourcePath" = "8:..\\!_Tank Exporter\\html\\imgs\\background.jpg"
+            "TargetName" = "8:background.jpg"
+            "Tag" = "8:"
+            "Folder" = "8:_589FDE83079A4FB68CA57637595D2D5A"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -1118,6 +1196,28 @@
                         {
                         }
                     }
+                    "{9EF0B969-E518-4E46-987F-47570745A589}:_87C614F83BA1480492E90F368FEAFD06"
+                    {
+                    "Name" = "8:html"
+                    "AlwaysCreate" = "11:FALSE"
+                    "Condition" = "8:"
+                    "Transitive" = "11:FALSE"
+                    "Property" = "8:_881D4E34C63A4A2B9B56409BBF0B1DC1"
+                        "Folders"
+                        {
+                            "{9EF0B969-E518-4E46-987F-47570745A589}:_589FDE83079A4FB68CA57637595D2D5A"
+                            {
+                            "Name" = "8:imgs"
+                            "AlwaysCreate" = "11:FALSE"
+                            "Condition" = "8:"
+                            "Transitive" = "11:FALSE"
+                            "Property" = "8:_9D1B2493488C48AC97BAFA7C0AB235FF"
+                                "Folders"
+                                {
+                                }
+                            }
+                        }
+                    }
                     "{9EF0B969-E518-4E46-987F-47570745A589}:_EACEE00013F249E6B9932BC37E30FDF4"
                     {
                     "Name" = "8:resources"
@@ -1158,15 +1258,15 @@
         {
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:Tank Exporter"
-        "ProductCode" = "8:{81CB28FA-C653-448A-AD9A-8023A33ADBA4}"
-        "PackageCode" = "8:{B94B38D6-3F2B-44B2-9F37-DBD26BA31365}"
+        "ProductCode" = "8:{C101980E-B07B-4023-BC06-3F977794E51B}"
+        "PackageCode" = "8:{72B09002-04FD-4CF8-BA56-0D2E732D2A61}"
         "UpgradeCode" = "8:{6ABAF23A-CB3D-4411-B78A-4855B5B5A0CD}"
         "AspNetVersion" = "8:4.0.30319.0"
         "RestartWWWService" = "11:FALSE"
         "RemovePreviousVersions" = "11:TRUE"
         "DetectNewerInstalledVersion" = "11:TRUE"
         "InstallAllUsers" = "11:FALSE"
-        "ProductVersion" = "8:1.0.6"
+        "ProductVersion" = "8:1.0.7"
         "Manufacturer" = "8:Coffee_"
         "ARPHELPTELEPHONE" = "8:"
         "ARPHELPLINK" = "8:"

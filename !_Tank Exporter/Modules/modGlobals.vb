@@ -1,9 +1,15 @@
 ﻿Imports System.Text
 Imports System.IO
 Module modGlobals
+    '##################################
+    Public TESTING As Boolean = False
+    '##################################
+
+
+
+
     Public exclusionMask_sd As Integer
     Public GLOBAL_exclusionMask As Integer
-    Public TESTING As Boolean = False
     Public exclusionMask_name As String
     Public exclusionMask_id As Integer
     Public HD_TANK As Boolean

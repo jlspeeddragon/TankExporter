@@ -177,7 +177,7 @@ ByVal text As String, ByVal r As Single, ByVal g As Single, ByVal b As Single, B
         Gl.glMatrixMode(Gl.GL_PROJECTION) 'Select Projection
         Gl.glLoadIdentity()
 
-        Glu.gluPerspective(60.0F, CSng((frmMain.pb1.Width) / (frmMain.pb1.Height)), 0.5F, far_Clip)
+        Glu.gluPerspective(60.0F, CSng((frmMain.pb1.Width) / (frmMain.pb1.Height)), 0.1F, far_Clip)
         Gl.glEnable(Gl.GL_DEPTH_TEST)
         Gl.glDepthMask(Gl.GL_TRUE)
         Gl.glDepthRange(0.0, 1.0)

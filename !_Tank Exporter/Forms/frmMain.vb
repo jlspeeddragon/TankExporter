@@ -1662,6 +1662,7 @@ tryagain:
         If model_loaded And TESTING Then
             If object_count > 6 Then
                 Gl.glColor3f(0.9, 0.9, 0.9)
+                running = 0.0
                 catmullrom.draw_spline()
                 delay += 1
                 If delay > 5 Then
@@ -1711,7 +1712,9 @@ tryagain:
                 Gl.glUniform1f(tank_detailPower, _group(jj).detail_power)
                 Gl.glUniform4f(tank_tile_vec4, _object(jj).camo_tiling.x, _object(jj).camo_tiling.y, _object(jj).camo_tiling.z, _object(jj).camo_tiling.w)
                 Gl.glUniform1i(tank_use_camo, _object(jj).use_camo)
-                Gl.glUniform1i(tank_exclude_camo, _object(jj).exclude_camo)
+                Gl.glUniform1i(tank_exclude_camo, 1)
+                Gl.glUniform4f(tank_armorcolor, ARMORCOLOR.x, ARMORCOLOR.y, ARMORCOLOR.z, ARMORCOLOR.w)
+                Gl.glUniform1i(tank_use_CM, GLOBAL_exclusionMask)
 
                 Gl.glActiveTexture(Gl.GL_TEXTURE0)
                 Gl.glBindTexture(Gl.GL_TEXTURE_2D, _group(jj).color_Id)
@@ -1720,7 +1723,11 @@ tryagain:
                 Gl.glActiveTexture(Gl.GL_TEXTURE0 + 2)
                 Gl.glBindTexture(Gl.GL_TEXTURE_2D, _group(jj).metalGMM_Id)
                 Gl.glActiveTexture(Gl.GL_TEXTURE0 + 3)
-                Gl.glBindTexture(Gl.GL_TEXTURE_2D, _group(jj).ao_id)
+                If GLOBAL_exclusionMask = 1 And Not HD_TANK Then
+                    Gl.glBindTexture(Gl.GL_TEXTURE_2D, exclusionMask_id)
+                Else
+                    Gl.glBindTexture(Gl.GL_TEXTURE_2D, _group(jj).ao_id)
+                End If
                 Gl.glActiveTexture(Gl.GL_TEXTURE0 + 4)
                 Gl.glBindTexture(Gl.GL_TEXTURE_2D, _group(jj).detail_Id)
                 Gl.glActiveTexture(Gl.GL_TEXTURE0 + 5)
@@ -1732,7 +1739,7 @@ tryagain:
                         Gl.glPopMatrix()
 
                         Gl.glPushMatrix()
-                        Gl.glScalef(-1.0, 1.0, 1.0)
+                        Gl.glScalef(1.0, 1.0, 1.0)
                         Gl.glTranslatef(.pos1.X, .pos1.Y, .pos1.Z)
                         Gl.glRotatef(.angle - 90, 1.0, 0.0, 0.0)
                         Gl.glCallList(_object(jj).main_display_list)
@@ -1755,7 +1762,7 @@ tryagain:
                             Gl.glPopMatrix()
 
                             Gl.glPushMatrix()
-                            Gl.glScalef(-1.0, 1.0, 1.0)
+                            Gl.glScalef(1.0, 1.0, 1.0)
                             Gl.glTranslatef(.pos1.X, .pos1.Y, .pos1.Z)
                             Gl.glRotatef(.angle - 90, 1.0, 0.0, 0.0)
                             Gl.glCallList(_object(jj).main_display_list)
@@ -2098,10 +2105,10 @@ tryagain:
                 If mouse.y - e.Y > 100 Then t = (10)
             Else : t = CSng(Sin((mouse.y - e.Y) / 100)) * 12
                 view_radius -= (t * (view_radius * 0.2))    ' zoom is factored in to Cam radius
-                If view_radius > -1.0 Then view_radius = -1.0
+                If view_radius > -0.01 Then view_radius = -0.01
                 mouse.y = e.Y
             End If
-            If view_radius > -0.5 Then view_radius = -0.5
+            If view_radius > -0.1 Then view_radius = -0.1
             'draw_scene()
             Return
         End If
@@ -2366,6 +2373,43 @@ make_this_tank:
         model_loaded = True
         TC1.Enabled = True
 
+    End Sub
+
+    Private Sub m_create_and_extract_Click(sender As Object, e As EventArgs) Handles m_create_and_extract.Click
+        If My.Settings.res_mods_path = "" Then
+            MsgBox("You need to set the path to the res_mods folder!", MsgBoxStyle.Exclamation, "Opps..")
+            Return
+        End If
+        Dim ans = MsgBox("Extract ALL LODs or LOD0 only?" + vbCrLf + "Yes = ALL LODS", MsgBoxStyle.YesNoCancel, "Need Your Input..")
+        If ans = MsgBoxResult.Cancel Then
+            Return
+        End If
+        TC1.Enabled = False
+        Dim ar = file_name.Split(":")
+        For i = 1 To packages.Length - 2
+            For Each ent In packages(i)
+                If ent.FileName.Contains(ar(2)) Then
+                    If Not ent.FileName.Contains("collision_client") Then
+                        If Not ent.FileName.Contains("crash") Then
+
+                            If ans = MsgBoxResult.No Then
+                                If ent.FileName.ToLower.Contains("lod0") Then
+                                    ent.Extract(My.Settings.res_mods_path, ExtractExistingFileAction.DoNotOverwrite)
+                                End If
+                            Else
+                                If ent.FileName.ToLower.Contains("lod") Then
+                                    ent.Extract(My.Settings.res_mods_path, ExtractExistingFileAction.DoNotOverwrite)
+                                End If
+                            End If
+                            If Not ent.FileName.ToLower.Contains("lod") Then
+                                ent.Extract(My.Settings.res_mods_path, ExtractExistingFileAction.DoNotOverwrite)
+                            End If
+                        End If
+                    End If
+                End If
+            Next
+        Next
+        TC1.Enabled = True
     End Sub
 
     Private Sub m_clear_selected_tanks_Click(sender As Object, e As EventArgs) Handles m_clear_selected_tanks.Click
@@ -2736,11 +2780,11 @@ make_this_tank:
     Private Sub m_res_mods_path_Click(sender As Object, e As EventArgs) Handles m_res_mods_path.Click
         If FolderBrowserDialog1.ShowDialog = Forms.DialogResult.OK Then
             My.Settings.res_mods_path = FolderBrowserDialog1.SelectedPath
-            If Not File.Exists(My.Settings.res_mods_path) Then
-                MsgBox("Incorrect Path.", MsgBoxStyle.Information)
-                m_res_mods_path.PerformClick()
-                Return
-            End If
+            'If Not File.Exists(My.Settings.res_mods_path) Then
+            '    MsgBox("Incorrect Path.", MsgBoxStyle.Information)
+            '    m_res_mods_path.PerformClick()
+            '    Return
+            'End If
             res_mods_path_set = True
             My.Settings.res_mods_path = FolderBrowserDialog1.SelectedPath
             Return
@@ -3184,6 +3228,11 @@ make_this_tank:
                 get_track_section()
 
             End If
+            If track_info.segment_offset2 > track_info.segment_offset1 Then
+                Dim t_seg = track_info.segment_offset1
+                track_info.segment_offset1 = track_info.segment_offset2
+                track_info.segment_offset2 = t_seg
+            End If
             running = 0
             path_pointer1 = 0
             track_length = 0
@@ -3192,17 +3241,22 @@ make_this_tank:
             Next
             Dim lenS = running / track_info.segment_length
             If Z_Flipped Then
-                lenS += 0
+                lenS -= 1.0
             Else
-                lenS += 0
+                lenS -= 1.0
 
             End If
             segment_length_adjusted = running / (Floor(lenS))
+            Dim refact = track_info.segment_length / segment_length_adjusted
+            track_info.segment_offset1 /= refact
+            track_info.segment_offset2 /= refact
+            Dim half = track_info.segment_offset2
+            '========= segment 1 =========
             ReDim path_data1(CInt(Floor(lenS)) + 3)
             If Z_Flipped Then
-                running = 0 - segment_length_adjusted
+                running = 0 + track_info.segment_offset1 + half
             Else
-                running = 0 - track_info.segment_offset1 '  segment_length_adjusted
+                running = 0 + track_info.segment_offset1 + half
             End If
             GC.Collect()
             GC.WaitForFullGCComplete()
@@ -3213,13 +3267,14 @@ make_this_tank:
             Next
             ReDim Preserve path_data1(path_pointer1)
             get_tread_rotations1()
+            '========= segment 2 =========
             If track_info.segment_count = 2 Then
                 ReDim path_data2(CInt(Floor(lenS)) + 3)
                 track_length = 0
                 If Z_Flipped Then
-                    running = 0
+                    running = 0 + track_info.segment_offset2 + half
                 Else
-                    running = 0
+                    running = 0 + track_info.segment_offset2 + half
                 End If
                 path_pointer2 = 0
                 For i = 0 To tracks.Length - 1
@@ -3692,5 +3747,9 @@ make_this_tank:
 
     Private Sub m_lighting_Click(sender As Object, e As EventArgs) Handles m_lighting.Click
         frmLighting.Show()
+    End Sub
+
+    Private Sub m_help_Click(sender As Object, e As EventArgs) Handles m_help.Click
+        Process.Start(Application.StartupPath + "\html\MainPage.html")
     End Sub
 End Class

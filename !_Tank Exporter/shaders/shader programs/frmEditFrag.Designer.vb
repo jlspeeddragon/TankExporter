@@ -84,6 +84,8 @@ Partial Class frmEditFrag
         '
         Me.vert_tb.AutoCompleteBracketsList = New Char() {Global.Microsoft.VisualBasic.ChrW(40), Global.Microsoft.VisualBasic.ChrW(41), Global.Microsoft.VisualBasic.ChrW(123), Global.Microsoft.VisualBasic.ChrW(125), Global.Microsoft.VisualBasic.ChrW(91), Global.Microsoft.VisualBasic.ChrW(93), Global.Microsoft.VisualBasic.ChrW(34), Global.Microsoft.VisualBasic.ChrW(34), Global.Microsoft.VisualBasic.ChrW(39), Global.Microsoft.VisualBasic.ChrW(39)}
         Me.vert_tb.AutoIndent = False
+        Me.vert_tb.AutoIndentChars = False
+        Me.vert_tb.AutoIndentExistingLines = False
         Me.vert_tb.AutoScrollMinSize = New System.Drawing.Size(27, 14)
         Me.vert_tb.BackBrush = Nothing
         Me.vert_tb.BackColor = System.Drawing.Color.Black
@@ -100,6 +102,7 @@ Partial Class frmEditFrag
         Me.vert_tb.Paddings = New System.Windows.Forms.Padding(0)
         Me.vert_tb.SelectionColor = System.Drawing.Color.FromArgb(CType(CType(60, Byte), Integer), CType(CType(0, Byte), Integer), CType(CType(0, Byte), Integer), CType(CType(255, Byte), Integer))
         Me.vert_tb.ServiceColors = CType(resources.GetObject("vert_tb.ServiceColors"), FastColoredTextBoxNS.ServiceColors)
+        Me.vert_tb.ShowFoldingLines = True
         Me.vert_tb.Size = New System.Drawing.Size(641, 553)
         Me.vert_tb.TabIndex = 0
         Me.vert_tb.Zoom = 100
@@ -119,7 +122,9 @@ Partial Class frmEditFrag
         '
         Me.frag_tb.AutoCompleteBracketsList = New Char() {Global.Microsoft.VisualBasic.ChrW(40), Global.Microsoft.VisualBasic.ChrW(41), Global.Microsoft.VisualBasic.ChrW(123), Global.Microsoft.VisualBasic.ChrW(125), Global.Microsoft.VisualBasic.ChrW(91), Global.Microsoft.VisualBasic.ChrW(93), Global.Microsoft.VisualBasic.ChrW(34), Global.Microsoft.VisualBasic.ChrW(34), Global.Microsoft.VisualBasic.ChrW(39), Global.Microsoft.VisualBasic.ChrW(39)}
         Me.frag_tb.AutoIndent = False
-        Me.frag_tb.AutoScrollMinSize = New System.Drawing.Size(2, 14)
+        Me.frag_tb.AutoIndentChars = False
+        Me.frag_tb.AutoIndentExistingLines = False
+        Me.frag_tb.AutoScrollMinSize = New System.Drawing.Size(27, 14)
         Me.frag_tb.BackBrush = Nothing
         Me.frag_tb.BackColor = System.Drawing.Color.Black
         Me.frag_tb.CaretColor = System.Drawing.Color.WhiteSmoke

@@ -1,0 +1,102 @@
+﻿<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <title>Tank Exporter Help</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"><style type="text/css">
+<!--
+body {
+	background-color: #333333;
+	background-repeat: no-repeat;
+	background-image: url(imgs/background.jpg);
+	background-position: center;
+}
+.style1 {
+	font-size: 36px;
+	color: #FFFF00;
+	font-style: oblique;
+	font-weight: bolder;
+}.style4 {
+	font-size: 18px;
+	color: #FFFFFF;
+	font-style: normal;
+	font-weight: bold;
+}
+a {
+	font-size: 16px;
+	color: #00FF00;
+}
+a:visited {
+	color: #FFFFFF;
+}
+a:hover {
+	color: #CCFF00;
+}
+a:active {
+	color: #CC0000;
+}
+.style5 {color: #00FF00}
+.style6 {color: #CC3300}
+-->
+</style></head>
+<body>
+<table width="90%" height="100%" border="0" align="center" class="style1">
+  <tr>
+    <td width="90%" height="100%" align="center" valign="top"><p class="style1">General Information on Tank Exporter</p>
+      <table width="90%" height="90%" border="0" align="center" class="style4">
+        <tr>
+          <td height="920" align="left" valign="top" background="imgs/transparent_fill.png"><p class="style4">Tank Exporter will need the path to the game set.. It will ask for this at start up the first time.<br>
+            Usually its something like &quot;C:\Games\World_of_Tanks&quot;<br>
+            <br>
+            Also.. you should set the path to the res_mods folder. Its located under the File menu.<br>
+            NOTE that the version may be different from whats shown here:<br>
+            Usually the res_mods folder looks like this: &quot;C:\Games\World_of_Tanks\res_mods\0.9.20.0&quot;<br>
+            By setting the res_mods folder, TE will look for textures in that path and load them. Nice for custom skin mods.<br>
+            Also.. if you extract data, this is where it will be placed.. More on this below. <br> 
+            <br>
+            When Tank Exporter starts for the first time, it will need to download data from the <a href="https://developers.wargaming.net/reference/all/wot/account/list/?application_id=demo&language=en&r_realm=eu">WoT Dev API site.</a><br>
+          There is a lot of data there about the tanks such as their in game name which TE needs to function correctly.<br>
+            The loading of data from the API is stored in a temp folder so this only needs to happen once after you install TE.<br>
+            Under the File menu, you can force the data to be downloaded again. Use this when new tanks have been added or existing ones changed.<br>
+            <br>
+            This app was originally created to use with Terra.. A program I wrote to load maps from World of Tanks and create battle layout plans for Clan battles.<br>
+            Clicking on a tank name adds it to the export list.. clicking on it again removes it. There is also a Menu item above the list to clear the selected tanks.<br>
+            Under the File Menu, there is a selection to show the folder where all the tanks are exported to. This is not much use to the average user of TE.<br>
+            If you are a programmer and want to use the exported tank data for Terra, there are header strings in the files that explains what's in the file and the order.<br>
+            <br>
+            Loading of tanks is done by RIGHT clicking on a tank name in the list. Exporting them is done in the same way.<br>
+            Also.. To make life easier, you can also extract and create the data in the World of Tanks res_mods folder. YOU WILL NEED TO SET THIS PATH!!!!<br>
+          If you decide to extract to the res_mods folder, you will be asked if you want to extract only LOD0 or all LODs that exist. Some have 3 lods... some as many as 5.<br>
+          <span class="style5">Extracting to the res_mods folder will NOT overwrite existing files!</span> This is too protect any modding to textures or tank models you have done.<br>
+          If you want to re-extract them, delete them first.<br>
+          <span class="style6">NOTE:</span> Some mod installers will completely erase the contents on the res_mods folder.<br>
+          Be sure to backup your files before using mod installers suchs as <a href="http://aslain.com/index.php?/topic/13-0920-aslains-xvm-mod-modpack-installer-wpicture-sound-preview/">Ashlian's Mod Installer. </a></p>
+            <p class="style4"><br>
+              TE's FBX format is 2009.. This will not load directly into Blender.. However, you can download <a href="http://usa.autodesk.com/adsk/servlet/pc/item?siteID=123112&id=22694909">AutoDesk' FREE FBX converter.</a> It can load and convert 2009 to new versions and also export in other formats suchs as OBJ. This tool of AutoDesk's should be in every 3D artist toolbox! </p>
+            <p class="style4">There are some items on the Menu bar that are pretty self explanatory. Try clicking them after a tank is loaded to see what they do.<br>
+          Currently, TE can NOT import tanks and some tanks MAY be missing of the list.<br>
+            </p>
+            <p class="style4">There are some bugs with the camouflage... Some times there is more camo than is in the game or repetes of the same show up on the list.<br>
+            This is a visual thing and not a big deal.. Be happy you can even load camouflage :) </p>
+            <p class="style4">I do this as a hobby... I work many hours figuring out how this stuff works and share my work on <a href="https://github.com/mikeoverbay">GitHub</a> so others might create projects of their own.<br>
+If you like my Tools and use them.. please consider becoming a Patron of my work! More information is at the link below. <br>
+            <a href="http://tnmshouse.com/patreon_redirect.html"><img src="imgs/become_a_patron_button.png" alt="" width="216" height="50" border="0"></a></p>
+            <p>Integrated  DLLs and Programs with links to their licenses and more information.<br>
+              <br />
+              <a href="http://sourceforge.net/projects/taoframework/">Tao OpenGL</a> : Wrapper for .NET : This project is dead.. I use it because it allows writing text to the OpenGL frame buffer.<br>
+              <a href="http://openil.sourceforge.net/">DevIL</a> : Very nice Image loading and manipulation open source library. <br />
+              <a href="http://dotnetzip.codeplex.com/">DotNetZip</a> : A very nice wrapper for working with zip files.<br>
+              <br />
+              All Data.. Models and Textures(except a few I got of the internet) come from with in the game's .pkg files and the Dev API. This data is owned by War Gaming.<br />
+            </p>
+            <p class="style4">&nbsp; </p>
+            <p class="style4">&nbsp;</p></td>
+        </tr>
+      </table>      
+    <p class="style1">&nbsp;</p></td>
+  </tr>
+</table>
+
+</body>
+</html>
