@@ -150,7 +150,7 @@ Module WOT_Dev_interface
 
         'frmMain.info_Label.Text = "Building Tank Table..."
         'Application.DoEvents()
-
+        TankDataTable = New DataTable
         TankDataTable.Columns.Add("tag")
         TankDataTable.Columns.Add("shortname")
         TankDataTable.Columns.Add("tier")

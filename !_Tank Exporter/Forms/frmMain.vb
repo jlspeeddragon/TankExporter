@@ -637,6 +637,9 @@ Public Class frmMain
             Return
         End If
         Dim f As DirectoryInfo = New DirectoryInfo(Temp_Storage)
+        shared_contents_build.Dispose()
+        GC.Collect()
+        GC.WaitForFullGCComplete()
         If f.Exists Then
             For Each fi In f.GetFiles
                 fi.Delete()
