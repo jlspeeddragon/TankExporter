@@ -55,3 +55,4 @@ C:\!_Tank Exporter\!_Tank Exporter\obj\x86\Debug\!_Tank Exporter.pdb
 C:\!_Tank Exporter\!_Tank Exporter\bin\x86\Debug\html\imgs\background.jpg
 C:\!_Tank Exporter\!_Tank Exporter\bin\x86\Debug\html\MainPage.html
 C:\!_Tank Exporter\!_Tank Exporter\bin\x86\Debug\html\imgs\transparent_fill.png
+C:\!_Tank Exporter\!_Tank Exporter\obj\x86\Debug\Tank_Exporter.frmExtract.resources

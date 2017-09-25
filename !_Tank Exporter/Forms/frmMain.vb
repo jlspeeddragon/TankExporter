@@ -282,7 +282,8 @@ Public Class frmMain
         '====================================================================================================
         info_Label.Text = "Loading Data from Packages..."
         Application.DoEvents()
-
+        MM.Enabled = False ' Dont let the user click anything while we are loading data!
+        TC1.Enabled = False
         Try
 
             gui_pkg = New Ionic.Zip.ZipFile(My.Settings.game_path + "\res\packages\gui.pkg")
@@ -431,7 +432,6 @@ Public Class frmMain
         '-----------------------------
         Application.DoEvents()
 
-        'Create a temp folder for app to use.
         '====================================================================================================
         TC1.SelectedIndex = 0
         Application.DoEvents()
@@ -446,6 +446,10 @@ Public Class frmMain
         GC.WaitForFullGCComplete()
         Me.KeyPreview = True    'so i catch keyboard before despatching it
         w_changing = False
+
+        MM.Enabled = True
+        TC1.Enabled = True
+
         Startup_Timer.Enabled = True
         Application.DoEvents()
         AddHandler Me.SizeChanged, AddressOf me_size_changed
@@ -2376,14 +2380,21 @@ make_this_tank:
     End Sub
 
     Private Sub m_create_and_extract_Click(sender As Object, e As EventArgs) Handles m_create_and_extract.Click
+        frmExtract.ShowDialog(Me)
+    End Sub
+    Public Sub extract_selections()
         If My.Settings.res_mods_path = "" Then
             MsgBox("You need to set the path to the res_mods folder!", MsgBoxStyle.Exclamation, "Opps..")
             Return
         End If
-        Dim ans = MsgBox("Extract ALL LODs or LOD0 only?" + vbCrLf + "Yes = ALL LODS", MsgBoxStyle.YesNoCancel, "Need Your Input..")
-        If ans = MsgBoxResult.Cancel Then
-            Return
+        Dim all_lods As Boolean = False
+        Dim models As Boolean = frmExtract.no_models.Checked
+        If frmExtract.all_lods_rb.Checked Then
+            all_lods = True
+        Else
+            all_lods = False
         End If
+
         TC1.Enabled = False
         Dim ar = file_name.Split(":")
         For i = 1 To packages.Length - 2
@@ -2391,27 +2402,96 @@ make_this_tank:
                 If ent.FileName.Contains(ar(2)) Then
                     If Not ent.FileName.Contains("collision_client") Then
                         If Not ent.FileName.Contains("crash") Then
-
-                            If ans = MsgBoxResult.No Then
-                                If ent.FileName.ToLower.Contains("lod0") Then
-                                    ent.Extract(My.Settings.res_mods_path, ExtractExistingFileAction.DoNotOverwrite)
-                                End If
-                            Else
-                                If ent.FileName.ToLower.Contains("lod") Then
-                                    ent.Extract(My.Settings.res_mods_path, ExtractExistingFileAction.DoNotOverwrite)
-                                End If
-                            End If
-                            If Not ent.FileName.ToLower.Contains("lod") Then
-                                ent.Extract(My.Settings.res_mods_path, ExtractExistingFileAction.DoNotOverwrite)
-                            End If
-                        End If
-                    End If
-                End If
-            Next
-        Next
+                            If Not models Then
+                                Select Case all_lods
+                                    Case True
+                                        Select Case frmExtract.ext_chassis.Checked
+                                            Case True
+                                                If ent.FileName.ToLower.Contains("chassis") Then
+                                                    ent.Extract(My.Settings.res_mods_path, ExtractExistingFileAction.DoNotOverwrite)
+                                                End If
+                                        End Select
+                                        Select Case frmExtract.ext_hull.Checked
+                                            Case True
+                                                If ent.FileName.ToLower.Contains("hull") Then
+                                                    ent.Extract(My.Settings.res_mods_path, ExtractExistingFileAction.DoNotOverwrite)
+                                                End If
+                                        End Select
+                                        Select Case frmExtract.ext_turret.Checked
+                                            Case True
+                                                If ent.FileName.ToLower.Contains("turret") Then
+                                                    ent.Extract(My.Settings.res_mods_path, ExtractExistingFileAction.DoNotOverwrite)
+                                                End If
+                                        End Select
+                                        Select Case frmExtract.ext_gun.Checked
+                                            Case True
+                                                If ent.FileName.ToLower.Contains("gun") Then
+                                                    ent.Extract(My.Settings.res_mods_path, ExtractExistingFileAction.DoNotOverwrite)
+                                                End If
+                                        End Select
+                                    Case False
+                                        If ent.FileName.ToLower.Contains("lod0") Then
+                                            Select Case frmExtract.ext_chassis.Checked
+                                                Case True
+                                                    If ent.FileName.ToLower.Contains("chassis") Then
+                                                        ent.Extract(My.Settings.res_mods_path, ExtractExistingFileAction.DoNotOverwrite)
+                                                    End If
+                                            End Select
+                                            Select Case frmExtract.ext_hull.Checked
+                                                Case True
+                                                    If ent.FileName.ToLower.Contains("hull") Then
+                                                        ent.Extract(My.Settings.res_mods_path, ExtractExistingFileAction.DoNotOverwrite)
+                                                    End If
+                                            End Select
+                                            Select Case frmExtract.ext_turret.Checked
+                                                Case True
+                                                    If ent.FileName.ToLower.Contains("turret") Then
+                                                        ent.Extract(My.Settings.res_mods_path, ExtractExistingFileAction.DoNotOverwrite)
+                                                    End If
+                                            End Select
+                                            Select Case frmExtract.ext_gun.Checked
+                                                Case True
+                                                    If ent.FileName.ToLower.Contains("gun") Then
+                                                        ent.Extract(My.Settings.res_mods_path, ExtractExistingFileAction.DoNotOverwrite)
+                                                    End If
+                                            End Select
+                                        End If
+                                End Select
+                            End If 'if model
+                            Select Case ent.FileName.Contains("dds")
+                                Case True
+                                    Select Case frmExtract.ext_chassis.Checked
+                                        Case True
+                                            If ent.FileName.ToLower.Contains("chassis") Then
+                                                ent.Extract(My.Settings.res_mods_path, ExtractExistingFileAction.DoNotOverwrite)
+                                            End If
+                                    End Select
+                                    Select Case frmExtract.ext_hull.Checked
+                                        Case True
+                                            If ent.FileName.ToLower.Contains("hull") Then
+                                                ent.Extract(My.Settings.res_mods_path, ExtractExistingFileAction.DoNotOverwrite)
+                                            End If
+                                    End Select
+                                    Select Case frmExtract.ext_turret.Checked
+                                        Case True
+                                            If ent.FileName.ToLower.Contains("turret") Then
+                                                ent.Extract(My.Settings.res_mods_path, ExtractExistingFileAction.DoNotOverwrite)
+                                            End If
+                                    End Select
+                                    Select Case frmExtract.ext_gun.Checked
+                                        Case True
+                                            If ent.FileName.ToLower.Contains("gun") Then
+                                                ent.Extract(My.Settings.res_mods_path, ExtractExistingFileAction.DoNotOverwrite)
+                                            End If
+                                    End Select
+                            End Select
+                        End If ' crash
+                    End If ' collision_client
+                End If ' filename match
+            Next ' next entry
+        Next 'next package
         TC1.Enabled = True
     End Sub
-
     Private Sub m_clear_selected_tanks_Click(sender As Object, e As EventArgs) Handles m_clear_selected_tanks.Click
         If MsgBox("Are you sure?" + vbCrLf + "This can NOT be undone!", MsgBoxStyle.YesNo, "Warning!") = MsgBoxResult.No Then
             Return
