@@ -51,12 +51,10 @@ Partial Class frmMain
         Me.m_gun = New System.Windows.Forms.ToolStripMenuItem()
         Me.m_load_textures = New System.Windows.Forms.ToolStripMenuItem()
         Me.m_lighting = New System.Windows.Forms.ToolStripMenuItem()
-        Me.m_help = New System.Windows.Forms.ToolStripMenuItem()
         Me.FolderBrowserDialog1 = New System.Windows.Forms.FolderBrowserDialog()
         Me.SplitContainer1 = New System.Windows.Forms.SplitContainer()
         Me.font_holder = New System.Windows.Forms.Label()
         Me.info_Label = New System.Windows.Forms.Label()
-        Me.pb1 = New System.Windows.Forms.PictureBox()
         Me.SplitContainer2 = New System.Windows.Forms.SplitContainer()
         Me.TC1 = New System.Windows.Forms.TabControl()
         Me.TabPage1 = New System.Windows.Forms.TabPage()
@@ -70,26 +68,29 @@ Partial Class frmMain
         Me.TabPage9 = New System.Windows.Forms.TabPage()
         Me.TabPage10 = New System.Windows.Forms.TabPage()
         Me.tank_label = New System.Windows.Forms.Label()
-        Me.iconbox = New System.Windows.Forms.PictureBox()
         Me.conMenu = New System.Windows.Forms.ContextMenuStrip(Me.components)
         Me.m_load = New System.Windows.Forms.ToolStripMenuItem()
         Me.m_export_fbx = New System.Windows.Forms.ToolStripMenuItem()
         Me.ToolStripSeparator6 = New System.Windows.Forms.ToolStripSeparator()
         Me.m_create_and_extract = New System.Windows.Forms.ToolStripMenuItem()
         Me.SaveFileDialog1 = New System.Windows.Forms.SaveFileDialog()
+        Me.pb1 = New System.Windows.Forms.PictureBox()
+        Me.iconbox = New System.Windows.Forms.PictureBox()
+        Me.m_help = New System.Windows.Forms.ToolStripMenuItem()
+        Me.PG1 = New System.Windows.Forms.ProgressBar()
         Me.MM.SuspendLayout()
         CType(Me.SplitContainer1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SplitContainer1.Panel1.SuspendLayout()
         Me.SplitContainer1.Panel2.SuspendLayout()
         Me.SplitContainer1.SuspendLayout()
-        CType(Me.pb1, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.SplitContainer2, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SplitContainer2.Panel1.SuspendLayout()
         Me.SplitContainer2.Panel2.SuspendLayout()
         Me.SplitContainer2.SuspendLayout()
         Me.TC1.SuspendLayout()
-        CType(Me.iconbox, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.conMenu.SuspendLayout()
+        CType(Me.pb1, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.iconbox, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
         '
         'Startup_Timer
@@ -281,14 +282,6 @@ Partial Class frmMain
         Me.m_lighting.Size = New System.Drawing.Size(63, 20)
         Me.m_lighting.Text = "Lighting"
         '
-        'm_help
-        '
-        Me.m_help.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image
-        Me.m_help.Image = Global.Tank_Exporter.My.Resources.Resources.question
-        Me.m_help.Name = "m_help"
-        Me.m_help.Size = New System.Drawing.Size(28, 20)
-        Me.m_help.Text = "Help"
-        '
         'SplitContainer1
         '
         Me.SplitContainer1.Dock = System.Windows.Forms.DockStyle.Fill
@@ -300,6 +293,7 @@ Partial Class frmMain
         'SplitContainer1.Panel1
         '
         Me.SplitContainer1.Panel1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center
+        Me.SplitContainer1.Panel1.Controls.Add(Me.PG1)
         Me.SplitContainer1.Panel1.Controls.Add(Me.font_holder)
         Me.SplitContainer1.Panel1.Controls.Add(Me.info_Label)
         Me.SplitContainer1.Panel1.Controls.Add(Me.pb1)
@@ -336,18 +330,6 @@ Partial Class frmMain
         Me.info_Label.Size = New System.Drawing.Size(520, 23)
         Me.info_Label.TabIndex = 1
         Me.info_Label.Text = "Label1"
-        '
-        'pb1
-        '
-        Me.pb1.BackColor = System.Drawing.Color.FromArgb(CType(CType(64, Byte), Integer), CType(CType(64, Byte), Integer), CType(CType(64, Byte), Integer))
-        Me.pb1.BackgroundImage = Global.Tank_Exporter.My.Resources.Resources.gradiant
-        Me.pb1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch
-        Me.pb1.Dock = System.Windows.Forms.DockStyle.Fill
-        Me.pb1.Location = New System.Drawing.Point(0, 0)
-        Me.pb1.Name = "pb1"
-        Me.pb1.Size = New System.Drawing.Size(750, 509)
-        Me.pb1.TabIndex = 0
-        Me.pb1.TabStop = False
         '
         'SplitContainer2
         '
@@ -499,22 +481,11 @@ Partial Class frmMain
         Me.tank_label.TabIndex = 3
         Me.tank_label.Text = "Label1"
         '
-        'iconbox
-        '
-        Me.iconbox.BackColor = System.Drawing.Color.Transparent
-        Me.iconbox.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch
-        Me.iconbox.Dock = System.Windows.Forms.DockStyle.Fill
-        Me.iconbox.Location = New System.Drawing.Point(0, 0)
-        Me.iconbox.Name = "iconbox"
-        Me.iconbox.Size = New System.Drawing.Size(217, 111)
-        Me.iconbox.TabIndex = 2
-        Me.iconbox.TabStop = False
-        '
         'conMenu
         '
         Me.conMenu.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.m_load, Me.m_export_fbx, Me.ToolStripSeparator6, Me.m_create_and_extract})
         Me.conMenu.Name = "conMenu"
-        Me.conMenu.Size = New System.Drawing.Size(211, 98)
+        Me.conMenu.Size = New System.Drawing.Size(211, 76)
         '
         'm_load
         '
@@ -539,6 +510,46 @@ Partial Class frmMain
         Me.m_create_and_extract.Size = New System.Drawing.Size(210, 22)
         Me.m_create_and_extract.Text = "Extract to res_mods folder"
         '
+        'pb1
+        '
+        Me.pb1.BackColor = System.Drawing.Color.FromArgb(CType(CType(64, Byte), Integer), CType(CType(64, Byte), Integer), CType(CType(64, Byte), Integer))
+        Me.pb1.BackgroundImage = Global.Tank_Exporter.My.Resources.Resources.gradiant
+        Me.pb1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch
+        Me.pb1.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.pb1.Location = New System.Drawing.Point(0, 0)
+        Me.pb1.Name = "pb1"
+        Me.pb1.Size = New System.Drawing.Size(750, 509)
+        Me.pb1.TabIndex = 0
+        Me.pb1.TabStop = False
+        '
+        'iconbox
+        '
+        Me.iconbox.BackColor = System.Drawing.Color.Transparent
+        Me.iconbox.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch
+        Me.iconbox.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.iconbox.Location = New System.Drawing.Point(0, 0)
+        Me.iconbox.Name = "iconbox"
+        Me.iconbox.Size = New System.Drawing.Size(217, 111)
+        Me.iconbox.TabIndex = 2
+        Me.iconbox.TabStop = False
+        '
+        'm_help
+        '
+        Me.m_help.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image
+        Me.m_help.Image = Global.Tank_Exporter.My.Resources.Resources.question
+        Me.m_help.Name = "m_help"
+        Me.m_help.Size = New System.Drawing.Size(28, 20)
+        Me.m_help.Text = "Help"
+        '
+        'PG1
+        '
+        Me.PG1.Dock = System.Windows.Forms.DockStyle.Top
+        Me.PG1.Location = New System.Drawing.Point(0, 0)
+        Me.PG1.Name = "PG1"
+        Me.PG1.Size = New System.Drawing.Size(750, 23)
+        Me.PG1.TabIndex = 2
+        Me.PG1.Visible = False
+        '
         'frmMain
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
@@ -559,15 +570,15 @@ Partial Class frmMain
         Me.SplitContainer1.Panel2.ResumeLayout(False)
         CType(Me.SplitContainer1, System.ComponentModel.ISupportInitialize).EndInit()
         Me.SplitContainer1.ResumeLayout(False)
-        CType(Me.pb1, System.ComponentModel.ISupportInitialize).EndInit()
         Me.SplitContainer2.Panel1.ResumeLayout(False)
         Me.SplitContainer2.Panel2.ResumeLayout(False)
         Me.SplitContainer2.Panel2.PerformLayout()
         CType(Me.SplitContainer2, System.ComponentModel.ISupportInitialize).EndInit()
         Me.SplitContainer2.ResumeLayout(False)
         Me.TC1.ResumeLayout(False)
-        CType(Me.iconbox, System.ComponentModel.ISupportInitialize).EndInit()
         Me.conMenu.ResumeLayout(False)
+        CType(Me.pb1, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.iconbox, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
         Me.PerformLayout()
 
@@ -625,5 +636,6 @@ Partial Class frmMain
     Friend WithEvents ToolStripSeparator6 As System.Windows.Forms.ToolStripSeparator
     Friend WithEvents m_create_and_extract As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents m_help As System.Windows.Forms.ToolStripMenuItem
+    Friend WithEvents PG1 As System.Windows.Forms.ProgressBar
 
 End Class

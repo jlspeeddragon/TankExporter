@@ -154,7 +154,7 @@ Module modCamouflage
 
 
             Dim ms As New MemoryStream
-            Dim ent = frmMain.shared_sandbox_pkg(l.texture)
+            Dim ent = frmMain.packages(11)(l.texture)
             If ent IsNot Nothing Then
                 ent.Extract(ms)
                 bb_texture_ids(cnt) = get_texture_from_stream(ms)

@@ -90,8 +90,8 @@ Public Class frmMain
             Next
             gui_pkg.Dispose()
             scripts_pkg.Dispose()
-            shared_pkg.Dispose()
-            shared_sandbox_pkg.Dispose()
+            'shared_pkg.Dispose()
+            'shared_sandbox_pkg.Dispose()
         Catch ex As Exception
 
         End Try
@@ -288,9 +288,9 @@ Public Class frmMain
 
             gui_pkg = New Ionic.Zip.ZipFile(My.Settings.game_path + "\res\packages\gui.pkg")
             scripts_pkg = New Ionic.Zip.ZipFile(My.Settings.game_path + "\res\packages\scripts.pkg")
-            shared_pkg = ZipFile.Read(My.Settings.game_path + "\res\packages\shared_content.pkg")
-            shared_sandbox_pkg = ZipFile.Read(My.Settings.game_path + "\res\packages\shared_content_sandbox.pkg")
-            packages(11) = shared_pkg
+            'packages(11) = ZipFile.Read(My.Settings.game_path + "\res\packages\shared_content.pkg")
+            'packages(12) = ZipFile.Read(My.Settings.game_path + "\res\packages\shared_content_sandbox.pkg")
+            'packages(11) = shared_pkg
             'packages(12) = shared_sandbox_pkg
 
         Catch ex As Exception
@@ -304,55 +304,73 @@ Public Class frmMain
         'MsgBox("I LOADED required pkg files!", MsgBoxStyle.Exclamation, "Error!")
         Try
             If File.Exists(Temp_Storage + "\shared_contents_build.pkg") Then
-                shared_contents_build = ZipFile.Read(Temp_Storage + "\shared_contents_build.pkg")
-                packages(11) = shared_contents_build
+                packages(11) = ZipFile.Read(Temp_Storage + "\shared_contents_build.pkg")
 
             Else
                 shared_contents_build = New ZipFile(Temp_Storage + "\shared_contents_build.pkg")
+                'add handler for progression call back to display progressbar value
+                AddHandler (shared_contents_build.SaveProgress), New EventHandler(Of SaveProgressEventArgs)(AddressOf save_progress)
 
-                info_Label.Text = "First time Building and saving shared_contents_build.pkg.. Entry(0)"
+                info_Label.Text = "Reading all shared content packages. This only needs to be done once."
                 Application.DoEvents()
                 Application.DoEvents()
-                'packages_HD(11) = ZipFile.Read(My.Settings.game_path + "\res\packages\shared_content_hd.pkg")
-                'packages_HD(12) = ZipFile.Read(My.Settings.game_path + "\res\packages\shared_content_sandbox_hd.pkg")
-                Dim cnt As Integer = 1
-                For Each entry In packages(11)
-                    If entry.FileName.ToLower.Contains("vehicles") Then
-                        Dim ms As New MemoryStream
-                        entry.Extract(ms)
-                        ms.Position = 0
-                        shared_contents_build.AddEntry(entry.FileName, ms)
-                        'GC.Collect()
-                        info_Label.Text = "First time Building and saving shared_contents_build.pkg.. Entry(" + cnt.ToString("000") + ")"
-                        Application.DoEvents()
-                        cnt += 1
+
+                IO.Directory.CreateDirectory(Temp_Storage + "\zip")
+                info_Label.Text = "Reading shared_content.pkg"
+                Dim z_path = Temp_Storage + "\zip"
+                Dim arc = ZipFile.Read(My.Settings.game_path + "\res\packages\shared_content.pkg")
+                For Each entry In arc
+                    If entry.FileName.ToLower.Contains("vehicle") Then
+                        entry.Extract(z_path, True)
                     End If
-                    Application.DoEvents()
                 Next
-                For Each entry In packages(12)
-                    If entry.FileName.ToLower.Contains("vehicles") Then
-                        Dim ms As New MemoryStream
-                        entry.Extract(ms)
-                        ms.Position = 0
-                        shared_contents_build.AddEntry(entry.FileName, ms)
-                        'GC.Collect()
-                        info_Label.Text = "First time Building and saving shared_contents_build.pkg.. Entry(" + cnt.ToString("000") + ")"
-                        Application.DoEvents()
-                        cnt += 1
+                Try
+                    info_Label.Text = "Reading shared_content_hd.pkg"
+                    arc = ZipFile.Read(My.Settings.game_path + "\res\packages\shared_content_hd.pkg")
+                    For Each entry In arc
+                        If entry.FileName.ToLower.Contains("vehicle") Then
+                            entry.Extract(z_path, True)
+                        End If
+                    Next
+                Catch ex As Exception
+                End Try
+                info_Label.Text = "Reading shared_content_sandbox.pkg"
+                arc = ZipFile.Read(My.Settings.game_path + "\res\packages\shared_content_sandbox.pkg")
+                For Each entry In arc
+                    If entry.FileName.ToLower.Contains("vehicle") Then
+                        entry.Extract(z_path, True)
                     End If
-                    Application.DoEvents()
                 Next
+                Try
+                    info_Label.Text = "Reading shared_content_sandbox_hd.pkg"
+                    arc = ZipFile.Read(My.Settings.game_path + "\res\packages\shared_content_sandbox_hd.pkg")
+                    For Each entry In arc
+                        If entry.FileName.ToLower.Contains("vehicle") Then
+                            entry.Extract(z_path, True)
+                        End If
+                    Next
+                Catch ex As Exception
+                End Try
+
+                shared_contents_build.AddDirectory(z_path)
+
+                GC.Collect()
+                GC.WaitForFullGCComplete()
                 shared_contents_build.CompressionLevel = 0 ' no compression
-                info_Label.Text = "Saving shared_contents_build.pkg.. This will take a while..."
+                shared_contents_build.ParallelDeflateThreshold = 0
+                info_Label.Text = "Saving " + shared_contents_build.Entries.Count.ToString + " files to shared_contents_build.pkg.. This will take a long time!"
                 Application.DoEvents()
                 shared_contents_build.Save()
-
+                packages(11) = New ZipFile
+                packages(11) = shared_contents_build ' save this in to 11th position
             End If
         Catch ex As Exception
             log_text.AppendLine("HD Package files not found")
         End Try
         screen_totaled_draw_time = 1 ' to stop divide by zero exception
-
+        If Directory.Exists(Temp_Storage + "\zip") Then
+            System.IO.Directory.Delete(Temp_Storage + "\zip", True)
+        End If
         Application.DoEvents()
         '====================================================================================================
         m_chassis.ForeColor = Color.DarkGreen
@@ -455,7 +473,17 @@ Public Class frmMain
         AddHandler Me.SizeChanged, AddressOf me_size_changed
         window_state = Me.WindowState
     End Sub
-
+    Private Sub save_progress(ByVal sender As Object, ByVal e As SaveProgressEventArgs)
+        If e.EventType = Ionic.Zip.ZipProgressEventType.Saving_BeforeWriteEntry Then
+            PG1.Visible = True
+            PG1.Maximum = e.EntriesTotal
+            PG1.Value = e.EntriesSaved + 1
+            Application.DoEvents()
+        End If
+        If e.EventType = ZipProgressEventType.Saving_Completed Then
+            PG1.Visible = False
+        End If
+    End Sub
     Private Sub load_customization_files()
 
         For Each entry In scripts_pkg
@@ -633,11 +661,17 @@ Public Class frmMain
         Next
     End Sub
     Private Sub clear_temp_folder()
-        If MsgBox("This will close the application.." + vbCrLf + "Would you like to continue?", MsgBoxStyle.YesNo, "Warning..") = MsgBoxResult.No Then
+        If MsgBox("This will clean out all temp folder data!!" + vbCrLf + _
+                  "Also this will close the application because it can not run with out" + vbCrLf + _
+                   "the data." + vbCrLf + _
+                   "This only needs to be done if there was an update to the tank data." + vbCrLf + _
+                   "It will force a reload of all data and the long delay creating the shared file." + vbCrLf + _
+                  "Would you like to continue?", MsgBoxStyle.YesNo, "Warning..") = MsgBoxResult.No Then
             Return
         End If
         Dim f As DirectoryInfo = New DirectoryInfo(Temp_Storage)
         shared_contents_build.Dispose()
+        packages(11).Dispose()
         GC.Collect()
         GC.WaitForFullGCComplete()
         If f.Exists Then
@@ -1057,7 +1091,7 @@ tryagain:
                 store_in_treeview(i, treeviews(i))
             Next
             get_tanks_shared()
-            get_tanks_sandbox()
+            'get_tanks_sandbox()
             For i = 1 To 10
                 info_Label.Text = "Adding Nodes to TreeView Lists (" + i.ToString("00") + ")"
                 Dim l = node_list(i).item.Length - 2
@@ -1177,7 +1211,7 @@ tryagain:
     End Sub
 
     Private Sub get_tanks_shared()
-        For Each entry As ZipEntry In shared_pkg
+        For Each entry As ZipEntry In packages(11)
             If entry.FileName.Contains("normal/lod0/Chassis.model") Then
                 Dim t_name = entry.FileName
                 Dim ta = t_name.Split("/")
@@ -1187,7 +1221,7 @@ tryagain:
                 Next
                 Dim n As New TreeNode
                 n.Text = ta(2)
-                n.Tag = My.Settings.game_path + "\res\packages\shared_content.pkg" + ":" + t_name
+                n.Tag = My.Settings.game_path + "\res\packages\shared_content_build.pkg" + ":" + t_name
                 'need this to look up actual tanks game name in the
                 '\res\packages\scripts.pkg\scripts\item_defs\vehicles\***poland***\list.xml
                 Dim s As String = ""
@@ -1259,89 +1293,89 @@ tryagain:
 
         Application.DoEvents()
     End Sub
-    Private Sub get_tanks_sandbox()
-        For Each entry As ZipEntry In shared_sandbox_pkg
-            If entry.FileName.Contains("normal/lod0/Chassis.model") Then
-                Dim t_name = entry.FileName
-                Dim ta = t_name.Split("/")
-                t_name = ""
-                For j = 0 To 2
-                    t_name += ta(j) + "/"
-                Next
-                Dim n As New TreeNode
-                n.Text = ta(2)
-                n.Tag = My.Settings.game_path + "\res\packages\shared_content_sandbox.pkg" + ":" + t_name
-                'need this to look up actual tanks game name in the
-                '\res\packages\scripts.pkg\scripts\item_defs\vehicles\***poland***\list.xml
-                Dim s As String = ""
-                Dim i As Integer = 0
-                Select Case ta(1)
-                    Case "american"
-                        n.Name = "usa"
-                        s = get_user_name(n.Text)
-                        i = CInt(get_tier_id(n.Text))
-                    Case "british"
-                        n.Name = "uk"
-                        s = get_user_name(n.Text)
-                        i = CInt(get_tier_id(n.Text))
-                    Case "chinese"
-                        n.Name = "china"
-                        s = get_user_name(n.Text)
-                        i = CInt(get_tier_id(n.Text))
-                    Case "czech"
-                        n.Name = "czech"
-                        s = get_user_name(n.Text)
-                        i = CInt(get_tier_id(n.Text))
-                    Case "french"
-                        n.Name = "france"
-                        s = get_user_name(n.Text)
-                        i = CInt(get_tier_id(n.Text))
-                    Case "german"
-                        n.Name = "germany"
-                        s = get_user_name(n.Text)
-                        i = CInt(get_tier_id(n.Text))
-                    Case "japan"
-                        n.Name = "japan"
-                        s = get_user_name(n.Text)
-                        i = CInt(get_tier_id(n.Text))
-                    Case "poland"
-                        n.Name = "poland"
-                        s = get_user_name(n.Text)
-                        i = CInt(get_tier_id(n.Text))
-                    Case "russian"
-                        n.Name = "ussr"
-                        s = get_user_name(n.Text)
-                        i = CInt(get_tier_id(n.Text))
-                    Case "sweden"
-                        n.Name = "sweden"
-                        s = get_user_name(n.Text)
-                        i = CInt(get_tier_id(n.Text))
-                End Select
-                If s.Length > 0 Then ' only save what actually exist
-                    Dim cnt As Integer = node_list(i).item.Length
-                    ReDim Preserve node_list(i).item(cnt)
-                    ReDim Preserve icons(i).img(cnt)
-                    cnt -= 1
-                    node_list(i).item(cnt) = New t_items_
-                    Dim na = n.Text.Split("_")
-                    If na(0).Length = 3 Then
-                        na(0) += "99"
-                    End If
-                    node_list(i).item(cnt).name = na(0)
-                    node_list(i).item(cnt).node = n
-                    node_list(i).item(cnt).package = My.Settings.game_path + "\res\packages\shared_content_sandbox.pkg"
-                    icons(i).img(cnt) = get_tank_icon(n.Text).Clone
-                    If icons(i).img(cnt) IsNot Nothing Then
-                        node_list(i).item(cnt).icon = icons(i).img(cnt).Clone
-                        node_list(i).item(cnt).icon.Tag = current_png_path
-                        'tn.Nodes.Add(n)
-                    End If
-                End If
-            End If
-        Next
+    'Private Sub get_tanks_sandbox()
+    '    For Each entry As ZipEntry In packages(11)
+    '        If entry.FileName.Contains("normal/lod0/Chassis.model") Then
+    '            Dim t_name = entry.FileName
+    '            Dim ta = t_name.Split("/")
+    '            t_name = ""
+    '            For j = 0 To 2
+    '                t_name += ta(j) + "/"
+    '            Next
+    '            Dim n As New TreeNode
+    '            n.Text = ta(2)
+    '            n.Tag = My.Settings.game_path + "\res\packages\shared_content_sandbox.pkg" + ":" + t_name
+    '            'need this to look up actual tanks game name in the
+    '            '\res\packages\scripts.pkg\scripts\item_defs\vehicles\***poland***\list.xml
+    '            Dim s As String = ""
+    '            Dim i As Integer = 0
+    '            Select Case ta(1)
+    '                Case "american"
+    '                    n.Name = "usa"
+    '                    s = get_user_name(n.Text)
+    '                    i = CInt(get_tier_id(n.Text))
+    '                Case "british"
+    '                    n.Name = "uk"
+    '                    s = get_user_name(n.Text)
+    '                    i = CInt(get_tier_id(n.Text))
+    '                Case "chinese"
+    '                    n.Name = "china"
+    '                    s = get_user_name(n.Text)
+    '                    i = CInt(get_tier_id(n.Text))
+    '                Case "czech"
+    '                    n.Name = "czech"
+    '                    s = get_user_name(n.Text)
+    '                    i = CInt(get_tier_id(n.Text))
+    '                Case "french"
+    '                    n.Name = "france"
+    '                    s = get_user_name(n.Text)
+    '                    i = CInt(get_tier_id(n.Text))
+    '                Case "german"
+    '                    n.Name = "germany"
+    '                    s = get_user_name(n.Text)
+    '                    i = CInt(get_tier_id(n.Text))
+    '                Case "japan"
+    '                    n.Name = "japan"
+    '                    s = get_user_name(n.Text)
+    '                    i = CInt(get_tier_id(n.Text))
+    '                Case "poland"
+    '                    n.Name = "poland"
+    '                    s = get_user_name(n.Text)
+    '                    i = CInt(get_tier_id(n.Text))
+    '                Case "russian"
+    '                    n.Name = "ussr"
+    '                    s = get_user_name(n.Text)
+    '                    i = CInt(get_tier_id(n.Text))
+    '                Case "sweden"
+    '                    n.Name = "sweden"
+    '                    s = get_user_name(n.Text)
+    '                    i = CInt(get_tier_id(n.Text))
+    '            End Select
+    '            If s.Length > 0 Then ' only save what actually exist
+    '                Dim cnt As Integer = node_list(i).item.Length
+    '                ReDim Preserve node_list(i).item(cnt)
+    '                ReDim Preserve icons(i).img(cnt)
+    '                cnt -= 1
+    '                node_list(i).item(cnt) = New t_items_
+    '                Dim na = n.Text.Split("_")
+    '                If na(0).Length = 3 Then
+    '                    na(0) += "99"
+    '                End If
+    '                node_list(i).item(cnt).name = na(0)
+    '                node_list(i).item(cnt).node = n
+    '                node_list(i).item(cnt).package = My.Settings.game_path + "\res\packages\shared_content_sandbox.pkg"
+    '                icons(i).img(cnt) = get_tank_icon(n.Text).Clone
+    '                If icons(i).img(cnt) IsNot Nothing Then
+    '                    node_list(i).item(cnt).icon = icons(i).img(cnt).Clone
+    '                    node_list(i).item(cnt).icon.Tag = current_png_path
+    '                    'tn.Nodes.Add(n)
+    '                End If
+    '            End If
+    '        End If
+    '    Next
 
-        Application.DoEvents()
-    End Sub
+    '    Application.DoEvents()
+    'End Sub
     Private Function get_user_name(ByVal fname As String) As String
 
         Try
@@ -2861,6 +2895,7 @@ make_this_tank:
     End Sub
 
     Private Sub m_res_mods_path_Click(sender As Object, e As EventArgs) Handles m_res_mods_path.Click
+        FolderBrowserDialog1.SelectedPath = My.Settings.res_mods_path
         If FolderBrowserDialog1.ShowDialog = Forms.DialogResult.OK Then
             My.Settings.res_mods_path = FolderBrowserDialog1.SelectedPath
             'If Not File.Exists(My.Settings.res_mods_path) Then
@@ -2978,7 +3013,7 @@ make_this_tank:
             Dim en = packages(current_tank_package)(exclusionMask_name)
             Dim ms As New MemoryStream
             If en Is Nothing Then
-                en = shared_pkg(exclusionMask_name)
+                en = packages(11)(exclusionMask_name)
                 If en Is Nothing Then
                     en = shared_sandbox_pkg(exclusionMask_name)
                 End If

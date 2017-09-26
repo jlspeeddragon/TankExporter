@@ -122,7 +122,8 @@ Module modTextures
         End If
         'No HD.. try rd
         Try
-            ent = frmMain.packages_HD(current_tank_package)(name.Replace(".dds", "_hd.dds")) ' look in tank package
+            ent = frmMain.packages(11)(name.Replace(".dds", "_hd.dds")) ' look in tank package
+          
             log_text.AppendLine("loaded HD from PKG : " + Path.GetFileName(name))
         Catch ex As Exception
             log_text.AppendLine("loaded SD from PKG : " + Path.GetFileName(name))
@@ -133,6 +134,9 @@ Module modTextures
             id = get_texture(mStream, name)
         Else
             ent = frmMain.packages(current_tank_package)(name) ' look in tank package
+            If ent Is Nothing Then
+                ent = frmMain.packages(11)(name) ' look in tank combined package
+            End If
             If ent IsNot Nothing Then
                 mStream = New MemoryStream
                 ent.Extract(mStream)

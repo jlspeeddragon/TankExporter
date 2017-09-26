@@ -1243,14 +1243,9 @@ all_done:
             If e IsNot Nothing Then
                 e.Extract(mstream)
             Else
-                e = frmMain.shared_pkg(filename)
+                e = frmMain.packages(11)(filename)
                 If e IsNot Nothing Then
                     e.Extract(mstream)
-                Else
-                    e = frmMain.shared_sandbox_pkg(filename)
-                    If e IsNot Nothing Then
-                        e.Extract(mstream)
-                    End If
                 End If
             End If
             'e.Extract(mstream)
