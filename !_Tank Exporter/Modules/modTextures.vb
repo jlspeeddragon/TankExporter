@@ -205,9 +205,17 @@ Module modTextures
             Gl.glBindTexture(Gl.GL_TEXTURE_2D, 0)
 
             If frmFBX.Visible Then
+                'setup texture path
+                Dim ar = TANK_NAME.Split(":")
+                Dim name As String = Path.GetFileName(ar(0))
+                FBX_Texture_path = Path.GetDirectoryName(My.Settings.fbx_path) + "\" + name
+                'create directory for the textures
+                If Not IO.Directory.Exists(FBX_Texture_path) Then
+                    System.IO.Directory.CreateDirectory(FBX_Texture_path)
+                End If
                 Dim abs_name = Path.GetFileNameWithoutExtension(file_path)
                 Dim save_path As String = Path.GetDirectoryName(My.Settings.fbx_path)
-                Il.ilSave(Il.IL_PNG, save_path + "\" + abs_name + ".png")
+                Il.ilSave(Il.IL_PNG, FBX_Texture_path + "\" + abs_name + ".png")
             End If
 
         Else

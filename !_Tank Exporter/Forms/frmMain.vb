@@ -3001,7 +3001,6 @@ make_this_tank:
         If t.Tables.Count = 0 Then
             Return
         End If
-        TANK_NAME = ar(2)
         '-----------------------------------
         'see if this is the old style tanks
         If GLOBAL_exclusionMask = 1 Then
@@ -3241,6 +3240,7 @@ make_this_tank:
                 CURRENT_DATA_SET = 9
                 nation_string = "sweden"
         End Select
+        TANK_NAME = "vehicles\" + ar(1) + "\" + ar(2) + ":" + current_tank_package.ToString
         '===================================
         Dim d = custom_tables(CURRENT_DATA_SET).Copy
         '===================================

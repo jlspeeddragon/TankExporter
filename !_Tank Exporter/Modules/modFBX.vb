@@ -22,6 +22,523 @@ Imports Skill.FbxSDK.IO
 Imports SlimDX
 
 Module modFBX
+    Public FBX_Texture_path As String
+    '    Public Sub import_FBX()
+    '        'fbx import sub
+    '        If frmMain.DGV_objs.Rows.Count = 0 Then
+    '            MsgBox("Select something to export!", MsgBoxStyle.Exclamation, "No Selection...")
+    '            Return
+    '        End If
+    '        Dim id As Integer
+    '        Try
+    '            id = frmMain.DGV_objs.SelectedCells(0).RowIndex
+
+    '        Catch ex As Exception
+    '            MsgBox("Select something to export!", MsgBoxStyle.Exclamation, "No Selection...")
+    '            Return
+    '        End Try
+
+    '        If id < 0 Then
+    '            MsgBox("Select something to export!", MsgBoxStyle.Exclamation, "No Selection...")
+    '            Return
+    '        End If
+    '        Dim j As UInt32 = 0
+    '        Dim i As UInt32 = 0
+
+    '        Dim model_name As String = frmMain.DGV_objs(1, id).Value.ToString.Replace(":", "")
+    '        frmMain.OpenFileDialog2.FileName = model_name
+    '        frmMain.OpenFileDialog2.Filter = "AutoDesk (*.FBX)|*.fbx"
+    '        frmMain.OpenFileDialog2.Title = "Import FBX..."
+    '        If Not frmMain.OpenFileDialog2.ShowDialog = Forms.DialogResult.OK Then
+    '            frmMain.Main_Menu.Enabled = True
+    '            frmMain.Timer1.Enabled = True
+    '            Return
+    '        End If
+    '        frmMain.Main_Menu.Enabled = False
+    '        frmMain.Timer1.Enabled = False
+    '        Dim pManager As FbxSdkManager
+    '        Dim scene As FbxScene
+    '        pManager = FbxSdkManager.Create
+    '        scene = FbxScene.Create(pManager, "My Scene")
+    '        Dim fileformat As Integer = Skill.FbxSDK.IO.FileFormat.FbxAscii
+    '        'Detect the file format of the file to be imported            
+    '        Dim filename = frmMain.OpenFileDialog2.FileName
+    '        If Not pManager.IOPluginRegistry.DetectFileFormat(filename, fileformat) Then
+
+    '            ' Unrecognizable file format.
+    '            ' Try to fall back to SDK's native file format (an FBX binary file).
+    '            fileformat = pManager.IOPluginRegistry.NativeReaderFormat
+    '        End If
+
+    '        Dim importOptions = Skill.FbxSDK.IO.FbxStreamOptionsFbxReader.Create(pManager, "")
+    '        Dim importer As Skill.FbxSDK.IO.FbxImporter = Skill.FbxSDK.IO.FbxImporter.Create(pManager, "")
+    '        importer.FileFormat = fileformat    ' ascii only for now
+    '        Dim imp_status As Boolean = importer.Initialize(filename)
+    '        If Not imp_status Then
+    '            MsgBox("Failed to open " + frmMain.OpenFileDialog2.FileName, MsgBoxStyle.Exclamation, "FBX Load Error...")
+    '            pManager.Destroy()
+    '            GoTo outofhere
+    '        End If
+    '        If Not importer.IsFBX Then
+    '            MsgBox("Are you sure this is a FBX file? " + vbCrLf + frmMain.OpenFileDialog1.FileName, MsgBoxStyle.Exclamation, "FBX Load Error...")
+    '            pManager.Destroy()
+    '            GoTo outofhere
+    '        End If
+    '        importOptions.SetOption(Skill.FbxSDK.IO.FbxStreamOptionsFbx.MATERIAL, True)
+    '        importOptions.SetOption(Skill.FbxSDK.IO.FbxStreamOptionsFbx.TEXTURE, True)
+    '        importOptions.SetOption(Skill.FbxSDK.IO.FbxStreamOptionsFbx.LINK, True)
+    '        importOptions.SetOption(Skill.FbxSDK.IO.FbxStreamOptionsFbx.SHAPE, True)
+    '        importOptions.SetOption(Skill.FbxSDK.IO.FbxStreamOptionsFbx.GOBO, True)
+    '        importOptions.SetOption(Skill.FbxSDK.IO.FbxStreamOptionsFbx.ANIMATION, True)
+    '        importOptions.SetOption(Skill.FbxSDK.IO.FbxStreamOptionsFbx.GLOBAL_SETTINGS, True)
+
+    '        imp_status = importer.Import(scene, importOptions)
+    '        importer.Destroy()
+    '        Dim rootnode As FbxNode = scene.RootNode
+    '        Dim nodecnt As Int32 = rootnode.GetChildCount
+    '        Dim childnode As FbxNode
+    '        Dim mesh As FbxMesh = Nothing
+    '        Dim geo As FbxGeometry = Nothing
+    '        For i = 0 To nodecnt
+    '            childnode = rootnode.GetChild(i)
+    '            Try
+
+    '                mesh = childnode.Mesh
+    '                If mesh IsNot Nothing Then
+    '                    geo = childnode.NodeAttribute
+    '                    Exit For
+    '                End If
+    '            Catch ex As Exception
+
+    '            End Try
+
+    '        Next
+    '        id += 1
+    '        Dim polycnt As UInt32 = mesh.PolygonCount
+    '        'Dim nIndices() As Int32 = mesh.PolygonVertices
+    '        Dim rotation As FbxDouble3 = rootnode.LclRotation.Get
+    '        Dim tranX As FbxDouble3 = rootnode.LclRotation.Get
+    '        Dim x_cent, y_cent, z_cent As Single
+    '        Dim b_max, b_min As FbxDouble3
+    '        mesh.ComputeBBox()
+    '        b_max = mesh.BBoxMax.Get
+    '        b_min = mesh.BBoxMin.Get
+    '        x_cent = (b_max.X + b_min.X) / 2
+    '        y_cent = (b_max.Y + b_min.Y) / 2
+    '        z_cent = (b_max.Z + b_min.Z) / 2
+    '        Dim val As Integer = 0
+    '        Dim up_axis = scene.GlobalSettings.AxisSystem.GetUpVector(val)
+    '        Dim up_y, up_z As Integer
+    '        up_y = FbxAxisSystem.UpVector.YAxis
+    '        up_z = FbxAxisSystem.UpVector.ZAxis
+    '        Dim old_poly_cnt As Long = _group(id).nPrimitives_
+    '        Dim old_vertice_cnt As Long = _group(id).nVertices_
+    '        Dim nVertices = mesh.Normals.Count
+    '        ReDim Preserve _group(id).vertices(1)
+    '        ReDim Preserve _group(id).vertices(nVertices)
+    '        '------ we use this to resize the vertices array and get the right count of vertices.
+    '        For i = 0 To nVertices - 1
+    '            _group(id).vertices(i) = New vertice_
+    '            _group(id).vertices(i).index_1 = 255
+    '        Next
+    '        '-----------------------------------------------------------------------------------
+    '        ReDim Preserve _group(id).indicies(polycnt)
+    '        'Dim layer = mesh.UVLayerCount
+    '        Dim uvlayer1 As FbxLayerElementUV = mesh.GetLayer(0).GetUVs
+    '        Dim uvlayer2 As FbxLayerElementUV = Nothing
+    '        Dim mat_cnt As Integer = geo.Node.GetSrcObjectCount(FbxSurfaceMaterial.ClassId)
+    '        Dim material As FbxSurfaceMaterial = geo.Node.GetSrcObject(FbxSurfaceMaterial.ClassId, 0)
+    '        Dim property_ As FbxProperty
+    '        Dim texture As FbxTexture
+    '        'diffuse texture.. color2_name
+    '        property_ = material.FindProperty(FbxSurfaceMaterial.SAmbient)
+    '        texture = property_.GetSrcObject(FbxTexture.ClassId, 0)
+    '        'this might throw an exception so its wrapped. (means there is no 2nd texture.)
+    '        Try
+    '            _group(id).color2_name = texture.FileName
+
+    '        Catch ex As Exception
+
+    '        End Try
+    '        'ambient texture.. color_name
+    '        Try
+    '            property_ = material.FindProperty(FbxSurfaceMaterial.SDiffuse)
+
+    '        Catch ex As Exception
+    '            _group(id).blend_only = False
+    '        End Try
+    '        texture = property_.GetSrcObject(FbxTexture.ClassId, 0)
+    '        _group(id).color_name = texture.FileName
+    '        'normal map... normal_name
+    '        Try
+    '            property_ = material.FindProperty(FbxSurfaceMaterial.SBump)
+    '            _group(id).bumped = True
+    '        Catch ex As Exception
+
+    '        End Try
+    '        texture = property_.GetSrcObject(FbxTexture.ClassId, 0)
+    '        Try
+    '            _group(id).normal_name = texture.FileName
+
+    '        Catch ex As Exception
+
+    '        End Try
+    '        build_textures(id, True)
+    '        Try
+    '            uvlayer2 = mesh.GetLayer(1).GetUVs
+    '            'has_uv2 = True
+
+    '        Catch ex As Exception
+    '            '_group(id).multi_textured = False
+
+    '        End Try
+    '        If has_uv2 Then
+    '            ' uvlayer2 = mesh.GetLayer(1).GetUVs
+
+    '        End If
+    '        Dim eNormals As FbxLayerElementNormal = mesh.GetLayer(0).Normals
+    '        Dim index_mode = uvlayer1.Reference_Mode
+    '        Dim off As UInt32 = _group(id).startVertex_
+    '        'ARGH!!! cant figure out the normals!! LOL --> YES I DID!
+    '        j = 0
+    '        frmMain.pbar.Visible = True
+    '        frmMain.pbar.Maximum = polycnt
+    '        frmMain.pbar.Minimum = 0
+    '        For i = 0 To polycnt - 1
+    '            frmMain.pbar.Value = i
+    '            Application.DoEvents()
+
+    '            Dim pn1, pn2, pn3 As UInt32
+    '            Dim uv1_, uv2_, uv3_ As FbxVector2
+    '            Dim uv1_2, uv2_2, uv3_2 As New FbxVector2
+    '            Dim vtc1, vtc2, vtc3 As New vertice_
+    '            Dim n1, n2, n3 As New FbxVector4
+    '            Dim v1 = mesh.GetPolygonVertex(i, 0)
+    '            Dim v2 = mesh.GetPolygonVertex(i, 1)
+    '            Dim v3 = mesh.GetPolygonVertex(i, 2)
+    '            Dim vt1 = mesh.GetControlPointAt(v1)
+    '            Dim vt2 = mesh.GetControlPointAt(v2)
+    '            Dim vt3 = mesh.GetControlPointAt(v3)
+    '            mesh.GetPolygonVertexNormal(i, 0, n1)
+    '            mesh.GetPolygonVertexNormal(i, 1, n2)
+    '            mesh.GetPolygonVertexNormal(i, 2, n3)
+
+
+    '            pn1 = frmMain.packnormalFBX(n1)
+    '            pn2 = frmMain.packnormalFBX(n2)
+    '            pn3 = frmMain.packnormalFBX(n3)
+    '            If index_mode = FbxLayerElement.ReferenceMode.Direct Then
+    '                uv1_ = uvlayer1.DirectArray(v1)
+    '                If frmMain.m_U_save_flip.CheckState Then
+    '                    uv1_.X *= -1
+    '                End If
+    '                If frmMain.m_V_load_flip.CheckState Then
+    '                    uv1_.Y *= -1
+    '                End If
+    '                uv2_ = uvlayer1.DirectArray(v2)
+    '                If frmMain.m_U_save_flip.CheckState Then
+    '                    uv2_.X *= -1
+    '                End If
+    '                If frmMain.m_V_load_flip.CheckState Then
+    '                    uv2_.Y *= -1
+    '                End If
+    '                uv3_ = uvlayer1.DirectArray(v3)
+    '                If frmMain.m_U_save_flip.CheckState Then
+    '                    uv3_.X *= -1
+    '                End If
+    '                If frmMain.m_V_load_flip.CheckState Then
+    '                    uv3_.Y *= -1
+    '                End If
+    '                If has_uv2 Then
+    '                    uv1_2 = uvlayer2.DirectArray(v1)
+    '                    If frmMain.m_U_save_flip.CheckState Then
+    '                        uv1_2.X *= -1
+    '                    End If
+    '                    If frmMain.m_V_load_flip.CheckState Then
+    '                        uv1_2.Y *= -1
+    '                    End If
+    '                    uv2_2 = uvlayer2.DirectArray(v2)
+    '                    If frmMain.m_U_save_flip.CheckState Then
+    '                        uv2_2.X *= -1
+    '                    End If
+    '                    If frmMain.m_V_load_flip.CheckState Then
+    '                        uv2_2.Y *= -1
+    '                    End If
+    '                    uv3_2 = uvlayer2.DirectArray(v3)
+    '                    If frmMain.m_U_save_flip.CheckState Then
+    '                        uv3_2.X *= -1
+    '                    End If
+    '                    If frmMain.m_V_load_flip.CheckState Then
+    '                        uv3_2.Y *= -1
+    '                    End If
+    '                End If
+    '            Else
+    '                Dim uvp As Integer
+    '                uvp = uvlayer1.IndexArray.GetAt(j)
+    '                uv1_ = uvlayer1.DirectArray.GetAt(uvp)
+    '                If frmMain.m_U_save_flip.CheckState Then
+    '                    uv1_.X *= -1
+    '                End If
+    '                If frmMain.m_V_load_flip.CheckState Then
+    '                    uv1_.Y *= -1
+    '                End If
+    '                uvp = uvlayer1.IndexArray.GetAt(j)
+    '                If has_uv2 Then
+    '                    uv1_2 = uvlayer2.DirectArray.GetAt(uvp)
+    '                    If frmMain.m_U_save_flip.CheckState Then
+    '                        uv1_2.X *= -1
+    '                    End If
+    '                    If frmMain.m_V_load_flip.CheckState Then
+    '                        uv1_2.Y *= -1
+    '                    End If
+    '                End If
+    '                j += 1
+    '                uvp = uvlayer1.IndexArray.GetAt(j)
+    '                uv2_ = uvlayer1.DirectArray.GetAt(uvp)
+    '                If frmMain.m_U_save_flip.CheckState Then
+    '                    uv2_.X *= -1
+    '                End If
+    '                If frmMain.m_V_load_flip.CheckState Then
+    '                    uv2_.Y *= -1
+    '                End If
+    '                uvp = uvlayer1.IndexArray.GetAt(j)
+    '                If has_uv2 Then
+    '                    uv2_2 = uvlayer2.DirectArray.GetAt(uvp)
+    '                    If frmMain.m_U_save_flip.CheckState Then
+    '                        uv2_2.X *= -1
+    '                    End If
+    '                    If frmMain.m_V_load_flip.CheckState Then
+    '                        uv2_2.Y *= -1
+    '                    End If
+    '                End If
+    '                j += 1
+    '                uvp = uvlayer1.IndexArray.GetAt(j)
+    '                uv3_ = uvlayer1.DirectArray.GetAt(uvp)
+    '                If frmMain.m_U_save_flip.CheckState Then
+    '                    uv3_.X *= -1
+    '                End If
+    '                If frmMain.m_V_load_flip.CheckState Then
+    '                    uv3_.Y *= -1
+    '                End If
+    '                uvp = uvlayer1.IndexArray.GetAt(j)
+    '                If has_uv2 Then
+    '                    uv3_2 = uvlayer2.DirectArray.GetAt(uvp)
+    '                    If frmMain.m_U_save_flip.CheckState Then
+    '                        uv3_2.X *= -1
+    '                    End If
+    '                    If frmMain.m_V_load_flip.CheckState Then
+    '                        uv3_2.Y *= -1
+    '                    End If
+    '                End If
+
+    '                j += 1
+
+    '            End If
+    '            vtc1.x = vt1.X
+    '            vtc1.y = vt1.Y
+    '            vtc1.z = vt1.Z
+    '            vtc1.n = pn1
+    '            vtc1.u = uv1_.X
+    '            vtc1.v = uv1_.Y
+    '            If has_uv2 Then
+    '                vtc1.u2 = uv1_2.X
+    '                vtc1.v2 = uv1_2.Y
+    '            End If
+
+
+    '            vtc2.x = vt2.X
+    '            vtc2.y = vt2.Y
+    '            vtc2.z = vt2.Z
+    '            vtc2.n = pn2
+    '            vtc2.u = uv2_.X
+    '            vtc2.v = uv2_.Y
+    '            If has_uv2 Then
+    '                vtc2.u2 = uv2_2.X
+    '                vtc2.v2 = uv2_2.Y
+    '            End If
+
+
+    '            vtc3.x = vt3.X
+    '            vtc3.y = vt3.Y
+    '            vtc3.z = vt3.Z
+    '            vtc3.n = pn3
+    '            vtc3.u = uv3_.X
+    '            vtc3.v = uv3_.Y
+    '            If has_uv2 Then
+    '                vtc3.u2 = uv3_2.X
+    '                vtc3.v2 = uv3_2.Y
+    '            End If
+
+    '            _group(id).vertices(v1) = vtc1
+    '            _group(id).vertices(v2) = vtc2
+    '            _group(id).vertices(v3) = vtc3
+    '            _group(id).vertices(v1).index_1 = 0
+    '            _group(id).vertices(v2).index_1 = 0
+    '            _group(id).vertices(v3).index_1 = 0
+    '            _group(id).indicies(i + 1).v1 = v1 + off
+    '            _group(id).indicies(i + 1).v2 = v2 + off
+    '            _group(id).indicies(i + 1).v3 = v3 + off
+
+    '        Next
+    '        frmMain.pbar.Visible = False
+    '        For i = 0 To nVertices
+    '            Try
+    '                If _group(id).vertices(i).index_1 = 255 Then
+    '                    ReDim Preserve _group(id).vertices(i + 1)
+    '                    _group(id).nVertices_ = i
+    '                    Exit For
+    '                End If
+
+    '            Catch ex As Exception
+    '                _group(id).nVertices_ = i
+
+    '            End Try
+    '        Next
+    '        'at this point, its a good idea to shift the pointers after our current ID.
+
+    '        Dim delta_v As Integer = old_poly_cnt - polycnt 'calculate size differences.. Could be + or -
+    '        Dim delta_i As Integer = old_vertice_cnt - _group(id).nVertices_
+    '        If old_poly_cnt <> _group(id).nPrimitives_ Or old_vertice_cnt <> _group(id).nVertices_ Then
+    '            If id < object_count Then
+    '                For i = id + 1 To object_count
+    '                    If _group(id + 1).startVertex_ = 0 Then
+    '                        delta_i *= -1
+    '                        delta_v *= -1
+    '                        _group(i).startVertex_ += delta_i
+    '                        _group(i).startIndex_ += (delta_v * 3)
+    '                        For j = 1 To _group(i).nPrimitives_
+    '                            _group(i).indicies(j).v1 += (delta_i)
+    '                            _group(i).indicies(j).v2 += (delta_i)
+    '                            _group(i).indicies(j).v3 += (delta_i)
+    '                        Next
+    '                        delta_i *= -1
+    '                        delta_v *= -1
+    '                    Else
+    '                        _group(i).startVertex_ -= delta_i
+    '                        _group(i).startIndex_ -= (delta_v * 3)
+    '                        For j = 1 To _group(i).nPrimitives_
+    '                            _group(i).indicies(j).v1 -= (delta_i)
+    '                            _group(i).indicies(j).v2 -= (delta_i)
+    '                            _group(i).indicies(j).v3 -= (delta_i)
+    '                        Next
+
+    '                    End If
+    '                Next
+    '            End If
+    '            _group(id).nPrimitives_ = polycnt ' adjust total
+    '            object_table.Rows(0).Item("obj_cnt") = polycnt
+    '            frmMain.Object_tableBindingsource.DataSource = object_table
+
+    '        End If
+    '        If has_uv2 Then 'no need if there isnt a used uv2 set
+    '            j = 0
+    '            'There are 3 streaming uv2s per poly.. so if delta_v is negitive, we will
+    '            'need to enlarge the size of uv2_b by 3 * delta_v.
+
+    '            Try
+
+    '                If delta_v < 0 Then
+    '                    j = (uv2_b.Length) + -(delta_v * 3)
+    '                    ReDim Preserve uv2_b(j)
+    '                End If
+    '                j = 0
+    '                For i = 1 To object_count
+    '                    j += _group(i).nPrimitives_
+    '                Next
+    '                ReDim Preserve uv2_b(j * 3)
+    '                j = 0
+    '                For i = 1 To object_count
+    '                    For k As UInt32 = 0 To _group(i).nVertices_ - 1
+    '                        uv2_b(j).u = _group(i).vertices(k).u2
+    '                        uv2_b(j).v = _group(i).vertices(k).v2
+    '                        j += 1
+    '                    Next
+    '                Next
+    '                ReDim Preserve uv2_b(j)
+    '                uv2 = uv2_b
+    '                'Else
+    '                'ReDim Preserve uv2(polycnt * 3)
+    '                'ReDim Preserve uv2_b(polycnt * 3)
+    '                'For i = 0 To polycnt
+    '                '    uv2(i) = New uvs
+    '                '    uv2_b(i) = New uvs
+    '                'Next
+    '            Catch ex As Exception
+    '                has_uv2 = False
+    '            End Try
+    '        End If
+    '        stop_opengl = True ' so we dont use this _object in the middle of creation
+    '        ReDim Preserve _object(id).tris(polycnt)
+    '        _object(id).count = polycnt
+    '        Dim v As vect3
+    '        For jj = id To object_count
+    '            With _object(jj)
+    '                .count = _group(jj).nPrimitives_
+    '                For i = 1 To _group(jj).nPrimitives_
+    '                    Dim v1 = _group(jj).indicies(i).v1 - _group(jj).startVertex_
+    '                    Dim v2 = _group(jj).indicies(i).v2 - _group(jj).startVertex_
+    '                    Dim v3 = _group(jj).indicies(i).v3 - _group(jj).startVertex_
+    '                    .tris(i) = New triangle
+    '                    .tris(i).uv1 = New uv_
+    '                    .tris(i).uv2 = New uv_
+    '                    .tris(i).uv3 = New uv_
+    '                    .tris(i).uv1_2 = New uv_
+    '                    .tris(i).uv2_2 = New uv_
+    '                    .tris(i).uv3_2 = New uv_
+    '                    .tris(i).v1.x = _group(jj).vertices(v1).x
+    '                    .tris(i).v1.y = _group(jj).vertices(v1).y
+    '                    .tris(i).v1.z = _group(jj).vertices(v1).z
+    '                    .tris(i).uv1.u = _group(jj).vertices(v1).u
+    '                    .tris(i).uv1.v = _group(jj).vertices(v1).v
+    '                    .tris(i).uv1_2.u = _group(jj).vertices(v1).u2
+    '                    .tris(i).uv1_2.v = _group(jj).vertices(v1).v2
+    '                    v = frmMain.unpackNormal(_group(jj).vertices(v1).n)
+    '                    .tris(i).n1.x = v.x
+    '                    .tris(i).n1.y = v.y
+    '                    .tris(i).n1.z = v.z
+
+
+    '                    .tris(i).v2.x = _group(jj).vertices(v2).x
+    '                    .tris(i).v2.y = _group(jj).vertices(v2).y
+    '                    .tris(i).v2.z = _group(jj).vertices(v2).z
+    '                    .tris(i).uv2.u = _group(jj).vertices(v2).u
+    '                    .tris(i).uv2.v = _group(jj).vertices(v2).v
+    '                    .tris(i).uv2_2.u = _group(jj).vertices(v2).u2
+    '                    .tris(i).uv2_2.v = _group(jj).vertices(v2).v2
+    '                    v = frmMain.unpackNormal(_group(jj).vertices(v2).n)
+    '                    .tris(i).n2.x = v.x
+    '                    .tris(i).n2.y = v.y
+    '                    .tris(i).n2.z = v.z
+
+    '                    .tris(i).v3.x = _group(jj).vertices(v3).x
+    '                    .tris(i).v3.y = _group(jj).vertices(v3).y
+    '                    .tris(i).v3.z = _group(jj).vertices(v3).z
+    '                    .tris(i).uv3.u = _group(jj).vertices(v3).u
+    '                    .tris(i).uv3.v = _group(jj).vertices(v3).v
+    '                    .tris(i).uv3_2.u = _group(jj).vertices(v3).u2
+    '                    .tris(i).uv3_2.v = _group(jj).vertices(v3).v2
+    '                    v = frmMain.unpackNormal(_group(jj).vertices(v3).n)
+    '                    .tris(i).n3.x = v.x
+    '                    .tris(i).n3.y = v.y
+    '                    .tris(i).n3.z = v.z
+
+
+    '                Next
+    '            End With
+    '            frmMain.update_list(jj)
+    '            _object(jj).find_center()
+    '        Next jj
+    '        _OBJ_ID = id
+    '        pManager.Destroy()
+    '        frmMain.create_TBNS(id)
+    'outofhere:
+    '        frmMain.Main_Menu.Enabled = True
+    '        frmMain.Timer1.Enabled = True
+    '        stop_opengl = False
+    '        frmMain.get_total_verts()
+    '        frmMain.draw_scene()
+    '    End Sub
+
     Public Sub export_fbx()
         'export FBX
         Dim rootNode As FbxNode
@@ -67,9 +584,8 @@ Module modFBX
         Dim scene As FbxScene
         scene = FbxScene.Create(pManager, file_name)
         scene.SceneInfo.Author = "Exported using Coffee_'s Tank Exporter tool"
-        For i = 1 To object_count
-            scene.SceneInfo.Comment += _group(i).color_name
-        Next
+        scene.SceneInfo.Comment = TANK_NAME
+
         frmFBX.Label1.Visible = False
         frmFBX.Label2.Visible = True
         Dim node_list() = {FbxNode.Create(pManager, model_name)}
@@ -83,15 +599,15 @@ Module modFBX
             '        GoTo we_dont_want_this_one_saved
             '    End If
             'End If
-            mat_main = Path.GetDirectoryName(My.Settings.fbx_path) + "\" + Path.GetFileNameWithoutExtension(_group(id).color_name) + ".png"
-            mat_NM = Path.GetDirectoryName(My.Settings.fbx_path) + "\" + Path.GetFileNameWithoutExtension(_group(id).normal_name) + ".png"
+            mat_main = FBX_Texture_path + "\" + Path.GetFileNameWithoutExtension(_group(id).color_name) + ".png"
+            mat_NM = FBX_Texture_path + "\" + Path.GetFileNameWithoutExtension(_group(id).normal_name) + ".png"
             mat_uv2 = _group(id).detail_name
 
             model_name = _group(id).name
             node_list(id) = FbxNode.Create(pManager, model_name)
 
             frmFBX.Label2.Text = model_name
-           
+
 
             'create mesh node
             Dim mymesh = fbx_create_mesh(model_name, id, pManager)
@@ -237,7 +753,7 @@ outahere:
         'need a name for this texture
         Dim texture = FbxTexture.Create(pManager, "DiffuseMap" + ":" + id.ToString("000"))
         ' Set texture properties.
-        texture.SetFileName(Path.GetDirectoryName(My.Settings.fbx_path) + "\" + Path.GetFileNameWithoutExtension(textures(id).c_name) + ".png") 'Get the Texture path from the list
+        texture.SetFileName(FBX_Texture_path + "\" + Path.GetFileNameWithoutExtension(textures(id).c_name) + ".png") 'Get the Texture path from the list
         texture.TextureUseType = FbxTexture.TextureUse.Standard
         texture.Mapping = FbxTexture.MappingType.Uv
         texture.MaterialUseType = FbxTexture.MaterialUse.Model
@@ -251,7 +767,7 @@ outahere:
         'need a name for this texture
         Dim texture = FbxTexture.Create(pManager, "NormalMap" + ":" + id.ToString("000"))
         ' Set texture properties.
-        texture.SetFileName(Path.GetDirectoryName(My.Settings.fbx_path) + "\" + Path.GetFileNameWithoutExtension(textures(id).n_name) + ".png") 'Get the Texture path from the list
+        texture.SetFileName(FBX_Texture_path + "\" + Path.GetFileNameWithoutExtension(textures(id).n_name) + ".png") 'Get the Texture path from the list
         texture.TextureUseType = FbxTexture.TextureUse.BumpNormalMap
         texture.Mapping = FbxTexture.MappingType.Uv
         texture.MaterialUseType = FbxTexture.MaterialUse.Model
