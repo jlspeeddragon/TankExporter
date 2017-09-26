@@ -582,16 +582,20 @@ Module tank_loader
         For i = 0 To number_of_groups - 1
 
             If InStr(section_names(i), "vertices") > 0 Then
+                Debug.WriteLine("vertices")
                 f_name_vertices = section_names(i)
                 sub_groups += 1 ' if this has sub models
             End If
             If InStr(section_names(i), "indices") > 0 Then
+                Debug.WriteLine("indices")
                 f_name_indices = section_names(i)
             End If
             If InStr(section_names(i).ToLower, "uv2") > 0 Then
+                Debug.WriteLine("uv2")
                 f_name_uv2 = section_names(i)
             End If
             If InStr(section_names(i), "colour") > 0 Then
+                Debug.WriteLine("colour")
                 f_name_color = section_names(i)
             End If
             If InStr(section_names(i), "default.cmodl") > 0 Then
@@ -601,9 +605,11 @@ Module tank_loader
                 misc_name2 = section_names(i)
             End If
             If InStr(section_names(i), "bsp2") > 0 Then
+                Debug.WriteLine("bsp2")
                 bsp_name = section_names(i)
             End If
             If InStr(section_names(i), "bsp2_materials") > 0 Then
+                Debug.WriteLine("bsp2_materials")
                 bsp_name = section_names(i)
             End If
             Try

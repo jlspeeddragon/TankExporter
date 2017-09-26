@@ -303,7 +303,12 @@
     <Content Include="html\imgs\background.jpg">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="html\imgs\extract_panel.jpg" />
+    <Content Include="html\imgs\become_a_patron_button.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="html\imgs\extract_panel.jpg">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="html\imgs\transparent_fill.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
