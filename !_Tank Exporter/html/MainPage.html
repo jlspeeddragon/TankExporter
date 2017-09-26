@@ -51,18 +51,22 @@ a:active {
           <td height="1773" align="left" valign="top" background="imgs/transparent_fill.png"><p>&nbsp;</p>
             <table width="90%" border="0" align="center">
               <tr>
-                <td height="69" background="imgs/transparent_fill.png"><p>Tank Exporter will need the path to the game set.. It will ask for this at start up the first time.<br>
+                <td height="69" background="imgs/transparent_fill.png"><p>The first time Tank Exporter is ran, It will need to gather lots of data.<br>
+                  It will read and convert the shared_content and shared_content_sandbox and their HD counter parts and save only data related to the tanks in a file called shared_content_build.pkg in your temp folder section. The folder is called wot_temp.<br>
+                  This process takes a LOT of time.. Be patient.. It makes accessing the data easier for the app and faster.<br>
+                  <br>
+When Tank Exporter runs for the first time, it will also need to download data from the <a href="https://developers.wargaming.net/reference/all/wot/account/list/?application_id=demo&language=en&r_realm=eu">WoT Dev API site.</a><br>
+There is a lot of data there about the tanks such as their in game name which TE needs to function correctly.<br>
+The loading of data from the API is stored in a temp folder so this only needs to happen once after you install TE.<br>
+Under the File menu, you can delete the temp folder. Use this when new tanks have been added or existing ones changed. TE will shut down because it can not fucntion with out the data. When you run the app again, it will go through all the loading of the data again. Dom't reset the data unless you really need the new or changed tanks! </p>
+                  <p>Tank Exporter will need the path to the game set.. It will ask for this after its done gathering data.<br>
                     Usually its something like &quot;C:\Games\World_of_Tanks&quot;</p>
                   <p>Also.. you should set the path to the res_mods folder. Its located under the File menu.<br>
                     NOTE that the version may be different from what's shown here:<br>
                     Usually the res_mods folder looks like this: &quot;C:\Games\World_of_Tanks\res_mods\0.9.20.0&quot;<br>
                     By setting the res_mods folder, TE will look for textures in that path and load them. Nice for custom skin mods.<br>
-                    Also.. if you extract data, this is where it will be placed.. More on this below. <br>
-                    <br>
-                    When Tank Exporter starts for the first time, it will need to download data from the <a href="https://developers.wargaming.net/reference/all/wot/account/list/?application_id=demo&language=en&r_realm=eu">WoT Dev API site.</a><br>
-                    There is a lot of data there about the tanks such as their in game name which TE needs to function correctly.<br>
-                    The loading of data from the API is stored in a temp folder so this only needs to happen once after you install TE.<br>
-                Under the File menu, you can force the data to be downloaded again. Use this when new tanks have been added or existing ones changed.</p></td>
+                    Also.. if you extract data, this is where it will be placed.. More on this below. You can change this path and extract the tank data anywhere you would like. <br>
+                  </p></td>
               </tr>
             </table>
             <br>
@@ -77,8 +81,9 @@ If you are a programmer and want to use the exported tank data for Terra, there 
             <br>
             <table width="90%" height="71" border="0" align="center">
               <tr>
-                <td background="imgs/transparent_fill.png">Loading of tanks is done by RIGHT clicking on a tank name in the list. Exporting them is done in the same way.<br>
-Also.. To make life easier, you can also extract and create the data in the World of Tanks res_mods folder. YOU WILL NEED TO SET THIS PATH!!!! </td>
+                <td background="imgs/transparent_fill.png">Loading of tanks is done by RIGHT clicking on a tank name in the list.<br>
+                  Exporting them is done in the same way.<br>
+Also.. To make life easier, you can also extract and create the data in the World of Tanks res_mods folder or where ever you chose. YOU WILL NEED TO SET THIS PATH!!!! </td>
               </tr>
             </table>
             <br>
@@ -97,9 +102,9 @@ Be sure to backup your files before using mod installers such as <a href="http:/
             <br>
             <table width="90%" height="78" border="0" align="center">
               <tr>
-                <td background="imgs/transparent_fill.png"><p class="style4">TE's FBX format is 2009.. This will not load directly into Blender.. However, you can download <a href="http://usa.autodesk.com/adsk/servlet/pc/item?siteID=123112&id=22694909">AutoDesk' FREE FBX converter.</a> It can load and convert 2009 to new versions and also export in other formats such as OBJ. This tool of AutoDesk's should be in every 3D artist toolbox! </p>
+                <td background="imgs/transparent_fill.png"><p class="style4">TE's exports version 2009 FBX.. This will not load directly into Blender.. However, you can download <a href="http://usa.autodesk.com/adsk/servlet/pc/item?siteID=123112&id=22694909">AutoDesk' FREE FBX converter.</a> It can load and convert 2009 to new versions and also export in other formats such as OBJ. This tool of AutoDesk's should be in every 3D artist toolbox! </p>
                   <p class="style4">There are some items on the Menu bar that are pretty self explanatory. Try clicking them after a tank is loaded to see what they do.<br>
-                    Currently, TE can NOT import tanks and some tanks MAY be missing off the list.<br>
+                    Currently, TE can NOT import tanks and some tanks MAY be missing off the list. Some guns are missing as well.<br>
                   </p></td>
               </tr>
             </table>
