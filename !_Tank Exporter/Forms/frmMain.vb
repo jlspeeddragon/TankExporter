@@ -29,6 +29,7 @@ Imports System.Globalization
 
 Public Class frmMain
 #Region "variables"
+    Dim out_string As New StringBuilder
     Public Background_image_id As Integer
     Private window_state As Integer
     Public Show_lights As Boolean = False
@@ -46,9 +47,9 @@ Public Class frmMain
     Public shared_contents_build As New Ionic.Zip.ZipFile
     Public gui_pkg As Ionic.Zip.ZipFile
     Public scripts_pkg As Ionic.Zip.ZipFile
-
     Dim treeviews(10) As TreeView
     Public icons(10) As pngs
+    Public view_status_string As String
     Structure pngs
         Public img() As System.Drawing.Bitmap
     End Structure
@@ -73,8 +74,9 @@ Public Class frmMain
     Dim TreeView8 As New TreeView
     Dim TreeView9 As New TreeView
     Dim TreeView10 As New TreeView
-
+    Dim spin_light As Boolean = False
 #End Region
+
 
     Private Sub frmMain_FormClosing(sender As Object, e As FormClosingEventArgs) Handles Me.FormClosing
         _Started = False
@@ -108,6 +110,11 @@ Public Class frmMain
     End Sub
 
     Private Sub frmMain_KeyDown(sender As Object, e As KeyEventArgs) Handles Me.KeyDown
+        Dim tab = TC1.SelectedTab
+        Dim c = tab.Controls
+        Dim t = DirectCast(c(0), TreeView)
+        t.SelectedNode = Nothing
+        t.Parent.Focus()
         If e.KeyCode = 16 Then
             move_mod = True
         End If
@@ -215,7 +222,6 @@ Public Class frmMain
         Cam_Y_angle = -PI * 0.25
         view_radius = -10.0
         tank_label.Text = ""
-        Me.Show()
         SplitContainer1.SplitterDistance = 720
         SplitContainer2.SplitterDistance = SplitContainer2.Height - 160
         Application.DoEvents()
@@ -225,6 +231,7 @@ Public Class frmMain
         iconbox.Visible = False
         Application.DoEvents()
         pb1.Visible = True
+        frmState = Me.WindowState
 
         '---------------------------
         info_Label.BringToFront()
@@ -247,6 +254,7 @@ Public Class frmMain
         'tanklist.BackColor = iconbox.BackColor
         tanklist.Font = TreeView1.Font
         tanklist.SendToBack()
+        Me.Show()
         Application.DoEvents()
 
         'fire up OpenGL amd IL
@@ -373,10 +381,6 @@ Public Class frmMain
         End If
         Application.DoEvents()
         '====================================================================================================
-        m_chassis.ForeColor = Color.DarkGreen
-        m_hull.ForeColor = Color.DarkGreen
-        m_turret.ForeColor = Color.DarkGreen
-        m_gun.ForeColor = Color.DarkGreen
         '====================================================================================================
         tank_label.Parent = iconbox
         tank_label.Text = ""
@@ -1513,6 +1517,7 @@ tryagain:
     Public Sub draw_scene()
         Application.DoEvents()
         If gl_stop Then Return
+        view_status_string = ""
         gl_busy = True
         'End If
         If Not (Wgl.wglMakeCurrent(pb1_hDC, pb1_hRC)) Then
@@ -1528,16 +1533,19 @@ tryagain:
         Gl.glDepthFunc(Gl.GL_LEQUAL)
         Gl.glFrontFace(Gl.GL_CW)
         'Gl.glCullFace(Gl.GL_BACK)
+        Gl.glPolygonOffset(1.0, 1.0)
         Gl.glLineWidth(1)
+        Gl.glPointSize(2.0)
         Gl.glClearColor(0.0F, 0.0F, 0.0F, 1.0F)
 
-        'Gl.glClear(Gl.GL_COLOR_BUFFER_BIT Or Gl.GL_DEPTH_BUFFER_BIT)
+        Gl.glClear(Gl.GL_COLOR_BUFFER_BIT Or Gl.GL_DEPTH_BUFFER_BIT)
         Gl.glDisable(Gl.GL_BLEND)
 
         Gl.glEnable(Gl.GL_LIGHTING)
         Gl.glEnable(Gl.GL_CULL_FACE)
 
         Gl.glEnable(Gl.GL_SMOOTH)
+        Gl.glEnable(Gl.GL_NORMALIZE)
 
 
         ResizeGL()
@@ -1568,16 +1576,33 @@ tryagain:
         Gl.glDepthFunc(Gl.GL_LEQUAL)
         Dim drawme As Boolean = True
 
-        Gl.glEnable(Gl.GL_NORMALIZE)
+        Dim l_color() = {0.3!, 0.3!, 0.3!}
 
+        If MODEL_LOADED Then
+            If m_show_fbx.Checked Then
+                view_status_string = ": FBX View "
+            Else
+                view_status_string = ": Model View "
+            End If
+            If m_show_bsp2.Checked Then
+                view_status_string = ": BSP2 View "
 
-        Gl.glEnable(Gl.GL_LIGHTING)
+            End If
+        Else
+            view_status_string = ": Nothing Loaded "
+        End If
+        If wire_cb.Checked Then
+            view_status_string += ": Solid : "
+        Else
+            view_status_string += ": Facets : "
+        End If
 
         ViewPerspective()
         set_eyes()
         Gl.glLightfv(Gl.GL_LIGHT0, Gl.GL_POSITION, position0)
         Gl.glLightfv(Gl.GL_LIGHT1, Gl.GL_POSITION, position1)
         Gl.glLightfv(Gl.GL_LIGHT2, Gl.GL_POSITION, position2)
+        Gl.glEnable(Gl.GL_LIGHTING)
 
         Gl.glPushMatrix()
         Gl.glDisable(Gl.GL_CULL_FACE)
@@ -1606,16 +1631,93 @@ tryagain:
         '-----------------------------------------------------------------------------
 
         Gl.glEnable(Gl.GL_DEPTH_TEST)
-        Gl.glColor3f(0.25, 0.25, 0.25)
-        If model_loaded And Not m_load_textures.Checked Then
+        Gl.glColor3fv(l_color)
+        'Draw Imported FBX if it exists?
+        If FBX_LOADED And m_show_fbx.Checked And Not m_show_bsp2.Checked Then
+            Gl.glEnable(Gl.GL_TEXTURE_2D)
+            If Not wire_cb.Checked Then
+                Gl.glEnable(Gl.GL_POLYGON_OFFSET_FILL)
+            End If
+            For jj = 1 To fbxgrp.Length - 1
+                If m_load_textures.Checked Then
+                    Gl.glColor3f(0.5, 0.5, 0.5)
+                    Gl.glBindTexture(Gl.GL_TEXTURE_2D, fbxgrp(jj).color_Id)
+                End If
+                Gl.glPushMatrix()
+                Gl.glMultMatrixd(fbxgrp(jj).matrix)
+                Gl.glCallList(fbxgrp(jj).call_list)
+                Gl.glPopMatrix()
+            Next
+            Gl.glBindTexture(Gl.GL_TEXTURE_2D, 0)
+            If Not wire_cb.Checked Then
+                Gl.glDisable(Gl.GL_TEXTURE_2D)
+                Gl.glDisable(Gl.GL_POLYGON_OFFSET_FILL)
+                Gl.glPolygonMode(Gl.GL_FRONT_AND_BACK, Gl.GL_LINE)
+                Gl.glColor3f(0.1, 0.1, 0.1)
+                For jj = 1 To fbxgrp.Length - 1
+                    Gl.glPushMatrix()
+                    Gl.glMultMatrixd(fbxgrp(jj).matrix)
+                    Gl.glCallList(fbxgrp(jj).call_list)
+                    Gl.glPopMatrix()
+                Next
+            End If
+        End If
+        'Dont draw textures?
+        If MODEL_LOADED And Not m_load_textures.Checked And Not m_show_fbx.Checked And Not m_show_bsp2.Checked Then
+            view_status_string += " Light Only : "
+            If Not wire_cb.Checked Then
+                Gl.glEnable(Gl.GL_POLYGON_OFFSET_FILL)
+            End If
             For jj = 1 To object_count
                 If _object(jj).visible Then
                     Gl.glCallList(_object(jj).main_display_list)
                 End If
             Next
+
+            If Not wire_cb.Checked Then
+                Gl.glDisable(Gl.GL_POLYGON_OFFSET_FILL)
+                Gl.glPolygonMode(Gl.GL_FRONT_AND_BACK, Gl.GL_LINE)
+                Gl.glColor3f(0.1, 0.1, 0.1)
+                For jj = 1 To object_count
+                    If _object(jj).visible Then
+                        Gl.glCallList(_object(jj).main_display_list)
+                    End If
+                Next
+
+            End If
+        End If
+        'draw BSP2?
+        If MODEL_LOADED And Not m_show_fbx.Checked And m_show_bsp2.Checked Then
+            Gl.glEnable(Gl.GL_LIGHTING)
+            Gl.glEnable(Gl.GL_POLYGON_OFFSET_FILL)
+            Gl.glPolygonMode(Gl.GL_FRONT_AND_BACK, Gl.GL_FILL)
+            For jj = 1 To object_count
+                If _object(jj).visible Then
+                    Gl.glCallList(_group(jj).bsp2_id)
+                End If
+            Next
+            Gl.glDisable(Gl.GL_POLYGON_OFFSET_FILL)
+            Gl.glPolygonMode(Gl.GL_FRONT_AND_BACK, Gl.GL_LINE)
+            Gl.glColor3f(0.1, 0.1, 0.1)
+            For jj = 1 To object_count
+                If _object(jj).visible Then
+                    Gl.glCallList(_group(jj).bsp2_id)
+                End If
+            Next
+        End If
+        'draw BSP2_Tree?
+        If MODEL_LOADED And Not m_show_fbx.Checked And m_show_bsp2_tree.Checked Then
+            view_status_string += ": BSP2 Tree Visiable : "
+            For jj = 1 To object_count
+                If _object(jj).visible Then
+                    Gl.glCallList(_group(jj).bsp2_tree_id)
+                End If
+            Next
         End If
         Dim id As Integer = SELECTED_CAMO_BUTTON
-        If model_loaded And m_load_textures.Checked Then
+        'Draw fully rendered?
+        If MODEL_LOADED And m_load_textures.Checked And Not m_show_fbx.Checked And Not m_show_bsp2.Checked Then
+            view_status_string += " Textured : "
             Gl.glUseProgram(shader_list.tank_shader)
             Gl.glUniform1i(tank_colorMap, 0)
             Gl.glUniform1i(tank_normalMap, 1)
@@ -1626,6 +1728,10 @@ tryagain:
             Gl.glUniform1f(tank_specular, CSng(frmLighting.specular_slider.Value / 100)) ' convert to 0.0 to 1.0
             Gl.glUniform1f(tank_ambient, CSng(frmLighting.ambient_slider.Value / 100))
             Gl.glUniform1f(tank_total, CSng(frmLighting.total_slider.Value / 100))
+
+            If Not wire_cb.Checked Then
+                Gl.glEnable(Gl.GL_POLYGON_OFFSET_FILL)
+            End If
 
             For jj = 1 To object_count - track_info.segment_count
                 Gl.glUniform1i(tank_is_GAmap, _object(jj).ANM)
@@ -1666,12 +1772,13 @@ tryagain:
                     If _object(jj).use_camo > 0 Then
                         Gl.glBindTexture(Gl.GL_TEXTURE_2D, bb_texture_ids(id))
                     End If
-
+                    'Gl.glPushMatrix()
+                    'Gl.glMultMatrixd(_object(jj).matrix)
                     Gl.glCallList(_object(jj).main_display_list)
+                    'Gl.glPopMatrix()
                 End If
             Next
             Gl.glUseProgram(0)
-
             'clear texture bindings
             Gl.glBindTexture(Gl.GL_TEXTURE_2D, 0) '4
             Gl.glActiveTexture(Gl.GL_TEXTURE0 + 3)
@@ -1682,17 +1789,49 @@ tryagain:
             Gl.glBindTexture(Gl.GL_TEXTURE_2D, 0) '1
             Gl.glActiveTexture(Gl.GL_TEXTURE0)
             Gl.glBindTexture(Gl.GL_TEXTURE_2D, 0) '0
+            If Not wire_cb.Checked Then
+                Gl.glDisable(Gl.GL_TEXTURE_2D)
+                Gl.glDisable(Gl.GL_LIGHTING)
+                Gl.glDisable(Gl.GL_POLYGON_OFFSET_FILL)
+                Gl.glPolygonMode(Gl.GL_FRONT_AND_BACK, Gl.GL_LINE)
+                Gl.glColor3f(0.0, 0.0, 0.0)
+                For jj = 1 To object_count
+                    Gl.glCallList(_object(jj).main_display_list)
+                Next
+            End If
         End If
+        Gl.glPolygonMode(Gl.GL_FRONT_AND_BACK, Gl.GL_FILL)
 
+        'Draw Surface Normals?
         If normal_shader_mode > 0 Then
             Gl.glUseProgram(shader_list.normal_shader)
             Gl.glUniform1i(normal_shader_mode_id, normal_shader_mode)
-            If model_loaded Then
-                For jj = 1 To object_count
-                    If _object(jj).visible Then
-                        Gl.glCallList(_object(jj).main_display_list)
-                    End If
-                Next
+            If MODEL_LOADED Then
+                If normal_shader_mode = 1 Then
+                    view_status_string += " Normal View by Face : "
+                End If
+                If normal_shader_mode = 2 Then
+                    view_status_string += " Normal View by Vertex : "
+                End If
+                If FBX_LOADED And m_show_fbx.Checked Then ' FBX if loaded
+                    view_status_string += " Textured : "
+                    For jj = 1 To fbxgrp.Length - 1
+                        Gl.glPushMatrix()
+                        Gl.glMultMatrixd(fbxgrp(jj).matrix)
+                        Gl.glCallList(fbxgrp(jj).call_list)
+                        Gl.glPopMatrix()
+                    Next
+                Else
+                    For jj = 1 To object_count
+                        If _object(jj).visible Then
+                            If m_show_bsp2.Checked Then
+                                Gl.glCallList(_group(jj).bsp2_id) 'BSP2
+                            Else
+                                Gl.glCallList(_object(jj).main_display_list) 'Model
+                            End If
+                        End If
+                    Next
+                End If
             End If
             Gl.glUseProgram(0)
 
@@ -1700,7 +1839,7 @@ tryagain:
         End If
         '==========================================
         'track nurb points
-        If model_loaded And TESTING Then
+        If MODEL_LOADED And TESTING Then
             If object_count > 6 Then
                 Gl.glColor3f(0.9, 0.9, 0.9)
                 running = 0.0
@@ -1836,7 +1975,9 @@ tryagain:
         '==========================================
 
         Gl.glColor3f(0.3, 0.3, 0.3)
-        Gl.glCallList(grid)
+        If grid_cb.Checked Then
+            Gl.glCallList(grid)
+        End If
 
 
         Gl.glDisable(Gl.GL_LIGHTING)
@@ -1895,7 +2036,8 @@ tryagain:
         Dim fps As Integer = 1.0 / (screen_totaled_draw_time * 0.001)
         Dim str = " FPS: ( " + fps.ToString + " )"
         'swat.Stop()
-        glutPrint(10, 8 - pb1.Height, str.ToString, 0.0, 1.0, 0.0, 1.0)
+        glutPrint(10, 8 - pb1.Height, str.ToString, 0.0, 1.0, 0.0, 1.0) ' fps string
+        glutPrint(10, -20, view_status_string, 0.0, 1.0, 0.0, 1.0) ' view status
 
         Gl.glDisable(Gl.GL_BLEND)
 
@@ -2058,9 +2200,7 @@ tryagain:
         m_mouse.y = e.Y
 
         If BUTTON_ID > 0 Then
-            If BUTTON_ID > 0 Then
-                Return
-            End If
+            Return
         End If
 
         'If check_menu_select() Then ' check if we are over a button
@@ -2133,6 +2273,7 @@ tryagain:
                 mouse.y = e.Y
             End If
             'draw_scene()
+            'Debug.WriteLine(Cam_X_angle.ToString("0.000") + " " + Cam_Y_angle.ToString("0.000"))
             Return
         End If
         If move_cam_z Then
@@ -2197,7 +2338,6 @@ tryagain:
 
         Return update
     End Function
-    Dim spin_light As Boolean = False
     Public Sub update_mouse()
         Dim l_rot As Single
         Dim sun_angle As Single = 0
@@ -2207,10 +2347,9 @@ tryagain:
         screen_totaled_draw_time = 10.0
         Dim swat As New Stopwatch
         While _Started
+            need_update()
             angle_offset = 0
-            If need_update() Then
-                'If we need to update the screen, lets calculate draw times.
-            End If
+
             '	Application.DoEvents()
             If Not gl_busy And Not Me.WindowState = FormWindowState.Minimized Then
 
@@ -2282,6 +2421,941 @@ tryagain:
         update_thread.Start()
     End Sub
 #End Region
+    Public Sub clean_house()
+        'reset data params
+        MODEL_LOADED = False
+        m_pick_camo.Enabled = False
+        LAST_SEASON = 10
+        season_Buttons_VISIBLE = False
+        CAMO_BUTTONS_VISIBLE = False
+        GLOBAL_exclusionMask = 0
+        exclusionMask_sd = -1
+        HD_TANK = True
+        object_count = 0
+        m_show_bsp2.Checked = False
+        If Not bb_texture_list(0) = "" Then
+            For i = 0 To bb_texture_list.Length - 1
+                Gl.glDeleteTextures(1, bb_texture_ids(i))
+                Gl.glFinish()
+                Gl.glDeleteTextures(1, bb_camo_texture_ids(i))
+                Gl.glFinish()
+            Next
+        End If
+        ReDim textures(0)
+
+        '-------------------------------------------------------
+        If object_count > 0 Then
+            For i = 1 To object_count
+                Gl.glDeleteLists(_object(i).main_display_list, 1)
+                Gl.glFinish()
+                Gl.glDeleteTextures(1, _group(i).color_Id)
+                Gl.glFinish()
+                Gl.glDeleteTextures(1, _group(i).normal_Id)
+                Gl.glFinish()
+                Gl.glDeleteTextures(1, _group(i).detail_Id)
+                Gl.glFinish()
+                Gl.glDeleteTextures(1, _group(i).ao_id)
+                Gl.glFinish()
+                Gl.glDeleteTextures(1, _group(i).metalGMM_Id)
+                Gl.glFinish()
+            Next
+        End If
+        ReDim _object(0)
+        _object(0) = New obj
+        object_count = 0
+    End Sub
+
+    '##################################################################################
+    Public Sub process_tank(ByVal save_tank As Boolean)
+        'need to set these before loading anyhing
+        clean_house()
+        '===================================
+        Dim ar = file_name.Split(":")
+        file_name = ar(2)
+        Dim ts = ar(1)
+        ar = ts.Split("\")
+        For i = 0 To ar.Length - 1
+            If ar(i).ToLower.Contains("level_") Then
+                ts = ar(i)
+                Exit For
+            End If
+        Next
+        ar = ts.Split("_")
+        ts = ar(2)
+        ar = ts.Split(".")
+        Dim fd As String = "lod0"
+        Try
+            current_tank_package = CInt(ar(0))
+
+        Catch ex As Exception
+            Try
+                If ts.ToLower.Contains("\shared") Then
+                    current_tank_package = 11
+                End If
+                If ts.ToLower.Contains("\shared_sandbox") Then
+                    current_tank_package = 11
+                End If
+            Catch eex As Exception
+                MsgBox("Unable to find package file!", MsgBoxStyle.Exclamation, "Well shit...")
+                Return
+            End Try
+
+        End Try
+        '########################################################
+        'get the tank info from scripts package
+        ar = file_name.Split("/")
+        Dim xml_file = ar(0) + "\" + ar(1) + "\" + ar(2) + ".xml"
+        Dim t As New DataSet
+        get_tank_parts_from_xml(xml_file, t)
+        If t.Tables.Count = 0 Then
+            Return
+        End If
+        '-----------------------------------
+        'see if this is the old style tanks
+        If GLOBAL_exclusionMask = 1 Then
+            Dim et = t.Tables("exclusionMask")
+            Dim eq = From row In et.AsEnumerable _
+                     Select _
+                     na = row.Field(Of String)("name")
+            exclusionMask_name = eq(0)
+            Dim en = packages(current_tank_package)(exclusionMask_name)
+            Dim ms As New MemoryStream
+            If en Is Nothing Then
+                en = packages(11)(exclusionMask_name)
+                If en Is Nothing Then
+                    en = shared_sandbox_pkg(exclusionMask_name)
+                End If
+            End If
+            If en IsNot Nothing Then
+                en.Extract(ms)
+                exclusionMask_id = get_texture(ms, exclusionMask_name)
+            Else
+                log_text.AppendLine("unable to locate : " + exclusionMask_name)
+            End If
+        End If
+        '-------------------------------------------------------
+        'Return
+        'get take part paths from table
+        Dim turrets(10) As String
+        Dim guns(10) As String
+        Dim hulls(10) As String
+        Dim chassis(10) As String
+        ReDim hull_tile(10)
+        ReDim gun_tile(10)
+        ReDim turret_tile(GLUT_BITMAP_HELVETICA_10)
+        Dim cnt As Integer = 0
+
+        Dim tbl = t.Tables("gun")
+        Dim q = From row In tbl.AsEnumerable _
+                Select _
+                g_name = row.Field(Of String)("gun_name"), _
+                model = row.Field(Of String)("model"), _
+                tile = row.Field(Of String)("gun_camouflage")
+        cnt = 0
+        '-------------------------------------------------------
+        'guns
+        For Each thing In q
+            Dim gn = thing.model
+            guns(cnt) = gn
+            gun_tile(cnt) = New vect4
+            If thing.tile IsNot Nothing Then
+
+                Dim n = thing.tile.Split(" ")
+                gun_tile(cnt).x = CSng(n(0))
+                gun_tile(cnt).y = CSng(n(1))
+                gun_tile(cnt).z = CSng(n(2))
+                gun_tile(cnt).w = CSng(n(3))
+                cnt += 1
+            Else
+                gun_tile(cnt).x = 1.0
+                gun_tile(cnt).y = 1.0
+                gun_tile(cnt).z = 0.0
+                gun_tile(cnt).w = 0.0
+                cnt += 1
+
+            End If
+        Next
+        If cnt = 0 Then
+            bad_tanks.AppendLine(file_name)
+            Return
+        End If
+        ReDim Preserve guns(cnt)
+        ReDim Preserve gun_tile(cnt)
+        cnt = 0
+        '-------------------------------------------------------
+        '----- turret tiling
+        Try
+            tbl = t.Tables("turret_tiling")
+
+            Dim q25 = From row In tbl.AsEnumerable _
+                      Select _
+                      tile = row.Field(Of String)("tiling")
+
+            For Each thing In q25
+                Dim n = thing.Split(" ")
+                turret_tile(cnt).x = CSng(n(0))
+                turret_tile(cnt).y = CSng(n(1))
+                turret_tile(cnt).z = CSng(n(2))
+                turret_tile(cnt).w = CSng(n(3))
+                cnt += 1
+            Next
+            ReDim Preserve turret_tile(cnt)
+            cnt = 0
+        Catch ex As Exception
+            tbl = t.Tables("tiling")
+
+            Dim q25 = From row In tbl.AsEnumerable _
+                      Select _
+                      tile = row.Field(Of String)("tiling_Text")
+
+            For Each thing In q25
+                Dim n = thing.Split(" ")
+                turret_tile(cnt).x = CSng(n(0))
+                turret_tile(cnt).y = CSng(n(1))
+                turret_tile(cnt).z = CSng(n(2))
+                turret_tile(cnt).w = CSng(n(3))
+                cnt += 1
+            Next
+            ReDim Preserve turret_tile(cnt)
+            cnt = 0
+
+        End Try
+
+        '-------------------------------------------------------
+        '----- turrets
+        tbl = t.Tables("turret_model")
+        If tbl Is Nothing Then
+
+        Else
+
+            Dim q1 = From row In tbl.AsEnumerable _
+                Select _
+                turret = row.Field(Of String)("model")
+
+            For Each r0 In q1
+                turrets(cnt) = r0
+                cnt += 1
+            Next
+            If cnt = 0 Then
+                bad_tanks.AppendLine(file_name)
+                Return
+            End If
+            ReDim Preserve turrets(cnt)
+        End If
+        cnt = 0
+        '-------------------------------------------------------
+        '----- chassis
+
+        tbl = t.Tables("chassis")
+        Dim q2 = From row In tbl.AsEnumerable _
+          Select _
+          chass = row.Field(Of String)("model")
+        For Each thing In q2
+
+            chassis(cnt) = thing
+            cnt += 1
+        Next
+        If cnt = 0 Then
+            bad_tanks.AppendLine(file_name)
+            Return
+        End If
+        ReDim Preserve chassis(cnt)
+        cnt = 0
+        '-------------------------------------------------------
+        '----- hull
+        tbl = t.Tables("hull")
+        Dim q3 = From row In tbl.AsEnumerable
+             Select _
+             model = row.Field(Of String)("model"), _
+             tile = row.Field(Of String)("hull_camouflage")
+
+        For Each thing In q3
+            hulls(cnt) = thing.model
+            hull_tile(cnt) = New vect4
+            Dim n = thing.tile.Split(" ")
+            hull_tile(cnt).x = CSng(n(0))
+            hull_tile(cnt).y = CSng(n(1))
+            hull_tile(cnt).z = CSng(n(2))
+            hull_tile(cnt).w = CSng(n(3))
+            cnt += 1
+        Next
+        If cnt = 0 Then
+            bad_tanks.AppendLine(file_name)
+            Return
+        End If
+        ReDim Preserve hulls(cnt)
+        ReDim Preserve hull_tile(cnt)
+        cnt = 0
+        '-------------------------------------------------------
+        'Array.Sort(guns)
+        'Array.Sort(turrets)
+        'Array.Sort(hulls)
+        'Array.Sort(chassis)
+        turret_count = 0
+        hull_count = 0
+        Dim turret_name = turrets(turrets.Length - 2)
+        turret_tiling = turret_tile(turrets.Length - 2)
+        Dim hull_name = hulls(hulls.Length - 2)
+        hull_tiling = hull_tile(hulls.Length - 2)
+        Dim chassis_name = chassis(chassis.Length - 2)
+        Dim gun_name As String = ""
+        Dim ti, tj As New vect4
+        If guns.Length = 10 Then
+            gun_name = guns(guns.Length - 2)
+            ti = gun_tile(guns.Length - 2)
+            tj = ti
+            tj.w = ti.z
+            tj.z = ti.w
+            gun_tiling = tj
+        Else
+            gun_name = guns(guns.Length - 2)
+            ti = gun_tile(guns.Length - 2)
+            tj = ti
+            tj.w = ti.z
+            tj.z = ti.w
+            gun_tiling = tj
+        End If
+        '========================================
+        Dim nation_string As String = ""
+        Select Case ar(1)
+            Case "american"
+                CURRENT_DATA_SET = 0
+                nation_string = "usa"
+            Case "british"
+                CURRENT_DATA_SET = 1
+                nation_string = "uk"
+            Case "chinese"
+                CURRENT_DATA_SET = 2
+                nation_string = "china"
+            Case "czech"
+                CURRENT_DATA_SET = 3
+                nation_string = "czech"
+            Case "french"
+                CURRENT_DATA_SET = 4
+                nation_string = "france"
+            Case "german"
+                CURRENT_DATA_SET = 5
+                nation_string = "germany"
+            Case "japan"
+                CURRENT_DATA_SET = 6
+                nation_string = "japan"
+            Case "poland"
+                CURRENT_DATA_SET = 7
+                nation_string = "poland"
+            Case "russian"
+                CURRENT_DATA_SET = 8
+                nation_string = "ussr"
+            Case "sweden"
+                CURRENT_DATA_SET = 9
+                nation_string = "sweden"
+        End Select
+        TANK_NAME = "vehicles\" + ar(1) + "\" + ar(2) + ":" + current_tank_package.ToString
+        '===================================
+        Dim d = custom_tables(CURRENT_DATA_SET).Copy
+        '===================================
+
+        Dim tt = d.Tables("camouflage")
+        Dim qq = From row In tt.AsEnumerable
+        Select _
+        armorC = row.Field(Of String)("armorcolor")
+        ARMORCOLOR = get_vect4(qq(0))
+
+
+        'clear tank variables
+        gun_trans = New vect3
+        gun_trans2 = New vect3
+        turret_trans = New vect3
+        hull_trans = New vect3
+        gun_location = New vect3
+        turret_location = New vect3
+        'make sure visiblity check boxes are checked
+        If Not chassis_cb.Checked Then
+            chassis_cb.Checked = True
+        End If
+        If Not hull_cb.Checked Then
+            hull_cb.Checked = True
+        End If
+        If Not turret_cb.Checked Then
+            turret_cb.Checked = True
+        End If
+        If Not gun_cb.Checked Then
+            gun_cb.Checked = True
+        End If
+        '-------------------------------------------------------
+        If TESTING Then
+
+            'test stuff to grab track stuff
+            tbl = t.Tables("track_info")
+            Dim tq = From row In tbl.AsEnumerable
+                     Select _
+                     seg_cnt = row.Field(Of String)("seg_cnt")
+
+
+            If tq(0).Contains("1") Then
+                track_info.segment_count = 1
+                Dim t1q = From row In tbl.AsEnumerable
+                          Select _
+                          trp = row.Field(Of String)("right_filename"), _
+                          tlp = row.Field(Of String)("left_filename"), _
+                          seglength = row.Field(Of String)("segment_length"), _
+                          seg_off = row.Field(Of String)("segmentOffset")
+                For Each tr In t1q
+                    track_info.left_path1 = tr.tlp
+                    track_info.right_path1 = tr.trp
+                    track_info.segment_length = tr.seglength
+                    track_info.segment_offset1 = tr.seg_off
+                Next
+
+            Else
+                track_info.segment_count = 2
+                Dim t1q = From row In tbl.AsEnumerable
+                          Select _
+                          trp = row.Field(Of String)("right_filename"), _
+                          tlp = row.Field(Of String)("left_filename"), _
+                          seglength = row.Field(Of String)("segment_length"), _
+                          seg_off = row.Field(Of String)("segmentOffset"), _
+                          trp2 = row.Field(Of String)("right2_filename"), _
+                          tlp2 = row.Field(Of String)("left2_filename"), _
+                          seg_off2 = row.Field(Of String)("segment2Offset")
+                For Each tr In t1q
+                    track_info.left_path1 = tr.tlp
+                    track_info.right_path1 = tr.trp
+                    track_info.left_path2 = tr.tlp2
+                    track_info.right_path2 = tr.trp2
+                    track_info.segment_length = tr.seglength
+                    track_info.segment_offset1 = tr.seg_off
+                    track_info.segment_offset2 = tr.seg_off2
+                Next
+
+            End If
+
+
+
+            Dim tra() = chassis_name.Split("/")
+            Dim track_path = Path.GetDirectoryName(track_info.left_path1) + "\right.track"
+            Dim tent = packages(current_tank_package)(track_path)
+            Dim t_data As New DataSet
+            If tent IsNot Nothing Then
+                Dim ms As New MemoryStream
+                tent.Extract(ms)
+                openXml_stream(ms, "right.track")
+                get_track_section()
+
+            End If
+            If track_info.segment_offset2 > track_info.segment_offset1 Then
+                Dim t_seg = track_info.segment_offset1
+                track_info.segment_offset1 = track_info.segment_offset2
+                track_info.segment_offset2 = t_seg
+            End If
+            running = 0
+            path_pointer1 = 0
+            track_length = 0
+            For i = 0 To tracks.Length - 1
+                catmullrom.CatmullRomSpline_get_length(i)
+            Next
+            Dim lenS = running / track_info.segment_length
+            If Z_Flipped Then
+                lenS -= 1.0
+            Else
+                lenS -= 1.0
+
+            End If
+            segment_length_adjusted = running / (Floor(lenS))
+            Dim refact = track_info.segment_length / segment_length_adjusted
+            track_info.segment_offset1 /= refact
+            track_info.segment_offset2 /= refact
+            Dim half = track_info.segment_offset2
+            '========= segment 1 =========
+            ReDim path_data1(CInt(Floor(lenS)) + 3)
+            If Z_Flipped Then
+                running = 0 + track_info.segment_offset1 + half
+            Else
+                running = 0 + track_info.segment_offset1 + half
+            End If
+            GC.Collect()
+            GC.WaitForFullGCComplete()
+            path_pointer1 = 0
+            track_length = 0
+            For i = 0 To tracks.Length - 1
+                catmullrom.GetCatmullRomSpline1(i)
+            Next
+            ReDim Preserve path_data1(path_pointer1)
+            get_tread_rotations1()
+            '========= segment 2 =========
+            If track_info.segment_count = 2 Then
+                ReDim path_data2(CInt(Floor(lenS)) + 3)
+                track_length = 0
+                If Z_Flipped Then
+                    running = 0 + track_info.segment_offset2 + half
+                Else
+                    running = 0 + track_info.segment_offset2 + half
+                End If
+                path_pointer2 = 0
+                For i = 0 To tracks.Length - 1
+                    catmullrom.GetCatmullRomSpline2(i)
+                Next
+                ReDim Preserve path_data2(path_pointer2)
+                get_tread_rotations2()
+            End If
+
+        End If
+        file_name = chassis_name
+        build_primitive_data(False) ' -- chassis
+
+        file_name = hull_name
+        build_primitive_data(True) ' -- chassis
+
+        file_name = turret_name
+        build_primitive_data(True) ' -- chassis
+
+        file_name = gun_name
+        build_primitive_data(True) ' -- chassis
+
+        file_name = track_info.left_path1
+        build_primitive_data(True) ' -- chassis
+        If TESTING Then
+
+            If track_info.segment_count = 2 Then
+                file_name = track_info.left_path2
+                build_primitive_data(True) ' -- chassis
+            End If
+
+        End If
+
+
+        model_loaded = True
+        part_counts = New part_counts_
+        For i = 1 To object_count
+            If _object(i).name.ToLower.Contains("chassis") Then
+                part_counts.chassis_cnt += _object(i).count
+            End If
+            If _object(i).name.ToLower.Contains("hull") Then
+                part_counts.hull_cnt += _object(i).count
+            End If
+            If _object(i).name.ToLower.Contains("turret") Then
+                part_counts.turret_cnt += _object(i).count
+            End If
+            If _object(i).name.ToLower.Contains("gun") Then
+                part_counts.gun_cnt += _object(i).count
+            End If
+
+        Next
+        'get data_set camo set we will use
+        'and string to scripts package
+
+        If save_tank Then
+
+            Dim rot_limit_l, rot_limit_r As Single
+            Dim gun_limit_u, gun_limit_d As Single
+            rot_limit_l = -400.0
+            rot_limit_r = 400.0
+
+            Dim ent = scripts_pkg("scripts\item_defs\vehicles\" + nation_string + "\" + ar(2) + ".xml")
+            Dim ms As New MemoryStream
+            ent.Extract(ms)
+            openXml_stream(ms, "")
+            Dim docx = XDocument.Parse(TheXML_String)
+            Dim xmlroot As XmlNode = xDoc.CreateElement(XmlNodeType.Element, "root", "")
+            'doc.DocumentElement.ParentNode.Value = "<root>" + vbCrLf + "</root>"
+            For Each n As XElement In docx.Descendants("turretYawLimits")
+                n.Value = n.Value.Replace("/", "\")
+                Dim ar2 = n.Value.Split(" ")
+                rot_limit_l = ar2(0)
+                rot_limit_r = ar2(1)
+                Exit For
+            Next
+
+            For Each n As XElement In docx.Descendants("minPitch")
+                n.Value = n.Value.Replace("/", "\")
+                Dim ar2 = n.Value.Split(" ")
+                gun_limit_u = -ar2(1)
+                Exit For
+            Next
+            For Each n As XElement In docx.Descendants("maxPitch")
+                n.Value = n.Value.Replace("/", "\")
+                Dim ar2 = n.Value.Split(" ")
+                gun_limit_d = -ar2(1)
+                Exit For
+            Next
+
+
+            If rot_limit_l = -180 Then rot_limit_l = -400
+            If rot_limit_r = 180 Then rot_limit_r = 400
+
+            Dim fo = File.Open(Application.StartupPath + "\tanks\" + ar(2) + ".tank", FileMode.OpenOrCreate)
+            Dim fw As New BinaryWriter(fo)
+            'version changes
+            'ver 1 
+
+            Dim version As Integer = 1
+            Dim rotation_limit As Single = 0.0
+            'ver 1
+            Dim s1 = "File format: 1 INT32 as version, INT32 as chassis and hull vertex count, INT32 as turret vertex count, INT32 as Gun vertex Count."
+            Dim s2 = "3 Floats turret pivot center XYZ, " + _
+                    "2 Floats rotation limits L&R,"
+            Dim s3 = "3 Floats gun pivot point XYZ , 2 Floats gun limits U&D, " + _
+                    "6 Floats as list of vertices:Each being (position XYZ Normal XYZ), "
+            Dim s4 = "9 Floats for future use."
+            fw.Write(s1)
+            fw.Write(s2)
+            fw.Write(s3)
+            fw.Write(s4)
+            fw.Write(version)
+
+            fw.Write(part_counts.chassis_cnt + part_counts.hull_cnt)
+            fw.Write(part_counts.turret_cnt)
+            fw.Write(part_counts.gun_cnt)
+            'turret info
+            fw.Write(turret_location.x)
+            fw.Write(turret_location.y)
+            fw.Write(turret_location.z)
+            fw.Write(rot_limit_l)
+            fw.Write(rot_limit_r)
+            'gun info
+            fw.Write(gun_location.x)
+            fw.Write(gun_location.y)
+            fw.Write(gun_location.z)
+            fw.Write(gun_limit_u)
+            fw.Write(gun_limit_d)
+            'extra vects
+            '1
+            fw.Write(1.0!)
+            fw.Write(1.0!)
+            fw.Write(1.0!)
+            '2
+            fw.Write(1.0!)
+            fw.Write(1.0!)
+            fw.Write(1.0!)
+            '3
+            fw.Write(1.0!)
+            fw.Write(1.0!)
+            fw.Write(1.0!)
+
+            For i = 1 To object_count
+                If _object(i).name.ToLower.Contains("chassis") Then
+                    write_vertex_data(_object(i), fw)
+                End If
+                If _object(i).name.ToLower.Contains("hull") Then
+                    write_vertex_data(_object(i), fw)
+                End If
+                If _object(i).name.ToLower.Contains("turret") Then
+                    write_vertex_data(_object(i), fw)
+                End If
+                If _object(i).name.ToLower.Contains("gun") Then
+                    write_vertex_data(_object(i), fw)
+                End If
+
+            Next
+
+            fo.Close()
+        End If
+        If FBX_LOADED Then
+            m_show_fbx.Visible = True
+            m_show_fbx.Checked = False
+        End If
+        m_pick_camo.Enabled = True
+    End Sub
+    Private Sub get_track_section()
+
+        Dim docx = XDocument.Parse(TheXML_String.Replace("matrix", "position"))
+        Dim doc As New XmlDocument
+        Dim xmlroot As XmlNode = xDoc.CreateElement(XmlNodeType.Element, "root", "")
+        Dim root_node As XmlNode = doc.CreateElement("model")
+        doc.AppendChild(root_node)
+
+        For Each node In docx.Descendants("node")
+            Dim node_ = doc.CreateElement("node")
+            Dim name = doc.CreateElement("name")
+            Dim matrix = doc.CreateElement("matrix")
+            For Each n In node.Descendants("name")
+                name.InnerText = n.Value.ToString
+                node_.AppendChild(name)
+            Next
+            For Each mat In node.Descendants("position")
+                matrix.InnerText = mat.Value.ToString.Replace("position", "")
+                node_.AppendChild(matrix)
+            Next
+            root_node.AppendChild(node_)
+        Next
+
+
+        Dim fm As New MemoryStream
+        doc.Save(fm)
+        fm.Position = 0
+        Dim data_set As New DataSet
+        data_set.ReadXml(fm)
+
+        Dim t = data_set.Tables("node")
+        Dim q = From row In t.AsEnumerable
+                Select _
+                Name = row.Field(Of String)("name"), _
+           Matrix = row.Field(Of String)("matrix")
+        ' id = row.Field(Of String)("id"), _
+
+        ReDim tracks(q.Count - 1)
+
+        Dim cnt As Integer = 0
+        For Each trk In q
+            tracks(cnt) = New track_
+            ReDim tracks(cnt).matrix(15)
+            tracks(cnt).name = trk.Name
+            ' tracks(cnt).id = trk.id
+            Dim ar = trk.Matrix.Split(" ")
+            Dim j As Integer = 0
+            If ar.Length > 3 Then
+                Dim mm(15) As Single
+                For Each m In ar
+
+                    If CSng(m) > 1.0 Or CSng(m) < -1.0 Then
+                        mm(j) = CSng(m) * 0.01
+                    Else
+                        mm(j) = CSng(m)
+                    End If
+                    j += 1
+                    If j = 16 Then Exit For
+                Next
+                tracks(cnt).position.X = mm(3)
+                tracks(cnt).position.Y = mm(7)
+                tracks(cnt).position.Z = -mm(11)
+
+            Else
+                j = 0
+                Dim mm(15) As Single
+                For Each m In ar
+
+                    mm(j) = CSng(m)
+                    j += 1
+                    If j = 3 Then Exit For
+                Next
+                tracks(cnt).position.X = mm(0)
+                tracks(cnt).position.Y = mm(1)
+                tracks(cnt).position.Z = -mm(2)
+
+            End If
+            cnt += 1
+        Next
+        'check if we need to flip the Z on this track.
+        If tracks(0).position = tracks(tracks.Length - 1).position Then
+            ReDim Preserve tracks(tracks.Length - 2)
+        End If
+        Dim vv = tracks(0).position
+
+        Z_Flipped = False
+        If vv.Z < 0 Then
+            For i = 0 To tracks.Length - 1
+                tracks(i).position.Z *= -1.0
+            Next
+            Z_Flipped = True
+        End If
+        If vv.Y < 0 Then
+            For i = 0 To tracks.Length - 1
+                tracks(i).position.Z *= -1.0
+            Next
+        End If
+        data_set.Dispose()
+
+        fm.Dispose()
+
+
+    End Sub
+
+    Private Sub get_tread_rotations1()
+        For i = 0 To path_pointer1 - 1
+            path_data1(check_pos(i + 1, path_pointer1)).angle = 0
+            path_data1(check_pos(i + 1, path_pointer1)).zc = 0
+            path_data1(check_pos(i + 1, path_pointer1)).yc = 0
+        Next
+        For i = -2 To path_pointer1 - 1
+            path_data1(check_pos(i + 1, path_pointer1)).angle = 0
+            path_data1(check_pos(i + 1, path_pointer1)).zc = 0
+            path_data1(check_pos(i + 1, path_pointer1)).yc = 0
+            get_angle_and_center(i, path_data1, path_pointer1)
+        Next
+
+    End Sub
+    Private Sub get_tread_rotations2()
+        For i = 0 To path_pointer2 - 1
+            path_data2(check_pos(i + 1, path_pointer2)).angle = 0
+            path_data2(check_pos(i + 1, path_pointer2)).zc = 0
+            path_data2(check_pos(i + 1, path_pointer2)).yc = 0
+        Next
+        For i = -1 To path_pointer2 - 1
+            path_data2(check_pos(i + 1, path_pointer2)).angle = 0
+            path_data2(check_pos(i + 1, path_pointer2)).zc = 0
+            path_data2(check_pos(i + 1, path_pointer2)).yc = 0
+            get_angle_and_center(i, path_data2, path_pointer2)
+        Next
+
+    End Sub
+    Private Sub get_angle_and_center(ByVal pos As Integer, ByRef path_data() As path_data_, ByVal path_pointer As Integer)
+        Dim yc, zc As Single
+        Dim y1, z1, y2, z2, y3, z3 As Single
+        Dim direction As Integer
+        Dim cnt As Integer
+        Dim z__ As Decimal
+
+        Dim p1, p2, p3 As SlimDX.Vector3
+
+        p1 = path_data(check_pos(pos, path_pointer)).pos1
+        p2 = path_data(check_pos(pos + 1, path_pointer)).pos1
+        p3 = path_data(check_pos(pos + 2, path_pointer)).pos1
+        'gotta flip y and z for this old algo to work
+        Dim rf As Integer = 3
+        y1 = Round(p1.Y, rf)
+        z1 = Round(p1.Z, rf)
+        y2 = Round(p2.Y, rf)
+        z2 = Round(p2.Z, rf)
+        y3 = Round(p3.Y, rf)
+        z3 = Round(p3.Z, rf)
+        Dim s As Single = 0.5D * ((y2 - y3) * (y1 - y3) - (z2 - z3) * (z3 - z1))
+        Dim sUnder As Single = (y1 - y2) * (z3 - z1) - (z2 - z1) * (y1 - y3)
+        If sUnder <> 0 Then
+
+            s /= sUnder
+
+            yc = Round(0.5D * (y1 + y2) + s * (z2 - z1), 3) ' center y coordinate
+            zc = Round(0.5D * (z1 + z2) + s * (y1 - y2), 3)  ' center y coordinate
+        End If
+        Dim radius As Single = CSng(Round((Sqrt(((y3 - yc) * (y3 - yc)) + ((z3 - zc) * (z3 - zc)))), 5))
+
+        z__ = (y2 - y1) * (z3 - z2)
+        z__ -= (z2 - z1) * (y3 - y2)
+        If z__ < 0 Then
+            cnt -= 1
+        Else
+            If z__ > 0 Then
+                cnt += 1
+            End If
+        End If
+        If z__ = 0 Then
+            direction = 0
+        End If
+        If cnt > 0 Then
+            direction = 3
+        Else
+            direction = 2
+        End If
+        Dim agl = Round(mAtan2(z2 - z1, y2 - y1), 6)
+        If zc = 0 And yc = 0 Then
+            path_data(check_pos(pos + 1, path_pointer)).angle = agl * 57.29577
+            path_data(check_pos(pos + 1, path_pointer)).zc = z2
+            path_data(check_pos(pos + 1, path_pointer)).yc = y2 + 0.25
+            Return
+            'End If
+        End If
+        Dim dyr1 As Single = CSng(Round(y1 - yc, 6))
+        Dim dy2 As Single = CSng(Round(y3 - yc, 6))
+        Dim dzr1 As Single = CSng(Round(z1 - zc, 6))
+        Dim dz2 As Single = CSng(Round(z2 - zc, 6))
+        Dim dy1 As Single = CSng(Round(y1 - yc, 6))
+        Dim dz1 As Single = CSng(Round(z2 - zc, 6))
+
+        Dim r1 = Sqrt((dyr1 * dyr1) + (dzr1 * dzr1))
+
+        Dim sa = Round(mAtan2(z1 - z2, y1 - y2), 6)
+        Dim ea = Round(mAtan2(z2 - z3, y2 - y3), 6)
+        Dim angle = Round(mAtan2(z2 - zc, y2 - yc), 6)
+        If direction = 3 Then
+            angle += PI / 2.0
+        Else
+            angle -= PI / 2.0
+        End If
+
+        path_data(check_pos(pos + 1, path_pointer)).angle = angle * 57.29577
+        path_data(check_pos(pos + 1, path_pointer)).zc = zc
+        path_data(check_pos(pos + 1, path_pointer)).yc = yc
+        If direction = 0 Then
+            Stop
+        End If
+        Return
+
+
+
+    End Sub
+    Private Function check_pos(ByVal p As Integer, ByVal path_pointer As Integer)
+        If p > path_pointer - 1 Then
+            p -= (path_pointer - 1)
+        End If
+        If p < 0 Then
+            p += (path_pointer - 1)
+        End If
+        Return p
+    End Function
+    Private Function mAtan2(ByVal y As Single, ByVal x As Single) As Single
+        Dim theta As Single
+        theta = CSng(Atan2(y, x))
+        If theta < 0 Then
+            theta += CSng((PI * 2))
+        End If
+        Return theta
+    End Function
+    Private Sub write_vertex_data(ByVal o As obj, ByVal fw As BinaryWriter)
+        For i As Integer = 1 To o.count
+            '1
+            fw.Write(o.tris(i).v1.x)
+            fw.Write(o.tris(i).v1.y)
+            fw.Write(o.tris(i).v1.z)
+            fw.Write(o.tris(i).n1.x)
+            fw.Write(o.tris(i).n1.y)
+            fw.Write(o.tris(i).n1.z)
+
+            '2
+            fw.Write(o.tris(i).v2.x)
+            fw.Write(o.tris(i).v2.y)
+            fw.Write(o.tris(i).v2.z)
+            fw.Write(o.tris(i).n2.x)
+            fw.Write(o.tris(i).n2.y)
+            fw.Write(o.tris(i).n2.z)
+
+            '3
+            fw.Write(o.tris(i).v3.x)
+            fw.Write(o.tris(i).v3.y)
+            fw.Write(o.tris(i).v3.z)
+            fw.Write(o.tris(i).n3.x)
+            fw.Write(o.tris(i).n3.y)
+            fw.Write(o.tris(i).n3.z)
+
+        Next
+    End Sub
+
+
+    Private Sub clear_node_selection(ByRef n As TreeNode)
+        If n.ForeColor = Color.White Then
+            n.ForeColor = Color.Black
+        End If
+    End Sub
+
+
+    Private Sub set_node_white(ByRef n As TreeNode)
+        n.ForeColor = Color.White
+    End Sub
+    Private Sub set_node_black(ByRef n As TreeNode)
+        n.ForeColor = Color.Black
+    End Sub
+
+    Private Sub get_tank_xml_data(ByVal n As TreeNode)
+        Dim q = From row In TankDataTable _
+            Where row.Field(Of String)("tag") = n.Text _
+  Select _
+       un = row.Field(Of String)("shortname"), _
+       tier = row.Field(Of String)("tier"), _
+       natiom = row.Field(Of String)("nation"), _
+       Type = row.Field(Of String)("type")
+       Order By tier Descending
+
+        'Dim a = q(0).un.Split(":")
+        If q(0) IsNot Nothing Then
+            out_string.Append(n.Text + ":" + q(0).un + ":" + q(0).natiom + ":" + q(0).tier + ":" + q(0).Type + ":")
+
+
+        End If
+
+    End Sub
+
+
+    Private Sub pb1_Paint(sender As Object, e As PaintEventArgs) Handles pb1.Paint
+        If w_changing Then draw_scene()
+    End Sub
 
 #Region "menu_button_functions"
     Private Sub m_load_Click(sender As Object, e As EventArgs) Handles m_load.Click
@@ -2692,7 +3766,7 @@ make_this_tank:
                 n.ForeColor = Color.Black
             End If
         Next
-
+        m_export_tank_list.Visible = True
         Application.DoEvents()
     End Sub
 
@@ -2792,66 +3866,6 @@ make_this_tank:
         File.WriteAllText(Application.StartupPath + "\tanks\tanknames.txt", out_string.ToString)
     End Sub
 
-    Private Sub m_chassis_CheckedChanged(sender As Object, e As EventArgs) Handles m_chassis.CheckedChanged
-        If Not model_loaded Then Return
-        If m_chassis.Checked Then
-            m_chassis.ForeColor = Color.DarkGreen
-        Else
-            m_chassis.ForeColor = Color.Black
-        End If
-        For i = 1 To object_count
-            If _object(i).name.ToLower.Contains("chassis") Then
-                'If i < 3 Then
-                _object(i).visible = m_chassis.Checked
-                'End If
-            End If
-        Next
-    End Sub
-
-    Private Sub m_hull_CheckedChanged(sender As Object, e As EventArgs) Handles m_hull.CheckedChanged
-        If Not model_loaded Then Return
-        If m_hull.Checked Then
-            m_hull.ForeColor = Color.DarkGreen
-        Else
-            m_hull.ForeColor = Color.Black
-        End If
-        For i = 1 To object_count
-            If _object(i).name.ToLower.Contains("hull_") Then
-                _object(i).visible = m_hull.Checked
-            End If
-        Next
-
-    End Sub
-
-    Private Sub m_turret_CheckedChanged(sender As Object, e As EventArgs) Handles m_turret.CheckedChanged
-        If Not model_loaded Then Return
-        If m_turret.Checked Then
-            m_turret.ForeColor = Color.DarkGreen
-        Else
-            m_turret.ForeColor = Color.Black
-        End If
-        For i = 1 To object_count
-            If _object(i).name.ToLower.Contains("turret_") Then
-                _object(i).visible = m_turret.Checked
-            End If
-        Next
-
-    End Sub
-
-    Private Sub m_gun_CheckedChanged(sender As Object, e As EventArgs) Handles m_gun.CheckedChanged
-        If Not model_loaded Then Return
-        If m_gun.Checked Then
-            m_gun.ForeColor = Color.DarkGreen
-        Else
-            m_gun.ForeColor = Color.Black
-        End If
-        For i = 1 To object_count
-            If _object(i).name.ToLower.Contains("gun_") Then
-                _object(i).visible = m_gun.Checked
-            End If
-        Next
-
-    End Sub
 
     Private Sub m_open_temp_folder_Click(sender As Object, e As EventArgs) Handles m_open_temp_folder.Click
         Dim f As DirectoryInfo = New DirectoryInfo(Temp_Storage)
@@ -2935,939 +3949,108 @@ make_this_tank:
         Me.Close()
     End Sub
 
-#End Region
-
-    Public Sub process_tank(ByVal save_tank As Boolean)
-        'need to set these before loading anyhing
-        GLOBAL_exclusionMask = 0
-        exclusionMask_sd = -1
-        HD_TANK = True
-        If Not bb_texture_list(0) = "" Then
-            For i = 0 To bb_texture_list.Length - 1
-                Gl.glDeleteTextures(1, bb_texture_ids(i))
-                Gl.glFinish()
-                Gl.glDeleteTextures(1, bb_camo_texture_ids(i))
-                Gl.glFinish()
-            Next
-        End If
-        model_loaded = False
-        '===================================
-        m_pick_camo.Enabled = False
-        LAST_SEASON = 10
-        season_Buttons_VISIBLE = False
-        CAMO_BUTTONS_VISIBLE = False
-        ReDim textures(0)
-        For i = 1 To 400
-            Gl.glDeleteTextures(1, delete_image_start + 1 + i) 'start one past camo ids
-            Gl.glFinish()
-        Next
-        Dim ar = file_name.Split(":")
-        file_name = ar(2)
-        Dim ts = ar(1)
-        ar = ts.Split("\")
-        For i = 0 To ar.Length - 1
-            If ar(i).ToLower.Contains("level_") Then
-                ts = ar(i)
-                Exit For
-            End If
-        Next
-        ar = ts.Split("_")
-        ts = ar(2)
-        ar = ts.Split(".")
-        Dim fd As String = "lod0"
-        Try
-            current_tank_package = CInt(ar(0))
-
-        Catch ex As Exception
-            Try
-                If ts.ToLower.Contains("\shared") Then
-                    current_tank_package = 11
-                End If
-                If ts.ToLower.Contains("\shared_sandbox") Then
-                    current_tank_package = 11
-                End If
-            Catch eex As Exception
-                MsgBox("Unable to find package file!", MsgBoxStyle.Exclamation, "Well shit...")
-                Return
-            End Try
-
-        End Try
-        '########################################################
-        'get the tank info from scripts package
-        ar = file_name.Split("/")
-        Dim xml_file = ar(0) + "\" + ar(1) + "\" + ar(2) + ".xml"
-        Dim t As New DataSet
-        get_tank_parts_from_xml(xml_file, t)
-        If t.Tables.Count = 0 Then
-            Return
-        End If
-        '-----------------------------------
-        'see if this is the old style tanks
-        If GLOBAL_exclusionMask = 1 Then
-            Dim et = t.Tables("exclusionMask")
-            Dim eq = From row In et.AsEnumerable _
-                     Select _
-                     na = row.Field(Of String)("name")
-            exclusionMask_name = eq(0)
-            Dim en = packages(current_tank_package)(exclusionMask_name)
-            Dim ms As New MemoryStream
-            If en Is Nothing Then
-                en = packages(11)(exclusionMask_name)
-                If en Is Nothing Then
-                    en = shared_sandbox_pkg(exclusionMask_name)
-                End If
-            End If
-            If en IsNot Nothing Then
-                en.Extract(ms)
-                exclusionMask_id = get_texture(ms, exclusionMask_name)
-            Else
-                log_text.AppendLine("unable to locate : " + exclusionMask_name)
-            End If
-        End If
-        '-------------------------------------------------------
-        'Return
-        'get take part paths from table
-        Dim turrets(10) As String
-        Dim guns(10) As String
-        Dim hulls(10) As String
-        Dim chassis(10) As String
-        ReDim hull_tile(10)
-        ReDim gun_tile(10)
-        ReDim turret_tile(GLUT_BITMAP_HELVETICA_10)
-        Dim cnt As Integer = 0
-
-        Dim tbl = t.Tables("gun")
-        Dim q = From row In tbl.AsEnumerable _
-                Select _
-                g_name = row.Field(Of String)("gun_name"), _
-                model = row.Field(Of String)("model"), _
-                tile = row.Field(Of String)("gun_camouflage")
-        cnt = 0
-        '-------------------------------------------------------
-        'guns
-        For Each thing In q
-            Dim gn = thing.model
-            guns(cnt) = gn
-            gun_tile(cnt) = New vect4
-            If thing.tile IsNot Nothing Then
-
-                Dim n = thing.tile.Split(" ")
-                gun_tile(cnt).x = CSng(n(0))
-                gun_tile(cnt).y = CSng(n(1))
-                gun_tile(cnt).z = CSng(n(2))
-                gun_tile(cnt).w = CSng(n(3))
-                cnt += 1
-            Else
-                gun_tile(cnt).x = 1.0
-                gun_tile(cnt).y = 1.0
-                gun_tile(cnt).z = 0.0
-                gun_tile(cnt).w = 0.0
-                cnt += 1
-
-            End If
-        Next
-        If cnt = 0 Then
-            bad_tanks.AppendLine(file_name)
-            Return
-        End If
-        ReDim Preserve guns(cnt)
-        ReDim Preserve gun_tile(cnt)
-        cnt = 0
-        '-------------------------------------------------------
-        '----- turret tiling
-        Try
-            tbl = t.Tables("turret_tiling")
-
-            Dim q25 = From row In tbl.AsEnumerable _
-                      Select _
-                      tile = row.Field(Of String)("tiling")
-
-            For Each thing In q25
-                Dim n = thing.Split(" ")
-                turret_tile(cnt).x = CSng(n(0))
-                turret_tile(cnt).y = CSng(n(1))
-                turret_tile(cnt).z = CSng(n(2))
-                turret_tile(cnt).w = CSng(n(3))
-                cnt += 1
-            Next
-            ReDim Preserve turret_tile(cnt)
-            cnt = 0
-        Catch ex As Exception
-            tbl = t.Tables("tiling")
-
-            Dim q25 = From row In tbl.AsEnumerable _
-                      Select _
-                      tile = row.Field(Of String)("tiling_Text")
-
-            For Each thing In q25
-                Dim n = thing.Split(" ")
-                turret_tile(cnt).x = CSng(n(0))
-                turret_tile(cnt).y = CSng(n(1))
-                turret_tile(cnt).z = CSng(n(2))
-                turret_tile(cnt).w = CSng(n(3))
-                cnt += 1
-            Next
-            ReDim Preserve turret_tile(cnt)
-            cnt = 0
-
-        End Try
-
-        '-------------------------------------------------------
-        '----- turrets
-        tbl = t.Tables("turret_model")
-        If tbl Is Nothing Then
-
-        Else
-
-            Dim q1 = From row In tbl.AsEnumerable _
-                Select _
-                turret = row.Field(Of String)("model")
-
-            For Each r0 In q1
-                turrets(cnt) = r0
-                cnt += 1
-            Next
-            If cnt = 0 Then
-                bad_tanks.AppendLine(file_name)
-                Return
-            End If
-            ReDim Preserve turrets(cnt)
-        End If
-        cnt = 0
-        '-------------------------------------------------------
-        '----- chassis
-
-        tbl = t.Tables("chassis")
-        Dim q2 = From row In tbl.AsEnumerable _
-          Select _
-          chass = row.Field(Of String)("model")
-        For Each thing In q2
-
-            chassis(cnt) = thing
-            cnt += 1
-        Next
-        If cnt = 0 Then
-            bad_tanks.AppendLine(file_name)
-            Return
-        End If
-        ReDim Preserve chassis(cnt)
-        cnt = 0
-        '-------------------------------------------------------
-        '----- hull
-        tbl = t.Tables("hull")
-        Dim q3 = From row In tbl.AsEnumerable
-             Select _
-             model = row.Field(Of String)("model"), _
-             tile = row.Field(Of String)("hull_camouflage")
-
-        For Each thing In q3
-            hulls(cnt) = thing.model
-            hull_tile(cnt) = New vect4
-            Dim n = thing.tile.Split(" ")
-            hull_tile(cnt).x = CSng(n(0))
-            hull_tile(cnt).y = CSng(n(1))
-            hull_tile(cnt).z = CSng(n(2))
-            hull_tile(cnt).w = CSng(n(3))
-            cnt += 1
-        Next
-        If cnt = 0 Then
-            bad_tanks.AppendLine(file_name)
-            Return
-        End If
-        ReDim Preserve hulls(cnt)
-        ReDim Preserve hull_tile(cnt)
-        cnt = 0
-        '-------------------------------------------------------
-        'Array.Sort(guns)
-        'Array.Sort(turrets)
-        'Array.Sort(hulls)
-        'Array.Sort(chassis)
-        turret_count = 0
-        hull_count = 0
-        Dim turret_name = turrets(turrets.Length - 2)
-        turret_tiling = turret_tile(turrets.Length - 2)
-        Dim hull_name = hulls(hulls.Length - 2)
-        hull_tiling = hull_tile(hulls.Length - 2)
-        Dim chassis_name = chassis(chassis.Length - 2)
-        Dim gun_name As String = ""
-        Dim ti, tj As New vect4
-        If guns.Length = 10 Then
-            gun_name = guns(guns.Length - 2)
-            ti = gun_tile(guns.Length - 2)
-            tj = ti
-            tj.w = ti.z
-            tj.z = ti.w
-            gun_tiling = tj
-        Else
-            gun_name = guns(guns.Length - 2)
-            ti = gun_tile(guns.Length - 2)
-            tj = ti
-            tj.w = ti.z
-            tj.z = ti.w
-            gun_tiling = tj
-        End If
-        '========================================
-        Dim nation_string As String = ""
-        Select Case ar(1)
-            Case "american"
-                CURRENT_DATA_SET = 0
-                nation_string = "usa"
-            Case "british"
-                CURRENT_DATA_SET = 1
-                nation_string = "uk"
-            Case "chinese"
-                CURRENT_DATA_SET = 2
-                nation_string = "china"
-            Case "czech"
-                CURRENT_DATA_SET = 3
-                nation_string = "czech"
-            Case "french"
-                CURRENT_DATA_SET = 4
-                nation_string = "france"
-            Case "german"
-                CURRENT_DATA_SET = 5
-                nation_string = "germany"
-            Case "japan"
-                CURRENT_DATA_SET = 6
-                nation_string = "japan"
-            Case "poland"
-                CURRENT_DATA_SET = 7
-                nation_string = "poland"
-            Case "russian"
-                CURRENT_DATA_SET = 8
-                nation_string = "ussr"
-            Case "sweden"
-                CURRENT_DATA_SET = 9
-                nation_string = "sweden"
-        End Select
-        TANK_NAME = "vehicles\" + ar(1) + "\" + ar(2) + ":" + current_tank_package.ToString
-        '===================================
-        Dim d = custom_tables(CURRENT_DATA_SET).Copy
-        '===================================
-
-        Dim tt = d.Tables("camouflage")
-        Dim qq = From row In tt.AsEnumerable
-        Select _
-        armorC = row.Field(Of String)("armorcolor")
-        ARMORCOLOR = get_vect4(qq(0))
-
-        'reset data params
-        '-------------------------------------------------------
-        If object_count > 0 Then
-            For i = 1 To object_count
-                Gl.glDeleteLists(_object(i).main_display_list, 1)
-            Next
-        End If
-        ReDim _object(0)
-        _object(0) = New obj
-        object_count = 0
-        'clear tank variables
-        gun_trans = New vect3
-        gun_trans2 = New vect3
-        turret_trans = New vect3
-        hull_trans = New vect3
-        gun_location = New vect3
-        turret_location = New vect3
-        'make sure visiblity check boxes are checked
-        If Not m_chassis.Checked Then
-            m_chassis.PerformClick()
-            m_chassis.ForeColor = Color.DarkGreen
-        End If
-        If Not m_hull.Checked Then
-            m_hull.PerformClick()
-            m_hull.ForeColor = Color.DarkGreen
-        End If
-        If Not m_turret.Checked Then
-            m_turret.PerformClick()
-            m_turret.ForeColor = Color.DarkGreen
-        End If
-        If Not m_gun.Checked Then
-            m_gun.PerformClick()
-            m_gun.ForeColor = Color.DarkGreen
-        End If
-        '-------------------------------------------------------
-        If TESTING Then
-
-            'test stuff to grab track stuff
-            tbl = t.Tables("track_info")
-            Dim tq = From row In tbl.AsEnumerable
-                     Select _
-                     seg_cnt = row.Field(Of String)("seg_cnt")
-
-
-            If tq(0).Contains("1") Then
-                track_info.segment_count = 1
-                Dim t1q = From row In tbl.AsEnumerable
-                          Select _
-                          trp = row.Field(Of String)("right_filename"), _
-                          tlp = row.Field(Of String)("left_filename"), _
-                          seglength = row.Field(Of String)("segment_length"), _
-                          seg_off = row.Field(Of String)("segmentOffset")
-                For Each tr In t1q
-                    track_info.left_path1 = tr.tlp
-                    track_info.right_path1 = tr.trp
-                    track_info.segment_length = tr.seglength
-                    track_info.segment_offset1 = tr.seg_off
-                Next
-
-            Else
-                track_info.segment_count = 2
-                Dim t1q = From row In tbl.AsEnumerable
-                          Select _
-                          trp = row.Field(Of String)("right_filename"), _
-                          tlp = row.Field(Of String)("left_filename"), _
-                          seglength = row.Field(Of String)("segment_length"), _
-                          seg_off = row.Field(Of String)("segmentOffset"), _
-                          trp2 = row.Field(Of String)("right2_filename"), _
-                          tlp2 = row.Field(Of String)("left2_filename"), _
-                          seg_off2 = row.Field(Of String)("segment2Offset")
-                For Each tr In t1q
-                    track_info.left_path1 = tr.tlp
-                    track_info.right_path1 = tr.trp
-                    track_info.left_path2 = tr.tlp2
-                    track_info.right_path2 = tr.trp2
-                    track_info.segment_length = tr.seglength
-                    track_info.segment_offset1 = tr.seg_off
-                    track_info.segment_offset2 = tr.seg_off2
-                Next
-
-            End If
-
-
-
-            Dim tra() = chassis_name.Split("/")
-            Dim track_path = Path.GetDirectoryName(track_info.left_path1) + "\right.track"
-            Dim tent = packages(current_tank_package)(track_path)
-            Dim t_data As New DataSet
-            If tent IsNot Nothing Then
-                Dim ms As New MemoryStream
-                tent.Extract(ms)
-                openXml_stream(ms, "right.track")
-                get_track_section()
-
-            End If
-            If track_info.segment_offset2 > track_info.segment_offset1 Then
-                Dim t_seg = track_info.segment_offset1
-                track_info.segment_offset1 = track_info.segment_offset2
-                track_info.segment_offset2 = t_seg
-            End If
-            running = 0
-            path_pointer1 = 0
-            track_length = 0
-            For i = 0 To tracks.Length - 1
-                catmullrom.CatmullRomSpline_get_length(i)
-            Next
-            Dim lenS = running / track_info.segment_length
-            If Z_Flipped Then
-                lenS -= 1.0
-            Else
-                lenS -= 1.0
-
-            End If
-            segment_length_adjusted = running / (Floor(lenS))
-            Dim refact = track_info.segment_length / segment_length_adjusted
-            track_info.segment_offset1 /= refact
-            track_info.segment_offset2 /= refact
-            Dim half = track_info.segment_offset2
-            '========= segment 1 =========
-            ReDim path_data1(CInt(Floor(lenS)) + 3)
-            If Z_Flipped Then
-                running = 0 + track_info.segment_offset1 + half
-            Else
-                running = 0 + track_info.segment_offset1 + half
-            End If
-            GC.Collect()
-            GC.WaitForFullGCComplete()
-            path_pointer1 = 0
-            track_length = 0
-            For i = 0 To tracks.Length - 1
-                catmullrom.GetCatmullRomSpline1(i)
-            Next
-            ReDim Preserve path_data1(path_pointer1)
-            get_tread_rotations1()
-            '========= segment 2 =========
-            If track_info.segment_count = 2 Then
-                ReDim path_data2(CInt(Floor(lenS)) + 3)
-                track_length = 0
-                If Z_Flipped Then
-                    running = 0 + track_info.segment_offset2 + half
-                Else
-                    running = 0 + track_info.segment_offset2 + half
-                End If
-                path_pointer2 = 0
-                For i = 0 To tracks.Length - 1
-                    catmullrom.GetCatmullRomSpline2(i)
-                Next
-                ReDim Preserve path_data2(path_pointer2)
-                get_tread_rotations2()
-            End If
-
-        End If
-        file_name = chassis_name
-        build_primitive_data(False) ' -- chassis
-
-        file_name = hull_name
-        build_primitive_data(True) ' -- chassis
-
-        file_name = turret_name
-        build_primitive_data(True) ' -- chassis
-
-        file_name = gun_name
-        build_primitive_data(True) ' -- chassis
-
-        file_name = track_info.left_path1
-        build_primitive_data(True) ' -- chassis
-        If TESTING Then
-
-            If track_info.segment_count = 2 Then
-                file_name = track_info.left_path2
-                build_primitive_data(True) ' -- chassis
-            End If
-
-        End If
-
-
-        model_loaded = True
-        part_counts = New part_counts_
-        For i = 1 To object_count
-            If _object(i).name.ToLower.Contains("chassis") Then
-                part_counts.chassis_cnt += _object(i).count
-            End If
-            If _object(i).name.ToLower.Contains("hull") Then
-                part_counts.hull_cnt += _object(i).count
-            End If
-            If _object(i).name.ToLower.Contains("turret") Then
-                part_counts.turret_cnt += _object(i).count
-            End If
-            If _object(i).name.ToLower.Contains("gun") Then
-                part_counts.gun_cnt += _object(i).count
-            End If
-
-        Next
-        'get data_set camo set we will use
-        'and string to scripts package
-
-        If save_tank Then
-
-            Dim rot_limit_l, rot_limit_r As Single
-            Dim gun_limit_u, gun_limit_d As Single
-            rot_limit_l = -400.0
-            rot_limit_r = 400.0
-
-            Dim ent = scripts_pkg("scripts\item_defs\vehicles\" + nation_string + "\" + ar(2) + ".xml")
-            Dim ms As New MemoryStream
-            ent.Extract(ms)
-            openXml_stream(ms, "")
-            Dim docx = XDocument.Parse(TheXML_String)
-            Dim xmlroot As XmlNode = xDoc.CreateElement(XmlNodeType.Element, "root", "")
-            'doc.DocumentElement.ParentNode.Value = "<root>" + vbCrLf + "</root>"
-            For Each n As XElement In docx.Descendants("turretYawLimits")
-                n.Value = n.Value.Replace("/", "\")
-                Dim ar2 = n.Value.Split(" ")
-                rot_limit_l = ar2(0)
-                rot_limit_r = ar2(1)
-                Exit For
-            Next
-
-            For Each n As XElement In docx.Descendants("minPitch")
-                n.Value = n.Value.Replace("/", "\")
-                Dim ar2 = n.Value.Split(" ")
-                gun_limit_u = -ar2(1)
-                Exit For
-            Next
-            For Each n As XElement In docx.Descendants("maxPitch")
-                n.Value = n.Value.Replace("/", "\")
-                Dim ar2 = n.Value.Split(" ")
-                gun_limit_d = -ar2(1)
-                Exit For
-            Next
-
-
-            If rot_limit_l = -180 Then rot_limit_l = -400
-            If rot_limit_r = 180 Then rot_limit_r = 400
-
-            Dim fo = File.Open(Application.StartupPath + "\tanks\" + ar(2) + ".tank", FileMode.OpenOrCreate)
-            Dim fw As New BinaryWriter(fo)
-            'version changes
-            'ver 1 
-
-            Dim version As Integer = 1
-            Dim rotation_limit As Single = 0.0
-            'ver 1
-            'Dim s1 = "File format: INT as version, INT as chassis and hull vertex count, INT as turret and gun vertex count"
-            'Dim s2 = "Floats turret pivet XY," + _
-            '        "floats rot_limits L&R , " + _
-            '        "floats as list of vertices: position XYZ Normal XYZ"
-            'ver 2
-            Dim s1 = "File format: INT as version, INT as chassis and hull vertex count, INT as turret vertex count, INT as Gun vertex Count"
-            Dim s2 = "Floats turret pivet XYZ," + _
-                    "floats rot_limits L&R,"
-            Dim s3 = "floats gun pivit XYZ , floats gun limits U&D, " + _
-                    "floats as list of vertices:Each being (position XYZ Normal XYZ),"
-            Dim s4 = "floats (9) for future use."
-            fw.Write(s1)
-            fw.Write(s2)
-            fw.Write(s3)
-            fw.Write(s4)
-            fw.Write(version)
-
-            fw.Write(part_counts.chassis_cnt + part_counts.hull_cnt)
-            fw.Write(part_counts.turret_cnt)
-            fw.Write(part_counts.gun_cnt)
-            'turret info
-            fw.Write(turret_location.x)
-            fw.Write(turret_location.y)
-            fw.Write(turret_location.z)
-            fw.Write(rot_limit_l)
-            fw.Write(rot_limit_r)
-            'gun info
-            fw.Write(gun_location.x)
-            fw.Write(gun_location.y)
-            fw.Write(gun_location.z)
-            fw.Write(gun_limit_u)
-            fw.Write(gun_limit_d)
-            'extra vects
-            '1
-            fw.Write(1.0!)
-            fw.Write(1.0!)
-            fw.Write(1.0!)
-            '2
-            fw.Write(1.0!)
-            fw.Write(1.0!)
-            fw.Write(1.0!)
-            '3
-            fw.Write(1.0!)
-            fw.Write(1.0!)
-            fw.Write(1.0!)
-
-            For i = 1 To object_count
-                If _object(i).name.ToLower.Contains("chassis") Then
-                    write_vertex_data(_object(i), fw)
-                End If
-                If _object(i).name.ToLower.Contains("hull") Then
-                    write_vertex_data(_object(i), fw)
-                End If
-                If _object(i).name.ToLower.Contains("turret") Then
-                    write_vertex_data(_object(i), fw)
-                End If
-                If _object(i).name.ToLower.Contains("gun") Then
-                    write_vertex_data(_object(i), fw)
-                End If
-
-            Next
-
-            fo.Close()
-        End If
-        m_pick_camo.Enabled = True
-    End Sub
-    Private Sub get_track_section()
-
-        Dim docx = XDocument.Parse(TheXML_String.Replace("matrix", "position"))
-        Dim doc As New XmlDocument
-        Dim xmlroot As XmlNode = xDoc.CreateElement(XmlNodeType.Element, "root", "")
-        Dim root_node As XmlNode = doc.CreateElement("model")
-        doc.AppendChild(root_node)
-
-        For Each node In docx.Descendants("node")
-            Dim node_ = doc.CreateElement("node")
-            Dim name = doc.CreateElement("name")
-            Dim matrix = doc.CreateElement("matrix")
-            For Each n In node.Descendants("name")
-                name.InnerText = n.Value.ToString
-                node_.AppendChild(name)
-            Next
-            For Each mat In node.Descendants("position")
-                matrix.InnerText = mat.Value.ToString.Replace("position", "")
-                node_.AppendChild(matrix)
-            Next
-            root_node.AppendChild(node_)
-        Next
-
-
-        Dim fm As New MemoryStream
-        doc.Save(fm)
-        fm.Position = 0
-        Dim data_set As New DataSet
-        data_set.ReadXml(fm)
-
-        Dim t = data_set.Tables("node")
-        Dim q = From row In t.AsEnumerable
-                Select _
-                Name = row.Field(Of String)("name"), _
-           Matrix = row.Field(Of String)("matrix")
-        ' id = row.Field(Of String)("id"), _
-
-        ReDim tracks(q.Count - 1)
-
-        Dim cnt As Integer = 0
-        For Each trk In q
-            tracks(cnt) = New track_
-            ReDim tracks(cnt).matrix(15)
-            tracks(cnt).name = trk.Name
-            ' tracks(cnt).id = trk.id
-            Dim ar = trk.Matrix.Split(" ")
-            Dim j As Integer = 0
-            If ar.Length > 3 Then
-                Dim mm(15) As Single
-                For Each m In ar
-
-                    If CSng(m) > 1.0 Or CSng(m) < -1.0 Then
-                        mm(j) = CSng(m) * 0.01
-                    Else
-                        mm(j) = CSng(m)
-                    End If
-                    j += 1
-                    If j = 16 Then Exit For
-                Next
-                tracks(cnt).position.X = mm(3)
-                tracks(cnt).position.Y = mm(7)
-                tracks(cnt).position.Z = -mm(11)
-
-            Else
-                j = 0
-                Dim mm(15) As Single
-                For Each m In ar
-
-                    mm(j) = CSng(m)
-                    j += 1
-                    If j = 3 Then Exit For
-                Next
-                tracks(cnt).position.X = mm(0)
-                tracks(cnt).position.Y = mm(1)
-                tracks(cnt).position.Z = -mm(2)
-
-            End If
-            cnt += 1
-        Next
-        'check if we need to flip the Z on this track.
-        If tracks(0).position = tracks(tracks.Length - 1).position Then
-            ReDim Preserve tracks(tracks.Length - 2)
-        End If
-        Dim vv = tracks(0).position
-
-        Z_Flipped = False
-        If vv.Z < 0 Then
-            For i = 0 To tracks.Length - 1
-                tracks(i).position.Z *= -1.0
-            Next
-            Z_Flipped = True
-        End If
-        If vv.Y < 0 Then
-            For i = 0 To tracks.Length - 1
-                tracks(i).position.Z *= -1.0
-            Next
-        End If
-        data_set.Dispose()
-
-        fm.Dispose()
-
-
-    End Sub
-
-    Private Sub get_tread_rotations1()
-        For i = 0 To path_pointer1 - 1
-            path_data1(check_pos(i + 1, path_pointer1)).angle = 0
-            path_data1(check_pos(i + 1, path_pointer1)).zc = 0
-            path_data1(check_pos(i + 1, path_pointer1)).yc = 0
-        Next
-        For i = -2 To path_pointer1 - 1
-            path_data1(check_pos(i + 1, path_pointer1)).angle = 0
-            path_data1(check_pos(i + 1, path_pointer1)).zc = 0
-            path_data1(check_pos(i + 1, path_pointer1)).yc = 0
-            get_angle_and_center(i, path_data1, path_pointer1)
-        Next
-
-    End Sub
-    Private Sub get_tread_rotations2()
-        For i = 0 To path_pointer2 - 1
-            path_data2(check_pos(i + 1, path_pointer2)).angle = 0
-            path_data2(check_pos(i + 1, path_pointer2)).zc = 0
-            path_data2(check_pos(i + 1, path_pointer2)).yc = 0
-        Next
-        For i = -1 To path_pointer2 - 1
-            path_data2(check_pos(i + 1, path_pointer2)).angle = 0
-            path_data2(check_pos(i + 1, path_pointer2)).zc = 0
-            path_data2(check_pos(i + 1, path_pointer2)).yc = 0
-            get_angle_and_center(i, path_data2, path_pointer2)
-        Next
-
-    End Sub
-    Private Sub get_angle_and_center(ByVal pos As Integer, ByRef path_data() As path_data_, ByVal path_pointer As Integer)
-        Dim yc, zc As Single
-        Dim y1, z1, y2, z2, y3, z3 As Single
-        Dim direction As Integer
-        Dim cnt As Integer
-        Dim z__ As Decimal
-
-        Dim p1, p2, p3 As SlimDX.Vector3
-
-        p1 = path_data(check_pos(pos, path_pointer)).pos1
-        p2 = path_data(check_pos(pos + 1, path_pointer)).pos1
-        p3 = path_data(check_pos(pos + 2, path_pointer)).pos1
-        'gotta flip y and z for this old algo to work
-        Dim rf As Integer = 3
-        y1 = Round(p1.Y, rf)
-        z1 = Round(p1.Z, rf)
-        y2 = Round(p2.Y, rf)
-        z2 = Round(p2.Z, rf)
-        y3 = Round(p3.Y, rf)
-        z3 = Round(p3.Z, rf)
-        Dim s As Single = 0.5D * ((y2 - y3) * (y1 - y3) - (z2 - z3) * (z3 - z1))
-        Dim sUnder As Single = (y1 - y2) * (z3 - z1) - (z2 - z1) * (y1 - y3)
-        If sUnder <> 0 Then
-
-            s /= sUnder
-
-            yc = Round(0.5D * (y1 + y2) + s * (z2 - z1), 3) ' center y coordinate
-            zc = Round(0.5D * (z1 + z2) + s * (y1 - y2), 3)  ' center y coordinate
-        End If
-        Dim radius As Single = CSng(Round((Sqrt(((y3 - yc) * (y3 - yc)) + ((z3 - zc) * (z3 - zc)))), 5))
-
-        z__ = (y2 - y1) * (z3 - z2)
-        z__ -= (z2 - z1) * (y3 - y2)
-        If z__ < 0 Then
-            cnt -= 1
-        Else
-            If z__ > 0 Then
-                cnt += 1
-            End If
-        End If
-        If z__ = 0 Then
-            direction = 0
-        End If
-        If cnt > 0 Then
-            direction = 3
-        Else
-            direction = 2
-        End If
-        Dim agl = Round(mAtan2(z2 - z1, y2 - y1), 6)
-        If zc = 0 And yc = 0 Then
-            path_data(check_pos(pos + 1, path_pointer)).angle = agl * 57.29577
-            path_data(check_pos(pos + 1, path_pointer)).zc = z2
-            path_data(check_pos(pos + 1, path_pointer)).yc = y2 + 0.25
-            Return
-            'End If
-        End If
-        Dim dyr1 As Single = CSng(Round(y1 - yc, 6))
-        Dim dy2 As Single = CSng(Round(y3 - yc, 6))
-        Dim dzr1 As Single = CSng(Round(z1 - zc, 6))
-        Dim dz2 As Single = CSng(Round(z2 - zc, 6))
-        Dim dy1 As Single = CSng(Round(y1 - yc, 6))
-        Dim dz1 As Single = CSng(Round(z2 - zc, 6))
-
-        Dim r1 = Sqrt((dyr1 * dyr1) + (dzr1 * dzr1))
-
-        Dim sa = Round(mAtan2(z1 - z2, y1 - y2), 6)
-        Dim ea = Round(mAtan2(z2 - z3, y2 - y3), 6)
-        Dim angle = Round(mAtan2(z2 - zc, y2 - yc), 6)
-        If direction = 3 Then
-            angle += PI / 2.0
-        Else
-            angle -= PI / 2.0
-        End If
-
-        path_data(check_pos(pos + 1, path_pointer)).angle = angle * 57.29577
-        path_data(check_pos(pos + 1, path_pointer)).zc = zc
-        path_data(check_pos(pos + 1, path_pointer)).yc = yc
-        If direction = 0 Then
-            Stop
-        End If
-        Return
-
-
-
-    End Sub
-    Private Function check_pos(ByVal p As Integer, ByVal path_pointer As Integer)
-        If p > path_pointer - 1 Then
-            p -= (path_pointer - 1)
-        End If
-        If p < 0 Then
-            p += (path_pointer - 1)
-        End If
-        Return p
-    End Function
-    Private Function mAtan2(ByVal y As Single, ByVal x As Single) As Single
-        Dim theta As Single
-        theta = CSng(Atan2(y, x))
-        If theta < 0 Then
-            theta += CSng((PI * 2))
-        End If
-        Return theta
-    End Function
-    Private Sub write_vertex_data(ByVal o As obj, ByVal fw As BinaryWriter)
-        For i As Integer = 1 To o.count
-            '1
-            fw.Write(o.tris(i).v1.x)
-            fw.Write(o.tris(i).v1.y)
-            fw.Write(o.tris(i).v1.z)
-            fw.Write(o.tris(i).n1.x)
-            fw.Write(o.tris(i).n1.y)
-            fw.Write(o.tris(i).n1.z)
-
-            '2
-            fw.Write(o.tris(i).v2.x)
-            fw.Write(o.tris(i).v2.y)
-            fw.Write(o.tris(i).v2.z)
-            fw.Write(o.tris(i).n2.x)
-            fw.Write(o.tris(i).n2.y)
-            fw.Write(o.tris(i).n2.z)
-
-            '3
-            fw.Write(o.tris(i).v3.x)
-            fw.Write(o.tris(i).v3.y)
-            fw.Write(o.tris(i).v3.z)
-            fw.Write(o.tris(i).n3.x)
-            fw.Write(o.tris(i).n3.y)
-            fw.Write(o.tris(i).n3.z)
-
-        Next
-    End Sub
-
-
-    Private Sub clear_node_selection(ByRef n As TreeNode)
-        If n.ForeColor = Color.White Then
-            n.ForeColor = Color.Black
-        End If
-    End Sub
-
-
-    Private Sub set_node_white(ByRef n As TreeNode)
-        n.ForeColor = Color.White
-    End Sub
-    Private Sub set_node_black(ByRef n As TreeNode)
-        n.ForeColor = Color.Black
-    End Sub
-
-    Private Sub get_tank_xml_data(ByVal n As TreeNode)
-        Dim q = From row In TankDataTable _
-            Where row.Field(Of String)("tag") = n.Text _
-  Select _
-       un = row.Field(Of String)("shortname"), _
-       tier = row.Field(Of String)("tier"), _
-       natiom = row.Field(Of String)("nation"), _
-       Type = row.Field(Of String)("type")
-       Order By tier Descending
-
-        'Dim a = q(0).un.Split(":")
-        If q(0) IsNot Nothing Then
-            out_string.Append(n.Text + ":" + q(0).un + ":" + q(0).natiom + ":" + q(0).tier + ":" + q(0).Type + ":")
-
-
-        End If
-
-    End Sub
-    Dim out_string As New StringBuilder
-
-
-    Private Sub pb1_Paint(sender As Object, e As PaintEventArgs) Handles pb1.Paint
-        If w_changing Then draw_scene()
-    End Sub
-
     Private Sub m_lighting_Click(sender As Object, e As EventArgs) Handles m_lighting.Click
-        frmLighting.Show()
+        If Not frmLighting.Visible Then
+            frmLighting.Show()
+        Else
+            frmLighting.Hide()
+        End If
     End Sub
 
     Private Sub m_help_Click(sender As Object, e As EventArgs) Handles m_help.Click
         Process.Start(Application.StartupPath + "\html\MainPage.html")
+    End Sub
+
+    Private Sub m_show_bsp2_CheckedChanged(sender As Object, e As EventArgs) Handles m_show_bsp2.CheckedChanged
+        If m_show_bsp2.Checked Then
+            m_show_bsp2.ForeColor = Color.Red
+        Else
+            m_show_bsp2.ForeColor = Color.Black
+        End If
+    End Sub
+
+    Private Sub m_Import_FBX_Click(sender As Object, e As EventArgs) Handles m_Import_FBX.Click
+        MM.Enabled = False
+        TC1.Enabled = False
+        import_FBX()
+        MM.Enabled = True
+        TC1.Enabled = True
+    End Sub
+
+    Private Sub m_show_fbx_CheckedChanged(sender As Object, e As EventArgs) Handles m_show_fbx.CheckedChanged
+        If m_show_fbx.Checked Then
+            m_show_fbx.Text = "Show Model"
+        Else
+            m_show_fbx.Text = "Show FBX"
+        End If
+    End Sub
+
+    Private Sub m_remove_fbx_Click(sender As Object, e As EventArgs) Handles m_remove_fbx.Click
+        clean_house()
+        remove_loaded_fbx()
+    End Sub
+
+    Private Sub chassis_cb_CheckedChanged(sender As Object, e As EventArgs) Handles chassis_cb.CheckedChanged
+        If Not _Started Then Return
+        For i = 1 To object_count
+            If _object(i).name.ToLower.Contains("chassis") Then
+                _object(i).visible = chassis_cb.Checked
+            End If
+        Next
+    End Sub
+
+    Private Sub hull_cb_CheckedChanged(sender As Object, e As EventArgs) Handles hull_cb.CheckedChanged
+        If Not _Started Then Return
+        For i = 1 To object_count
+            If _object(i).name.ToLower.Contains("hull") Then
+                _object(i).visible = hull_cb.Checked
+            End If
+        Next
+    End Sub
+
+    Private Sub turret_cb_CheckedChanged(sender As Object, e As EventArgs) Handles turret_cb.CheckedChanged
+        If Not _Started Then Return
+        For i = 1 To object_count
+            If _object(i).name.ToLower.Contains("turret") Then
+                _object(i).visible = turret_cb.Checked
+            End If
+        Next
+
+    End Sub
+
+    Private Sub gun_cb_CheckedChanged(sender As Object, e As EventArgs) Handles gun_cb.CheckedChanged
+        If Not _Started Then Return
+        For i = 1 To object_count
+            If _object(i).name.ToLower.Contains("gun") Then
+                _object(i).visible = gun_cb.Checked
+            End If
+        Next
+
+    End Sub
+
+    Private Sub grid_cb_CheckStateChanged(sender As Object, e As EventArgs) Handles grid_cb.CheckStateChanged
+        If grid_cb.Checked Then
+            grid_cb.BackgroundImage = My.Resources.grid
+        Else
+            grid_cb.BackgroundImage = My.Resources.grid_dark
+        End If
+    End Sub
+
+    Private Sub wire_cb_CheckedChanged(sender As Object, e As EventArgs) Handles wire_cb.CheckedChanged
+        If wire_cb.Checked Then
+            wire_cb.BackgroundImage = My.Resources.box_solid
+        Else
+            wire_cb.BackgroundImage = My.Resources.box_wire
+        End If
+    End Sub
+
+#End Region
+
+    Private Sub m_show_bsp2_tree_CheckedChanged(sender As Object, e As EventArgs) Handles m_show_bsp2_tree.CheckedChanged
+        If m_show_bsp2_tree.Checked Then
+            m_show_bsp2_tree.ForeColor = Color.Red
+        Else
+            m_show_bsp2_tree.ForeColor = Color.Black
+        End If
     End Sub
 End Class

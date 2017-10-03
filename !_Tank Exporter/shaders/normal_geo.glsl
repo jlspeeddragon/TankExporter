@@ -18,7 +18,7 @@ void main()
  sumN.w = 0.0;
         gl_Position = gl_ModelViewProjectionMatrix * sumV;
         EmitVertex();      
-        gl_Position = gl_ModelViewProjectionMatrix * (sumV + (sumN * 0.08));
+        gl_Position = gl_ModelViewProjectionMatrix * (sumV + (sumN * 0.03));
         EmitVertex();      
  }
  else
@@ -28,7 +28,7 @@ void main()
         gl_Position = gl_ModelViewProjectionMatrix * gl_PositionIn[i];
         EmitVertex();      
  
-        gl_Position = gl_ModelViewProjectionMatrix * (gl_PositionIn[i] + (vec4(normal[i], 0) * 0.08));
+        gl_Position = gl_ModelViewProjectionMatrix * (gl_PositionIn[i] + (vec4(normal[i], 0) * 0.03));
         EmitVertex();      
  
         EndPrimitive();

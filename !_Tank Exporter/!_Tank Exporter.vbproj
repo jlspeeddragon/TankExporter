@@ -24,7 +24,7 @@
     <UpdatePeriodically>false</UpdatePeriodically>
     <UpdateRequired>false</UpdateRequired>
     <MapFileExtensions>true</MapFileExtensions>
-    <ApplicationRevision>10</ApplicationRevision>
+    <ApplicationRevision>11</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
@@ -114,6 +114,10 @@
     <ApplicationManifest>My Project\app.manifest</ApplicationManifest>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="cttools, Version=1.0.4723.22902, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>.\cttools.dll</HintPath>
+    </Reference>
     <Reference Include="FastColoredTextBox, Version=2.16.11.0, Culture=neutral, PublicKeyToken=fb8aa12b994ef61b, processorArchitecture=MSIL">
       <HintPath>..\packages\FCTB.2.16.11.0\lib\FastColoredTextBox.dll</HintPath>
       <Private>True</Private>
@@ -300,6 +304,9 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="cttools.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="html\imgs\background.jpg">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -315,6 +322,8 @@
     <Content Include="html\MainPage.html">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <None Include="resources\box_solid.png" />
+    <None Include="resources\box_wire.png" />
     <Content Include="resources\Cbutt_down.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -325,6 +334,11 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <None Include="resources\gradiant.png" />
+    <None Include="resources\chassis.png" />
+    <None Include="resources\hull.png" />
+    <None Include="resources\gun.png" />
+    <None Include="resources\grid.png" />
+    <None Include="resources\grid_dark.png" />
     <Content Include="resources\Nbutt_down.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -335,6 +349,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <None Include="resources\question.png" />
+    <None Include="resources\tower.png" />
+    <Content Include="resources\t_footer.txt" />
+    <Content Include="resources\t_header.txt" />
     <Content Include="tank.ico">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

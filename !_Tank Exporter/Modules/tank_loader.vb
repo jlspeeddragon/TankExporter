@@ -33,7 +33,7 @@ Module tank_loader
     Public section_names(100) As String
     Public uv2_data() As uv_
     Public uv2_data_fbx() As Single
-    Dim has_uv2, has_color, has_bsp As Boolean
+    Dim has_uv2, has_color, has_bsp, has_bsp_materials As Boolean
     Dim xmlget_mode, number_of_groups As Integer
     Public log_text As New StringBuilder
     Public x_max As Single = -10000
@@ -47,7 +47,7 @@ Module tank_loader
     Public bsp_data() As Byte
     Public color_data() As Byte
     Public bsp_materials_data() As Byte
-    Public save_has_uv2, model_loaded As Boolean
+    Public save_has_uv2, MODEL_LOADED As Boolean
     Dim ih As IndexHeader
     Dim vh As VerticesHeader
     Dim temo_text_string As String = ""
@@ -75,28 +75,30 @@ Module tank_loader
         Public uv2_data() As Byte
         Public color_name As String
         Public color_data() As Byte
+        Public bsp2_data() As Byte
+        Public bsp2_material_data() As Byte
         Public index As Integer
+        Public has_color As Boolean
+        Public has_bsp2 As Boolean
+        Public has_uv2 As Boolean
+        Public has_bsp_material As Boolean
     End Structure
     Public Class vertice_
-        Public x As Single
-        Public y As Single
-        Public z As Single
+        Public x, y, z As Single
         Public n As UInt32
-        Public u As Single
-        Public v As Single
-        Public t As UInt32
+        Public u, v As Single
         Public index_1 As Byte = 0
         Public index_2 As Byte = 0
         Public index_3 As Byte = 0
         Public weight_1 As Byte = 0
         Public weight_2 As Byte = 0
-        Public tx As Single
-        Public ty As Single
-        Public tz As Single
+        Public nx, ny, nz As Single
+        Public tx, ty, tz As Single
+        Public bnx, bny, bnz As Single
+        Public t As UInt32
         Public bn As UInt32
         Public u2 As Single
         Public v2 As Single
-        Public nx, ny, nz As Single
     End Class
     Structure primGroup
         Public startIndex_ As Long
@@ -165,7 +167,7 @@ Module tank_loader
         Public exclude_camo As Integer
         Public camo_tiling As vect4
         Public use_camo As Integer
-        Public matrix(16) As Single
+        Public matrix(16) As Double
         Public tris() As triangle = {New triangle}
         Public name As String
         Public ID As UInt32
@@ -268,11 +270,13 @@ Module tank_loader
     End Class
     Public _group() As _grps
     Public Structure _grps
+        Public bsp2_id As Integer
+        Public bsp2_tree_id As Integer
         Public texture_id As Integer
         Public name As String
         Public BPVT_mode As Boolean
         Public mfm_path As String
-        Public light_matrix() As Single
+        Public matrix() As Double
         Public shadowMapID As Integer
         Public alphaRef As Integer
         Public alphaTest As Integer
@@ -293,6 +297,9 @@ Module tank_loader
         Public blend_only As Boolean
         Public indicies() As uvect3
         Public vertices() As vertice_
+        Public bsp2_data() As Byte
+        Public color_data() As Byte
+        Public bsp2_material_data() As Byte
         Public startVertex_ As UInt32
         Public startIndex_ As UInt32
         Public nVertices_ As UInt32
@@ -301,6 +308,12 @@ Module tank_loader
         Public tank_shift As vect3
         Public detail_tile As vec2
         Public has_uv2 As Integer
+        Public header As String
+        Public call_list As Integer
+        Public rotation As Skill.FbxSDK.FbxVector4
+        Public translation As Skill.FbxSDK.FbxVector4
+        Public scale As Skill.FbxSDK.FbxVector4
+
     End Structure
     Public Structure uvect3
         Public v1 As UInt32
@@ -310,10 +323,10 @@ Module tank_loader
 
 #End Region
 
-    Public Sub build_primitive_data(ByVal _add As Boolean)
+    Public Function build_primitive_data(ByVal _add As Boolean) As Boolean
         '------------
         log_text.Append(" ======== Model Load Start =========" + vbCrLf)
-        Dim f_name_vertices, f_name_indices, f_name_uv2, f_name_color, misc_name1, misc_name2, bsp_materials_name, bsp_name As String
+        Dim f_name_vertices, f_name_indices, f_name_uv2, f_name_color, bsp_materials_name, bsp_name As String
         Dim tbuf() As vertice_
 
         Dim pg_flag As Boolean = False
@@ -392,7 +405,7 @@ Module tank_loader
         End If
         If Not openVisual(file_name) Then
             log_text.Append("File Not Found :" + file_name + vbCrLf)
-            Return
+            Return False
         End If
 
         Dim t = xmldataset.Copy
@@ -481,7 +494,7 @@ Module tank_loader
             geo.Dispose()
             t.Dispose()
             MsgBox("Tank: " & file_name & " XML is screwy!", MsgBoxStyle.Exclamation, "Moron authors!")
-            Return
+            Return False
 
         End Try
 
@@ -506,7 +519,7 @@ Module tank_loader
                 End If
                 log_text.Append("File Not Found in package.." + file_name + vbCrLf)
             End If
-            Return
+            Return False
 
         End If
         r.Position = 0
@@ -571,11 +584,12 @@ Module tank_loader
         f_name_indices = "zz"
         f_name_uv2 = "zz"
         f_name_color = "zz"
-        misc_name1 = "zz"
-        misc_name2 = "zz"
         bsp_name = "zz"
         bsp_materials_name = "zz"
-
+        has_bsp = False
+        has_bsp_materials = False
+        has_uv2 = False
+        has_color = False
         'End If
         Dim sub_groups As Integer = 0
         Dim name_list As Array = get_section_names()    ' added july 4th 2013
@@ -597,12 +611,6 @@ Module tank_loader
             If InStr(section_names(i), "colour") > 0 Then
                 Debug.WriteLine("colour")
                 f_name_color = section_names(i)
-            End If
-            If InStr(section_names(i), "default.cmodl") > 0 Then
-                misc_name1 = section_names(i)
-            End If
-            If InStr(section_names(i), "hit_locations.cmodl") > 0 Then
-                misc_name2 = section_names(i)
             End If
             If InStr(section_names(i), "bsp2") > 0 Then
                 Debug.WriteLine("bsp2")
@@ -632,50 +640,40 @@ Module tank_loader
                         GoTo next_m
                     End If
                     If ordered_names(id).color_name = f_name_color Then
-                        ReDim color_data(section_sizes(i))
+                        ordered_names(id).has_color = True
+                        ReDim ordered_names(id).color_data(section_sizes(i))
                         For sec_l As UInt32 = 0 To section_sizes(i) - 1
-                            color_data(sec_l) = b_reader.ReadByte
+                            ordered_names(id).color_data(sec_l) = b_reader.ReadByte
                         Next
                         GoTo next_m
                     End If
                     If bsp_name = "bsp2" Then
-                        ReDim bsp_data(section_sizes(i))
+                        ordered_names(id).has_bsp2 = True
+                        ReDim ordered_names(id).bsp2_data(section_sizes(i))
                         For sec_l As UInt32 = 0 To section_sizes(i) - 1
-                            bsp_data(sec_l) = b_reader.ReadByte
+                            ordered_names(id).bsp2_data(sec_l) = b_reader.ReadByte
                         Next
+                        'File.WriteAllBytes("C:\BSP2_DATA" + object_count.ToString, ordered_names(id).bsp2_data)
                         GoTo next_m
                     End If
                     If bsp_name = "bsp2_materials" Then
-                        ReDim bsp_materials_data(section_sizes(i))
+                        ordered_names(id).has_bsp_material = True
+                        ReDim ordered_names(id).bsp2_material_data(section_sizes(i))
                         For sec_l As UInt32 = 0 To section_sizes(i) - 1
-                            bsp_materials_data(sec_l) = b_reader.ReadByte
+                            ordered_names(id).bsp2_material_data(sec_l) = b_reader.ReadByte
                         Next
-                        Dim materials_string As String = System.Text.Encoding.UTF8.GetString(bsp_materials_data)
+                        Dim materials_string As String = System.Text.Encoding.UTF8.GetString(ordered_names(id).bsp2_material_data)
                         GoTo next_m
                     End If
                     If ordered_names(id).uv2_name = f_name_uv2 Then
+                        ordered_names(id).has_uv2 = True
                         ReDim ordered_names(id).uv2_data(section_sizes(i))
                         For sec_l As UInt32 = 0 To section_sizes(i) - 1
                             ordered_names(id).uv2_data(sec_l) = b_reader.ReadByte
                         Next
                         GoTo next_m
                     End If
-                    If misc_name1 = "default.cmodl" Then
-                        Dim f = File.Open("c:\default.cmodl", FileMode.OpenOrCreate, FileAccess.Write)
-                        For sec_l As UInt32 = 0 To section_sizes(i) - 1
-                            f.WriteByte(b_reader.ReadByte())
-                        Next
-                        f.Close()
-                        GoTo next_m
-                    End If
-                    If misc_name2 = "hit_locations.cmodl" Then
-                        Dim f = File.Open("c:\hit_locations.cmodl", FileMode.OpenOrCreate, FileAccess.Write)
-                        For sec_l As UInt32 = 0 To section_sizes(i) - 1
-                            f.WriteByte(b_reader.ReadByte())
-                        Next
-                        f.Close()
-                        GoTo next_m
-                    End If
+                  
                 Next
 next_m:
                 Dim l = b_reader.BaseStream.Position Mod 4 'read off pad characters
@@ -686,12 +684,11 @@ next_m:
                 f_name_indices = "zz"
                 f_name_uv2 = "zz"
                 f_name_color = "zz"
-                misc_name1 = "zz"
-                misc_name2 = "zz"
                 bsp_name = "zz"
                 bsp_materials_name = "zz"
             Catch ex As Exception
-                Return
+                log_text.Append("Something is wrong with primitives contents table.")
+                Return False
             End Try
         Next
         b_reader.Close()
@@ -854,7 +851,26 @@ next_m:
             i = 0
             Dim p As Integer = 6
             For k As UInt32 = object_start To big_l
+                If ordered_names(sg - sub_groups).has_color Then
+                    ReDim _group(k).color_data(ordered_names(sg - sub_groups).color_data.Length)
+                    ordered_names(sg - sub_groups).color_data.CopyTo(_group(k).color_data, 0)
+                End If
+                _group(k).bsp2_id = -1
+                If ordered_names(sg - sub_groups).has_bsp2 Then
+                    ReDim _group(k).bsp2_data(ordered_names(sg - sub_groups).bsp2_data.Length)
+                    ordered_names(sg - sub_groups).bsp2_data.CopyTo(_group(k).bsp2_data, 0)
+                End If
+                If ordered_names(sg - sub_groups).has_bsp_material Then
+                    ReDim _group(k).bsp2_material_data(ordered_names(sg - sub_groups).bsp2_material_data.Length)
+                    ordered_names(sg - sub_groups).bsp2_material_data.CopyTo(_group(k).bsp2_material_data, 0)
+                End If
+
                 _group(k).BPVT_mode = BPVT_mode
+                If has_uv2 Then
+                    _group(k).has_uv2 = 1
+                Else
+                    _group(k).has_uv2 = 0
+                End If
                 Dim pos As UInt32
                 If pg_flag Then
                     pos = pGroups(k - object_start).nVertices_ - 1
@@ -932,9 +948,6 @@ next_m:
                     If has_uv2 Then
                         _group(k).vertices(cnt).u2 = uv2_data(i).u
                         _group(k).vertices(cnt).v2 = uv2_data(i).v
-                        _group(k).has_uv2 = 1
-                    Else
-                        _group(k).has_uv2 = 0
                     End If
                     i += 1
                 Next cnt
@@ -966,23 +979,24 @@ next_m:
                     narray = ordered_names(sg - sub_groups).vert_name.Split(".")
 
                 End If
+                If ordered_names(sg - sub_groups).has_bsp2 Then
+                    make_bsp2_list(object_count)
+                End If
                 'If _group(jj).has_uv2 = 1 Then
                 '    get_uv2(ordered_names(running).uv2_data, ordered_names(running).uv2_data.Length / 4)
                 'End If
                 'get the textures if we are exporting
-                If frmFBX.Visible And frmFBX.export_textures.Checked Then
-                    build_textures(jj) ' make a new texture and find out if this texture as been used... if so, exiting texture will be pointed at
-                End If
-                If Not frmFBX.Visible And frmMain.m_load_textures.Checked Then
-                    build_textures(jj) ' make a new texture and find out if this texture as been used... if so, exiting texture will be pointed at
-                End If
+
+                build_textures(jj) ' make a new texture and find out if this texture as been used... if so, existing texture will be pointed at
+
                 log_text.Append("loaded Model:" + "ID:" + object_count.ToString + ":" + file_name + vbCrLf)
 
                 Dim n_ = Path.GetFileNameWithoutExtension(file_name)
                 Dim aa = n_.Split("_")
 
-                _object(jj).name = n_ + "_" + jj.ToString
-                _group(jj).name = n_ + "_" + jj.ToString
+                _object(jj).name = file_name + ":" + current_tank_package.ToString + ":" + jj.ToString
+                _group(jj).name = file_name + ":" + current_tank_package.ToString + ":" + jj.ToString
+                _group(jj).header = vh.header_text ' save vertex type
                 If _object(jj).name.ToLower.Contains("chassis") Then
                     _object(jj).camo_tiling = chassis_tiling
                     _object(jj).exclude_camo = 1
@@ -1184,7 +1198,7 @@ next_m:
                 Next
                 ' Update data grid view binding source
                 'saves having to hide all the cracked sections
-                ReDim _group(jj).light_matrix(16)
+                ReDim _group(jj).matrix(16)
                 loop_count += 1
                 'check_winding(jj)
                 Application.DoEvents()
@@ -1227,6 +1241,205 @@ all_done:
 
         Dim os As String = ""
         frmMain.Text = "File: " + file_name.Replace(".visual", ".primitives")
+        Return True
+    End Function
+    Dim verts(0) As b_verts_
+    Public Structure b_verts_
+        Public v1, v2, v3 As SlimDX.Vector3
+        Public n As vect3
+        Public offv As vect3
+        Public v_center As vect3
+        Public Function get_center() As vect3
+            Dim v As vect3
+            v.x = (Me.v1.x + Me.v2.x + Me.v3.x) / 3.0
+            v.y = (Me.v1.y + Me.v2.y + Me.v3.y) / 3.0
+            v.z = (Me.v1.Z + Me.v2.Z + Me.v3.Z) / 3.0
+            v_center = v
+            Return v
+        End Function
+        Public Function getoff() As vect3
+            Dim v As vect3
+            v.x = v_center.x + (0.02 * n.x)
+            v.y = v_center.y + (0.02 * n.y)
+            v.z = v_center.z + (0.02 * n.z)
+            offv = v
+            Return v
+        End Function
+    End Structure
+    Private Sub make_bsp2_list(ByVal k As Integer)
+
+        Dim ms As New MemoryStream(_group(k).bsp2_data)
+        Dim br As New BinaryReader(ms)
+        ms.Position = 0
+
+        Dim header = br.ReadUInt32
+        Dim data_start = br.ReadUInt32
+        Dim s1 = br.ReadUInt32
+        Dim s2 = br.ReadUInt32
+        Dim v_cnt = br.ReadUInt32
+        Dim v3_len = br.ReadUInt32
+        Dim v2_len = br.ReadUInt32
+        Dim ls = Gl.glGenLists(1)
+        _group(k).bsp2_id = ls
+        Gl.glNewList(ls, Gl.GL_COMPILE)
+        Gl.glBegin(Gl.GL_TRIANGLES)
+        Dim flip As Single = 1.0
+        If file_name.ToLower.Contains("gun") Then
+            flip = -1.0
+        End If
+        Dim v1, v2, v3, norm As SlimDX.Vector3
+        ReDim verts(v_cnt)
+        Try
+            ms.Position = 60
+            Dim n As vect3
+            For l As UInt32 = 0 To (v_cnt - 1)
+
+                v1.X = br.ReadSingle
+                v1.Y = br.ReadSingle
+                v1.Z = br.ReadSingle
+
+                v2.X = br.ReadSingle
+                v2.Y = br.ReadSingle
+                v2.Z = br.ReadSingle
+
+                v3.X = br.ReadSingle
+                v3.Y = br.ReadSingle
+                v3.Z = br.ReadSingle
+
+                norm = SlimDX.Vector3.Cross(v2 - v1, v3 - v1) 'calc face normal
+                norm.Normalize()
+
+                v1.Z *= flip
+                v2.Z *= flip
+                v3.Z *= flip
+
+                v1 = transform_vector3(v1, _object(k).matrix) ' transform locations
+                v2 = transform_vector3(v2, _object(k).matrix)
+                v3 = transform_vector3(v3, _object(k).matrix)
+                verts(l) = New b_verts_
+                verts(l).v1 = v1
+                verts(l).v2 = v2
+                verts(l).v3 = v3
+                n.x = norm.X
+                n.y = norm.Y
+                n.z = norm.Z * flip
+                n = rotate_transform(n, _object(k).matrix) ' transform normal
+                verts(l).n = n
+                Gl.glNormal3f(n.x, n.y, n.z)
+                Gl.glVertex3f(v1.X, v1.Y, v1.Z)
+                Gl.glVertex3f(v2.X, v2.Y, v2.Z)
+                Gl.glVertex3f(v3.X, v3.Y, v3.Z)
+                br.ReadUInt32()
+            Next
+        Catch ex As Exception
+        End Try
+        Gl.glEnd()
+        'I think I understand how the BSP2 works.. visualizing it might be an issue
+        ReDim bspTree(v3_len)
+        For i = 0 To CInt(v3_len)
+            bspTree(i) = New bsptree_
+        Next
+        Dim p = 60 + (v_cnt * 40) + (v2_len * 4)
+        ms.Position = p
+        For i = 1 To CInt(v3_len)
+            Dim n1, n2, n3, n4 As UInt32
+            Dim v As vect3
+            Dim f As Single
+            Dim indx = i
+            n1 = br.ReadUInt32
+            'If n1 < &HFFF0 Then
+            '    indx = n1
+            'End If
+            n2 = br.ReadUInt32
+            v.x = br.ReadSingle
+            v.y = br.ReadSingle
+            v.z = br.ReadSingle
+            f = br.ReadSingle
+            n3 = br.ReadUInt32
+            n4 = br.ReadUInt32
+            br.ReadUInt32()
+            br.ReadUInt32()
+
+            bspTree(indx).n1 = n1
+            bspTree(indx).n2 = n2
+            bspTree(indx).n3 = n3
+            bspTree(indx).n4 = n4
+            bspTree(indx).v = v
+            bspTree(indx).v.x = v.x
+            bspTree(indx).v.y = v.y
+            bspTree(indx).v.z = v.z
+            bspTree(indx).f = f
+
+            'Debug.WriteLine(i.ToString("X00000") + ": " _
+            '                + bspTree(i).n1.ToString("X") + " " _
+            '                + bspTree(i).n2.ToString("X") + " " _
+            '                + bspTree(i).n3.ToString("X") + " " _
+            '                + bspTree(i).n4.ToString("X"))
+        Next
+
+
+        Gl.glEndList()
+        '------------------------------------
+        'all this is the BSP2 tree.. not sure how it all works yet.
+        Dim l2 = Gl.glGenLists(1)
+        _group(k).bsp2_tree_id = l2
+        Gl.glNewList(l2, Gl.GL_COMPILE)
+        Gl.glDisable(Gl.GL_LIGHTING)
+        Gl.glBegin(Gl.GL_LINES)
+        Dim ve As New vect3
+        Dim r, g, b As Single
+        For i = 1 To CInt(v3_len)
+            Dim sidx = bspTree(i).n3
+            Dim n1 As UInt32 = bspTree(i).n1
+            Dim n2 As UInt32 = bspTree(i).n2
+            r = 0.0
+            g = 0.0
+            b = 0.6
+
+            If n1 > &HFFFF Then
+                r = 0.6
+                b = 0.0
+            End If
+            If n2 >= &HFFFF Then
+                g = 0.6
+                b = 0.0
+            End If
+
+            Gl.glColor3f(0.2, 0.6, 0.2)
+            If sidx < &HFFFF Then
+                Dim slen = bspTree(i).n4
+                Dim vs = transform(bspTree(i).v, _object(k).matrix)
+                verts(sidx).get_center()
+                ve = verts(sidx).getoff()
+                Gl.glVertex3f(vs.x, vs.y, vs.z) ' root to vertex offset
+                Gl.glVertex3f(ve.x, ve.y, ve.z)
+                vs = verts(sidx).getoff()
+                ve = verts(sidx).get_center()
+                Gl.glColor3f(r, g, b)
+                Gl.glVertex3f(vs.x, vs.y, vs.z) 'vertex offset to vertex center
+                Gl.glVertex3f(ve.x, ve.y, ve.z)
+                Dim opnt As Int32 = 1
+
+                For j = 0 To CInt(slen - 2)
+                    ve = verts(sidx + j).getoff 'offset to offset
+                    verts(sidx + j + opnt).get_center() ' need to calc center before using it!
+                    vs = verts(sidx + j + opnt).getoff
+                    Gl.glVertex3f(vs.x, vs.y, vs.z)
+                    Gl.glVertex3f(ve.x, ve.y, ve.z)
+
+                    vs = verts(sidx + j + opnt).getoff
+                    ve = verts(sidx + j + opnt).get_center
+                    Gl.glVertex3f(vs.x, vs.y, vs.z) 'offset to center
+                    Gl.glVertex3f(ve.x, ve.y, ve.z)
+                Next
+            End If
+        Next
+no_more:
+        Gl.glEnd()
+        Gl.glColor3f(0.3, 0.3, 0.3)
+        Gl.glEnable(Gl.GL_LIGHTING)
+        Gl.glEndList()
+        ms.Dispose()
     End Sub
 
     Dim mstream As New MemoryStream
@@ -1482,8 +1695,12 @@ get_visual:
             _object(id).row3.x = _object(id).row3.x
             _object(id).row3.y = 0.0
             _object(id).row3.z = _object(id).row3.z
+            '_object(id).row2.x *= -1.0
+            '_object(id).row2.y *= -1.0
+            '_object(id).row2.z *= -1.0
+            _object(id).row0.x *= -1.0
+            _object(id).row0.z *= -1.0
             _object(id).row2.x *= -1.0
-            _object(id).row2.y *= -1.0
             _object(id).row2.z *= -1.0
 
 
@@ -1532,6 +1749,12 @@ get_visual:
             _object(id).row2.x *= -1.0
             _object(id).row2.y *= -1.0
             _object(id).row2.z *= -1.0
+
+            '_object(id).row0.x *= -1.0
+            '_object(id).row0.z *= -1.0
+            '_object(id).row2.x *= -1.0
+            '_object(id).row2.z *= -1.0
+
 
         End If
         If xmlget_mode = 5 Then
@@ -1658,7 +1881,7 @@ get_visual:
             Dim ar = newS.Split(" ")
             _group(id).detail_tile.x = CSng(ar(0))
             _group(id).detail_tile.y = CSng(ar(1))
-            _group(id).has_uv2 = 0 ' we dont want this.. 
+            '_group(id).has_uv2 = 0 ' we dont want this.. 
             'I dont know how to use it!
         Else
             _group(id).detail_tile.x = 1.0
@@ -1889,11 +2112,7 @@ get_visual:
     End Function
     Public Sub make_lists(I As Integer)
         Wgl.wglMakeCurrent(pb1_hDC, pb1_hRC)
-        'Gl.glDeleteLists(6, 200)
-        '       For i = 1 To object_count
-        'If Gl.glIsList(_object(i).main_display_list) Then
-        '	Gl.glDeleteLists(_object(i).main_display_list, 1)
-        'End If
+
         Gl.glDeleteLists(_object(I).main_display_list, 1)
         _object(I).main_display_list = Gl.glGenLists(1)
         Gl.glNewList(_object(I).main_display_list, Gl.GL_COMPILE)
@@ -1901,18 +2120,7 @@ get_visual:
         Gl.glEndList()
         model_loaded = True
         Dim e = Gl.glGetError
-        'If _group(i).multi_textured Then
-        '	If Gl.glIsList(_object(i).uv2_display_list) Then
-        '		Gl.glDeleteLists(_object(i).uv2_display_list, 1)
-        '	End If
-        '	_object(i).uv2_display_list = Gl.glGenLists(1)
-        '	Gl.glNewList(_object(i).uv2_display_list, Gl.GL_COMPILE)
-        '	uv2_list(_object(i).count, i)
-        '	Gl.glEndList()
-        '	e = Gl.glGetError
-        'End If
-
-        '    Next
+        
     End Sub
 
     Private Sub pre_transform(ByVal jj As Integer, ByVal i As Integer)
@@ -1974,7 +2182,21 @@ get_visual:
         Gl.glEnd()
     End Sub
 
-    Public Function transform(ByVal v As vect3, ByVal m() As Single) As vect3
+    Public Function transform_vector3(ByVal v As SlimDX.Vector3, ByVal m() As Double) As SlimDX.Vector3
+        Dim vo As SlimDX.Vector3
+        vo.X = (m(0) * v.X) + (m(4) * v.Y) + (m(8) * v.Z)
+        vo.Y = (m(1) * v.X) + (m(5) * v.Y) + (m(9) * v.Z)
+        vo.Z = (m(2) * v.X) + (m(6) * v.Y) + (m(10) * v.Z)
+
+        vo.X += m(12)
+        vo.Y += m(13)
+        vo.Z += m(14)
+        vo.X *= -1.0
+        Return vo
+
+    End Function
+
+    Public Function transform(ByVal v As vect3, ByVal m() As Double) As vect3
         Dim vo As vect3
         vo.x = (m(0) * v.x) + (m(4) * v.y) + (m(8) * v.z)
         vo.y = (m(1) * v.x) + (m(5) * v.y) + (m(9) * v.z)
@@ -1987,7 +2209,7 @@ get_visual:
         Return vo
 
     End Function
-    Public Function rotate_transform(ByVal v As vect3, ByVal m() As Single) As vect3
+    Public Function rotate_transform(ByVal v As vect3, ByVal m() As Double) As vect3
         Dim vo As vect3
         vo.x = (m(0) * v.x) + (m(4) * v.y) + (m(8) * v.z)
         vo.y = (m(1) * v.x) + (m(5) * v.y) + (m(9) * v.z)

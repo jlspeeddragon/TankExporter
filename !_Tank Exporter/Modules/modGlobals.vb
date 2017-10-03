@@ -102,6 +102,13 @@ Module modGlobals
         "vehicles_level_08.pkg", _
         "vehicles_level_09.pkg", _
         "vehicles_level_10.pkg"}
+    Public bspTree(0) As bsptree_
+    Public Structure bsptree_
+        Public v As vect3
+        Public f As Single
+        Public n1, n2, n3, n4 As UInt32
+        Public node2 As UInt32
+    End Structure
     Public tanks() As tank_nation
     Public Structure tank_nation
         Public nation As String
@@ -136,7 +143,7 @@ Module modGlobals
     Public screen_avg_counter, screen_avg_draw_time, screen_draw_time, screen_totaled_draw_time As Double
     Public pause As Boolean = False
     Public track_mars As Boolean
-    Public frmState As Integer = frmMain.WindowState
+    Public frmState As Integer
     Public gl_busy As Boolean = False
     Public current_png_path As String = ""
     Public Structure vect3Norm

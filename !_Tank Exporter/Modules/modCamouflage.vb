@@ -94,13 +94,16 @@ Module modCamouflage
         Select _
         armorC = row.Field(Of String)("armorcolor")
         ARMORCOLOR = get_vect4(qq(0))
+        Dim ar = TANK_NAME.Split(":")
+
+        Dim t_name = Path.GetFileNameWithoutExtension(ar(0))
         '===================================
         t = d.Tables("colors")
         Dim q = From row In t.AsEnumerable _
                 Where type = row.Field(Of String)("kind") _
                 Select _
                 texture = row.Field(Of String)("texture"), _
-                tank_tiling = row.Field(Of String)(TANK_NAME), _
+                tank_tiling = row.Field(Of String)(t_name), _
                 c0 = row.Field(Of String)("c0"), _
                 c1 = row.Field(Of String)("c1"), _
                 c2 = row.Field(Of String)("c2"), _

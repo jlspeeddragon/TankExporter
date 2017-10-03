@@ -15,11 +15,43 @@
   Overrides the current thread's CurrentUICulture property for all
   resource lookups using this strongly typed resource class.
 </summary>
+</member><member name="P:Tank_Exporter.My.Resources.Resources.box_solid">
+	<summary>
+  Looks up a localized resource of type System.Drawing.Bitmap.
+</summary>
+</member><member name="P:Tank_Exporter.My.Resources.Resources.box_wire">
+	<summary>
+  Looks up a localized resource of type System.Drawing.Bitmap.
+</summary>
+</member><member name="P:Tank_Exporter.My.Resources.Resources.chassis">
+	<summary>
+  Looks up a localized resource of type System.Drawing.Bitmap.
+</summary>
 </member><member name="P:Tank_Exporter.My.Resources.Resources.gradiant">
 	<summary>
   Looks up a localized resource of type System.Drawing.Bitmap.
 </summary>
+</member><member name="P:Tank_Exporter.My.Resources.Resources.grid">
+	<summary>
+  Looks up a localized resource of type System.Drawing.Bitmap.
+</summary>
+</member><member name="P:Tank_Exporter.My.Resources.Resources.grid_dark">
+	<summary>
+  Looks up a localized resource of type System.Drawing.Bitmap.
+</summary>
+</member><member name="P:Tank_Exporter.My.Resources.Resources.gun">
+	<summary>
+  Looks up a localized resource of type System.Drawing.Bitmap.
+</summary>
+</member><member name="P:Tank_Exporter.My.Resources.Resources.hull">
+	<summary>
+  Looks up a localized resource of type System.Drawing.Bitmap.
+</summary>
 </member><member name="P:Tank_Exporter.My.Resources.Resources.question">
+	<summary>
+  Looks up a localized resource of type System.Drawing.Bitmap.
+</summary>
+</member><member name="P:Tank_Exporter.My.Resources.Resources.tower">
 	<summary>
   Looks up a localized resource of type System.Drawing.Bitmap.
 </summary>
