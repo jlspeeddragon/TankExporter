@@ -29,19 +29,18 @@ Module modOpenGL
     Public position0() As Single = {3.535534F, 5.0F, 3.535534F, 1.0F}
     Public position1() As Single = {-5.0F, 6.0F, 5.0F, 1.0F}
     Public position2() As Single = {0.0F, 10.0F, 0.0F, 1.0F}
-    Public pb2 As New Panel
     Public Sub EnableOpenGL()
-        pb2.Visible = False
+        frmMain.pb2.Visible = False
         Application.DoEvents()
         Application.DoEvents()
         Application.DoEvents()
         pb1_hDC = User.GetDC(frmMain.pb1.Handle)
-        pb2_hDC = User.GetDC(pb2.Handle)
-        frmMain.Controls.Add(pb2)
+        pb2_hDC = User.GetDC(frmMain.pb2.Handle)
+        frmMain.Controls.Add(frmMain.pb2)
         Application.DoEvents()
         Application.DoEvents()
         Application.DoEvents()
-        pb2.Location = frmMain.pb1.Location
+        frmMain.pb2.Location = frmMain.pb1.Location
         Dim pfd As Gdi.PIXELFORMATDESCRIPTOR
         Dim PixelFormat, PixelFormat2 As Integer
 

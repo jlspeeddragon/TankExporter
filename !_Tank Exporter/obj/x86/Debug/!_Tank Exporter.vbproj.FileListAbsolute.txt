@@ -7,6 +7,8 @@ C:\!_Tank Exporter\!_Tank Exporter\bin\x86\Debug\html\MainPage.html
 C:\!_Tank Exporter\!_Tank Exporter\bin\x86\Debug\resources\Cbutt_down.png
 C:\!_Tank Exporter\!_Tank Exporter\bin\x86\Debug\resources\Cbutt_norm.png
 C:\!_Tank Exporter\!_Tank Exporter\bin\x86\Debug\resources\Cbutt_over.png
+C:\!_Tank Exporter\!_Tank Exporter\bin\x86\Debug\resources\Cbutt_Selected.png
+C:\!_Tank Exporter\!_Tank Exporter\bin\x86\Debug\resources\CheckerPatternPaper.png
 C:\!_Tank Exporter\!_Tank Exporter\bin\x86\Debug\resources\Nbutt_down.png
 C:\!_Tank Exporter\!_Tank Exporter\bin\x86\Debug\resources\Nbutt_norm.png
 C:\!_Tank Exporter\!_Tank Exporter\bin\x86\Debug\resources\Nbutt_over.png
@@ -24,6 +26,10 @@ C:\!_Tank Exporter\!_Tank Exporter\bin\x86\Debug\Tao.OpenGl.dll
 C:\!_Tank Exporter\!_Tank Exporter\bin\x86\Debug\Tao.Platform.Windows.dll
 C:\!_Tank Exporter\!_Tank Exporter\bin\x86\Debug\Zip\Ionic.Zip.dll
 C:\!_Tank Exporter\!_Tank Exporter\bin\x86\Debug\Zip\Ionic.Zlib.dll
+C:\!_Tank Exporter\!_Tank Exporter\bin\x86\Debug\resources\chassis.png
+C:\!_Tank Exporter\!_Tank Exporter\bin\x86\Debug\resources\hull.png
+C:\!_Tank Exporter\!_Tank Exporter\bin\x86\Debug\resources\gun.png
+C:\!_Tank Exporter\!_Tank Exporter\bin\x86\Debug\resources\tower.png
 C:\!_Tank Exporter\!_Tank Exporter\bin\x86\Debug\shaders\mixer_fragment.glsl
 C:\!_Tank Exporter\!_Tank Exporter\bin\x86\Debug\shaders\mixer_vertex.glsl
 C:\!_Tank Exporter\!_Tank Exporter\bin\x86\Debug\shaders\normal_fragment.glsl
@@ -52,6 +58,7 @@ C:\!_Tank Exporter\!_Tank Exporter\obj\x86\Debug\Tank_Exporter.frmExtract.resour
 C:\!_Tank Exporter\!_Tank Exporter\obj\x86\Debug\Tank_Exporter.frmFBX.resources
 C:\!_Tank Exporter\!_Tank Exporter\obj\x86\Debug\Tank_Exporter.frmLighting.resources
 C:\!_Tank Exporter\!_Tank Exporter\obj\x86\Debug\Tank_Exporter.frmMain.resources
+C:\!_Tank Exporter\!_Tank Exporter\obj\x86\Debug\Tank_Exporter.frmTextureViewer.resources
 C:\!_Tank Exporter\!_Tank Exporter\obj\x86\Debug\Tank_Exporter.Resources.resources
 C:\!_Tank Exporter\!_Tank Exporter\obj\x86\Debug\Tank_Exporter.frmEditFrag.resources
 C:\!_Tank Exporter\!_Tank Exporter\obj\x86\Debug\Tank_Exporter.frmShaderError.resources

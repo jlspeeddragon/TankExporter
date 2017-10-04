@@ -39,6 +39,9 @@ Public Class frmMain
     Public res_mods_path_set As Boolean = False
     Dim mouse As vec2
     Public move_cam_z, M_DOWN, move_mod, z_move As Boolean
+    Private mouse_down As Boolean = False
+    Private mouse_delta As New Point
+    Private mouse_pos As New Point
 
     Public Shared packages(12) As ZipFile
     Public Shared packages_HD(12) As ZipFile
@@ -173,11 +176,13 @@ Public Class frmMain
     Private Sub frmMain_ResizeEnd(sender As Object, e As EventArgs) Handles Me.ResizeEnd
         'gl_stop = False
 
-        If season_Buttons_VISIBLE Then
-            WINDOW_HEIGHT_DELTA = pb1.Height - OLD_WINDOW_HEIGHT
-            relocate_season_Bottons()
-            relocate_camobuttons()
-        End If
+        'If season_Buttons_VISIBLE Then
+        WINDOW_HEIGHT_DELTA = pb1.Height - OLD_WINDOW_HEIGHT
+        relocate_season_Bottons()
+        relocate_camobuttons()
+        relocate_tankbuttons()
+        relocate_texturebuttons()
+        'End If
         If Not _Started Then Return
         w_changing = False
     End Sub
@@ -186,12 +191,14 @@ Public Class frmMain
         If window_state <> Me.WindowState Then
             If Not Me.WindowState = FormWindowState.Minimized Then
                 'gl_stop = True
-                If season_Buttons_VISIBLE Then
-                    WINDOW_HEIGHT_DELTA = pb1.Height - OLD_WINDOW_HEIGHT
-                    relocate_season_Bottons()
-                    relocate_camobuttons()
-                    OLD_WINDOW_HEIGHT = pb1.Height
-                End If
+                'If season_Buttons_VISIBLE Then
+                WINDOW_HEIGHT_DELTA = pb1.Height - OLD_WINDOW_HEIGHT
+                relocate_season_Bottons()
+                relocate_camobuttons()
+                relocate_tankbuttons()
+                relocate_texturebuttons()
+                OLD_WINDOW_HEIGHT = pb1.Height
+                'End If
                 w_changing = False
                 window_state = Me.WindowState
                 Return
@@ -200,12 +207,14 @@ Public Class frmMain
             window_state = Me.WindowState
         End If
         If Not _Started Then Return
-        If season_Buttons_VISIBLE Then
-            WINDOW_HEIGHT_DELTA = pb1.Height - OLD_WINDOW_HEIGHT
-            relocate_season_Bottons()
-            relocate_camobuttons()
-            OLD_WINDOW_HEIGHT = pb1.Height
-        End If
+        'If season_Buttons_VISIBLE Then
+        WINDOW_HEIGHT_DELTA = pb1.Height - OLD_WINDOW_HEIGHT
+        relocate_season_Bottons()
+        relocate_camobuttons()
+        relocate_tankbuttons()
+        relocate_texturebuttons()
+        OLD_WINDOW_HEIGHT = pb1.Height
+        'End If
         draw_scene()
     End Sub
 
@@ -392,6 +401,7 @@ Public Class frmMain
         load_customization_files()
         'MsgBox("Past load_customization_files", MsgBoxStyle.Exclamation, "Debug")
         load_season_icons()
+        load_tank_buttons()
         Gl.glFinish()
         'removed this load of background image.. 
         'load_back_ground()
@@ -1796,7 +1806,9 @@ tryagain:
                 Gl.glPolygonMode(Gl.GL_FRONT_AND_BACK, Gl.GL_LINE)
                 Gl.glColor3f(0.0, 0.0, 0.0)
                 For jj = 1 To object_count
-                    Gl.glCallList(_object(jj).main_display_list)
+                    If _object(jj).visible Then
+                        Gl.glCallList(_object(jj).main_display_list)
+                    End If
                 Next
             End If
         End If
@@ -1838,6 +1850,127 @@ tryagain:
 
         End If
         '==========================================
+
+        Gl.glColor3f(0.3, 0.3, 0.3)
+        If grid_cb.Checked Then
+            Gl.glCallList(grid)
+        End If
+
+
+        Gl.glDisable(Gl.GL_LIGHTING)
+        Gl.glActiveTexture(Gl.GL_TEXTURE0)
+        Gl.glBindTexture(Gl.GL_TEXTURE_2D, 0)
+
+        If move_mod Or z_move Then    'draw reference lines to eye center
+            Gl.glColor3f(1.0, 1.0, 1.0)
+            'Gl.glLineStipple(1, &HF00F)
+            'Gl.glEnable(Gl.GL_LINE_STIPPLE)
+            Gl.glLineWidth(1)
+            Gl.glBegin(Gl.GL_LINES)
+            Gl.glVertex3f(U_look_point_x, U_look_point_y + 1000, U_look_point_z)
+            Gl.glVertex3f(U_look_point_x, U_look_point_y - 1000, U_look_point_z)
+
+            Gl.glVertex3f(U_look_point_x + 1000, U_look_point_y, U_look_point_z)
+            Gl.glVertex3f(U_look_point_x - 1000, U_look_point_y, U_look_point_z)
+
+            Gl.glVertex3f(U_look_point_x, U_look_point_y, U_look_point_z + 1000)
+            Gl.glVertex3f(U_look_point_x, U_look_point_y, U_look_point_z - 1000)
+            Gl.glEnd()
+            'Gl.glLineStipple(1, &HFFFF)
+            'Gl.glDisable(Gl.GL_LINE_STIPPLE)
+        End If
+
+        Gl.glPopMatrix()
+
+        '######################################################################### ORTHO MODE
+        '######################################################################### ORTHO MODE
+        '######################################################################### ORTHO MODE
+        ViewOrtho()
+        Gl.glDisable(Gl.GL_DEPTH_TEST)
+        Gl.glDisable(Gl.GL_LIGHTING)
+
+
+        'menu
+        'draw_menu()
+
+        Dim top As Integer = 20
+        If season_Buttons_VISIBLE Then
+            top = 177
+        End If
+        Gl.glEnable(Gl.GL_BLEND)
+        Gl.glBlendFunc(Gl.GL_SRC_ALPHA, Gl.GL_ONE_MINUS_SRC_ALPHA)
+        Gl.glColor4f(0.3, 0.0, 0.0, 0.6)
+        Gl.glBegin(Gl.GL_TRIANGLES)
+        Gl.glVertex3f(0.0, -pb1.Height, 0.0)
+        Gl.glColor4f(0.3, 0.0, 0.0, 0.4)
+        Gl.glVertex3f(0.0, -pb1.Height + top, 0.0)
+        Gl.glVertex3f(pb1.Width, -pb1.Height + top, 0.0)
+
+        Gl.glVertex3f(pb1.Width, -pb1.Height + top, 0.0)
+        Gl.glColor4f(0.3, 0.0, 0.0, 0.6)
+        Gl.glVertex3f(pb1.Width, -pb1.Height, 0.0)
+        Gl.glVertex3f(0.0, -pb1.Height, 0.0)
+        Gl.glEnd()
+
+
+        Dim fps As Integer = 1.0 / (screen_totaled_draw_time * 0.001)
+        Dim str = " FPS: ( " + fps.ToString + " )"
+        'swat.Stop()
+        glutPrint(10, 8 - pb1.Height, str.ToString, 0.0, 1.0, 0.0, 1.0) ' fps string
+        glutPrint(10, -20, view_status_string, 0.0, 1.0, 0.0, 1.0) ' view status
+
+        Gl.glDisable(Gl.GL_BLEND)
+
+        If show_textures_cb.Checked Then
+            draw_texture_screen()
+            If TANK_TEXTURES_VISIBLE Then
+                For i = 0 To texture_buttons.Length - 2
+                    texture_buttons(i).draw()
+                Next
+            End If
+        End If
+
+        If season_Buttons_VISIBLE Then
+            For i = 0 To season_Buttons.Length - 2
+                season_Buttons(i).draw()
+            Next
+        End If
+        If CAMO_BUTTONS_VISIBLE Then
+            For i = 0 To camo_Buttons.Length - 2
+                camo_Buttons(i).draw()
+            Next
+        End If
+        Gdi.SwapBuffers(pb1_hDC)
+        '====================================
+        'has to be AFTER the buffer swap
+        If Not STOP_BUTTON_SCAN Then
+
+            If season_Buttons_VISIBLE Then
+                draw_season_pick_buttons()
+                mouse_pick_season_button(m_mouse.x, m_mouse.y)
+                'Gdi.SwapBuffers(pb1_hDC)
+            End If
+            If CAMO_BUTTONS_VISIBLE Then
+                draw_pick_camo_buttons()
+                mouse_pick_camo_button(m_mouse.x, m_mouse.y)
+            End If
+            If TANKPARTS_VISIBLE Then
+                draw_tankpart_pick()
+                mouse_pick_tankparts(m_mouse.x, m_mouse.y)
+            End If
+            If TANK_TEXTURES_VISIBLE Then
+                draw_textures_pick()
+                mouse_pick_textures(m_mouse.x, m_mouse.y)
+            End If
+            'Gdi.SwapBuffers(pb1_hDC)
+        End If
+        '====================================
+        Gl.glFlush()
+        er = Gl.glGetError
+        OLD_WINDOW_HEIGHT = pb1.Height
+        gl_busy = False
+    End Sub
+    Public Sub track_test()
         'track nurb points
         If MODEL_LOADED And TESTING Then
             If object_count > 6 Then
@@ -1974,106 +2107,8 @@ tryagain:
         End If
         '==========================================
 
-        Gl.glColor3f(0.3, 0.3, 0.3)
-        If grid_cb.Checked Then
-            Gl.glCallList(grid)
-        End If
-
-
-        Gl.glDisable(Gl.GL_LIGHTING)
-        Gl.glActiveTexture(Gl.GL_TEXTURE0)
-        Gl.glBindTexture(Gl.GL_TEXTURE_2D, 0)
-
-        If move_mod Or z_move Then    'draw reference lines to eye center
-            Gl.glColor3f(1.0, 1.0, 1.0)
-            'Gl.glLineStipple(1, &HF00F)
-            'Gl.glEnable(Gl.GL_LINE_STIPPLE)
-            Gl.glLineWidth(1)
-            Gl.glBegin(Gl.GL_LINES)
-            Gl.glVertex3f(U_look_point_x, U_look_point_y + 1000, U_look_point_z)
-            Gl.glVertex3f(U_look_point_x, U_look_point_y - 1000, U_look_point_z)
-
-            Gl.glVertex3f(U_look_point_x + 1000, U_look_point_y, U_look_point_z)
-            Gl.glVertex3f(U_look_point_x - 1000, U_look_point_y, U_look_point_z)
-
-            Gl.glVertex3f(U_look_point_x, U_look_point_y, U_look_point_z + 1000)
-            Gl.glVertex3f(U_look_point_x, U_look_point_y, U_look_point_z - 1000)
-            Gl.glEnd()
-            'Gl.glLineStipple(1, &HFFFF)
-            'Gl.glDisable(Gl.GL_LINE_STIPPLE)
-        End If
-        Gl.glEnable(Gl.GL_LIGHTING)
-        er = Gl.glGetError
-
-        Gl.glPopMatrix()
-        ViewOrtho()
-        Gl.glDisable(Gl.GL_DEPTH_TEST)
-        Gl.glDisable(Gl.GL_LIGHTING)
-
-        'menu
-        'draw_menu()
-
-        Dim top As Integer = 20
-        If season_Buttons_VISIBLE Then
-            top = 177
-        End If
-        Gl.glEnable(Gl.GL_BLEND)
-        Gl.glBlendFunc(Gl.GL_SRC_ALPHA, Gl.GL_ONE_MINUS_SRC_ALPHA)
-        Gl.glColor4f(0.3, 0.0, 0.0, 0.6)
-        Gl.glBegin(Gl.GL_TRIANGLES)
-        Gl.glVertex3f(0.0, -pb1.Height, 0.0)
-        Gl.glColor4f(0.3, 0.0, 0.0, 0.4)
-        Gl.glVertex3f(0.0, -pb1.Height + top, 0.0)
-        Gl.glVertex3f(pb1.Width, -pb1.Height + top, 0.0)
-
-        Gl.glVertex3f(pb1.Width, -pb1.Height + top, 0.0)
-        Gl.glColor4f(0.3, 0.0, 0.0, 0.6)
-        Gl.glVertex3f(pb1.Width, -pb1.Height, 0.0)
-        Gl.glVertex3f(0.0, -pb1.Height, 0.0)
-        Gl.glEnd()
-
-
-        Dim fps As Integer = 1.0 / (screen_totaled_draw_time * 0.001)
-        Dim str = " FPS: ( " + fps.ToString + " )"
-        'swat.Stop()
-        glutPrint(10, 8 - pb1.Height, str.ToString, 0.0, 1.0, 0.0, 1.0) ' fps string
-        glutPrint(10, -20, view_status_string, 0.0, 1.0, 0.0, 1.0) ' view status
-
-        Gl.glDisable(Gl.GL_BLEND)
-
-        If season_Buttons_VISIBLE Then
-            For i = 0 To season_Buttons.Length - 2
-                season_Buttons(i).draw()
-            Next
-        End If
-        If CAMO_BUTTONS_VISIBLE Then
-            For i = 0 To camo_Buttons.Length - 2
-                camo_Buttons(i).draw()
-            Next
-        End If
-
-        Gdi.SwapBuffers(pb1_hDC)
-        '====================================
-        'has to be AFTER the buffer swap
-        If Not STOP_BUTTON_SCAN Then
-
-            If season_Buttons_VISIBLE Then
-                draw_season_pick_buttons()
-                mouse_pick_season_button(m_mouse.x, m_mouse.y)
-                'Gdi.SwapBuffers(pb1_hDC)
-            End If
-            If CAMO_BUTTONS_VISIBLE Then
-                draw_pick_camo_buttons()
-                mouse_pick_camo_button(m_mouse.x, m_mouse.y)
-
-            End If
-        End If
-        '====================================
-        Gl.glFlush()
-        er = Gl.glGetError
-        OLD_WINDOW_HEIGHT = pb1.Height
-        gl_busy = False
     End Sub
+
     Public Sub draw_XZ_grid()
         Gl.glDisable(Gl.GL_LIGHTING)
         Gl.glLineWidth(1)
@@ -2428,6 +2463,10 @@ tryagain:
         LAST_SEASON = 10
         season_Buttons_VISIBLE = False
         CAMO_BUTTONS_VISIBLE = False
+        TANKPARTS_VISIBLE = False
+        TANK_TEXTURES_VISIBLE = False
+        show_textures_cb.Checked = False
+        frmTextureViewer.Hide()
         GLOBAL_exclusionMask = 0
         exclusionMask_sd = -1
         HD_TANK = True
@@ -4053,4 +4092,141 @@ make_this_tank:
             m_show_bsp2_tree.ForeColor = Color.Black
         End If
     End Sub
+
+    Private Sub show_textures_cb_CheckedChanged(sender As Object, e As EventArgs) Handles show_textures_cb.CheckedChanged
+        'make sure camo crap is not visible
+        If season_Buttons_VISIBLE Then
+            CAMO_BUTTONS_VISIBLE = False
+            season_Buttons_VISIBLE = False
+        End If
+        '---------------------------------
+        If show_textures_cb.Checked Then
+            setup_tank_buttons()
+            STOP_BUTTON_SCAN = False
+            TANKPARTS_VISIBLE = True
+        Else
+            STOP_BUTTON_SCAN = True
+            TANKPARTS_VISIBLE = False
+            TANK_TEXTURE_ID = 0
+            TANK_TEXTURES_VISIBLE = False
+        End If
+    End Sub
+
+    Private Sub pb2_MouseDown(sender As Object, e As MouseEventArgs) Handles pb2.MouseDown
+        mouse_down = True
+        mouse_delta = e.Location
+
+    End Sub
+
+    Private Sub pb2_MouseEnter(sender As Object, e As EventArgs) Handles pb2.MouseEnter
+        pb2.Focus()
+    End Sub
+
+    Private Sub pb2_MouseMove(sender As Object, e As MouseEventArgs) Handles pb2.MouseMove
+        If mouse_down Then
+            Dim p As New Point
+            p = e.Location - mouse_delta
+            rect_location += p
+            mouse_delta = e.Location
+            frmTextureViewer.draw()
+            Return
+        End If
+    End Sub
+
+    Private Sub pb2_MouseUp(sender As Object, e As MouseEventArgs) Handles pb2.MouseUp
+        mouse_down = False
+    End Sub
+
+    Private Sub pb2_MouseWheel(sender As Object, e As MouseEventArgs) Handles pb2.MouseWheel
+             mouse_pos = e.Location
+        mouse_delta = e.Location
+
+        If e.Delta > 0 Then
+            img_scale_up()
+        Else
+            img_scale_down()
+        End If
+    End Sub
+    Public Sub img_scale_up()
+        If Zoom_Factor >= 4.0 Then
+            Zoom_Factor = 4.0
+            Return 'to big and the t_bmp creation will hammer memory.
+        End If
+        Dim amt As Single = 0.125
+        Zoom_Factor += amt
+        Dim z = (Zoom_Factor / 1.0) * 100.0
+        frmTextureViewer.zoom.Text = "Zoom:" + vbCrLf + z.ToString("000") + "%"
+        Application.DoEvents()
+        'this bit of math zooms the texture around the mouses center during the resize.
+        'old_w and old_h is the original size of the image in width and height
+        'mouse_pos is current mouse position in the window.
+
+        Dim offset As New Point
+        Dim old_size_w, old_size_h As Double
+        old_size_w = (old_w * (Zoom_Factor - amt))
+        old_size_h = (old_h * (Zoom_Factor - amt))
+
+        offset = rect_location - (mouse_pos)
+
+        rect_size.X = Zoom_Factor * old_w
+        rect_size.Y = Zoom_Factor * old_h
+
+        Dim delta_x As Double = CDbl(offset.X / old_size_w)
+        Dim delta_y As Double = CDbl(offset.Y / old_size_h)
+
+        Dim x_offset = delta_x * (rect_size.X - old_size_w)
+        Dim y_offset = delta_y * (rect_size.Y - old_size_h)
+        Try
+
+            rect_location.X += CInt(x_offset)
+            rect_location.Y += CInt(y_offset)
+
+        Catch ex As Exception
+
+        End Try
+        frmTextureViewer.draw()
+    End Sub
+    Public Sub img_scale_down()
+        If Zoom_Factor <= 0.25 Then
+            Zoom_Factor = 0.25
+            Return
+        End If
+        Dim amt As Single = 0.125
+        Zoom_Factor -= amt
+        Dim z = (Zoom_Factor / 1.0) * 100.0
+        frmTextureViewer.zoom.Text = "Zoom:" + vbCrLf + z.ToString("000") + "%"
+        Application.DoEvents()
+
+        'this bit of math zooms the texture around the mouses center during the resize.
+        'old_w and old_h is the original size of the image in width and height
+        'mouse_pos is current mouse position in the window.
+
+        Dim offset As New Point
+        Dim old_size_w, old_size_h As Double
+
+        old_size_w = (old_w * (Zoom_Factor - amt))
+        old_size_h = (old_h * (Zoom_Factor - amt))
+
+        offset = rect_location - (mouse_pos)
+
+        rect_size.X = Zoom_Factor * old_w
+        rect_size.Y = Zoom_Factor * old_h
+
+        Dim delta_x As Double = CDbl(offset.X / (rect_size.X + (rect_size.X - old_size_w)))
+        Dim delta_y As Double = CDbl(offset.Y / (rect_size.Y + (rect_size.Y - old_size_h)))
+
+        Dim x_offset = delta_x * (rect_size.X - old_size_w)
+        Dim y_offset = delta_y * (rect_size.Y - old_size_h)
+        Try
+
+            rect_location.X += -CInt(x_offset)
+            rect_location.Y += -CInt(y_offset)
+
+        Catch ex As Exception
+
+        End Try
+
+        frmTextureViewer.draw()
+    End Sub
+
 End Class

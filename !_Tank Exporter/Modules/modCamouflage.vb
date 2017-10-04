@@ -177,6 +177,9 @@ skip:
         '===================================
         If cnt = 0 Then Return ' nothing found
         ReDim camo_Buttons(0)
+        If frmTextureViewer.Visible Then
+            frmMain.pb2.Dock = DockStyle.None
+        End If
         For i = 0 To cnt - 1
             Dim b = New Camobutton_
             b.c0 = c0(i)
@@ -197,6 +200,13 @@ skip:
         '===================================
         relocate_camobuttons()
         CAMO_BUTTONS_VISIBLE = True
+        If frmTextureViewer.Visible Then
+            frmMain.pb2.Visible = True
+            frmMain.pb2.Dock = DockStyle.Fill
+            frmTextureViewer.draw()
+            frmTextureViewer.draw()
+            'frmTextureViewer.draw()
+        End If
         '===================================
         'Debug.WriteLine("test")
     End Sub
@@ -279,8 +289,8 @@ skip:
     End Sub
 
     Private Function make_mixed_texture(id As Integer) As Integer
-        pb2.Visible = False
-        pb2.BringToFront()
+        frmMain.pb2.Visible = False
+        frmMain.pb2.BringToFront()
         frmMain.gl_stop = True
         frmMain.update_thread.Suspend()
         'While gl_busy
@@ -295,8 +305,8 @@ skip:
             MessageBox.Show("Unable to make rendering context current")
             End
         End If
-        pb2.Width = w
-        pb2.Height = h
+        frmMain.pb2.Width = w
+        frmMain.pb2.Height = h
         Gl.glViewport(0, 0, w, h)
         Gl.glMatrixMode(Gl.GL_PROJECTION) 'Select Projection
         Gl.glLoadIdentity() 'Reset The Matrix
@@ -385,6 +395,7 @@ skip:
         Gl.glCopyTexImage2D(Gl.GL_TEXTURE_2D, 0, Gl.GL_RGBA, 0, 0, w, h, 0)
         Gl.glBindTexture(Gl.GL_TEXTURE_2D, 0)
         e = Gl.glGetError
+
         frmMain.gl_stop = False
         frmMain.update_thread.Resume()
 

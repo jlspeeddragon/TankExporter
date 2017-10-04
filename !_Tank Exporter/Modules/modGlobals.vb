@@ -5,8 +5,14 @@ Module modGlobals
     Public TESTING As Boolean = False
     '##################################
 
+    Public old_h, old_w As Integer
+    Public Zoom_Factor As Single = 1.0
 
-
+    Public rect_location As New Point
+    Public rect_size As New Point
+    Public checkerboard_id As Integer
+    Public current_image As Integer
+    Public current_tank_part As Integer
 
     Public exclusionMask_sd As Integer
     Public GLOBAL_exclusionMask As Integer
@@ -48,7 +54,7 @@ Module modGlobals
     Public CAMO_BUTTON_DOWN As Boolean
     Public SUMMER_ICON, WINTER_ICON, DESSERT_ICON As Integer
     Public NBUTT_norm, NBUTT_over, NBUTT_down As Integer
-    Public CBUTT_norm, CBUTT_over, CBUTT_down As Integer
+    Public CBUTT_norm, CBUTT_over, CBUTT_down, CBUTT_selected As Integer
     Public SELECTED_SEASON_BUTTON As Integer
     Public SELECTED_CAMO_BUTTON As Integer = -1
     Public LAST_SEASON As Integer
@@ -63,7 +69,7 @@ Module modGlobals
     Public season_Buttons_VISIBLE As Boolean
     Public CAMO_BUTTONS_VISIBLE As Boolean
     Public CAMO_BUTTON_TYPE As Integer
-
+    Public TEXTURE_BUTTONS_VISIBLE As Boolean
     Public CURRENT_DATA_SET As Integer
 
     Public turret_count As Integer

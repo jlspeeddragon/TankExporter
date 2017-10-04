@@ -34,39 +34,53 @@ Module modGLbuttons
     'Public Dessert_Buttons(0) As Dbutton_
     Public BUTTON_ID As Integer
     Public BUTTON_TYPE As Integer
-
-    Public Structure Camobutton_
+    '#########################################################
+    'Image Screen buttons
+    Public TANK_PART_ID As Integer
+    Public TANK_TEXTURE_ID As Integer
+    Public TANKPART_BUTTON_DOWN As Boolean
+    Public tankpart_buttons(0) As TankPart_btn
+    Public texture_buttons(0) As TankTexture_btn
+    Public Structure TankPart_btn
         Public gl_textureID As Integer
         Public gl_OverTextureID As Integer
-        Public camouflage_ID As Integer
+        Public part_ID As Integer
         Public size As Point
         Public location As Point
         Public state As Integer
         Public buttonID As Integer
         Public callmode As String
         Public selected As Boolean
-        Public camo_texture_id As Integer
+        Public tankpart_id As Integer
         Dim c0 As vect4
         Dim c1 As vect4
         Dim c2 As vect4
         Dim c3 As vect4
 
         Public Sub click()
-            apply_texture(buttonID - 100)
+            tank_button_clicked(callmode)
         End Sub
         Public Sub add()
-            Dim s = camo_Buttons.Length - 1
-            ReDim Preserve camo_Buttons(s + 1)
+            Dim s = tankpart_buttons.Length - 1
+            ReDim Preserve tankpart_buttons(s + 1)
             Me.buttonID = s + 100
-            camo_Buttons(s) = Me
+            tankpart_buttons(s) = Me
         End Sub
         Public Sub draw()
+            If Me.selected Then
+                Gl.glColor4f(0.8, 0.4, 0.0, 1.0)
+            Else
+                Gl.glColor4f(0.3, 0.2, 0.1, 1.0)
+            End If
+
+            draw_quad(Me.location, Me.size)
             Gl.glEnable(Gl.GL_TEXTURE_2D)
             Gl.glActiveTexture(Gl.GL_TEXTURE0)
             Gl.glColor4f(1.0, 1.0, 1.0, 1.0)
             'draw button state
-            Gl.glBindTexture(Gl.GL_TEXTURE_2D, Me.gl_textureID)
-            draw_quad(Me.location + New Point(2, -2), Me.size + New Point(-4, -4))
+            Gl.glEnable(Gl.GL_BLEND)
+            Gl.glBindTexture(Gl.GL_TEXTURE_2D, Me.tankpart_id)
+            draw_quad(Me.location, Me.size)
 
             Select Case Me.state
                 Case 0
@@ -76,7 +90,6 @@ Module modGLbuttons
                 Case 2
                     Gl.glBindTexture(Gl.GL_TEXTURE_2D, CBUTT_down)
             End Select
-            Gl.glEnable(Gl.GL_BLEND)
             draw_quad(Me.location, Me.size)
 
             Gl.glBindTexture(Gl.GL_TEXTURE_2D, 0)
@@ -84,76 +97,73 @@ Module modGLbuttons
         End Sub
         Public Sub draw_pick_box()
             'green colors
-            Gl.glColor4ub(CByte(0), CByte(Me.buttonID), CByte(0), CByte(0))
+            Gl.glColor4ub(CByte(Me.buttonID), CByte(0), CByte(0), CByte(0))
             draw_quad(Me.location, Me.size)
         End Sub
     End Structure
-    'Public Structure Wbutton_
-    '    Public gl_textureID As Integer
-    '    Public gl_OverTextureID As Integer
-    '    Public camouflage_ID As Integer
-    '    Public size As Point
-    '    Public location As Point
-    '    Public stat As Integer
-    '    Public buttonID As Integer
-    '    Public callmode As Integer
-    '    Public selected As Boolean
-    '    Public camo_texture_id As Integer
-    '    Public Sub click()
-    '        apply_texture(Me.camo_texture_id)
-    '    End Sub
-    '    Public Sub add()
-    '        Dim s = Winter_Buttons.Length
-    '        ReDim Preserve Winter_Buttons(s + 1)
-    '        Me.buttonID = s + 100
-    '        Winter_Buttons(s) = Me
-    '    End Sub
-    '    Public Sub draw()
-    '        Gl.glEnable(Gl.GL_TEXTURE_2D)
-    '        Gl.glBindTexture(Gl.GL_TEXTURE_2D, Me.gl_textureID)
-    '        draw_quad(Me.location, Me.size)
-    '        Gl.glBindTexture(Gl.GL_TEXTURE_2D, 0)
-    '    End Sub
-    '    Public Sub draw_pick_box()
-    '        'green colors
-    '        Gl.glColor4ub(CByte(0), CByte(Me.buttonID), CByte(0), CByte(0))
-    '        draw_quad(Me.location, Me.size)
-    '    End Sub
-    'End Structure
-    'Public Structure Dbutton_
-    '    Public gl_textureID As Integer
-    '    Public gl_OverTextureID As Integer
-    '    Public camouflage_ID As Integer
-    '    Public size As Point
-    '    Public location As Point
-    '    Public stat As Integer
-    '    Public buttonID As Integer
-    '    Public callmode As Integer
-    '    Public selected As Boolean
-    '    Public camo_texture_id As Integer
-    '    Public Sub click()
-    '        apply_texture(Me.camo_texture_id)
-    '    End Sub
-    '    Public Sub add()
-    '        Dim s = Dessert_Buttons.Length
-    '        ReDim Preserve Dessert_Buttons(s + 1)
-    '        Me.buttonID = s + 100
-    '        Dessert_Buttons(s) = Me
-    '    End Sub
-    '    Public Sub draw()
-    '        Gl.glEnable(Gl.GL_TEXTURE_2D)
-    '        Gl.glBindTexture(Gl.GL_TEXTURE_2D, Me.gl_textureID)
-    '        draw_quad(Me.location, Me.size)
-    '        Gl.glBindTexture(Gl.GL_TEXTURE_2D, 0)
-    '    End Sub
-    '    Public Sub draw_pick_box()
-    '        'green colors
-    '        Gl.glColor4ub(CByte(0), CByte(Me.buttonID), CByte(0), CByte(0))
-    '        draw_quad(Me.location, Me.size)
-    '    End Sub
-    'End Structure
+    Public Structure TankTexture_btn
+        Public name As String
+        Public gl_textureID As Integer
+        Public gl_OverTextureID As Integer
+        Public part_ID As Integer
+        Public size As Point
+        Public location As Point
+        Public state As Integer
+        Public buttonID As Integer
+        Public callmode As String
+        Public selected As Boolean
+        Dim c0 As vect4
+        Dim c1 As vect4
+        Dim c2 As vect4
+        Dim c3 As vect4
+
+        Public Sub click()
+            texture_button_clicked(gl_textureID, part_ID)
+        End Sub
+        Public Sub add()
+            Dim s = texture_buttons.Length - 1
+            ReDim Preserve texture_buttons(s + 1)
+            Me.buttonID = s + 100
+            texture_buttons(s) = Me
+        End Sub
+        Public Sub draw()
+            draw_quad(Me.location, Me.size)
+            Gl.glEnable(Gl.GL_TEXTURE_2D)
+            Gl.glActiveTexture(Gl.GL_TEXTURE0)
+            Gl.glColor4f(1.0, 1.0, 1.0, 1.0)
+            'draw button state
+            Gl.glEnable(Gl.GL_BLEND)
+            Gl.glBindTexture(Gl.GL_TEXTURE_2D, Me.gl_textureID)
+            draw_quad(Me.location, Me.size)
+
+            Select Case Me.state
+                Case 0
+                    Gl.glBindTexture(Gl.GL_TEXTURE_2D, CBUTT_norm)
+                Case 1
+                    Gl.glBindTexture(Gl.GL_TEXTURE_2D, CBUTT_over)
+                Case 2
+                    Gl.glBindTexture(Gl.GL_TEXTURE_2D, CBUTT_down)
+            End Select
+            draw_quad(Me.location, Me.size)
+            If Me.selected Then
+                Gl.glBindTexture(Gl.GL_TEXTURE_2D, CBUTT_selected)
+                draw_quad(Me.location, Me.size)
+            End If
 
 
+            Gl.glBindTexture(Gl.GL_TEXTURE_2D, 0)
+            Gl.glDisable(Gl.GL_BLEND)
+        End Sub
+        Public Sub draw_pick_box()
+            'green colors
+            Gl.glColor4ub(CByte(Me.buttonID), CByte(0), CByte(0), CByte(0))
+            draw_quad(Me.location, Me.size)
+        End Sub
+    End Structure
+
+
+
+    '#########################################################
     Public Structure Nbutton_
         Const summer As Integer = 1
         Const winter As Integer = 2
@@ -220,6 +230,60 @@ Module modGLbuttons
             draw_quad(Me.location, Me.size)
         End Sub
     End Structure
+    Public Structure Camobutton_
+        Public gl_textureID As Integer
+        Public gl_OverTextureID As Integer
+        Public camouflage_ID As Integer
+        Public size As Point
+        Public location As Point
+        Public state As Integer
+        Public buttonID As Integer
+        Public callmode As String
+        Public selected As Boolean
+        Public camo_texture_id As Integer
+        Dim c0 As vect4
+        Dim c1 As vect4
+        Dim c2 As vect4
+        Dim c3 As vect4
+
+        Public Sub click()
+            apply_texture(buttonID - 100)
+        End Sub
+        Public Sub add()
+            Dim s = camo_Buttons.Length - 1
+            ReDim Preserve camo_Buttons(s + 1)
+            Me.buttonID = s + 100
+            camo_Buttons(s) = Me
+        End Sub
+        Public Sub draw()
+            Gl.glEnable(Gl.GL_TEXTURE_2D)
+            Gl.glActiveTexture(Gl.GL_TEXTURE0)
+            Gl.glColor4f(1.0, 1.0, 1.0, 1.0)
+            'draw button state
+            Gl.glBindTexture(Gl.GL_TEXTURE_2D, Me.gl_textureID)
+            draw_quad(Me.location + New Point(2, -2), Me.size + New Point(-4, -4))
+
+            Select Case Me.state
+                Case 0
+                    Gl.glBindTexture(Gl.GL_TEXTURE_2D, CBUTT_norm)
+                Case 1
+                    Gl.glBindTexture(Gl.GL_TEXTURE_2D, CBUTT_over)
+                Case 2
+                    Gl.glBindTexture(Gl.GL_TEXTURE_2D, CBUTT_down)
+            End Select
+            Gl.glEnable(Gl.GL_BLEND)
+            draw_quad(Me.location, Me.size)
+
+            Gl.glBindTexture(Gl.GL_TEXTURE_2D, 0)
+            Gl.glDisable(Gl.GL_BLEND)
+        End Sub
+        Public Sub draw_pick_box()
+            'green colors
+            Gl.glColor4ub(CByte(0), CByte(Me.buttonID), CByte(0), CByte(0))
+            draw_quad(Me.location, Me.size)
+        End Sub
+    End Structure
+
 
     Private Sub draw_quad(ByVal p As Point, ByVal size As Point)
         Gl.glPolygonMode(Gl.GL_FRONT_AND_BACK, Gl.GL_FILL)
@@ -303,10 +367,134 @@ Module modGLbuttons
         CBUTT_over = load_png_file(Application.StartupPath + "\resources\Cbutt_over.png")
         CBUTT_down = load_png_file(Application.StartupPath + "\resources\Cbutt_down.png")
 
-        delete_image_start += 9 ' keep track of used textures
+        CBUTT_selected = load_png_file(Application.StartupPath + "\resources\Cbutt_selected.png")
+        checkerboard_id = load_png_file(Application.StartupPath + "\resources\CheckerPatternPaper.png")
+        delete_image_start += 11 ' keep track of used textures
 
     End Sub
 
+    Public Sub draw_textures_pick()
+        Gl.glDisable(Gl.GL_LIGHTING)
+        Gl.glDisable(Gl.GL_BLEND)
+        Gl.glDisable(Gl.GL_DEPTH_TEST)
+
+        Gl.glClearColor(0, 0, 0, 0)
+        Gl.glClear(Gl.GL_COLOR_BUFFER_BIT Or Gl.GL_DEPTH_BUFFER_BIT)
+
+        For i = 0 To texture_buttons.Length - 2
+            texture_buttons(i).draw_pick_box()
+            texture_buttons(i).state = 0
+        Next
+    End Sub
+    Public Sub mouse_pick_textures(ByVal x As Integer, ByVal y As Integer)
+        'If CAMO_BUTTON_DOWN Then Return
+
+        '==========================================
+        'pick function
+        Dim viewport(4) As Integer
+        Dim pixel() As Byte = {0, 0, 0, 0}
+        Gl.glGetIntegerv(Gl.GL_VIEWPORT, viewport)
+        Gl.glReadPixels(x, viewport(3) - y, 1, 1, Gl.GL_RGBA, Gl.GL_UNSIGNED_BYTE, pixel)
+        Dim type = pixel(3)
+        Dim index As UInt32 = CUInt(pixel(0))
+        If type = 0 Then
+            If index > 0 Then
+                BUTTON_TYPE = 1
+                BUTTON_ID = index
+                index = index - 100
+                If CAMO_BUTTON_DOWN Then 'its global so use it.
+                    texture_buttons(index).state = 2
+                    TANK_TEXTURE_ID = index
+                    'If Not LAST_SEASON = BUTTON_ID Then
+                    For i = 0 To texture_buttons.Length - 2
+                        texture_buttons(i).selected = False
+                    Next
+                    'stop repeteing the command over and over
+                    texture_buttons(index).click()
+                    texture_buttons(index).selected = True
+                    'End If
+                    CAMO_BUTTON_DOWN = False
+                Else
+                    texture_buttons(index).state = 1
+                    BUTTON_ID = 0
+                End If
+
+                Application.DoEvents()
+                Return
+            Else
+                For i = 0 To texture_buttons.Length - 2
+                    texture_buttons(i).state = 0
+                Next
+                TANK_TEXTURE_ID = 0
+                BUTTON_ID = 0
+
+            End If
+
+        Else
+        End If
+    End Sub
+
+
+    Public Sub draw_tankpart_pick()
+        Gl.glDisable(Gl.GL_LIGHTING)
+        Gl.glDisable(Gl.GL_BLEND)
+        Gl.glDisable(Gl.GL_DEPTH_TEST)
+
+        Gl.glClearColor(0, 0, 0, 0)
+        Gl.glClear(Gl.GL_COLOR_BUFFER_BIT Or Gl.GL_DEPTH_BUFFER_BIT)
+
+        For i = 0 To tankpart_buttons.Length - 2
+            tankpart_buttons(i).draw_pick_box()
+            tankpart_buttons(i).state = 0
+        Next
+    End Sub
+    Public Sub mouse_pick_tankparts(ByVal x As Integer, ByVal y As Integer)
+        'If CAMO_BUTTON_DOWN Then Return
+
+        '==========================================
+        'pick function
+        Dim viewport(4) As Integer
+        Dim pixel() As Byte = {0, 0, 0, 0}
+        Gl.glGetIntegerv(Gl.GL_VIEWPORT, viewport)
+        Gl.glReadPixels(x, viewport(3) - y, 1, 1, Gl.GL_RGBA, Gl.GL_UNSIGNED_BYTE, pixel)
+        Dim type = pixel(3)
+        Dim index As UInt32 = CUInt(pixel(0))
+        If type = 0 Then
+            If index > 0 Then
+                BUTTON_TYPE = 1
+                BUTTON_ID = index
+                index = index - 100
+                If CAMO_BUTTON_DOWN Then 'its global so use it.
+                    TANK_PART_ID = index
+                    tankpart_buttons(index).state = 2
+                    'If Not LAST_SEASON = BUTTON_ID Then
+                    For i = 0 To tankpart_buttons.Length - 2
+                        tankpart_buttons(i).selected = False
+                    Next
+                    'stop repeteing the command over and over
+                    tankpart_buttons(index).click()
+                    tankpart_buttons(index).selected = True
+                    'End If
+
+                Else
+                    tankpart_buttons(index).state = 1
+                    BUTTON_ID = 0
+                End If
+
+                Application.DoEvents()
+                Return
+            Else
+                For i = 0 To tankpart_buttons.Length - 2
+                    tankpart_buttons(i).state = 0
+                Next
+                TANK_PART_ID = 0
+                BUTTON_ID = 0
+
+            End If
+
+        Else
+        End If
+    End Sub
 
     Public Sub draw_season_pick_buttons()
         'If CAMO_BUTTON_DOWN Then Return
