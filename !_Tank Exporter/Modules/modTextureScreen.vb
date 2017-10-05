@@ -35,8 +35,11 @@ Module modTextureScreen
     Public Selected_TankPart As Integer
 #End Region
 
-    Public Sub setup_tank_buttons()
-
+    Public Sub reset_tank_buttons()
+        For i = 0 To tankpart_buttons.Length - 2
+            tankpart_buttons(i).selected = 0
+            tankpart_buttons(i).state = 0
+        Next
     End Sub
 
     Public Sub load_tank_buttons()

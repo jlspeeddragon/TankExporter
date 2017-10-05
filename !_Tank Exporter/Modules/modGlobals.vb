@@ -4,7 +4,10 @@ Module modGlobals
     '##################################
     Public TESTING As Boolean = False
     '##################################
+    Public current_vertex As UInt32
+    Public current_part As UInt32
 
+    Public CENTER_SELECTION As Boolean
     Public old_h, old_w As Integer
     Public Zoom_Factor As Single = 1.0
 

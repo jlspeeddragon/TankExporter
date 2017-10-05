@@ -29,6 +29,7 @@ Imports System.Drawing.Imaging
 
 
 Public Class frmTextureViewer
+    Dim center As vec2
     Public Sub set_current_image()
         Dim w, h As Integer
         Dim miplevel As Integer = 0
@@ -54,6 +55,43 @@ Public Class frmTextureViewer
         draw()
 
     End Sub
+    Private Sub check_if_centering_on_selection()
+        'if the C key is pressed, it toggles centering on the current_vertex
+        If CENTER_SELECTION Then
+            If Me.m_uvs_only.Checked Or Me.m_show_uvs.Checked Then
+                If current_vertex > 0 Then
+
+                    Dim u1 As New uv_
+                    Dim u2 As New uv_
+                    Dim u3 As New uv_
+                    u1.u = _object(current_part).tris(current_vertex).uv1.u
+                    u1.v = _object(current_part).tris(current_vertex).uv1.v
+                    u2.u = _object(current_part).tris(current_vertex).uv2.u
+                    u2.v = _object(current_part).tris(current_vertex).uv2.v
+                    u3.u = _object(current_part).tris(current_vertex).uv3.u
+                    u3.v = _object(current_part).tris(current_vertex).uv3.v
+
+                    u1.u = rect_location.X + (u1.u * rect_size.X)
+                    u2.u = rect_location.X + (u2.u * rect_size.X)
+                    u3.u = rect_location.X + (u3.u * rect_size.X)
+
+                    u1.v = -rect_location.Y + (-u1.v * rect_size.Y)
+                    u2.v = -rect_location.Y + (-u2.v * rect_size.Y)
+                    u3.v = -rect_location.Y + (-u3.v * rect_size.Y)
+
+                    center.x = (u1.u + u2.u + u3.u) / 3.0!
+                    center.y = (u1.v + u2.v + u3.v) / 3.0!
+                    center.x = (frmMain.pb2.Width / 2.0!) - center.x
+                    center.y = (frmMain.pb2.Height / 2.0!) + center.y
+                    Return
+                End If
+            End If
+        Else
+        End If
+        center.x = 0
+        center.y = 0
+
+    End Sub
     Public Sub draw()
         If Not _Started Then Return
         If Not (Wgl.wglMakeCurrent(pb2_hDC, pb2_hRC)) Then
@@ -62,6 +100,7 @@ Public Class frmTextureViewer
         End If
         'set ortho mode.
         '#######################################################################################
+        check_if_centering_on_selection()
         Gl.glViewport(0, 0, frmMain.pb2.Width, frmMain.pb2.Height)
         Gl.glMatrixMode(Gl.GL_PROJECTION) 'Select Projection
         Gl.glLoadIdentity() 'Reset The Matrix
@@ -124,6 +163,8 @@ Public Class frmTextureViewer
         Dim p1, p2, p3, p4 As Point
         Dim L, S As New Point
         L = rect_location
+        L.X += center.x
+        L.Y += center.y
         S = rect_size
         L.Y *= -1
         S.Y *= -1
@@ -279,42 +320,92 @@ Public Class frmTextureViewer
             u2.v = _object(current_tank_part).tris(i).uv2.v
             u3.u = _object(current_tank_part).tris(i).uv3.u
             u3.v = _object(current_tank_part).tris(i).uv3.v
-            u1.u = rect_location.X + (u1.u * rect_size.X)
-            u2.u = rect_location.X + (u2.u * rect_size.X)
-            u3.u = rect_location.X + (u3.u * rect_size.X)
 
-            u1.v = -rect_location.Y + (-u1.v * rect_size.Y)
-            u2.v = -rect_location.Y + (-u2.v * rect_size.Y)
-            u3.v = -rect_location.Y + (-u3.v * rect_size.Y)
+            u1.u = rect_location.X + (u1.u * rect_size.X) + center.x
+            u2.u = rect_location.X + (u2.u * rect_size.X) + center.x
+            u3.u = rect_location.X + (u3.u * rect_size.X) + center.x
+
+            u1.v = -rect_location.Y + (-u1.v * rect_size.Y) - center.y
+            u2.v = -rect_location.Y + (-u2.v * rect_size.Y) - center.y
+            u3.v = -rect_location.Y + (-u3.v * rect_size.Y) - center.y
+
             Gl.glVertex2f(u1.u, u1.v)
             Gl.glVertex2f(u2.u, u2.v)
             Gl.glVertex2f(u3.u, u3.v)
         Next
         Gl.glEnd()
-
+        If current_part > 0 Then
+            draw_current_vertex()
+        End If
     End Sub
 
+    Public Sub draw_current_vertex()
+        'draw()
+        Gl.glEnable(Gl.GL_BLEND)
+        Gl.glPolygonMode(Gl.GL_FRONT_AND_BACK, Gl.GL_FILL)
+        Gl.glColor4f(0.8, 0.4, 0.0, 0.8)
+        Dim u1 As New uv_
+        Dim u2 As New uv_
+        Dim u3 As New uv_
+        u1.u = _object(current_part).tris(current_vertex).uv1.u
+        u1.v = _object(current_part).tris(current_vertex).uv1.v
+        u2.u = _object(current_part).tris(current_vertex).uv2.u
+        u2.v = _object(current_part).tris(current_vertex).uv2.v
+        u3.u = _object(current_part).tris(current_vertex).uv3.u
+        u3.v = _object(current_part).tris(current_vertex).uv3.v
+
+        u1.u = rect_location.X + (u1.u * rect_size.X) + center.x
+        u2.u = rect_location.X + (u2.u * rect_size.X) + center.x
+        u3.u = rect_location.X + (u3.u * rect_size.X) + center.x
+
+        u1.v = -rect_location.Y + (-u1.v * rect_size.Y) - center.y
+        u2.v = -rect_location.Y + (-u2.v * rect_size.Y) - center.y
+        u3.v = -rect_location.Y + (-u3.v * rect_size.Y) - center.y
+
+        Gl.glBegin(Gl.GL_TRIANGLES)
+        Gl.glVertex2f(u1.u, u1.v)
+        Gl.glVertex2f(u2.u, u2.v)
+        Gl.glVertex2f(u3.u, u3.v)
+        Gl.glEnd()
+        Gl.glDisable(Gl.GL_BLEND)
+    End Sub
     Private Sub frmTextureViewer_FormClosing(sender As Object, e As FormClosingEventArgs) Handles Me.FormClosing
         frmMain.pb2.Parent = frmMain
         e.Cancel = True
         Me.Hide()
     End Sub
 
+    Private Sub frmTextureViewer_KeyDown(sender As Object, e As KeyEventArgs) Handles Me.KeyDown
+        If e.KeyCode = Keys.C Then
+            If CENTER_SELECTION Then
+                CENTER_SELECTION = False
+            Else
+                CENTER_SELECTION = True
+            End If
+        End If
+
+    End Sub
+
+    Private Sub frmTextureViewer_Load(sender As Object, e As EventArgs) Handles Me.Load
+        Me.KeyPreview = True    'so i catch keyboard before despatching it
+
+    End Sub
+
 
 
     Private Sub frmTextureViewer_ResizeEnd(sender As Object, e As EventArgs) Handles Me.ResizeEnd
-        frmMain.pb2.Width = Me.ClientSize.Width
-        frmMain.pb2.Height = Me.ClientSize.Height
-        frmMain.pb2.Location = New Point(0, 0)
-        rect_location = New Point((frmMain.pb2.Width - rect_size.X) / 2, (frmMain.pb2.Height - rect_size.Y) / 2)
+        'frmMain.pb2.Width = Me.ClientSize.Width
+        'frmMain.pb2.Height = Me.ClientSize.Height
+        'frmMain.pb2.Location = New Point(0, 0)
+        'rect_location = New Point((frmMain.pb2.Width - rect_size.X) / 2, (frmMain.pb2.Height - rect_size.Y) / 2)
         draw()
     End Sub
 
     Private Sub frmTextureViewer_SizeChanged(sender As Object, e As EventArgs) Handles Me.SizeChanged
-        frmMain.pb2.Width = Me.ClientSize.Width
-        frmMain.pb2.Height = Me.ClientSize.Height
-        frmMain.pb2.Location = New Point(0, 0)
-        rect_location = New Point((frmMain.pb2.Width - rect_size.X) / 2, (frmMain.pb2.Height - rect_size.Y) / 2)
+        'frmMain.pb2.Width = Me.ClientSize.Width
+        'frmMain.pb2.Height = Me.ClientSize.Height
+        'frmMain.pb2.Location = New Point(0, 0)
+        'rect_location = New Point((frmMain.pb2.Width - rect_size.X) / 2, (frmMain.pb2.Height - rect_size.Y) / 2)
         draw()
     End Sub
 

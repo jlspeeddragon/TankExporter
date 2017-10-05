@@ -164,6 +164,7 @@ Module tank_loader
 
     Public _object() As obj
     Public Class obj
+        Public vertex_pick_list As Integer
         Public exclude_camo As Integer
         Public camo_tiling As vect4
         Public use_camo As Integer

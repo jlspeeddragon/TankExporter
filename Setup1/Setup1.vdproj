@@ -117,6 +117,12 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_4EFFEE8EA2F64B199FDD7EE8872E16D1"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_506ED4679DFD406CA524C16E34E80F97"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -239,6 +245,12 @@
         {
         "MsmKey" = "8:_CB3B11DAE9A90D5EB814C84C32997A74"
         "OwnerKey" = "8:_D88F02B810ED4918A9E68229BD46788B"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_D48A81C6F95D4732A1826BBBC04FEDFE"
+        "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -400,7 +412,7 @@
         "DisplayName" = "8:Release"
         "IsDebugOnly" = "11:FALSE"
         "IsReleaseOnly" = "11:TRUE"
-        "OutputFilename" = "8:..\\TankExporter_012.msi"
+        "OutputFilename" = "8:..\\TankExporter_013.msi"
         "PackageFilesAs" = "3:2"
         "PackageFileSize" = "3:-2147483648"
         "CabType" = "3:1"
@@ -830,6 +842,26 @@
             "TargetName" = "8:Cbutt_down.png"
             "Tag" = "8:"
             "Folder" = "8:_EACEE00013F249E6B9932BC37E30FDF4"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_4EFFEE8EA2F64B199FDD7EE8872E16D1"
+            {
+            "SourcePath" = "8:..\\!_Tank Exporter\\html\\textures.html"
+            "TargetName" = "8:textures.html"
+            "Tag" = "8:"
+            "Folder" = "8:_87C614F83BA1480492E90F368FEAFD06"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -1299,6 +1331,26 @@
             "IsDependency" = "11:TRUE"
             "IsolateTo" = "8:"
             }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_D48A81C6F95D4732A1826BBBC04FEDFE"
+            {
+            "SourcePath" = "8:..\\!_Tank Exporter\\html\\imgs\\texture_viewer.png"
+            "TargetName" = "8:texture_viewer.png"
+            "Tag" = "8:"
+            "Folder" = "8:_589FDE83079A4FB68CA57637595D2D5A"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_D5E1112806E42E3E8C8A1C22F5F3E973"
             {
             "AssemblyRegister" = "3:1"
@@ -1552,15 +1604,15 @@
         {
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:Tank Exporter"
-        "ProductCode" = "8:{050765E4-94FD-4CBB-AC1C-65B10CDB205A}"
-        "PackageCode" = "8:{82A929A6-45DE-4072-85A0-15E9F32631B3}"
+        "ProductCode" = "8:{9C9AB151-13A3-4226-9DD0-044C0664278B}"
+        "PackageCode" = "8:{9C013B4C-65A2-4C34-98A3-E512B2DF7CB2}"
         "UpgradeCode" = "8:{6ABAF23A-CB3D-4411-B78A-4855B5B5A0CD}"
         "AspNetVersion" = "8:4.0.30319.0"
         "RestartWWWService" = "11:FALSE"
         "RemovePreviousVersions" = "11:TRUE"
         "DetectNewerInstalledVersion" = "11:TRUE"
         "InstallAllUsers" = "11:FALSE"
-        "ProductVersion" = "8:1.0.12"
+        "ProductVersion" = "8:1.0.13"
         "Manufacturer" = "8:Coffee_"
         "ARPHELPTELEPHONE" = "8:"
         "ARPHELPLINK" = "8:"

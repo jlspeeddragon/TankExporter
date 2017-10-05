@@ -118,6 +118,13 @@ Public Class frmMain
         Dim t = DirectCast(c(0), TreeView)
         t.SelectedNode = Nothing
         t.Parent.Focus()
+        If e.KeyCode = Keys.C Then
+            If CENTER_SELECTION Then
+                CENTER_SELECTION = False
+            Else
+                CENTER_SELECTION = True
+            End If
+        End If
         If e.KeyCode = 16 Then
             move_mod = True
         End If
@@ -1850,6 +1857,21 @@ tryagain:
 
         End If
         '==========================================
+        Gl.glDisable(Gl.GL_LIGHTING)
+        Gl.glActiveTexture(Gl.GL_TEXTURE0)
+        Gl.glBindTexture(Gl.GL_TEXTURE_2D, 0)
+        If frmTextureViewer.Visible And (frmTextureViewer.m_show_uvs.Checked Or frmTextureViewer.m_uvs_only.Checked) Then
+            Gl.glColor4f(0.8, 0.4, 0.0, 1.0)
+
+            Gl.glBegin(Gl.GL_TRIANGLES)
+            Dim v1 = _object(current_part).tris(current_vertex).v1
+            Dim v2 = _object(current_part).tris(current_vertex).v2
+            Dim v3 = _object(current_part).tris(current_vertex).v3
+            Gl.glVertex3f(v1.x, v1.y, v1.z)
+            Gl.glVertex3f(v2.x, v2.y, v2.z)
+            Gl.glVertex3f(v3.x, v3.y, v3.z)
+            Gl.glEnd()
+        End If
 
         Gl.glColor3f(0.3, 0.3, 0.3)
         If grid_cb.Checked Then
@@ -1857,9 +1879,6 @@ tryagain:
         End If
 
 
-        Gl.glDisable(Gl.GL_LIGHTING)
-        Gl.glActiveTexture(Gl.GL_TEXTURE0)
-        Gl.glBindTexture(Gl.GL_TEXTURE_2D, 0)
 
         If move_mod Or z_move Then    'draw reference lines to eye center
             Gl.glColor3f(1.0, 1.0, 1.0)
@@ -1942,6 +1961,20 @@ tryagain:
         End If
         Gdi.SwapBuffers(pb1_hDC)
         '====================================
+        If frmTextureViewer.Visible Then
+            For i = 0 To texture_buttons.Length - 2
+                If current_part = texture_buttons(i).part_ID Then
+                    If texture_buttons(i).selected Then
+                        frmTextureViewer.draw()
+                        If Not (Wgl.wglMakeCurrent(pb1_hDC, pb1_hRC)) Then
+                            MessageBox.Show("Unable to make rendering context current")
+                            End
+                        End If
+                        Exit For
+                    End If
+                End If
+            Next
+        End If
         'has to be AFTER the buffer swap
         If Not STOP_BUTTON_SCAN Then
 
@@ -1962,6 +1995,10 @@ tryagain:
                 draw_textures_pick()
                 mouse_pick_textures(m_mouse.x, m_mouse.y)
             End If
+        End If
+        If TANK_TEXTURES_VISIBLE And frmTextureViewer.Visible Then
+            draw_tank_pick()
+            mouse_pick_tank_vertex(m_mouse.x, m_mouse.y)
             'Gdi.SwapBuffers(pb1_hDC)
         End If
         '====================================
@@ -2169,6 +2206,49 @@ tryagain:
         Gl.glEnable(Gl.GL_LIGHTING)
 
     End Sub
+    Private Sub draw_tank_pick()
+        ViewPerspective()
+        set_eyes()
+        Gl.glClearColor(0.0!, 0.0!, 0.0!, 0.0!)
+        Gl.glClear(Gl.GL_COLOR_BUFFER_BIT Or Gl.GL_DEPTH_BUFFER_BIT)
+        Gl.glDisable(Gl.GL_BLEND)
+        Gl.glEnable(Gl.GL_DEPTH_TEST)
+        Gl.glDisable(Gl.GL_LIGHTING)
+        Gl.glPolygonMode(Gl.GL_FRONT_AND_BACK, Gl.GL_FILL)
+        For i = 1 To object_count
+            If _object(i).visible Then 'lets not waste time drawing what we wont pick.
+                Gl.glCallList(_object(i).vertex_pick_list)
+            End If
+        Next
+    End Sub
+    Public Sub mouse_pick_tank_vertex(ByVal x As Integer, ByVal y As Integer)
+
+        'pick function
+        Dim viewport(4) As Integer
+        Dim pixel() As Byte = {0, 0, 0, 0}
+        Gl.glGetIntegerv(Gl.GL_VIEWPORT, viewport)
+        Gl.glReadPixels(x, viewport(3) - y, 1, 1, Gl.GL_RGBA, Gl.GL_UNSIGNED_BYTE, pixel)
+        Dim part = pixel(3)
+        Dim index As UInt32 = CUInt(pixel(0))
+        If part > 0 Then
+            current_part = part - 10
+            index = pixel(0) + (pixel(1) * 256) + (pixel(2) * 65536)
+
+            If index > 0 Then
+                current_vertex = index
+            Else
+                current_part = 0
+                current_vertex = 0
+            End If
+
+        Else
+            current_part = 0
+            current_vertex = 0
+        End If
+
+    End Sub
+
+
 
 
     Public Sub set_eyes()
@@ -2486,6 +2566,8 @@ tryagain:
         If object_count > 0 Then
             For i = 1 To object_count
                 Gl.glDeleteLists(_object(i).main_display_list, 1)
+                Gl.glFinish()
+                Gl.glDeleteLists(_object(i).vertex_pick_list, 1)
                 Gl.glFinish()
                 Gl.glDeleteTextures(1, _group(i).color_Id)
                 Gl.glFinish()
@@ -2962,7 +3044,7 @@ tryagain:
         End If
 
 
-        model_loaded = True
+        MODEL_LOADED = True
         part_counts = New part_counts_
         For i = 1 To object_count
             If _object(i).name.ToLower.Contains("chassis") Then
@@ -2979,8 +3061,34 @@ tryagain:
             End If
 
         Next
-        'get data_set camo set we will use
-        'and string to scripts package
+        '####################################
+        'All the tank parts are loaded so
+        'lets create the color picking lists.
+        'This should speed up color picking a lot.
+        Dim r, b, g, a As Byte
+        For i = 1 To object_count
+            Dim cpl = Gl.glGenLists(1)
+            _object(i).vertex_pick_list = cpl
+            Gl.glNewList(cpl, Gl.GL_COMPILE)
+            a = i + 10
+            If _object(i).visible Then
+                Gl.glBegin(Gl.GL_TRIANGLES)
+                For k As UInt32 = 1 To _object(i).count
+                    Dim v1 = _object(i).tris(k).v1
+                    Dim v2 = _object(i).tris(k).v2
+                    Dim v3 = _object(i).tris(k).v3
+                    r = k And &HFF
+                    g = (k And &HFF00) >> 8
+                    b = (k And &HFF0000) >> 16
+                    Gl.glColor4ub(r, g, b, a)
+                    Gl.glVertex3f(v1.x, v1.y, v1.z)
+                    Gl.glVertex3f(v2.x, v2.y, v2.z)
+                    Gl.glVertex3f(v3.x, v3.y, v3.z)
+                Next
+                Gl.glEnd()
+            End If
+            Gl.glEndList()
+        Next
 
         If save_tank Then
 
@@ -3521,10 +3629,10 @@ make_this_tank:
                 log_text.AppendLine("Tank not found:" + tank)
             Else
                 process_tank(True) ' true means save the binary tank file
-                model_loaded = False
+                MODEL_LOADED = False
             End If
         Next
-        model_loaded = True
+        MODEL_LOADED = True
         TC1.Enabled = True
 
     End Sub
@@ -4101,7 +4209,7 @@ make_this_tank:
         End If
         '---------------------------------
         If show_textures_cb.Checked Then
-            setup_tank_buttons()
+            reset_tank_buttons()
             STOP_BUTTON_SCAN = False
             TANKPARTS_VISIBLE = True
         Else
@@ -4138,7 +4246,7 @@ make_this_tank:
     End Sub
 
     Private Sub pb2_MouseWheel(sender As Object, e As MouseEventArgs) Handles pb2.MouseWheel
-             mouse_pos = e.Location
+        mouse_pos = e.Location
         mouse_delta = e.Location
 
         If e.Delta > 0 Then
