@@ -8,7 +8,7 @@ Added Mouse over picking of the vertex under the mouse.
 This only works if UVs are visable in the Texture Viewer.
 Also.. Pressing the "C" key will center the current UV in the Texture Viewer's window.
 The purpose is to make it easy to locate where the UVs are mapped to.
-Updated Help file
+Updated Help HTML and added a new page and image.
 
 ### Version 12:
 Added Texture Viewing and UV ploting.. also a way to save the texture as a png. This is dependent on the view settings.
