@@ -4204,16 +4204,18 @@ make_this_tank:
     Private Sub show_textures_cb_CheckedChanged(sender As Object, e As EventArgs) Handles show_textures_cb.CheckedChanged
         'make sure camo crap is not visible
         If season_Buttons_VISIBLE Then
-            CAMO_BUTTONS_VISIBLE = False
-            season_Buttons_VISIBLE = False
+            'CAMO_BUTTONS_VISIBLE = False
+            'season_Buttons_VISIBLE = False
         End If
         '---------------------------------
         If show_textures_cb.Checked Then
             reset_tank_buttons()
-            STOP_BUTTON_SCAN = False
+            'STOP_BUTTON_SCAN = False
             TANKPARTS_VISIBLE = True
         Else
-            STOP_BUTTON_SCAN = True
+            'If Not season_Buttons_VISIBLE Then
+            '    STOP_BUTTON_SCAN = True
+            'End If
             TANKPARTS_VISIBLE = False
             TANK_TEXTURE_ID = 0
             TANK_TEXTURES_VISIBLE = False
