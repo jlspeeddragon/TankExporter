@@ -1,7 +1,7 @@
-# TankExporter
+# Tank Exporter
 
-## A tool to export Tanks from World of Tanks
-
+## A tool to export Tanks from World of Tanks.
+#### This is an ongoing project by me.. Coffee_
 
 ### Version 13:
 Added Mouse over picking of the vertex under the mouse.
