@@ -5,7 +5,7 @@
 
 ### Vertion 14:
 Added Primitive Write capability.
-Now you can write primtive files the game can load!
+Now you can write primitive files the game can load!
 This only works will the hull or turret models.
 Read the help file for more information.
 
