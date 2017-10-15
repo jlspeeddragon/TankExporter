@@ -40,6 +40,7 @@ a:active {
 .style5 {color: #00FF00}
 .style6 {color: #CC3300}
 .style7 {font-size: 16px}
+.style8 {font-size: 24px}
 -->
 </style></head>
 <body>
@@ -117,13 +118,55 @@ Be sure to backup your files before using mod installers such as <a href="http:/
               </tr>
             </table>
             <br>
+			<table width="90%" height="623" border="0" align="center">
+              <tr>
+                <td height="619" background="imgs/transparent_fill.png"><p><span class="style6">The Workd Flow goes like this....</span><br> 
+                  <br>
+                  <span class="style8">1:</span> Set the game path.. "/games/World_of_tanks" and res_mods paths... Res_mods should be pointing to the latest version .. Like this: "C:\Games\World_of_Tanks\res_mods\0.9.20.0"<br>
+                  <br>
+                  <span class="style8">2:</span> Right click on a tank and select "Extract to res_mods Folder".. This will created the folder tree with the correct paths for that tank.. You can decide what to extract in the panel that pops up. The default settings will extract all the textures and models for LOD0. There is a bug that might show up if for instance the HULL is not in LOD0. I will fix this later. It is a good idea to ONLY extract parts you want to change.. It slow the loading down in game if it has to load a bunch a crap that is not changed. IT WILL NOT OVER WRITE EXISTING FILES! If you want to start over.. delete them in Explorer.<br>
+                  <br>
+                  <span class="style8">3:</span> Export the tank.. Right click and select "Export FBX". This will ask for a name.. it defaults to the tanks name and I would just use it.. All you need to do is set the folder where to create the FBX.<br>
+                  <br>
+                  <span class="style8">4:</span> Go to max... Set the interfaces units to 1 unit = 10.0 centimeters. This is important or objects you create will be the wrong size in the game.<br>
+                  You can set this under the "Customize" menu at the top of Max.<br>
+                  <br>
+                  <span class="style8">5:</span> Import the FBX.. There are no lights or cameras in the scene so you can uncheck these if you want. MAKE SURE its set to Y UP!!!<br>
+                  <br>
+                  <span class="style8">6:</span> Edit your model.. OR add something.. You can import something also BUT... REMEMBER TO ADD "_hull" or "_turret" to the name of the object!. As of now, I can NOT export the gun or chassis.. they are skinned meshes using the xyznuviiiwwtb format.. This will take reserch to figure out how to dea with weighted maps.</p>
+                  <p><span class="style8">7:</span> After you have you new object where you want it.. use the Reset Xform i mentioned above. What this does exactly I am not sure but it works.</p>
+                  <p><span class="style8">8:</span> Import the model in to Tank Exporter. Its under the File Menu.<br>
+                    <br>
+                      <span class="style8">9.</span> Under File menu,, Click "Write Primitive".. This will bring up a panel with check boxes on it. If you added something or changed the hull or turret in anyway, these boxes should be checked. (As of now.. The engine can only handle adding items to either the hull or turret.. you can NOT add to both and write them both out as primitives at the same time.. You will need to do this as separate steps.<br>
+                    <br>
+                    <span class="style8">10.</span> Load world of tanks and load that tank.</p>
+                </td>
+              </tr>
+            </table>
+			</br>
  <table width="90%" height="186" border="0" align="center">
               <tr>
-                <td height="182" background="imgs/transparent_fill.png">This app was originally created to use with Terra.. A program I wrote to load maps from World of Tanks and create battle layout plans for Clan battles.<br>
-Clicking on a tank name adds it to the export list.. clicking on it again removes it. There is also a Menu item above the list to clear the selected tanks.<br>
-Under the File Menu, there is a selection to show the folder where all the tanks are exported to. This is not much use to the average user of TE.<br>
-If you are a programmer and want to use the exported tank data for Terra, there are 4 header strings in the files that explains what's in the file and the order.<br>
-</td>
+                <td height="182" background="imgs/transparent_fill.png"><p>This app was originally created to use with Terra.. A program I wrote to load maps from World of Tanks and create battle layout plans for Clan battles.<br>
+                  Clicking on a tank name adds it to the export list.. clicking on it again removes it. There is also a Menu item above the list to clear the selected tanks.<br>
+                  Under the File Menu, there is a selection to show the folder where all the tanks are exported to. This is not much use to the average user of TE.. However.. 
+                  Using Tank Exporter, you can create your own custom tank list for Terra..<br>
+                  This is how its done:<br>
+                  1. Load the tank list ( File &gt; Load )and change want to export by clicking them on the tanks.. If they are highlighted, they will be exported.<br>
+                  2. SAVE your list.. Creating a custom list and not saving it can cause you a lot of un-needed work!.<br>
+                  3. Click &quot;Export Tank List&quot;. This will bring up a dialog asking if you really want to do this. (Get some Coffee.. this can take a while if the list is long.. and you want lots of tanks to select from in Terra!) <br>
+                  4. Go to &quot;File&quot; &gt; &quot;Open Tank Folder&quot;... This is where all the tank data will be placed.<br>
+                  5. Select Everything in this folder by pressing Ctrl + A.<br>
+                  6. Press Ctrl + C to copy.<br>
+                  7. Navigate to where Terra is installed. &quot;C:\Program Files (x86)\Coffee_\Terra!&quot;<br>
+                  8. Open the &quot;tanks&quot; folder.<br>
+                  9. Now.. OVER WRITE and REPLACE everything in that folder.<br>
+                  10.a Press Ctrl + A ..... Press Ctrl + P.<br>
+                  10.b
+                  It is important that the 
+                  &quot;tanknames.txt&quot; file was also copied over to the new Terra!\tanks folder. Terra! uses this list when loading the tanks! <br>
+                  11. This should of selected everything and pasted and or replaced anything in that folder.<br>
+                  12. Terra! is now ready to use your new tank selections.<br>
+                </p>                </td>
               </tr>
             </table>
 			           <br>
@@ -137,12 +180,12 @@ If you like my Tools and use them.. please consider becoming a Patron of my work
             <br>
             <table width="90%" border="0" align="center">
               <tr>
-                <td background="imgs/transparent_fill.png">Integrated  DLLs and Programs with links to their licenses and more information.<br>
+                <td height="142" background="imgs/transparent_fill.png">Integrated  DLLs and Programs with links to their licenses and more information.<br>
                   <br />
                   <a href="http://sourceforge.net/projects/taoframework/" target="_blank">Tao OpenGL</a> :  This project is now dead.. Sad.. It's a great Opengl Wrapper. <br>
                   <a href="http://openil.sourceforge.net/" target="_blank">DevIL</a> : Very nice Image loading and manipulation open source library. <br />
                   <a href="http://dotnetzip.codeplex.com/" target="_blank">DotNetZip</a> : A great wrapper for working with zip files.<br>
-                  <a href="https://slimdx.org/" target="_blank">SlimDX</a> : A wrapper that brings DirectX functions in to .NET. I use this for matrix mathematics.<br /></td>
+                <a href="https://slimdx.org/" target="_blank">SlimDX</a> : A wrapper that brings DirectX functions in to .NET. I use this for matrix mathematics.</td>
               </tr>
             </table>
             <br>
@@ -151,7 +194,7 @@ If you like my Tools and use them.. please consider becoming a Patron of my work
                 Warning!!
               </caption>
               <tr>
-                <td background="imgs/transparent_fill.png">All Data.. Models and Textures(except a few I got of the internet) come from with in the game's .pkg files and the Dev API. This data is owned by War Gaming.</td>
+                <td background="imgs/transparent_fill.png">All Data.. Models and Textures(except a few I got of the internet) come from with in the game's .pkg files and the Dev API. This data is owned by WARGAMING.NET</td>
               </tr>
             </table>
             <p class="style4">&nbsp;</p>

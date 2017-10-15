@@ -382,6 +382,7 @@ Public Class frmTextureViewer
             Else
                 CENTER_SELECTION = True
             End If
+            frmMain.pb1.Focus()
         End If
 
     End Sub

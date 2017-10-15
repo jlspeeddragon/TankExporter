@@ -31,8 +31,10 @@ Module modFBX
         Public list() As Integer
         Public m_type As Integer
         Public cnt As Integer
-        Public f_name As String
-        Public package_id As Integer
+        Public f_name() As String
+        Public package_id() As Integer
+        Public changed As Boolean
+        Public new_objects As Boolean
     End Structure
     Public Sub remove_loaded_fbx()
         If FBX_LOADED Then
@@ -57,7 +59,8 @@ Module modFBX
         'fbx import sub
         Dim j As UInt32 = 0
         Dim i As UInt32 = 0
-
+        Dim start_index As Integer = 0
+        Dim start_vertex As Integer = 0
         frmMain.OpenFileDialog1.InitialDirectory = My.Settings.fbx_path
         frmMain.OpenFileDialog1.Filter = "AutoDesk (*.FBX)|*.fbx"
         frmMain.OpenFileDialog1.Title = "Import FBX..."
@@ -151,8 +154,8 @@ Module modFBX
                     childnode.GetDefaultT(dt)
                     Dim TnR As Double = 0
                     Try
-                        TnR = fbxgrp(i).rotation.X + fbxgrp(i).rotation.Y + fbxgrp(i).rotation.Z _
-                            + fbxgrp(i).translation.X + fbxgrp(i).translation.Y + fbxgrp(i).translation.Z
+                        TnR = Round(fbxgrp(i).rotation.X, 6) + Round(fbxgrp(i).rotation.Y, 6) + Round(fbxgrp(i).rotation.Z, 6) _
+                            + Round(fbxgrp(i).translation.X, 6) + Round(fbxgrp(i).translation.Y, 6) + Round(fbxgrp(i).translation.Z, 6)
                     Catch ex As Exception
 
                     End Try
@@ -163,6 +166,10 @@ Module modFBX
                     'If fbxgrp(i).scale.X + fbxgrp(i).scale.Y + fbxgrp(i).scale.Z = 0 Then
 
                     If TnR = 0.0 Then
+                        'dr.Y *= -1
+                        'Dim tn = dt.Z
+                        'dt.Z = dt.Y
+                        'dt.Y = tn
                         fbx_matrix.SetTRS(dt, dr, ds)
                     Else
                         fbx_matrix.SetTRS(fbxgrp(i).translation, fbxgrp(i).rotation, fbxgrp(i).scale)
@@ -213,24 +220,26 @@ Module modFBX
                     End Try
 
                     'geo = childnode.NodeAttribute
+                    '##############################################
+                    'get sizes
                     Dim polycnt As UInt32 = mesh.PolygonCount
                     Dim nVertices = mesh.Normals.Count
                     ReDim Preserve fbxgrp(i).vertices(nVertices)
                     ReDim Preserve fbxgrp(i).indicies(polycnt)
                     fbxgrp(i).nPrimitives_ = polycnt
                     fbxgrp(i).nVertices_ = nVertices
+                    fbxgrp(i).startIndex_ = start_index : start_index += polycnt * 3
+                    fbxgrp(i).startVertex_ = start_vertex : start_vertex += nVertices * 40
+                    '###############################################
                     Dim uvlayer1 As FbxLayerElementUV = mesh.GetLayer(0).GetUVs
                     Dim index_mode = uvlayer1.Reference_Mode
                     Dim eNormals As FbxLayerElementNormal = mesh.GetLayer(0).Normals
                     Dim uv2Layer As FbxLayerElementUV = Nothing
                     If mesh.UVLayerCount = 3 Then
                         uv2Layer = mesh.GetLayer(1).GetUVs
+                        fbxgrp(i).has_uv2 = 1
                     End If
                     '------ we use this to resize the vertices array and get the right count of vertices.
-                    For j = 0 To nVertices - 1
-                        fbxgrp(i).vertices(j) = New vertice_
-                        fbxgrp(i).vertices(j).index_1 = 255
-                    Next
                     '-----------------------------------------------------------------------------------
                     Dim uv1_, uv2_, uv3_ As FbxVector2
                     Dim uv1_2, uv2_2, uv3_2 As New FbxVector2
@@ -238,18 +247,34 @@ Module modFBX
                     Dim n1, n2, n3 As New FbxVector4
                     Dim k As Integer = 0
                     cnt = 0
+                    ' get indices
+                    For j = 0 To polycnt - 1
+                        fbxgrp(i).indicies(j).v1 = mesh.GetPolygonVertex(j, 0)
+                        fbxgrp(i).indicies(j).v2 = mesh.GetPolygonVertex(j, 1)
+                        fbxgrp(i).indicies(j).v3 = mesh.GetPolygonVertex(j, 2)
+                        If fbxgrp(i).indicies(j).v1 > cnt Then cnt = fbxgrp(i).indicies(j).v1
+                        If fbxgrp(i).indicies(j).v2 > cnt Then cnt = fbxgrp(i).indicies(j).v2
+                        If fbxgrp(i).indicies(j).v3 > cnt Then cnt = fbxgrp(i).indicies(j).v3
+                    Next
+                    ReDim fbxgrp(i).vertices(cnt)
+                    fbxgrp(i).nVertices_ = cnt + 1
+                    For j = 0 To cnt
+                        fbxgrp(i).vertices(j) = New vertice_
+                        fbxgrp(i).vertices(j).index_1 = 255
+                    Next
+                    'get mesh verts, normals and uvs
                     For j = 0 To polycnt - 1
                         Application.DoEvents()
                         Dim v1 = mesh.GetPolygonVertex(j, 0)
                         Dim v2 = mesh.GetPolygonVertex(j, 1)
                         Dim v3 = mesh.GetPolygonVertex(j, 2)
-                        Dim vt1 = mesh.GetControlPointAt(v1)
+                        Dim vt1 = mesh.GetControlPointAt(v1) 'verts
                         Dim vt2 = mesh.GetControlPointAt(v2)
                         Dim vt3 = mesh.GetControlPointAt(v3)
-                        mesh.GetPolygonVertexNormal(j, 0, n1)
+                        mesh.GetPolygonVertexNormal(j, 0, n1) 'normals
                         mesh.GetPolygonVertexNormal(j, 1, n2)
                         mesh.GetPolygonVertexNormal(j, 2, n3)
-                        If index_mode = FbxLayerElement.ReferenceMode.Direct Then
+                        If index_mode = FbxLayerElement.ReferenceMode.Direct Then ' uvs
                             uv1_ = uvlayer1.DirectArray(v1)
                             uv2_ = uvlayer1.DirectArray(v2)
                             uv3_ = uvlayer1.DirectArray(v3)
@@ -278,41 +303,60 @@ Module modFBX
                         End If
 
 
-                        fbxgrp(i).vertices(cnt).x = vt1.X
-                        fbxgrp(i).vertices(cnt).y = vt1.Y
-                        fbxgrp(i).vertices(cnt).z = vt1.Z
-                        fbxgrp(i).vertices(cnt).u = -uv1_.X
-                        fbxgrp(i).vertices(cnt).v = -uv1_.Y
-                        fbxgrp(i).vertices(cnt).u2 = -uv1_2.X
-                        fbxgrp(i).vertices(cnt).v2 = -uv1_2.Y
-                        fbxgrp(i).vertices(cnt).nx = n1.X
-                        fbxgrp(i).vertices(cnt).ny = n1.Y
-                        fbxgrp(i).vertices(cnt).nz = n1.Z
-                        fbxgrp(i).vertices(cnt).n = packnormalFBX(n1)
+                        fbxgrp(i).vertices(v1).x = vt1.X
+                        fbxgrp(i).vertices(v1).y = vt1.Y
+                        fbxgrp(i).vertices(v1).z = vt1.Z
+                        fbxgrp(i).vertices(v1).u = uv1_.X
+                        fbxgrp(i).vertices(v1).v = -uv1_.Y
+                        fbxgrp(i).vertices(v1).u2 = uv1_2.X
+                        fbxgrp(i).vertices(v1).v2 = -uv1_2.Y
+                        fbxgrp(i).vertices(v1).nx = n1.X
+                        fbxgrp(i).vertices(v1).ny = n1.Y
+                        fbxgrp(i).vertices(v1).nz = n1.Z
+                        fbxgrp(i).vertices(v1).n = packnormalFBX888(n1)
+
+                        ' these commented out lines are for debuging the packnormalFBX888 method
+                        'Dim nup = unpackNormal_8_8_8(fbxgrp(i).vertices(v1).n)
+                        'fbxgrp(i).vertices(v1).nx = nup.nx
+                        'fbxgrp(i).vertices(v1).ny = nup.ny
+                        'fbxgrp(i).vertices(v1).nz = nup.nz
+
                         cnt += 1
-                        fbxgrp(i).vertices(cnt).x = vt2.X
-                        fbxgrp(i).vertices(cnt).y = vt2.Y
-                        fbxgrp(i).vertices(cnt).z = vt2.Z
-                        fbxgrp(i).vertices(cnt).u = -uv2_.X
-                        fbxgrp(i).vertices(cnt).v = -uv2_.Y
-                        fbxgrp(i).vertices(cnt).u2 = -uv2_2.X
-                        fbxgrp(i).vertices(cnt).v2 = -uv2_2.Y
-                        fbxgrp(i).vertices(cnt).nx = n2.X
-                        fbxgrp(i).vertices(cnt).ny = n2.Y
-                        fbxgrp(i).vertices(cnt).nz = n2.Z
-                        fbxgrp(i).vertices(cnt).n = packnormalFBX(n2)
+                        fbxgrp(i).vertices(v2).x = vt2.X
+                        fbxgrp(i).vertices(v2).y = vt2.Y
+                        fbxgrp(i).vertices(v2).z = vt2.Z
+                        fbxgrp(i).vertices(v2).u = uv2_.X
+                        fbxgrp(i).vertices(v2).v = -uv2_.Y
+                        fbxgrp(i).vertices(v2).u2 = uv2_2.X
+                        fbxgrp(i).vertices(v2).v2 = -uv2_2.Y
+                        fbxgrp(i).vertices(v2).nx = n2.X
+                        fbxgrp(i).vertices(v2).ny = n2.Y
+                        fbxgrp(i).vertices(v2).nz = n2.Z
+                        fbxgrp(i).vertices(v2).n = packnormalFBX888(n2)
+
+                        'nup = unpackNormal_8_8_8(fbxgrp(i).vertices(v1).n)
+                        'fbxgrp(i).vertices(v2).nx = nup.nx
+                        'fbxgrp(i).vertices(v2).ny = nup.ny
+                        'fbxgrp(i).vertices(v2).nz = nup.nz
+
                         cnt += 1
-                        fbxgrp(i).vertices(cnt).x = vt3.X
-                        fbxgrp(i).vertices(cnt).y = vt3.Y
-                        fbxgrp(i).vertices(cnt).z = vt3.Z
-                        fbxgrp(i).vertices(cnt).u = -uv3_.X
-                        fbxgrp(i).vertices(cnt).v = -uv3_.Y
-                        fbxgrp(i).vertices(cnt).u2 = -uv3_2.X
-                        fbxgrp(i).vertices(cnt).v2 = -uv3_2.Y
-                        fbxgrp(i).vertices(cnt).nx = n3.X
-                        fbxgrp(i).vertices(cnt).ny = n3.Y
-                        fbxgrp(i).vertices(cnt).nz = n3.Z
-                        fbxgrp(i).vertices(cnt).n = packnormalFBX(n3)
+                        fbxgrp(i).vertices(v3).x = vt3.X
+                        fbxgrp(i).vertices(v3).y = vt3.Y
+                        fbxgrp(i).vertices(v3).z = vt3.Z
+                        fbxgrp(i).vertices(v3).u = uv3_.X
+                        fbxgrp(i).vertices(v3).v = -uv3_.Y
+                        fbxgrp(i).vertices(v3).u2 = uv3_2.X
+                        fbxgrp(i).vertices(v3).v2 = -uv3_2.Y
+                        fbxgrp(i).vertices(v3).nx = n3.X
+                        fbxgrp(i).vertices(v3).ny = n3.Y
+                        fbxgrp(i).vertices(v3).nz = n3.Z
+                        fbxgrp(i).vertices(v3).n = packnormalFBX888(n3)
+
+                        'nup = unpackNormal_8_8_8(fbxgrp(i).vertices(v1).n)
+                        'fbxgrp(i).vertices(v3).nx = nup.nx
+                        'fbxgrp(i).vertices(v3).ny = nup.ny
+                        'fbxgrp(i).vertices(v3).nz = nup.nz
+
                         cnt += 1
 
                     Next
@@ -352,7 +396,6 @@ outofhere:
         End If
     End Sub
     Private Sub process_fbx_data()
-        'frmMain.clean_house() 'delete anty textures and display lists and setup some variables that need set
         get_component_index() 'build indexing table
     End Sub
     Private Sub build_fbx_matrix(ByVal idx As Integer, ByVal fm As FbxMatrix)
@@ -365,87 +408,293 @@ outofhere:
     Private Sub get_component_index()
         Dim ct, ht, tt, gt As Integer
         Dim d_len As Integer
-        'sort out how many are of what type
+        Dim c_cnt, h_cnt, t_cnt, g_cnt As Integer
+        Dim odd_model As Boolean
+        '---------------------------------------------------------------------------------------------------
+        'find out if we have a wrongly named model in the FBX
+        odd_model = False
+        For i = 1 To fbxgrp.Length - 1
+            If Not odd_model Then
+                If fbxgrp(i).name.ToLower.Contains("chassis") Or _
+                    fbxgrp(i).name.ToLower.Contains("hull") Or _
+                    fbxgrp(i).name.ToLower.Contains("turret") Or _
+                    fbxgrp(i).name.ToLower.Contains("gun") Then
+                Else
+                    odd_model = True
+                End If
+            End If
+        Next
+
+        '---------------------------------------------------------------------------------------------------
+        'sort out how many are of what type in the fbx
         'we need to do this if parts have been added
-        For i = 1 To fbxgrp.Length - 2
+
+        'now we create our index table
+        Dim c As Integer = 1
+        ReDim m_groups(4) ' there are 4 types... chassis, hull, turret and gun
+        m_groups(1) = New mgrp_
+        m_groups(2) = New mgrp_
+        m_groups(3) = New mgrp_
+        m_groups(4) = New mgrp_
+        Dim ar() As String
+        For i = 1 To fbxgrp.Length - 1
             If fbxgrp(i).name.ToLower.Contains("chassis") Then
-                ct += 1 : d_len += 1
+                ReDim Preserve m_groups(1).list(ct)
+                ReDim Preserve m_groups(1).f_name(ct)
+                ReDim Preserve m_groups(1).package_id(ct)
+                m_groups(1).cnt = ct + 1
+                m_groups(1).list(ct) = i
+                m_groups(1).m_type = 1
+                ar = fbxgrp(i).name.Split(":")
+                m_groups(1).f_name(ct) = ar(0)
+                If ar.Length > 1 Then
+                    m_groups(1).package_id(ct) = CInt(ar(1))
+                Else
+                    m_groups(1).package_id(ct) = -1
+                End If
+                ct += 1
             End If
             If fbxgrp(i).name.ToLower.Contains("hull") Then
-                ht += 1 : d_len += 1
+                ReDim Preserve m_groups(2).list(ht)
+                ReDim Preserve m_groups(2).f_name(ht)
+                ReDim Preserve m_groups(2).package_id(ht)
+                m_groups(2).cnt = ht + 1
+                m_groups(2).list(ht) = i
+                m_groups(2).m_type = 2
+                ar = fbxgrp(i).name.Split(":")
+                m_groups(2).f_name(ht) = ar(0)
+                If ar.Length > 1 Then
+                    m_groups(2).package_id(ht) = CInt(ar(1))
+                Else
+                    m_groups(2).package_id(ht) = -1
+                End If
+                ht += 1
             End If
             If fbxgrp(i).name.ToLower.Contains("turret") Then
-                tt += 1 : d_len += 1
+                ReDim Preserve m_groups(3).list(tt)
+                ReDim Preserve m_groups(3).f_name(tt)
+                ReDim Preserve m_groups(3).package_id(tt)
+                m_groups(3).cnt = tt + 1
+                m_groups(3).list(tt) = i
+                m_groups(3).m_type = 3
+                ar = fbxgrp(i).name.Split(":")
+                m_groups(3).f_name(tt) = ar(0)
+                If ar.Length > 1 Then
+                    m_groups(3).package_id(tt) = CInt(ar(1))
+                Else
+                    m_groups(3).package_id(tt) = -1
+                End If
+                tt += 1
             End If
             If fbxgrp(i).name.ToLower.Contains("gun") Then
-                gt += 1 : d_len += 1
+                ReDim Preserve m_groups(4).list(gt)
+                ReDim Preserve m_groups(4).f_name(gt)
+                ReDim Preserve m_groups(4).package_id(gt)
+                m_groups(4).cnt = gt + 1
+                m_groups(4).list(gt) = i
+                m_groups(4).m_type = 4
+                ar = fbxgrp(i).name.Split(":")
+                m_groups(4).f_name(gt) = ar(0)
+                If ar.Length > 1 Then
+                    m_groups(4).package_id(gt) = CInt(ar(1))
+                Else
+                    m_groups(4).package_id(gt) = -1
+                End If
+                gt += 1
             End If
         Next
-        Dim c As Integer = 1
-        ReDim m_groups(4) ' there are 4 types
-        'now we create our index table
-        Dim pos As Integer = 1
-        'chassis
-        m_groups(pos) = New mgrp_
-        ReDim m_groups(pos).list(ct)
-        m_groups(pos).cnt = ct
-        m_groups(pos).m_type = pos
-        Dim ar = fbxgrp(c).name.Split(":")
-        m_groups(pos).f_name = ar(0)
-        m_groups(pos).package_id = CInt(ar(1))
-        For i = 1 To ct
-            m_groups(pos).list(i) = c
-            c += 1
-        Next
-        pos = 2
-        'hull
-        m_groups(pos) = New mgrp_
-        ReDim m_groups(pos).list(ct)
-        m_groups(pos).cnt = ht
-        m_groups(pos).m_type = pos
-        ar = fbxgrp(c).name.Split(":")
-        m_groups(pos).f_name = ar(0)
-        m_groups(pos).package_id = CInt(ar(1))
-        For i = 1 To ht
-            m_groups(pos).list(i) = c
-            c += 1
-        Next
-        pos = 3
-        'turret
-        m_groups(pos) = New mgrp_
-        ReDim m_groups(pos).list(ct)
-        m_groups(pos).cnt = tt
-        m_groups(pos).m_type = pos
-        ar = fbxgrp(c).name.Split(":")
-        m_groups(pos).f_name = ar(0)
-        m_groups(pos).package_id = CInt(ar(1))
-        For i = 1 To tt
-            m_groups(pos).list(i) = c
-            c += 1
-        Next
-        pos = 4
-        'gun
-        m_groups(pos) = New mgrp_
-        ReDim m_groups(pos).list(ct)
-        m_groups(pos).cnt = gt
-        m_groups(pos).m_type = pos
-        ar = fbxgrp(c).name.Split(":")
-        m_groups(pos).f_name = ar(0)
-        m_groups(pos).package_id = CInt(ar(1))
-        For i = 1 To gt
-            m_groups(pos).list(i) = c
-            c += 1
-        Next
-        'now we will load the model for the package files
+
+        '---------------------------------------------------------------------------------------------------
+        'now we will load the model from the package files
         For i = 1 To 4
-            file_name = m_groups(i).f_name.Replace(".primitives_processed", ".model")
+            file_name = m_groups(i).f_name(0).Replace(".primitives_processed", ".model") 'assuming (0) has the correct name.
             file_name = file_name.Replace(".primitives", ".model")
-            current_tank_package = m_groups(i).package_id
+            current_tank_package = m_groups(i).package_id(0)
             Dim success = build_primitive_data(True)
         Next
+        '---------------------------------------------------------------------------------------------------
+        'sort out how many are of what type in the existing model
+        For i = 1 To object_count
+            If _group(i).name.ToLower.Contains("chassis") Then
+                c_cnt += 1
+            End If
+            If _group(i).name.ToLower.Contains("hull") Then
+                h_cnt += 1
+            End If
+            If _group(i).name.ToLower.Contains("turret") Then
+                t_cnt += 1
+            End If
+            If _group(i).name.ToLower.Contains("gun") Then
+                g_cnt += 1
+            End If
+        Next
+        '---------------------------------------------------------------------------------------------------
+        Dim t_fbx, t_mdl As Integer
+        t_fbx = ct + ht + tt + gt
+        t_mdl = c_cnt + h_cnt + t_cnt + g_cnt
+        'if t_fbx = t_mdl than we have the same componet counts.
+        'Check of one of them has been modified.
+        Dim flg, CB, HB, TB, GB As Boolean
+        Dim c_new, h_new, t_new, g_new As Boolean
+        CB = False : HB = False : TB = False : GB = False ' these default to false but set them anyway
+        c_new = False : h_new = False : t_new = False : g_new = False
+        If t_fbx <> t_mdl Then
+            If c_cnt <> ct Then 'something added?
+                CB = True
+                c_new = True
+            End If
+            If h_cnt <> ht Then 'something added?
+                HB = True
+                h_new = True
+            End If
+            If t_cnt <> tt Then 'something added?
+                TB = True
+                t_new = True
+            End If
+            If g_cnt <> gt Then 'something added?
+                GB = True
+                g_new = True
+            End If
+        Else
+            For i = 1 To object_count
+                flg = False
+                If _group(i).nVertices_ <> fbxgrp(i).nVertices_ Then 'something removed or added?
+                    flg = True : GoTo whichOne
+                End If
+                For j As UInt32 = 0 To _group(i).nVertices_ - 1
+                    If _group(i).vertices(j).x <> fbxgrp(i).vertices(j).x Then
+                        flg = True
+                        GoTo whichOne
+                    End If
+                    If _group(i).vertices(j).y <> fbxgrp(i).vertices(j).y Then
+                        flg = True
+                        GoTo whichOne
+                    End If
+                    If _group(i).vertices(j).z <> fbxgrp(i).vertices(j).z Then
+                        flg = True
+                        GoTo whichOne
+                    End If
+
+                Next
+whichone:
+                If flg Then ' if true than either the count is different or the vertices are changed
+                    If _group(i).name.ToLower.Contains("chassis") Then
+                        CB = True
+                    End If
+                    If _group(i).name.ToLower.Contains("hull") Then
+                        HB = True
+                    End If
+                    If _group(i).name.ToLower.Contains("turret") Then
+                        TB = True
+                    End If
+                    If _group(i).name.ToLower.Contains("gun") Then
+                        GB = True
+                    End If
+                End If
+            Next
+
+        End If
+        For i = 1 To fbxgrp.Length - 1
+            If Not fbxgrp(i).name.Contains("vehicles/") Then
+                fbxgrp(i).is_new_model = True
+            End If
+        Next
+        'need to find out if there is a dangling model that was imported.
+        'one that was not assigned via name to a group
+        If odd_model Then
+            MsgBox("It appears you have added a model that is not assigned to a group." + vbCrLf + _
+                    "Make sure you renamed the model you created to include a group name.." + vbCrLf + _
+                    "The name should include one of these : Chassis, Hull, Turret or Gun." + vbCrLf + _
+                    "I CAN NOT add a new group to a tank model. I can Only add new items to a group." + vbCrLf + _
+                    "You will not beable to save this model!", MsgBoxStyle.Exclamation, "Import Issue")
+            frmMain.m_write_primitive.Enabled = False
+        Else
+            frmMain.m_write_primitive.Enabled = True
+        End If
+        'We give the user the opertunity to extract the model. We need some where to write any changed data too.
+        ar = file_name.Split("/")
+        Dim fn = ar(0) + "/" + ar(1) + "/" + ar(2)
+        Dim dp = My.Settings.res_mods_path + "/" + fn
+        frmWritePrimitive.SAVE_NAME = dp
+        If Not Directory.Exists(dp) Then
+            If MsgBox("It appears You have not extracted data for this model." + vbCrLf + _
+                      "There is no place to save this new Model." + vbCrLf + _
+                       "Would you like to extract the data from the .PKG files?", MsgBoxStyle.YesNo, "Extract?") = MsgBoxResult.Yes Then
+                file_name = "1:dummy:" + Path.GetFileNameWithoutExtension(dp.Replace("/", "\"))
+                frmMain.m_create_and_extract.PerformClick()
+            End If
+
+        End If
+        'set which group has new models or changed data
+        frmWritePrimitive.Visible = True
+        frmWritePrimitive.cew_cb.Checked = False '= CB
+        frmWritePrimitive.cew_cb.Enabled = False
+        m_groups(1).changed = False ' = CB
+        m_groups(1).new_objects = c_new
+
+        frmWritePrimitive.hew_cb.Checked = HB
+        m_groups(2).changed = HB
+        m_groups(2).new_objects = h_new
+
+        frmWritePrimitive.tew_cb.Checked = TB
+        m_groups(3).changed = TB
+        m_groups(3).new_objects = t_new
+
+        frmWritePrimitive.gew_cb.Checked = False ' = GB
+        frmWritePrimitive.gew_cb.Enabled = False
+        m_groups(4).changed = False '= GB
+        m_groups(4).new_objects = g_new
+
+        frmWritePrimitive.Visible = False
         MODEL_LOADED = True
     End Sub
-    Public Function packnormalFBX(ByVal n As FbxVector4) As UInt32
+
+    Public Function packnormalFBX888(ByVal n As FbxVector4) As UInt32
+        'ctz is my special C++ function to pack the vector into a Uint32
+        'ctz.init_x(n.X * -1.0)
+        Try
+            'n.X = -0.715007
+            'n.X = -1.0
+            'n.Y = 0.0
+            'n.Z = 1.0
+            n.X = Round(n.X, 4)
+            n.Y = Round(n.Y, 4)
+            n.Z = Round(n.Z, 4)
+            Dim nx, ny, nz As Int32
+            If n.X >= 0 Then
+                nx = n.X * 127
+                nx += 127
+            Else
+                nx = n.X * 128
+                nx += -128
+            End If
+            If n.Y >= 0 Then
+                ny = n.Y * 127
+                ny += 127
+            Else
+                ny = n.Y * 128
+                ny += -128
+            End If
+            If n.Z >= 0 Then
+                nz = n.Z * 127
+                nz += 127
+            Else
+                nz = n.Z * 128
+                nz += -128
+            End If
+
+            Dim nu = CLng(nz << 16)
+            Dim nm = CLng(ny << 8)
+            Dim nb = CInt(nx)
+            Dim ru = Convert.ToInt32((nu And &HFF0000) + (nm And &HFF00) + (nb And &HFF))
+            Return ru
+        Catch ex As Exception
+
+        End Try
+
+    End Function
+
+    Public Function packnormalFBX_old(ByVal n As FbxVector4) As UInt32
         'ctz is my special C++ function to pack the vector into a Uint32
         'ctz.init_x(n.X * -1.0)
         ctz.init_x(n.X)
@@ -453,27 +702,35 @@ outofhere:
         ctz.init_z(n.Z)
         Return ctz.pack(1)
     End Function
+
     Public Sub make_fbx_display_lists(ByVal cnt As Integer, ByVal jj As Integer)
         Gl.glBegin(Gl.GL_TRIANGLES)
         'trans_vertex(jj)
-        For i As UInt32 = 0 To (cnt * 3) - 1
-            Gl.glNormal3f(fbxgrp(jj).vertices(i).nx, fbxgrp(jj).vertices(i).ny, fbxgrp(jj).vertices(i).nz)
-            Gl.glMultiTexCoord3f(1, fbxgrp(jj).vertices(i).tx, fbxgrp(jj).vertices(i).ty, fbxgrp(jj).vertices(i).tz)
-            Gl.glMultiTexCoord3f(2, fbxgrp(jj).vertices(i).bnx, fbxgrp(jj).vertices(i).bny, fbxgrp(jj).vertices(i).bnz)
-            Gl.glTexCoord2f(fbxgrp(jj).vertices(i).u, fbxgrp(jj).vertices(i).v)
-            Gl.glVertex3f(fbxgrp(jj).vertices(i).x, fbxgrp(jj).vertices(i).y, fbxgrp(jj).vertices(i).z)
+        For z As UInt32 = 0 To (cnt) - 1
+            make_triangle(jj, fbxgrp(jj).indicies(z).v1)
+            make_triangle(jj, fbxgrp(jj).indicies(z).v2)
+            make_triangle(jj, fbxgrp(jj).indicies(z).v3)
         Next
         Gl.glEnd()
     End Sub
+    Private Sub make_triangle(ByVal jj As Integer, ByVal i As Integer)
+        Gl.glNormal3f(fbxgrp(jj).vertices(i).nx, fbxgrp(jj).vertices(i).ny, fbxgrp(jj).vertices(i).nz)
+        Gl.glMultiTexCoord3f(1, fbxgrp(jj).vertices(i).tx, fbxgrp(jj).vertices(i).ty, fbxgrp(jj).vertices(i).tz)
+        Gl.glMultiTexCoord3f(2, fbxgrp(jj).vertices(i).bnx, fbxgrp(jj).vertices(i).bny, fbxgrp(jj).vertices(i).bnz)
+        Gl.glTexCoord2f(-fbxgrp(jj).vertices(i).u, fbxgrp(jj).vertices(i).v)
+        Gl.glVertex3f(fbxgrp(jj).vertices(i).x, fbxgrp(jj).vertices(i).y, fbxgrp(jj).vertices(i).z)
+
+    End Sub
+
 #Region "TBN Creation functions"
 
     Public Sub create_TBNS(ByVal id As UInt32)
-        Dim cnt = fbxgrp(id).nVertices_
+        Dim cnt = fbxgrp(id).nPrimitives_
         Dim p1, p2, p3 As UInt32
-        For i As UInt32 = 0 To cnt - 3 Step 3
-            p1 = i
-            p2 = i + 1
-            p3 = i + 2
+        For i As UInt32 = 0 To cnt - 1
+            p1 = fbxgrp(id).indicies(i).v1
+            p2 = fbxgrp(id).indicies(i).v2
+            p3 = fbxgrp(id).indicies(i).v3
             Dim tan, bn As vect3
             Dim v1, v2, v3 As vect3
             Dim u1, u2, u3 As vect3
@@ -499,13 +756,14 @@ outofhere:
             save_tbn(id, tan, bn, p2)
             save_tbn(id, tan, bn, p3)
 
-            fbxgrp(id).vertices(p1).t = packnormalFBX(toFBXv(tan)) 'packs and puts the uint value in to the vertex
-            fbxgrp(id).vertices(p1).bn = packnormalFBX(toFBXv(bn))
-            fbxgrp(id).vertices(p2).t = packnormalFBX(toFBXv(tan))
-            fbxgrp(id).vertices(p2).bn = packnormalFBX(toFBXv(bn))
-            fbxgrp(id).vertices(p3).t = packnormalFBX(toFBXv(tan))
-            fbxgrp(id).vertices(p3).bn = packnormalFBX(toFBXv(bn))
+            fbxgrp(id).vertices(p1).t = packnormalFBX888(toFBXv(tan)) 'packs and puts the uint value in to the vertex
+            fbxgrp(id).vertices(p1).bn = packnormalFBX888(toFBXv(bn))
+            fbxgrp(id).vertices(p2).t = packnormalFBX888(toFBXv(tan))
+            fbxgrp(id).vertices(p2).bn = packnormalFBX888(toFBXv(bn))
+            fbxgrp(id).vertices(p3).t = packnormalFBX888(toFBXv(tan))
+            fbxgrp(id).vertices(p3).bn = packnormalFBX888(toFBXv(bn))
         Next
+        Return
     End Sub
     Private Sub save_tbn(id As Integer, tan As vect3, bn As vect3, i As Integer)
         fbxgrp(id).vertices(i).tx = tan.x

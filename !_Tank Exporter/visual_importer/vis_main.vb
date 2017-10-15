@@ -11,7 +11,7 @@ Imports System.Windows.Forms
 Imports System.IO
 Imports System.Runtime.CompilerServices
 Imports System.Xml
-
+Imports Microsoft.VisualBasic
 Module vis_main
     Public xmldataset As New DataSet
     Public xml_name As String
@@ -161,6 +161,7 @@ remove_more:
         Dim fbr As New BinaryReader(fileS)
         fileS.Position = 0
         TheXML_String = fbr.ReadChars(fileS.Length)
+        TheXML_String = PrettyPrint(TheXML_String)
 
         Id = xmlroot.Name + "/hull/armor"
         node = xDoc.SelectSingleNode(Id)
@@ -168,14 +169,6 @@ remove_more:
             Return
         End If
 
-        Dim da_arry = TheXML_String.Split(New String() {"<primitiveGroup>0<material>"}, StringSplitOptions.None)
-        Dim ts As String = ""
-        If da_arry.Length > 2 Then
-            For i = 0 To da_arry.Length - 2
-                ts += da_arry(i) + "<primitiveGroup>" + i.ToString + "<material>"
-            Next
-            TheXML_String = ts + da_arry(da_arry.Length - 1)
-        End If
         fileS.Position = 0
         Try
             xmldataset.ReadXml(fileS)
@@ -202,6 +195,62 @@ remove_more:
         'File.WriteAllText("C:\wot_temp\InnerXml.xml", f)
         'frmMain.WebBrowser1.DocumentStream = TransformXML(f, My.Resources.xml_format)
     End Sub
+    Private Function fix_bad_tags(xmlString As String)
+        'box all primitive tags.. Dont think there will ever be over 30 :-)
+        For i = 0 To 30
+            Dim ast = xmlString.Replace("<primitiveGroup>" + i.ToString, "<primitiveGroup>" + ControlChars.CrLf.ToCharArray() + "<PG_ID>" + i.ToString + "</PG_ID>")
+            xmlString = ast
+        Next
+        Return xmlString
+    End Function
+    Private Function PrettyPrint(XML As [String]) As [String]
+        Dim Result As [String] = ""
+        XML = fix_bad_tags(XML)
+        'another hack to fix WG's bad xml
+        XML = XML.Replace("<_", "<G_")
+        XML = XML.Replace("</_", "</G_")
+        Dim MS As New MemoryStream()
+
+        Dim xmlsettings As New XmlWriterSettings
+        xmlsettings.Indent = True
+        xmlsettings.NewLineOnAttributes = True
+        xmlsettings.Encoding = Encoding.UTF8
+        xmlsettings.OmitXmlDeclaration = True
+        xmlsettings.CheckCharacters = True
+        xmlsettings.CloseOutput = True
+        Dim W = XmlWriter.Create(MS, xmlsettings)
+        Dim D As New XmlDocument()
+        Try
+            ' Load the XmlDocument with the XML.
+            D.LoadXml(XML)
+
+            ' Write the XML into a formatting XmlTextWriter
+            D.WriteContentTo(W)
+            W.Flush()
+            MS.Flush()
+
+            ' Have to rewind the MemoryStream in order to read
+            ' its contents.
+            MS.Position = 0
+
+            ' Read MemoryStream contents into a StreamReader.
+            Dim SR As New StreamReader(MS)
+
+            ' Extract the text from the StreamReader.
+            Dim FormattedXML As [String] = SR.ReadToEnd()
+            'MS.Close()
+            'W.Close()
+
+            Result = FormattedXML.Replace("<G_", "<_")
+            Result = Result.Replace("</G_", "</_")
+
+        Catch generatedExceptionName As XmlException
+        End Try
+
+
+        Return Result
+    End Function
+
     Public Sub DecodePackedFile_2(ByVal reader As BinaryReader)
         reader.ReadSByte()
         Dim dictionary As List(Of String) = PS.readDictionary(reader)

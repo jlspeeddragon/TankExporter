@@ -2,8 +2,10 @@ C:\!_Tank Exporter\!_Tank Exporter\bin\x86\Debug\cttools.dll
 C:\!_Tank Exporter\!_Tank Exporter\bin\x86\Debug\html\imgs\background.jpg
 C:\!_Tank Exporter\!_Tank Exporter\bin\x86\Debug\html\imgs\become_a_patron_button.png
 C:\!_Tank Exporter\!_Tank Exporter\bin\x86\Debug\html\imgs\extract_panel.jpg
+C:\!_Tank Exporter\!_Tank Exporter\bin\x86\Debug\html\imgs\texture_viewer.png
 C:\!_Tank Exporter\!_Tank Exporter\bin\x86\Debug\html\imgs\transparent_fill.png
 C:\!_Tank Exporter\!_Tank Exporter\bin\x86\Debug\html\MainPage.html
+C:\!_Tank Exporter\!_Tank Exporter\bin\x86\Debug\html\textures.html
 C:\!_Tank Exporter\!_Tank Exporter\bin\x86\Debug\resources\Cbutt_down.png
 C:\!_Tank Exporter\!_Tank Exporter\bin\x86\Debug\resources\Cbutt_norm.png
 C:\!_Tank Exporter\!_Tank Exporter\bin\x86\Debug\resources\Cbutt_over.png
@@ -24,6 +26,7 @@ C:\!_Tank Exporter\!_Tank Exporter\bin\x86\Debug\Tao.DevIl.dll
 C:\!_Tank Exporter\!_Tank Exporter\bin\x86\Debug\Tao.FreeGlut.dll
 C:\!_Tank Exporter\!_Tank Exporter\bin\x86\Debug\Tao.OpenGl.dll
 C:\!_Tank Exporter\!_Tank Exporter\bin\x86\Debug\Tao.Platform.Windows.dll
+C:\!_Tank Exporter\!_Tank Exporter\bin\x86\Debug\Templates\template.txt
 C:\!_Tank Exporter\!_Tank Exporter\bin\x86\Debug\Zip\Ionic.Zip.dll
 C:\!_Tank Exporter\!_Tank Exporter\bin\x86\Debug\Zip\Ionic.Zlib.dll
 C:\!_Tank Exporter\!_Tank Exporter\bin\x86\Debug\resources\chassis.png
@@ -54,11 +57,13 @@ C:\!_Tank Exporter\!_Tank Exporter\bin\x86\Debug\Tao.FreeGlut.xml
 C:\!_Tank Exporter\!_Tank Exporter\bin\x86\Debug\Tao.OpenGl.xml
 C:\!_Tank Exporter\!_Tank Exporter\bin\x86\Debug\Tao.Platform.Windows.xml
 C:\!_Tank Exporter\!_Tank Exporter\obj\x86\Debug\Tank_Exporter.FrmCamo.resources
+C:\!_Tank Exporter\!_Tank Exporter\obj\x86\Debug\Tank_Exporter.frmEditVisual.resources
 C:\!_Tank Exporter\!_Tank Exporter\obj\x86\Debug\Tank_Exporter.frmExtract.resources
 C:\!_Tank Exporter\!_Tank Exporter\obj\x86\Debug\Tank_Exporter.frmFBX.resources
 C:\!_Tank Exporter\!_Tank Exporter\obj\x86\Debug\Tank_Exporter.frmLighting.resources
 C:\!_Tank Exporter\!_Tank Exporter\obj\x86\Debug\Tank_Exporter.frmMain.resources
 C:\!_Tank Exporter\!_Tank Exporter\obj\x86\Debug\Tank_Exporter.frmTextureViewer.resources
+C:\!_Tank Exporter\!_Tank Exporter\obj\x86\Debug\Tank_Exporter.frmWritePrimitive.resources
 C:\!_Tank Exporter\!_Tank Exporter\obj\x86\Debug\Tank_Exporter.Resources.resources
 C:\!_Tank Exporter\!_Tank Exporter\obj\x86\Debug\Tank_Exporter.frmEditFrag.resources
 C:\!_Tank Exporter\!_Tank Exporter\obj\x86\Debug\Tank_Exporter.frmShaderError.resources
@@ -66,5 +71,3 @@ C:\!_Tank Exporter\!_Tank Exporter\obj\x86\Debug\!_Tank Exporter.vbproj.Generate
 C:\!_Tank Exporter\!_Tank Exporter\obj\x86\Debug\!_Tank Exporter.exe
 C:\!_Tank Exporter\!_Tank Exporter\obj\x86\Debug\!_Tank Exporter.xml
 C:\!_Tank Exporter\!_Tank Exporter\obj\x86\Debug\!_Tank Exporter.pdb
-C:\!_Tank Exporter\!_Tank Exporter\bin\x86\Debug\html\imgs\texture_viewer.png
-C:\!_Tank Exporter\!_Tank Exporter\bin\x86\Debug\html\textures.html

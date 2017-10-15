@@ -27,6 +27,22 @@
 	<summary>
   Looks up a localized resource of type System.Drawing.Bitmap.
 </summary>
+</member><member name="P:Tank_Exporter.My.Resources.Resources.control_090">
+	<summary>
+  Looks up a localized resource of type System.Drawing.Bitmap.
+</summary>
+</member><member name="P:Tank_Exporter.My.Resources.Resources.control_270">
+	<summary>
+  Looks up a localized resource of type System.Drawing.Bitmap.
+</summary>
+</member><member name="P:Tank_Exporter.My.Resources.Resources.Copy_6524">
+	<summary>
+  Looks up a localized resource of type System.Drawing.Bitmap.
+</summary>
+</member><member name="P:Tank_Exporter.My.Resources.Resources.Cut_6523">
+	<summary>
+  Looks up a localized resource of type System.Drawing.Bitmap.
+</summary>
 </member><member name="P:Tank_Exporter.My.Resources.Resources.gradiant">
 	<summary>
   Looks up a localized resource of type System.Drawing.Bitmap.
@@ -52,6 +68,10 @@
   Looks up a localized resource of type System.Drawing.Bitmap.
 </summary>
 </member><member name="P:Tank_Exporter.My.Resources.Resources.images_on">
+	<summary>
+  Looks up a localized resource of type System.Drawing.Bitmap.
+</summary>
+</member><member name="P:Tank_Exporter.My.Resources.Resources.Paste_6520">
 	<summary>
   Looks up a localized resource of type System.Drawing.Bitmap.
 </summary>

@@ -124,6 +124,7 @@ Public Class frmMain
             Else
                 CENTER_SELECTION = True
             End If
+            pb1.Focus()
         End If
         If e.KeyCode = 16 Then
             move_mod = True
@@ -255,8 +256,10 @@ Public Class frmMain
         info_Label.Size = MM.Size
         info_Label.Dock = DockStyle.Top
         MM.Location = New Point(0, 0)
-        info_Label.Text = "Welcome... Version:" + Application.ProductVersion
-        Me.Text = " Tank Exporter Version:" + Application.ProductVersion
+        info_Label.Text = "Welcome... Version: " + Application.ProductVersion
+        Me.Text = " Tank Exporter Version: " + Application.ProductVersion
+        '====================================================================================================
+        start_up_log.AppendLine("------ App Startup ------")
         '====================================================================================================
         SplitContainer2.Panel2.Controls.Add(tanklist)
         tanklist.Visible = False
@@ -274,14 +277,29 @@ Public Class frmMain
         Application.DoEvents()
 
         'fire up OpenGL amd IL
+        start_up_log.AppendLine("Starting up OpenGL......")
         Il.ilInit()
         Ilu.iluInit()
         Ilut.ilutInit()
         EnableOpenGL()
-        Application.DoEvents()
-        Application.DoEvents()
-        Application.DoEvents()
-        Application.DoEvents()
+        Dim glstr As String
+        glstr = Gl.glGetString(Gl.GL_VENDOR)
+        start_up_log.AppendLine("Vendor: " + glstr)
+
+        glstr = Gl.glGetString(Gl.GL_VERSION)
+        start_up_log.AppendLine("Driver Version: " + glstr)
+
+        glstr = Gl.glGetString(Gl.GL_SHADING_LANGUAGE_VERSION)
+        start_up_log.AppendLine("Shader Version: " + glstr)
+
+        'glstr = Gl.glGetString(Gl.GL_EXTENSIONS).Replace(" ", vbCrLf)
+        'start_up_log.AppendLine("Extensions:" + vbCrLf + glstr)
+        start_up_log.AppendLine("End OpenGL Information" + vbCrLf)
+        start_up_log.AppendLine("OpenGL Startup Complete" + vbCrLf)
+
+        start_up_log.AppendLine("Loading required data..")
+
+
         Application.DoEvents()
         '====================================================================================================
         _Started = True
@@ -299,7 +317,7 @@ Public Class frmMain
             MsgBox("Game Location needs to be set.", MsgBoxStyle.Information)
             M_Path.PerformClick()
         End If
-        If My.Settings.game_path = "" Then
+        If My.Settings.game_path = "C:\" Then
             MsgBox("res_mods Location needs to be set.", MsgBoxStyle.Information)
             m_res_mods_path.PerformClick()
         End If
@@ -311,7 +329,10 @@ Public Class frmMain
         Try
 
             gui_pkg = New Ionic.Zip.ZipFile(My.Settings.game_path + "\res\packages\gui.pkg")
+            start_up_log.AppendLine("Loaded: " + My.Settings.game_path + "\res\packages\gui.pkg")
+
             scripts_pkg = New Ionic.Zip.ZipFile(My.Settings.game_path + "\res\packages\scripts.pkg")
+            start_up_log.AppendLine("Loaded: " + My.Settings.game_path + "\res\packages\scripts.pkg")
             'packages(11) = ZipFile.Read(My.Settings.game_path + "\res\packages\shared_content.pkg")
             'packages(12) = ZipFile.Read(My.Settings.game_path + "\res\packages\shared_content_sandbox.pkg")
             'packages(11) = shared_pkg
@@ -329,9 +350,12 @@ Public Class frmMain
         Try
             If File.Exists(Temp_Storage + "\shared_contents_build.pkg") Then
                 packages(11) = ZipFile.Read(Temp_Storage + "\shared_contents_build.pkg")
+                start_up_log.AppendLine("Loaded: " + Temp_Storage + "\shared_contents_build.pkg")
 
             Else
                 shared_contents_build = New ZipFile(Temp_Storage + "\shared_contents_build.pkg")
+                start_up_log.AppendLine("shared_contents_build.pkg does not exist. Building shared_contents_build.pkg")
+                start_up_log.AppendLine("Only Entries that contain Vehicle will be read.")
                 'add handler for progression call back to display progressbar value
                 AddHandler (shared_contents_build.SaveProgress), New EventHandler(Of SaveProgressEventArgs)(AddressOf save_progress)
 
@@ -341,8 +365,11 @@ Public Class frmMain
 
                 IO.Directory.CreateDirectory(Temp_Storage + "\zip")
                 info_Label.Text = "Reading shared_content.pkg"
+                Application.DoEvents()
                 Dim z_path = Temp_Storage + "\zip"
                 Dim arc = ZipFile.Read(My.Settings.game_path + "\res\packages\shared_content.pkg")
+                start_up_log.AppendLine("reading: \res\packages\shared_content.pkg")
+
                 For Each entry In arc
                     If entry.FileName.ToLower.Contains("vehicle") Then
                         entry.Extract(z_path, True)
@@ -350,7 +377,9 @@ Public Class frmMain
                 Next
                 Try
                     info_Label.Text = "Reading shared_content_hd.pkg"
+                    Application.DoEvents()
                     arc = ZipFile.Read(My.Settings.game_path + "\res\packages\shared_content_hd.pkg")
+                    start_up_log.AppendLine("reading: \res\packages\shared_content_hd.pkg")
                     For Each entry In arc
                         If entry.FileName.ToLower.Contains("vehicle") Then
                             entry.Extract(z_path, True)
@@ -359,7 +388,9 @@ Public Class frmMain
                 Catch ex As Exception
                 End Try
                 info_Label.Text = "Reading shared_content_sandbox.pkg"
+                Application.DoEvents()
                 arc = ZipFile.Read(My.Settings.game_path + "\res\packages\shared_content_sandbox.pkg")
+                start_up_log.AppendLine("reading: \res\packages\shared_content_sandbox.pkg")
                 For Each entry In arc
                     If entry.FileName.ToLower.Contains("vehicle") Then
                         entry.Extract(z_path, True)
@@ -367,7 +398,9 @@ Public Class frmMain
                 Next
                 Try
                     info_Label.Text = "Reading shared_content_sandbox_hd.pkg"
+                    Application.DoEvents()
                     arc = ZipFile.Read(My.Settings.game_path + "\res\packages\shared_content_sandbox_hd.pkg")
+                    start_up_log.AppendLine("reading: \res\packages\shared_content_sandbox_hd.pkg")
                     For Each entry In arc
                         If entry.FileName.ToLower.Contains("vehicle") Then
                             entry.Extract(z_path, True)
@@ -383,13 +416,14 @@ Public Class frmMain
                 shared_contents_build.CompressionLevel = 0 ' no compression
                 shared_contents_build.ParallelDeflateThreshold = 0
                 info_Label.Text = "Saving " + shared_contents_build.Entries.Count.ToString + " files to shared_contents_build.pkg.. This will take a long time!"
+                start_up_log.AppendLine("Saving: " + Temp_Storage + "\shared_contents_build.pkg")
                 Application.DoEvents()
                 shared_contents_build.Save()
                 packages(11) = New ZipFile
                 packages(11) = shared_contents_build ' save this in to 11th position
             End If
         Catch ex As Exception
-            log_text.AppendLine("HD Package files not found")
+            start_up_log.AppendLine("Something went very wrong creating the shared_contents_build.pkg!")
         End Try
         screen_totaled_draw_time = 1 ' to stop divide by zero exception
         If Directory.Exists(Temp_Storage + "\zip") Then
@@ -409,6 +443,8 @@ Public Class frmMain
         'MsgBox("Past load_customization_files", MsgBoxStyle.Exclamation, "Debug")
         load_season_icons()
         load_tank_buttons()
+        start_up_log.AppendLine("Done Creating OpenGL based Buttons.")
+
         Gl.glFinish()
         'removed this load of background image.. 
         'load_back_ground()
@@ -420,11 +456,14 @@ Public Class frmMain
         '====================================================================================================
 
         make_xy_grid()
+        start_up_log.AppendLine("Done Creating XY Grid Display List.")
 
         If Not File.Exists(Temp_Storage + "\in_shortnames.txt") Then
+            start_up_log.AppendLine("Getting DEV API data.")
             get_tank_names()
         Else
             get_tank_info_from_temp_folder()
+            start_up_log.AppendLine("Data already read from DEV API.. Loaded it..")
         End If
 
         Application.DoEvents()
@@ -488,12 +527,15 @@ Public Class frmMain
 
         MM.Enabled = True
         TC1.Enabled = True
+        start_up_log.AppendLine("----- Startup Complete -----")
+        File.WriteAllText(Temp_Storage + "Startup_log.txt", start_up_log.ToString)
 
         Startup_Timer.Enabled = True
         Application.DoEvents()
         AddHandler Me.SizeChanged, AddressOf me_size_changed
         window_state = Me.WindowState
     End Sub
+
     Private Sub save_progress(ByVal sender As Object, ByVal e As SaveProgressEventArgs)
         If e.EventType = Ionic.Zip.ZipProgressEventType.Saving_BeforeWriteEntry Then
             PG1.Visible = True
@@ -505,6 +547,7 @@ Public Class frmMain
             PG1.Visible = False
         End If
     End Sub
+
     Private Sub load_customization_files()
 
         For Each entry In scripts_pkg
@@ -797,7 +840,7 @@ tryagain:
     Private Sub set_treeview(ByRef tv As TreeView)
         Dim st_index = TC1.SelectedIndex
         Dim st = TC1.SelectedTab
-
+        start_up_log.AppendLine("Creating TreeView :" + st_index.ToString("00"))
         tv = New mytreeview
         tv.Font = font_holder.Font.Clone
         tv.ContextMenuStrip = conMenu
@@ -1148,20 +1191,23 @@ tryagain:
         Application.DoEvents()
         tn.FullRowSelect = False
         Application.DoEvents()
+
         Dim fpath = My.Settings.game_path + "\res\packages\vehicles_level_" + i.ToString("00") + ".pkg"
         packages(i) = Ionic.Zip.ZipFile.Read(fpath)
         Try
-            Dim fpath2 = My.Settings.game_path + "\res\packages\vehicles_level_" + i.ToString("00") + "_hd.pkg"
-            packages_HD(i) = Ionic.Zip.ZipFile.Read(fpath2)
+            fpath = My.Settings.game_path + "\res\packages\vehicles_level_" + i.ToString("00") + "_hd.pkg"
+            packages_HD(i) = Ionic.Zip.ZipFile.Read(fpath)
         Catch ex As Exception
+            start_up_log.AppendLine("!!!!! vehicles_level package did not OPEN !!!!! :" + fpath)
         End Try
+        start_up_log.AppendLine("Getting Tank data from: " + fpath)
         Dim cnt As Integer = 0
-        ReDim icons(i).img(100)
-        ReDim node_list(i).item(100)
+        ReDim icons(i).img(150)
+        ReDim node_list(i).item(150)
         alltanks.Append("# Tier " + i.ToString("00") + vbCrLf)
         'Get tanks fron tier packages
         For Each entry As ZipEntry In packages(i)
-            If entry.FileName.Contains("normal/lod0/Chassis.model") Then
+            If entry.FileName.ToLower.Contains("normal/lod0/chassis.model") Then
                 Dim t_name = entry.FileName
                 Dim ta = t_name.Split("/")
                 t_name = ""
@@ -1220,6 +1266,8 @@ tryagain:
                         node_list(i).item(cnt).icon = icons(i).img(cnt).Clone
                         node_list(i).item(cnt).icon.Tag = current_png_path
                         cnt += 1
+                    Else
+                        start_up_log.AppendLine("!!!!! Missing Tank Icon PNG !!!!! :" + current_png_path)
                     End If
                 End If
             End If
@@ -1681,7 +1729,7 @@ tryagain:
         End If
         'Dont draw textures?
         If MODEL_LOADED And Not m_load_textures.Checked And Not m_show_fbx.Checked And Not m_show_bsp2.Checked Then
-            view_status_string += " Light Only : "
+            view_status_string += "Light Only : "
             If Not wire_cb.Checked Then
                 Gl.glEnable(Gl.GL_POLYGON_OFFSET_FILL)
             End If
@@ -1734,7 +1782,7 @@ tryagain:
         Dim id As Integer = SELECTED_CAMO_BUTTON
         'Draw fully rendered?
         If MODEL_LOADED And m_load_textures.Checked And Not m_show_fbx.Checked And Not m_show_bsp2.Checked Then
-            view_status_string += " Textured : "
+            view_status_string += "Textured : "
             Gl.glUseProgram(shader_list.tank_shader)
             Gl.glUniform1i(tank_colorMap, 0)
             Gl.glUniform1i(tank_normalMap, 1)
@@ -1861,7 +1909,8 @@ tryagain:
         Gl.glActiveTexture(Gl.GL_TEXTURE0)
         Gl.glBindTexture(Gl.GL_TEXTURE_2D, 0)
         If frmTextureViewer.Visible And (frmTextureViewer.m_show_uvs.Checked Or frmTextureViewer.m_uvs_only.Checked) Then
-            Gl.glColor4f(0.8, 0.4, 0.0, 1.0)
+            Gl.glEnable(Gl.GL_BLEND)
+            Gl.glColor4f(0.8, 0.4, 0.0, 0.8)
 
             Gl.glBegin(Gl.GL_TRIANGLES)
             Dim v1 = _object(current_part).tris(current_vertex).v1
@@ -1872,7 +1921,7 @@ tryagain:
             Gl.glVertex3f(v3.x, v3.y, v3.z)
             Gl.glEnd()
         End If
-
+        Gl.glDisable(Gl.GL_BLEND)
         Gl.glColor3f(0.3, 0.3, 0.3)
         If grid_cb.Checked Then
             Gl.glCallList(grid)
@@ -2309,6 +2358,12 @@ tryagain:
             M_DOWN = True
         End If
     End Sub
+#Region "PB1 Mouse"
+
+    Private Sub pb1_MouseEnter(sender As Object, e As EventArgs) Handles pb1.MouseEnter
+        pb1.Focus()
+    End Sub
+
 
     Private Sub pb1_MouseMove(sender As Object, e As MouseEventArgs) Handles pb1.MouseMove
         m_mouse.x = e.X
@@ -2420,6 +2475,148 @@ tryagain:
         CAMO_BUTTON_DOWN = False
         move_cam_z = False
     End Sub
+
+    Private Sub pb1_MouseWheel(sender As Object, e As MouseEventArgs) Handles pb1.MouseWheel
+        If frmTextureViewer.Visible Then
+            mouse_delta = New Point(0, 0)
+            mouse_pos = New Point(pb2.Width / 2, pb2.Height / 2)
+            If e.Delta > 0 Then
+                img_scale_up()
+            Else
+                img_scale_down()
+            End If
+        End If
+
+    End Sub
+
+
+
+
+    Private Sub pb1_Paint(sender As Object, e As PaintEventArgs) Handles pb1.Paint
+        If w_changing Then draw_scene()
+    End Sub
+#End Region
+
+#Region "PB2 Mouse"
+
+    Private Sub pb2_MouseDown(sender As Object, e As MouseEventArgs) Handles pb2.MouseDown
+        mouse_down = True
+        mouse_delta = e.Location
+
+    End Sub
+
+    Private Sub pb2_MouseEnter(sender As Object, e As EventArgs) Handles pb2.MouseEnter
+        pb2.Focus()
+    End Sub
+
+    Private Sub pb2_MouseMove(sender As Object, e As MouseEventArgs) Handles pb2.MouseMove
+        If mouse_down Then
+            Dim p As New Point
+            p = e.Location - mouse_delta
+            rect_location += p
+            mouse_delta = e.Location
+            frmTextureViewer.draw()
+            Return
+        End If
+    End Sub
+
+    Private Sub pb2_MouseUp(sender As Object, e As MouseEventArgs) Handles pb2.MouseUp
+        mouse_down = False
+    End Sub
+
+    Private Sub pb2_MouseWheel(sender As Object, e As MouseEventArgs) Handles pb2.MouseWheel
+        mouse_pos = e.Location
+        mouse_delta = e.Location
+
+        If e.Delta > 0 Then
+            img_scale_up()
+        Else
+            img_scale_down()
+        End If
+    End Sub
+    Public Sub img_scale_up()
+        If Zoom_Factor >= 4.0 Then
+            Zoom_Factor = 4.0
+            Return 'to big and the t_bmp creation will hammer memory.
+        End If
+        Dim amt As Single = 0.125
+        Zoom_Factor += amt
+        Dim z = (Zoom_Factor / 1.0) * 100.0
+        frmTextureViewer.zoom.Text = "Zoom:" + vbCrLf + z.ToString("000") + "%"
+        Application.DoEvents()
+        'this bit of math zooms the texture around the mouses center during the resize.
+        'old_w and old_h is the original size of the image in width and height
+        'mouse_pos is current mouse position in the window.
+
+        Dim offset As New Point
+        Dim old_size_w, old_size_h As Double
+        old_size_w = (old_w * (Zoom_Factor - amt))
+        old_size_h = (old_h * (Zoom_Factor - amt))
+
+        offset = rect_location - (mouse_pos)
+
+        rect_size.X = Zoom_Factor * old_w
+        rect_size.Y = Zoom_Factor * old_h
+
+        Dim delta_x As Double = CDbl(offset.X / old_size_w)
+        Dim delta_y As Double = CDbl(offset.Y / old_size_h)
+
+        Dim x_offset = delta_x * (rect_size.X - old_size_w)
+        Dim y_offset = delta_y * (rect_size.Y - old_size_h)
+        Try
+
+            rect_location.X += CInt(x_offset)
+            rect_location.Y += CInt(y_offset)
+
+        Catch ex As Exception
+
+        End Try
+        frmTextureViewer.draw()
+    End Sub
+    Public Sub img_scale_down()
+        If Zoom_Factor <= 0.25 Then
+            Zoom_Factor = 0.25
+            Return
+        End If
+        Dim amt As Single = 0.125
+        Zoom_Factor -= amt
+        Dim z = (Zoom_Factor / 1.0) * 100.0
+        frmTextureViewer.zoom.Text = "Zoom:" + vbCrLf + z.ToString("000") + "%"
+        Application.DoEvents()
+
+        'this bit of math zooms the texture around the mouses center during the resize.
+        'old_w and old_h is the original size of the image in width and height
+        'mouse_pos is current mouse position in the window.
+
+        Dim offset As New Point
+        Dim old_size_w, old_size_h As Double
+
+        old_size_w = (old_w * (Zoom_Factor - amt))
+        old_size_h = (old_h * (Zoom_Factor - amt))
+
+        offset = rect_location - (mouse_pos)
+
+        rect_size.X = Zoom_Factor * old_w
+        rect_size.Y = Zoom_Factor * old_h
+
+        Dim delta_x As Double = CDbl(offset.X / (rect_size.X + (rect_size.X - old_size_w)))
+        Dim delta_y As Double = CDbl(offset.Y / (rect_size.Y + (rect_size.Y - old_size_h)))
+
+        Dim x_offset = delta_x * (rect_size.X - old_size_w)
+        Dim y_offset = delta_y * (rect_size.Y - old_size_h)
+        Try
+
+            rect_location.X += -CInt(x_offset)
+            rect_location.Y += -CInt(y_offset)
+
+        Catch ex As Exception
+
+        End Try
+
+        frmTextureViewer.draw()
+    End Sub
+#End Region
+
 
 #Region "screen refresh"
     Public Function need_update() As Boolean
@@ -2536,6 +2733,7 @@ tryagain:
         update_thread.Start()
     End Sub
 #End Region
+
     Public Sub clean_house()
         'reset data params
         MODEL_LOADED = False
@@ -2547,11 +2745,19 @@ tryagain:
         TANK_TEXTURES_VISIBLE = False
         show_textures_cb.Checked = False
         frmTextureViewer.Hide()
+        frmEditVisual.Close()
         GLOBAL_exclusionMask = 0
         exclusionMask_sd = -1
         HD_TANK = True
         object_count = 0
+        turret_count = 0
+        hull_count = 0
         m_show_bsp2.Checked = False
+        XML_Strings(1) = ""
+        XML_Strings(2) = ""
+        XML_Strings(3) = ""
+        XML_Strings(4) = ""
+        log_text.Clear()
         If Not bb_texture_list(0) = "" Then
             For i = 0 To bb_texture_list.Length - 1
                 Gl.glDeleteTextures(1, bb_texture_ids(i))
@@ -2591,8 +2797,11 @@ tryagain:
         'need to set these before loading anyhing
         clean_house()
         '===================================
+        log_text.Append(" ======== Model Load Start =========" + vbCrLf)
         Dim ar = file_name.Split(":")
         file_name = ar(2)
+        Me.Text = "File: " + file_name
+
         Dim ts = ar(1)
         ar = ts.Split("\")
         For i = 0 To ar.Length - 1
@@ -2812,8 +3021,6 @@ tryagain:
         'Array.Sort(turrets)
         'Array.Sort(hulls)
         'Array.Sort(chassis)
-        turret_count = 0
-        hull_count = 0
         Dim turret_name = turrets(turrets.Length - 2)
         turret_tiling = turret_tile(turrets.Length - 2)
         Dim hull_name = hulls(hulls.Length - 2)
@@ -3032,9 +3239,9 @@ tryagain:
         file_name = gun_name
         build_primitive_data(True) ' -- chassis
 
-        file_name = track_info.left_path1
-        build_primitive_data(True) ' -- chassis
         If TESTING Then
+            file_name = track_info.left_path1
+            build_primitive_data(True) ' -- chassis
 
             If track_info.segment_count = 2 Then
                 file_name = track_info.left_path2
@@ -3089,6 +3296,7 @@ tryagain:
             End If
             Gl.glEndList()
         Next
+        log_text.Append(" ======== Model Load Complete =========" + vbCrLf)
 
         If save_tank Then
 
@@ -3202,6 +3410,36 @@ tryagain:
         End If
         m_pick_camo.Enabled = True
     End Sub
+
+    Private Sub write_vertex_data(ByVal o As obj, ByVal fw As BinaryWriter)
+        For i As Integer = 1 To o.count
+            '1
+            fw.Write(o.tris(i).v1.x)
+            fw.Write(o.tris(i).v1.y)
+            fw.Write(o.tris(i).v1.z)
+            fw.Write(o.tris(i).n1.x)
+            fw.Write(o.tris(i).n1.y)
+            fw.Write(o.tris(i).n1.z)
+
+            '2
+            fw.Write(o.tris(i).v2.x)
+            fw.Write(o.tris(i).v2.y)
+            fw.Write(o.tris(i).v2.z)
+            fw.Write(o.tris(i).n2.x)
+            fw.Write(o.tris(i).n2.y)
+            fw.Write(o.tris(i).n2.z)
+
+            '3
+            fw.Write(o.tris(i).v3.x)
+            fw.Write(o.tris(i).v3.y)
+            fw.Write(o.tris(i).v3.z)
+            fw.Write(o.tris(i).n3.x)
+            fw.Write(o.tris(i).n3.y)
+            fw.Write(o.tris(i).n3.z)
+
+        Next
+    End Sub
+
     Private Sub get_track_section()
 
         Dim docx = XDocument.Parse(TheXML_String.Replace("matrix", "position"))
@@ -3436,34 +3674,6 @@ tryagain:
         End If
         Return theta
     End Function
-    Private Sub write_vertex_data(ByVal o As obj, ByVal fw As BinaryWriter)
-        For i As Integer = 1 To o.count
-            '1
-            fw.Write(o.tris(i).v1.x)
-            fw.Write(o.tris(i).v1.y)
-            fw.Write(o.tris(i).v1.z)
-            fw.Write(o.tris(i).n1.x)
-            fw.Write(o.tris(i).n1.y)
-            fw.Write(o.tris(i).n1.z)
-
-            '2
-            fw.Write(o.tris(i).v2.x)
-            fw.Write(o.tris(i).v2.y)
-            fw.Write(o.tris(i).v2.z)
-            fw.Write(o.tris(i).n2.x)
-            fw.Write(o.tris(i).n2.y)
-            fw.Write(o.tris(i).n2.z)
-
-            '3
-            fw.Write(o.tris(i).v3.x)
-            fw.Write(o.tris(i).v3.y)
-            fw.Write(o.tris(i).v3.z)
-            fw.Write(o.tris(i).n3.x)
-            fw.Write(o.tris(i).n3.y)
-            fw.Write(o.tris(i).n3.z)
-
-        Next
-    End Sub
 
 
     Private Sub clear_node_selection(ByRef n As TreeNode)
@@ -3500,8 +3710,126 @@ tryagain:
     End Sub
 
 
-    Private Sub pb1_Paint(sender As Object, e As PaintEventArgs) Handles pb1.Paint
-        If w_changing Then draw_scene()
+
+    Public Sub extract_selections()
+        If Not My.Settings.res_mods_path.ToLower.Contains("res_mods") Then
+            If MsgBox("You need to set the path to the res_mods folder!" + vbCrLf + _
+                   "Set it Now and continue?" + vbCrLf + _
+                   "It should be something like this:" + vbCrLf + _
+                   "C:\Games\World_of_Tanks\res_mods\0.9.20.0", MsgBoxStyle.YesNo, "Opps..") = MsgBoxResult.Yes Then
+                m_res_mods_path.PerformClick()
+                If Not My.Settings.res_mods_path.ToLower.Contains("res_mods") Then
+                    Return
+                End If
+            Else
+                Return
+            End If
+        End If
+        Dim all_lods As Boolean = False
+        Dim models As Boolean = frmExtract.no_models.Checked
+        If frmExtract.all_lods_rb.Checked Then
+            all_lods = True
+        Else
+            all_lods = False
+        End If
+
+        TC1.Enabled = False
+        Dim ar = file_name.Split(":")
+        'ar(2) = Path.GetFileNameWithoutExtension(ar(2))
+        For i = 1 To packages.Length - 2
+            For Each ent In packages(i)
+                If ent.FileName.Contains(ar(2)) Then
+                    If Not ent.FileName.Contains("collision_client") Then
+                        If Not ent.FileName.Contains("crash") Then
+                            If Not models Then
+                                Select Case all_lods
+                                    Case True
+                                        Select Case frmExtract.ext_chassis.Checked
+                                            Case True
+                                                If ent.FileName.ToLower.Contains("chassis") Then
+                                                    ent.Extract(My.Settings.res_mods_path, ExtractExistingFileAction.DoNotOverwrite)
+                                                End If
+                                        End Select
+                                        Select Case frmExtract.ext_hull.Checked
+                                            Case True
+                                                If ent.FileName.ToLower.Contains("hull") Then
+                                                    ent.Extract(My.Settings.res_mods_path, ExtractExistingFileAction.DoNotOverwrite)
+                                                End If
+                                        End Select
+                                        Select Case frmExtract.ext_turret.Checked
+                                            Case True
+                                                If ent.FileName.ToLower.Contains("turret") Then
+                                                    ent.Extract(My.Settings.res_mods_path, ExtractExistingFileAction.DoNotOverwrite)
+                                                End If
+                                        End Select
+                                        Select Case frmExtract.ext_gun.Checked
+                                            Case True
+                                                If ent.FileName.ToLower.Contains("gun") Then
+                                                    ent.Extract(My.Settings.res_mods_path, ExtractExistingFileAction.DoNotOverwrite)
+                                                End If
+                                        End Select
+                                    Case False
+                                        If ent.FileName.ToLower.Contains("lod0") Then
+                                            Select Case frmExtract.ext_chassis.Checked
+                                                Case True
+                                                    If ent.FileName.ToLower.Contains("chassis") Then
+                                                        ent.Extract(My.Settings.res_mods_path, ExtractExistingFileAction.DoNotOverwrite)
+                                                    End If
+                                            End Select
+                                            Select Case frmExtract.ext_hull.Checked
+                                                Case True
+                                                    If ent.FileName.ToLower.Contains("hull") Then
+                                                        ent.Extract(My.Settings.res_mods_path, ExtractExistingFileAction.DoNotOverwrite)
+                                                    End If
+                                            End Select
+                                            Select Case frmExtract.ext_turret.Checked
+                                                Case True
+                                                    If ent.FileName.ToLower.Contains("turret") Then
+                                                        ent.Extract(My.Settings.res_mods_path, ExtractExistingFileAction.DoNotOverwrite)
+                                                    End If
+                                            End Select
+                                            Select Case frmExtract.ext_gun.Checked
+                                                Case True
+                                                    If ent.FileName.ToLower.Contains("gun") Then
+                                                        ent.Extract(My.Settings.res_mods_path, ExtractExistingFileAction.DoNotOverwrite)
+                                                    End If
+                                            End Select
+                                        End If
+                                End Select
+                            End If 'if model
+                            Select Case ent.FileName.Contains("dds")
+                                Case True
+                                    Select Case frmExtract.ext_chassis.Checked
+                                        Case True
+                                            If ent.FileName.ToLower.Contains("chassis") Then
+                                                ent.Extract(My.Settings.res_mods_path, ExtractExistingFileAction.DoNotOverwrite)
+                                            End If
+                                    End Select
+                                    Select Case frmExtract.ext_hull.Checked
+                                        Case True
+                                            If ent.FileName.ToLower.Contains("hull") Then
+                                                ent.Extract(My.Settings.res_mods_path, ExtractExistingFileAction.DoNotOverwrite)
+                                            End If
+                                    End Select
+                                    Select Case frmExtract.ext_turret.Checked
+                                        Case True
+                                            If ent.FileName.ToLower.Contains("turret") Then
+                                                ent.Extract(My.Settings.res_mods_path, ExtractExistingFileAction.DoNotOverwrite)
+                                            End If
+                                    End Select
+                                    Select Case frmExtract.ext_gun.Checked
+                                        Case True
+                                            If ent.FileName.ToLower.Contains("gun") Then
+                                                ent.Extract(My.Settings.res_mods_path, ExtractExistingFileAction.DoNotOverwrite)
+                                            End If
+                                    End Select
+                            End Select
+                        End If ' crash
+                    End If ' collision_client
+                End If ' filename match
+            Next ' next entry
+        Next 'next package
+        TC1.Enabled = True
     End Sub
 
 #Region "menu_button_functions"
@@ -3640,116 +3968,8 @@ make_this_tank:
     Private Sub m_create_and_extract_Click(sender As Object, e As EventArgs) Handles m_create_and_extract.Click
         frmExtract.ShowDialog(Me)
     End Sub
-    Public Sub extract_selections()
-        If My.Settings.res_mods_path = "" Then
-            MsgBox("You need to set the path to the res_mods folder!", MsgBoxStyle.Exclamation, "Opps..")
-            Return
-        End If
-        Dim all_lods As Boolean = False
-        Dim models As Boolean = frmExtract.no_models.Checked
-        If frmExtract.all_lods_rb.Checked Then
-            all_lods = True
-        Else
-            all_lods = False
-        End If
 
-        TC1.Enabled = False
-        Dim ar = file_name.Split(":")
-        For i = 1 To packages.Length - 2
-            For Each ent In packages(i)
-                If ent.FileName.Contains(ar(2)) Then
-                    If Not ent.FileName.Contains("collision_client") Then
-                        If Not ent.FileName.Contains("crash") Then
-                            If Not models Then
-                                Select Case all_lods
-                                    Case True
-                                        Select Case frmExtract.ext_chassis.Checked
-                                            Case True
-                                                If ent.FileName.ToLower.Contains("chassis") Then
-                                                    ent.Extract(My.Settings.res_mods_path, ExtractExistingFileAction.DoNotOverwrite)
-                                                End If
-                                        End Select
-                                        Select Case frmExtract.ext_hull.Checked
-                                            Case True
-                                                If ent.FileName.ToLower.Contains("hull") Then
-                                                    ent.Extract(My.Settings.res_mods_path, ExtractExistingFileAction.DoNotOverwrite)
-                                                End If
-                                        End Select
-                                        Select Case frmExtract.ext_turret.Checked
-                                            Case True
-                                                If ent.FileName.ToLower.Contains("turret") Then
-                                                    ent.Extract(My.Settings.res_mods_path, ExtractExistingFileAction.DoNotOverwrite)
-                                                End If
-                                        End Select
-                                        Select Case frmExtract.ext_gun.Checked
-                                            Case True
-                                                If ent.FileName.ToLower.Contains("gun") Then
-                                                    ent.Extract(My.Settings.res_mods_path, ExtractExistingFileAction.DoNotOverwrite)
-                                                End If
-                                        End Select
-                                    Case False
-                                        If ent.FileName.ToLower.Contains("lod0") Then
-                                            Select Case frmExtract.ext_chassis.Checked
-                                                Case True
-                                                    If ent.FileName.ToLower.Contains("chassis") Then
-                                                        ent.Extract(My.Settings.res_mods_path, ExtractExistingFileAction.DoNotOverwrite)
-                                                    End If
-                                            End Select
-                                            Select Case frmExtract.ext_hull.Checked
-                                                Case True
-                                                    If ent.FileName.ToLower.Contains("hull") Then
-                                                        ent.Extract(My.Settings.res_mods_path, ExtractExistingFileAction.DoNotOverwrite)
-                                                    End If
-                                            End Select
-                                            Select Case frmExtract.ext_turret.Checked
-                                                Case True
-                                                    If ent.FileName.ToLower.Contains("turret") Then
-                                                        ent.Extract(My.Settings.res_mods_path, ExtractExistingFileAction.DoNotOverwrite)
-                                                    End If
-                                            End Select
-                                            Select Case frmExtract.ext_gun.Checked
-                                                Case True
-                                                    If ent.FileName.ToLower.Contains("gun") Then
-                                                        ent.Extract(My.Settings.res_mods_path, ExtractExistingFileAction.DoNotOverwrite)
-                                                    End If
-                                            End Select
-                                        End If
-                                End Select
-                            End If 'if model
-                            Select Case ent.FileName.Contains("dds")
-                                Case True
-                                    Select Case frmExtract.ext_chassis.Checked
-                                        Case True
-                                            If ent.FileName.ToLower.Contains("chassis") Then
-                                                ent.Extract(My.Settings.res_mods_path, ExtractExistingFileAction.DoNotOverwrite)
-                                            End If
-                                    End Select
-                                    Select Case frmExtract.ext_hull.Checked
-                                        Case True
-                                            If ent.FileName.ToLower.Contains("hull") Then
-                                                ent.Extract(My.Settings.res_mods_path, ExtractExistingFileAction.DoNotOverwrite)
-                                            End If
-                                    End Select
-                                    Select Case frmExtract.ext_turret.Checked
-                                        Case True
-                                            If ent.FileName.ToLower.Contains("turret") Then
-                                                ent.Extract(My.Settings.res_mods_path, ExtractExistingFileAction.DoNotOverwrite)
-                                            End If
-                                    End Select
-                                    Select Case frmExtract.ext_gun.Checked
-                                        Case True
-                                            If ent.FileName.ToLower.Contains("gun") Then
-                                                ent.Extract(My.Settings.res_mods_path, ExtractExistingFileAction.DoNotOverwrite)
-                                            End If
-                                    End Select
-                            End Select
-                        End If ' crash
-                    End If ' collision_client
-                End If ' filename match
-            Next ' next entry
-        Next 'next package
-        TC1.Enabled = True
-    End Sub
+
     Private Sub m_clear_selected_tanks_Click(sender As Object, e As EventArgs) Handles m_clear_selected_tanks.Click
         If MsgBox("Are you sure?" + vbCrLf + "This can NOT be undone!", MsgBoxStyle.YesNo, "Warning!") = MsgBoxResult.No Then
             Return
@@ -4013,7 +4233,6 @@ make_this_tank:
         File.WriteAllText(Application.StartupPath + "\tanks\tanknames.txt", out_string.ToString)
     End Sub
 
-
     Private Sub m_open_temp_folder_Click(sender As Object, e As EventArgs) Handles m_open_temp_folder.Click
         Dim f As DirectoryInfo = New DirectoryInfo(Temp_Storage)
         If f.Exists Then
@@ -4050,7 +4269,7 @@ make_this_tank:
 
     Private Sub m_show_log_Click(sender As Object, e As EventArgs) Handles m_show_log.Click
         Dim t As String = Temp_Storage + "\log_text.txt"
-        File.WriteAllText(t, log_text.ToString)
+        File.WriteAllText(t, log_text.ToString  + vbCrLf + start_up_log.ToString)
 
         System.Diagnostics.Process.Start("notepad.exe", t)
     End Sub
@@ -4191,8 +4410,6 @@ make_this_tank:
         End If
     End Sub
 
-#End Region
-
     Private Sub m_show_bsp2_tree_CheckedChanged(sender As Object, e As EventArgs) Handles m_show_bsp2_tree.CheckedChanged
         If m_show_bsp2_tree.Checked Then
             m_show_bsp2_tree.ForeColor = Color.Red
@@ -4221,122 +4438,16 @@ make_this_tank:
             TANK_TEXTURES_VISIBLE = False
         End If
     End Sub
+#End Region
 
-    Private Sub pb2_MouseDown(sender As Object, e As MouseEventArgs) Handles pb2.MouseDown
-        mouse_down = True
-        mouse_delta = e.Location
 
+    Private Sub m_edit_visual_Click(sender As Object, e As EventArgs) Handles m_edit_visual.Click
+        frmEditVisual.Show()
     End Sub
 
-    Private Sub pb2_MouseEnter(sender As Object, e As EventArgs) Handles pb2.MouseEnter
-        pb2.Focus()
-    End Sub
-
-    Private Sub pb2_MouseMove(sender As Object, e As MouseEventArgs) Handles pb2.MouseMove
-        If mouse_down Then
-            Dim p As New Point
-            p = e.Location - mouse_delta
-            rect_location += p
-            mouse_delta = e.Location
-            frmTextureViewer.draw()
-            Return
+    Private Sub m_write_primitive_Click(sender As Object, e As EventArgs) Handles m_write_primitive.Click
+        If FBX_LOADED Then
+            frmWritePrimitive.ShowDialog(Me)
         End If
     End Sub
-
-    Private Sub pb2_MouseUp(sender As Object, e As MouseEventArgs) Handles pb2.MouseUp
-        mouse_down = False
-    End Sub
-
-    Private Sub pb2_MouseWheel(sender As Object, e As MouseEventArgs) Handles pb2.MouseWheel
-        mouse_pos = e.Location
-        mouse_delta = e.Location
-
-        If e.Delta > 0 Then
-            img_scale_up()
-        Else
-            img_scale_down()
-        End If
-    End Sub
-    Public Sub img_scale_up()
-        If Zoom_Factor >= 4.0 Then
-            Zoom_Factor = 4.0
-            Return 'to big and the t_bmp creation will hammer memory.
-        End If
-        Dim amt As Single = 0.125
-        Zoom_Factor += amt
-        Dim z = (Zoom_Factor / 1.0) * 100.0
-        frmTextureViewer.zoom.Text = "Zoom:" + vbCrLf + z.ToString("000") + "%"
-        Application.DoEvents()
-        'this bit of math zooms the texture around the mouses center during the resize.
-        'old_w and old_h is the original size of the image in width and height
-        'mouse_pos is current mouse position in the window.
-
-        Dim offset As New Point
-        Dim old_size_w, old_size_h As Double
-        old_size_w = (old_w * (Zoom_Factor - amt))
-        old_size_h = (old_h * (Zoom_Factor - amt))
-
-        offset = rect_location - (mouse_pos)
-
-        rect_size.X = Zoom_Factor * old_w
-        rect_size.Y = Zoom_Factor * old_h
-
-        Dim delta_x As Double = CDbl(offset.X / old_size_w)
-        Dim delta_y As Double = CDbl(offset.Y / old_size_h)
-
-        Dim x_offset = delta_x * (rect_size.X - old_size_w)
-        Dim y_offset = delta_y * (rect_size.Y - old_size_h)
-        Try
-
-            rect_location.X += CInt(x_offset)
-            rect_location.Y += CInt(y_offset)
-
-        Catch ex As Exception
-
-        End Try
-        frmTextureViewer.draw()
-    End Sub
-    Public Sub img_scale_down()
-        If Zoom_Factor <= 0.25 Then
-            Zoom_Factor = 0.25
-            Return
-        End If
-        Dim amt As Single = 0.125
-        Zoom_Factor -= amt
-        Dim z = (Zoom_Factor / 1.0) * 100.0
-        frmTextureViewer.zoom.Text = "Zoom:" + vbCrLf + z.ToString("000") + "%"
-        Application.DoEvents()
-
-        'this bit of math zooms the texture around the mouses center during the resize.
-        'old_w and old_h is the original size of the image in width and height
-        'mouse_pos is current mouse position in the window.
-
-        Dim offset As New Point
-        Dim old_size_w, old_size_h As Double
-
-        old_size_w = (old_w * (Zoom_Factor - amt))
-        old_size_h = (old_h * (Zoom_Factor - amt))
-
-        offset = rect_location - (mouse_pos)
-
-        rect_size.X = Zoom_Factor * old_w
-        rect_size.Y = Zoom_Factor * old_h
-
-        Dim delta_x As Double = CDbl(offset.X / (rect_size.X + (rect_size.X - old_size_w)))
-        Dim delta_y As Double = CDbl(offset.Y / (rect_size.Y + (rect_size.Y - old_size_h)))
-
-        Dim x_offset = delta_x * (rect_size.X - old_size_w)
-        Dim y_offset = delta_y * (rect_size.Y - old_size_h)
-        Try
-
-            rect_location.X += -CInt(x_offset)
-            rect_location.Y += -CInt(y_offset)
-
-        Catch ex As Exception
-
-        End Try
-
-        frmTextureViewer.draw()
-    End Sub
-
 End Class
