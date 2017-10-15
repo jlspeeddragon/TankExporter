@@ -3,6 +3,12 @@
 ## A tool to export Tanks from World of Tanks.
 #### This is an ongoing project by me.. Coffee_
 
+### Vertion 14:
+Added Primitive Write capability.
+Now you can write primtive files the game can load!
+This only works will the hull or turret models.
+Read the help file for more information.
+
 ### Version 13:
 Added Mouse over picking of the vertex under the mouse.
 This only works if UVs are visable in the Texture Viewer.
