@@ -26,8 +26,17 @@ Module modPrimWriter
         For i = 1 To object_count
             'create_TBNS(i) ' not sure we need to do this again
         Next
+        Dim r As FileStream = Nothing
         obj_cnt = m_groups(ID).cnt
-        Dim r = New FileStream(My.Settings.res_mods_path + "\" + m_groups(ID).f_name(0), FileMode.Create, FileAccess.Write)
+        try
+
+            r = New FileStream(My.Settings.res_mods_path + "\" + m_groups(ID).f_name(0), FileMode.Create, FileAccess.Write)
+        Catch e As Exception
+            MsgBox("I could not open """ + My.Settings.res_mods_path + "\" + m_groups(ID).f_name(0) + """!" + vbCrLf + _
+                    "Exception: " + e.Message, MsgBoxStyle.Exclamation, "Can find folder!")
+            Return
+        End Try
+
         br = New BinaryWriter(r)
         Dim mh As UInt32 = &H42A14E65
         br.Write(mh) ' write magic number
@@ -43,6 +52,31 @@ Module modPrimWriter
         write_vertex_data(ID) 'write out vertices and UV2s if they exist
         vert_size = r.Position - p ' get section size
         vert_size -= padding ' l is the padding amount written
+        '-------------------------------------------------------------
+
+        'write colored vertice data if the model has them.
+        Dim has_color As Boolean = False ' flag for wrting table at the end of the .primitive
+        Dim color_data_size As Integer
+        pnter = m_groups(ID).list(1)
+        If _group(pnter).has_color = 1 Then
+            has_color = True ' yes.. make it true
+            Dim c_buff(_group(pnter).color_data.Length - 1) As Byte
+            _group(pnter).color_data.CopyTo(c_buff, 0)
+            Dim resize = total_verts * 4 ' there are 4 bytes for every single vertex
+            ReDim Preserve c_buff(resize)
+            p = r.Position
+            br.Write(c_buff, 0, c_buff.Length)
+            color_data_size = r.Position - p
+            l = (br.BaseStream.Position) Mod 4L
+            Console.Write("color_pnt" + vbTab + "base {0} , mod-4 {1} " + vbCrLf, br.BaseStream.Position, (br.BaseStream.Position) Mod 4L)
+            If l > 0 Then
+                For i = 1 To 4 - l
+                    br.Write(b)
+                    color_data_size += 1
+                Next
+            End If
+
+        End If
         '-------------------------------------------------------------
 
         write_BSP2(ID)
@@ -86,6 +120,7 @@ Module modPrimWriter
             Next
             offset += i - 1
         End If
+        '-------------------------------------------------------------
         If save_has_uv2 Then
             'write uv2 table entry
             tsa = "uv2".ToArray
@@ -96,6 +131,25 @@ Module modPrimWriter
             offset += tsa.Length + 24
             l = (br.BaseStream.Position) Mod 4L
             Console.Write("uv2_pnt" + vbTab + "base {0} , mod-4 {1} " + vbCrLf, br.BaseStream.Position, (br.BaseStream.Position) Mod 4L)
+            If l > 0 Then
+                For i = 1 To 4 - l
+                    br.Write(b)
+                Next
+                offset += i - 1
+            End If
+        End If
+
+        '-------------------------------------------------------------
+        If has_color Then
+            'write uv2 table entry
+            tsa = "colour".ToArray
+            br.Write(color_data_size)
+            br.Write(dummy) : br.Write(dummy) : br.Write(dummy) : br.Write(dummy)
+            br.Write(Convert.ToUInt32(tsa.Length))
+            br.Write(tsa)
+            offset += tsa.Length + 24
+            l = (br.BaseStream.Position) Mod 4L
+            Console.Write("color_pnt" + vbTab + "base {0} , mod-4 {1} " + vbCrLf, br.BaseStream.Position, (br.BaseStream.Position) Mod 4L)
             If l > 0 Then
                 For i = 1 To 4 - l
                     br.Write(b)
@@ -133,7 +187,7 @@ Module modPrimWriter
                 br.Write(tsa)
                 offset += tsa.Length + 24
                 l = (br.BaseStream.Position) Mod 4L
-                Console.Write("bsp2_m" + vbTab + "base {0} , mod-4 {1} " + vbCrLf + "---end ---" + vbCrLf, br.BaseStream.Position, (br.BaseStream.Position) Mod 4L)
+                Console.Write("bsp2_m_pnt" + vbTab + "base {0} , mod-4 {1} " + vbCrLf + "---end ---" + vbCrLf, br.BaseStream.Position, (br.BaseStream.Position) Mod 4L)
                 If l > 0 Then
                     For j = 1 To 4 - l
                         br.Write(b)
@@ -362,19 +416,19 @@ Module modPrimWriter
     Private Sub write_list_data(ByVal id As Integer)
         Dim xyz As New xyznuvtb_
         Dim len_vertex As UInt32 = Marshal.SizeOf(xyz)
-        Dim h2() = "list".ToArray
-        ind_scale = 2
-        If indi_cnt > &HFFFF Then
-            ind_scale = 4
-            h2 = "list32".ToArray
-        End If
-        ReDim Preserve h2(63)
-        br.Write(h2)
         total_indices = 0
         For i = 1 To obj_cnt
             pnter = m_groups(id).list(i - 1)
             total_indices += (fbxgrp(pnter).nPrimitives_ * 3)
         Next
+        Dim h2() = "list".ToArray
+        ind_scale = 2
+        If total_indices > &HFFFF Then
+            ind_scale = 4
+            h2 = "list32".ToArray
+        End If
+        ReDim Preserve h2(63)
+        br.Write(h2)
         br.Write(total_indices)
         br.Write(Convert.ToUInt32(obj_cnt)) 'write how many objects there are in this model
         Dim off As UInt32 = 0
@@ -388,36 +442,36 @@ Module modPrimWriter
                         br.Write(Convert.ToUInt16(fbxgrp(pnter).indicies(j).v2 + off))
                         br.Write(Convert.ToUInt16(fbxgrp(pnter).indicies(j).v1 + off))
                         br.Write(Convert.ToUInt16(fbxgrp(pnter).indicies(j).v3 + off))
-                        If fbxgrp(pnter).indicies(j).v1 + off > cnt Then cnt = fbxgrp(pnter).indicies(j).v1 + off
-                        If fbxgrp(pnter).indicies(j).v2 + off > cnt Then cnt = fbxgrp(pnter).indicies(j).v2 + off
-                        If fbxgrp(pnter).indicies(j).v3 + off > cnt Then cnt = fbxgrp(pnter).indicies(j).v3 + off
+                        If fbxgrp(pnter).indicies(j).v1 + off > cnt Then cnt = fbxgrp(pnter).indicies(j).v1
+                        If fbxgrp(pnter).indicies(j).v2 + off > cnt Then cnt = fbxgrp(pnter).indicies(j).v2
+                        If fbxgrp(pnter).indicies(j).v3 + off > cnt Then cnt = fbxgrp(pnter).indicies(j).v3
                     Else
                         br.Write(fbxgrp(pnter).indicies(j).v2 + off)
                         br.Write(fbxgrp(pnter).indicies(j).v1 + off)
                         br.Write(fbxgrp(pnter).indicies(j).v3 + off)
-                        If fbxgrp(pnter).indicies(j).v1 + off > cnt Then cnt = fbxgrp(pnter).indicies(j).v1 + off
-                        If fbxgrp(pnter).indicies(j).v2 + off > cnt Then cnt = fbxgrp(pnter).indicies(j).v2 + off
-                        If fbxgrp(pnter).indicies(j).v3 + off > cnt Then cnt = fbxgrp(pnter).indicies(j).v3 + off
+                        If fbxgrp(pnter).indicies(j).v1 + off > cnt Then cnt = fbxgrp(pnter).indicies(j).v1
+                        If fbxgrp(pnter).indicies(j).v2 + off > cnt Then cnt = fbxgrp(pnter).indicies(j).v2
+                        If fbxgrp(pnter).indicies(j).v3 + off > cnt Then cnt = fbxgrp(pnter).indicies(j).v3
                     End If
                 Else
                     If ind_scale = 2 Then
                         br.Write(Convert.ToUInt16(fbxgrp(pnter).indicies(j).v1 + off))
                         br.Write(Convert.ToUInt16(fbxgrp(pnter).indicies(j).v2 + off))
                         br.Write(Convert.ToUInt16(fbxgrp(pnter).indicies(j).v3 + off))
-                        If fbxgrp(pnter).indicies(j).v1 + off > cnt Then cnt = fbxgrp(pnter).indicies(j).v1 + off
-                        If fbxgrp(pnter).indicies(j).v2 + off > cnt Then cnt = fbxgrp(pnter).indicies(j).v2 + off
-                        If fbxgrp(pnter).indicies(j).v3 + off > cnt Then cnt = fbxgrp(pnter).indicies(j).v3 + off
+                        If fbxgrp(pnter).indicies(j).v1 + off > cnt Then cnt = fbxgrp(pnter).indicies(j).v1
+                        If fbxgrp(pnter).indicies(j).v2 + off > cnt Then cnt = fbxgrp(pnter).indicies(j).v2
+                        If fbxgrp(pnter).indicies(j).v3 + off > cnt Then cnt = fbxgrp(pnter).indicies(j).v3
                     Else
                         br.Write(fbxgrp(pnter).indicies(j).v1 + off)
                         br.Write(fbxgrp(pnter).indicies(j).v2 + off)
                         br.Write(fbxgrp(pnter).indicies(j).v3 + off)
-                        If fbxgrp(pnter).indicies(j).v1 + off > cnt Then cnt = fbxgrp(pnter).indicies(j).v1 + off
-                        If fbxgrp(pnter).indicies(j).v2 + off > cnt Then cnt = fbxgrp(pnter).indicies(j).v2 + off
-                        If fbxgrp(pnter).indicies(j).v3 + off > cnt Then cnt = fbxgrp(pnter).indicies(j).v3 + off
+                        If fbxgrp(pnter).indicies(j).v1 + off > cnt Then cnt = fbxgrp(pnter).indicies(j).v1
+                        If fbxgrp(pnter).indicies(j).v2 + off > cnt Then cnt = fbxgrp(pnter).indicies(j).v2
+                        If fbxgrp(pnter).indicies(j).v3 + off > cnt Then cnt = fbxgrp(pnter).indicies(j).v3
                     End If
                 End If
             Next
-            off += cnt + 1
+            off += fbxgrp(pnter).nVertices_
         Next
         Dim s_index, s_vertex As UInt32
         For i = 1 To obj_cnt

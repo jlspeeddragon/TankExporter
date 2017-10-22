@@ -225,8 +225,19 @@ Module modTextures
                     System.IO.Directory.CreateDirectory(FBX_Texture_path)
                 End If
                 Dim abs_name = Path.GetFileNameWithoutExtension(file_path)
+                'we have to save to a temp file.. from devil.. open and lock a new file with the correct name...
+                'save the data from the temp file in to it and finally close the new file....
+                'ALL BECAUSE 3DS MAX Crashes if its using one of PNGs... SUCH BS! Its the file change monitoring.
+                'It tries to load the image as soon as we change it and that makes it corupt!
                 Dim save_path As String = Path.GetDirectoryName(My.Settings.fbx_path)
-                Il.ilSave(Il.IL_PNG, FBX_Texture_path + "\" + abs_name + ".png")
+                Il.ilSave(Il.IL_PNG, FBX_Texture_path + "\" + abs_name + ".png" + "_temp") ' save to temp
+                Dim ta = File.ReadAllBytes(FBX_Texture_path + "\" + abs_name + ".png" + "_temp") 'read temp to an arry
+                Dim hnd = File.Open(FBX_Texture_path + "\" + abs_name + ".png", FileMode.OpenOrCreate, FileAccess.Write, FileShare.None) ' open and lock a new file
+                hnd.Write(ta, 0, ta.Length) ' save the temp array
+                hnd.Close() ' close the file
+                If File.Exists(FBX_Texture_path + "\" + abs_name + ".png" + "_temp") Then ' delete the temp file
+                    File.Delete(FBX_Texture_path + "\" + abs_name + ".png" + "_temp")
+                End If
             End If
 
         Else
@@ -508,7 +519,7 @@ Module modTextures
             Ilu.iluDeleteImage(texID)
             Return image_id
         Else
-            Stop
+            log_text.AppendLine("File Missing: " + fs)
         End If
         Return Nothing
     End Function

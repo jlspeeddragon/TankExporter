@@ -1,5 +1,5 @@
 ﻿<Global.Microsoft.VisualBasic.CompilerServices.DesignerGenerated()> _
-Partial Class frmWritePrimitive
+Partial Class write_uv2s_cb
     Inherits System.Windows.Forms.Form
 
     'Form overrides dispose to clean up the component list.
@@ -22,7 +22,7 @@ Partial Class frmWritePrimitive
     'Do not modify it using the code editor.
     <System.Diagnostics.DebuggerStepThrough()> _
     Private Sub InitializeComponent()
-        Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(frmWritePrimitive))
+        Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(write_uv2s_cb))
         Me.Label1 = New System.Windows.Forms.Label()
         Me.cew_cb = New System.Windows.Forms.CheckBox()
         Me.hew_cb = New System.Windows.Forms.CheckBox()
@@ -35,6 +35,8 @@ Partial Class frmWritePrimitive
         'Label1
         '
         Me.Label1.AutoSize = True
+        Me.Label1.BackColor = System.Drawing.Color.Transparent
+        Me.Label1.ForeColor = System.Drawing.Color.Black
         Me.Label1.Location = New System.Drawing.Point(12, 9)
         Me.Label1.Name = "Label1"
         Me.Label1.Size = New System.Drawing.Size(84, 13)
@@ -44,61 +46,71 @@ Partial Class frmWritePrimitive
         'cew_cb
         '
         Me.cew_cb.AutoSize = True
+        Me.cew_cb.BackColor = System.Drawing.Color.Transparent
         Me.cew_cb.Enabled = False
+        Me.cew_cb.ForeColor = System.Drawing.Color.Black
         Me.cew_cb.Location = New System.Drawing.Point(15, 34)
         Me.cew_cb.Name = "cew_cb"
         Me.cew_cb.Size = New System.Drawing.Size(62, 17)
         Me.cew_cb.TabIndex = 1
         Me.cew_cb.Text = "Chassis"
-        Me.cew_cb.UseVisualStyleBackColor = True
+        Me.cew_cb.UseVisualStyleBackColor = False
         '
         'hew_cb
         '
         Me.hew_cb.AutoSize = True
+        Me.hew_cb.BackColor = System.Drawing.Color.Transparent
+        Me.hew_cb.ForeColor = System.Drawing.Color.Black
         Me.hew_cb.Location = New System.Drawing.Point(15, 57)
         Me.hew_cb.Name = "hew_cb"
         Me.hew_cb.Size = New System.Drawing.Size(44, 17)
         Me.hew_cb.TabIndex = 2
         Me.hew_cb.Text = "Hull"
-        Me.hew_cb.UseVisualStyleBackColor = True
+        Me.hew_cb.UseVisualStyleBackColor = False
         '
         'tew_cb
         '
         Me.tew_cb.AutoSize = True
+        Me.tew_cb.BackColor = System.Drawing.Color.Transparent
+        Me.tew_cb.ForeColor = System.Drawing.Color.Black
         Me.tew_cb.Location = New System.Drawing.Point(15, 80)
         Me.tew_cb.Name = "tew_cb"
         Me.tew_cb.Size = New System.Drawing.Size(54, 17)
         Me.tew_cb.TabIndex = 3
         Me.tew_cb.Text = "Turret"
-        Me.tew_cb.UseVisualStyleBackColor = True
+        Me.tew_cb.UseVisualStyleBackColor = False
         '
         'gew_cb
         '
         Me.gew_cb.AutoSize = True
+        Me.gew_cb.BackColor = System.Drawing.Color.Transparent
         Me.gew_cb.Enabled = False
+        Me.gew_cb.ForeColor = System.Drawing.Color.Black
         Me.gew_cb.Location = New System.Drawing.Point(15, 103)
         Me.gew_cb.Name = "gew_cb"
         Me.gew_cb.Size = New System.Drawing.Size(46, 17)
         Me.gew_cb.TabIndex = 4
         Me.gew_cb.Text = "Gun"
-        Me.gew_cb.UseVisualStyleBackColor = True
+        Me.gew_cb.UseVisualStyleBackColor = False
         '
         'Button1
         '
         Me.Button1.ForeColor = System.Drawing.Color.Black
-        Me.Button1.Location = New System.Drawing.Point(15, 127)
+        Me.Button1.Location = New System.Drawing.Point(15, 131)
         Me.Button1.Name = "Button1"
         Me.Button1.Size = New System.Drawing.Size(75, 23)
         Me.Button1.TabIndex = 5
         Me.Button1.Text = "Write File(s)"
         Me.Button1.UseVisualStyleBackColor = True
         '
-        'frmWritePrimitive
+        'write_uv2s_cb
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.BackColor = System.Drawing.Color.FromArgb(CType(CType(30, Byte), Integer), CType(CType(30, Byte), Integer), CType(CType(30, Byte), Integer))
-        Me.ClientSize = New System.Drawing.Size(109, 175)
+        Me.BackgroundImage = Global.Tank_Exporter.My.Resources.Resources.upton
+        Me.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None
+        Me.ClientSize = New System.Drawing.Size(256, 164)
         Me.Controls.Add(Me.Button1)
         Me.Controls.Add(Me.gew_cb)
         Me.Controls.Add(Me.tew_cb)
@@ -108,7 +120,7 @@ Partial Class frmWritePrimitive
         Me.ForeColor = System.Drawing.Color.Gainsboro
         Me.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow
         Me.Icon = CType(resources.GetObject("$this.Icon"), System.Drawing.Icon)
-        Me.Name = "frmWritePrimitive"
+        Me.Name = "write_uv2s_cb"
         Me.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent
         Me.Text = "Primitive Writer"
         Me.ResumeLayout(False)

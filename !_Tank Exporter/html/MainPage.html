@@ -77,6 +77,7 @@ Under the File menu, you can delete the temp folder. Use this when new tanks hav
               <tr>
                 <td background="imgs/transparent_fill.png">Loading of tanks is done by RIGHT clicking on a tank name in the list.<br>
                   Exporting them is done in the same way.<br>
+                  NOTE: If there is a model with the same name in the current res_mods folder path, it will be loaded from there. <br>
 Also.. To make life easier, you can also extract and create the data in the World of Tanks res_mods folder or where ever you chose. YOU WILL NEED TO SET THIS PATH!!!! </td>
               </tr>
             </table>
@@ -121,7 +122,9 @@ Be sure to backup your files before using mod installers such as <a href="http:/
 			<table width="90%" height="623" border="0" align="center">
               <tr>
                 <td height="619" background="imgs/transparent_fill.png"><p><span class="style6">The Workd Flow goes like this....</span><br> 
-                  <br>
+                    <br>
+                    NOTE: You can NOT edit Guns or Chassis because of the vertex format these models use! <br>
+                    <br>
                   <span class="style8">1:</span> Set the game path.. "/games/World_of_tanks" and res_mods paths... Res_mods should be pointing to the latest version .. Like this: "C:\Games\World_of_Tanks\res_mods\0.9.20.0"<br>
                   <br>
                   <span class="style8">2:</span> Right click on a tank and select "Extract to res_mods Folder".. This will created the folder tree with the correct paths for that tank.. You can decide what to extract in the panel that pops up. The default settings will extract all the textures and models for LOD0. There is a bug that might show up if for instance the HULL is not in LOD0. I will fix this later. It is a good idea to ONLY extract parts you want to change.. It slow the loading down in game if it has to load a bunch a crap that is not changed. IT WILL NOT OVER WRITE EXISTING FILES! If you want to start over.. delete them in Explorer.<br>

@@ -83,6 +83,10 @@
 	<summary>
   Looks up a localized resource of type System.Drawing.Bitmap.
 </summary>
+</member><member name="P:Tank_Exporter.My.Resources.Resources.upton">
+	<summary>
+  Looks up a localized resource of type System.Drawing.Bitmap.
+</summary>
 </member><member name="T:Tank_Exporter.My.Resources.Resources">
 	<summary>
   A strongly-typed resource class, for looking up localized strings, etc.

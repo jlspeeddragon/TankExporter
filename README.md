@@ -3,7 +3,14 @@
 ## A tool to export Tanks from World of Tanks.
 #### This is an ongoing project by me.. Coffee_
 
-### Vertion 14:
+### Version 15:
+Fixed a issue while writing Turret models.
+Added a model info window.
+Added / Fixed Visual viewer window.
+Now TE seaches in the res_mods folder for a matching tank component. If it finds it, will load it from there.
+Minor Bug fixes.
+
+### Version 14:
 Added Primitive Write capability.
 Now you can write primitive files the game can load!
 This only works will the hull or turret models.

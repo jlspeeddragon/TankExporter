@@ -100,6 +100,7 @@ Partial Class frmEditVisual
         Me.m_file.Name = "m_file"
         Me.m_file.Size = New System.Drawing.Size(37, 20)
         Me.m_file.Text = "File"
+        Me.m_file.Visible = False
         '
         'ToolStripMenuItem1
         '
@@ -159,7 +160,7 @@ Partial Class frmEditVisual
         Me.Icon = CType(resources.GetObject("$this.Icon"), System.Drawing.Icon)
         Me.Name = "frmEditVisual"
         Me.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent
-        Me.Text = "Visual Editor"
+        Me.Text = "Visual Viewer"
         Me.TopMost = True
         Me.CMS.ResumeLayout(False)
         Me.MenuStrip1.ResumeLayout(False)

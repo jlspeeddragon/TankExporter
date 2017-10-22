@@ -92,7 +92,7 @@ Namespace My
         
         <Global.System.Configuration.UserScopedSettingAttribute(),  _
          Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
-         Global.System.Configuration.DefaultSettingValueAttribute("C:\")>  _
+         Global.System.Configuration.DefaultSettingValueAttribute("")>  _
         Public Property res_mods_path() As String
             Get
                 Return CType(Me("res_mods_path"),String)

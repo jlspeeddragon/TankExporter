@@ -2735,24 +2735,31 @@ tryagain:
 #End Region
 
     Public Sub clean_house()
+        frmModelInfo.Close() ' close so it resets on load
+        frmTextureViewer.Hide() ' hide.. so we dont kill settings
+        frmEditVisual.Close() ' close so it resets on load
+
         'reset data params
         MODEL_LOADED = False
+        FBX_LOADED = False
         m_pick_camo.Enabled = False
         LAST_SEASON = 10
         season_Buttons_VISIBLE = False
         CAMO_BUTTONS_VISIBLE = False
         TANKPARTS_VISIBLE = False
         TANK_TEXTURES_VISIBLE = False
+
         show_textures_cb.Checked = False
-        frmTextureViewer.Hide()
-        frmEditVisual.Close()
+        m_write_primitive.Enabled = False
+        m_show_fbx.Checked = False
+        m_show_bsp2.Checked = False
+
         GLOBAL_exclusionMask = 0
         exclusionMask_sd = -1
         HD_TANK = True
         object_count = 0
         turret_count = 0
         hull_count = 0
-        m_show_bsp2.Checked = False
         XML_Strings(1) = ""
         XML_Strings(2) = ""
         XML_Strings(3) = ""
@@ -4249,6 +4256,8 @@ make_this_tank:
         SaveFileDialog1.FileName = tank_label.Text.Replace("\/", "_") + ".fbx"
 
         If SaveFileDialog1.ShowDialog = Forms.DialogResult.OK Then
+            remove_loaded_fbx()
+            clean_house()
             My.Settings.fbx_path = SaveFileDialog1.FileName
         Else
             Return
@@ -4285,6 +4294,7 @@ make_this_tank:
             'End If
             res_mods_path_set = True
             My.Settings.res_mods_path = FolderBrowserDialog1.SelectedPath
+            My.Settings.Save()
             Return
         End If
     End Sub
@@ -4447,7 +4457,11 @@ make_this_tank:
 
     Private Sub m_write_primitive_Click(sender As Object, e As EventArgs) Handles m_write_primitive.Click
         If FBX_LOADED Then
-            frmWritePrimitive.ShowDialog(Me)
+            write_uv2s_cb.ShowDialog(Me)
         End If
+    End Sub
+
+    Private Sub m_show_model_info_Click(sender As Object, e As EventArgs) Handles m_show_model_info.Click
+        frmModelInfo.Show()
     End Sub
 End Class

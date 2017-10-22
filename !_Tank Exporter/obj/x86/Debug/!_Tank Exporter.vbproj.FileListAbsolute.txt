@@ -62,8 +62,9 @@ C:\!_Tank Exporter\!_Tank Exporter\obj\x86\Debug\Tank_Exporter.frmExtract.resour
 C:\!_Tank Exporter\!_Tank Exporter\obj\x86\Debug\Tank_Exporter.frmFBX.resources
 C:\!_Tank Exporter\!_Tank Exporter\obj\x86\Debug\Tank_Exporter.frmLighting.resources
 C:\!_Tank Exporter\!_Tank Exporter\obj\x86\Debug\Tank_Exporter.frmMain.resources
+C:\!_Tank Exporter\!_Tank Exporter\obj\x86\Debug\Tank_Exporter.frmModelInfo.resources
 C:\!_Tank Exporter\!_Tank Exporter\obj\x86\Debug\Tank_Exporter.frmTextureViewer.resources
-C:\!_Tank Exporter\!_Tank Exporter\obj\x86\Debug\Tank_Exporter.frmWritePrimitive.resources
+C:\!_Tank Exporter\!_Tank Exporter\obj\x86\Debug\Tank_Exporter.write_uv2s_cb.resources
 C:\!_Tank Exporter\!_Tank Exporter\obj\x86\Debug\Tank_Exporter.Resources.resources
 C:\!_Tank Exporter\!_Tank Exporter\obj\x86\Debug\Tank_Exporter.frmEditFrag.resources
 C:\!_Tank Exporter\!_Tank Exporter\obj\x86\Debug\Tank_Exporter.frmShaderError.resources

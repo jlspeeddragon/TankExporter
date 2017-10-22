@@ -103,6 +103,7 @@ Module ModTankLoader
         Public bn As UInt32
         Public u2 As Single
         Public v2 As Single
+        Public r, g, b, a As Byte
     End Class
     Structure primGroup
         Public startIndex_ As Long
@@ -314,6 +315,7 @@ Module ModTankLoader
         Public tank_shift As vect3
         Public detail_tile As vec2
         Public has_uv2 As Integer
+        Public has_color As Integer
         Public header As String
         Public call_list As Integer
         Public rotation As Skill.FbxSDK.FbxVector4
@@ -502,36 +504,49 @@ Module ModTankLoader
         indxcol.Dispose()
         geo.Dispose()
         t.Dispose()
+        '####################################################################################
+        'Load Prmitive Data
         cnt = 0
         Dim r As New MemoryStream
-        Dim entry As ZipEntry = frmMain.packages(current_tank_package)(file_name)
-        If entry IsNot Nothing Then
-            entry.Extract(r)
+        Dim b_reader As New BinaryReader(r)
+        Dim buf() As Byte
+        'first.. look in the res_mod folder for this tank model
+        Dim t_path = My.Settings.res_mods_path + "\" + file_name.Replace("/", "\")
+        If File.Exists(t_path) Then
+            'yes... read the file
+            buf = File.ReadAllBytes(t_path)
+            r = New MemoryStream(buf)
+            File_len = r.Length
         Else
-            entry = frmMain.shared_pkg(file_name)
+            'no.. get the file from the package...
+            Dim entry As ZipEntry = frmMain.packages(current_tank_package)(file_name)
             If entry IsNot Nothing Then
                 entry.Extract(r)
             Else
-                entry = frmMain.shared_sandbox_pkg(file_name)
+                entry = frmMain.shared_pkg(file_name)
                 If entry IsNot Nothing Then
                     entry.Extract(r)
                 Else
+                    entry = frmMain.shared_sandbox_pkg(file_name)
+                    If entry IsNot Nothing Then
+                        entry.Extract(r)
+                    Else
 
+                    End If
+                    log_text.Append("File Not Found in package.." + file_name + vbCrLf)
                 End If
-                log_text.Append("File Not Found in package.." + file_name + vbCrLf)
+                Return False
             End If
-            Return False
-
+            r.Position = 0
+            File_len = r.Length
+            ReDim buf(File_len)
+            For i = 0 To File_len - 1
+                buf(i) = b_reader.ReadByte
+            Next
         End If
-        r.Position = 0
-        Dim b_reader As New BinaryReader(r)
-        File_len = r.Length
-        Dim buf(File_len) As Byte
-        For i = 0 To File_len - 1
-            buf(i) = b_reader.ReadByte
-        Next
 
         r.Dispose()
+        '####################################################################################
         Dim stream As MemoryStream = New MemoryStream(buf)
         b_reader = New BinaryReader(stream)
         'set data_heaps size
@@ -854,6 +869,7 @@ next_m:
             Dim p As Integer = 6
             For k As UInt32 = object_start To big_l
                 If ordered_names(sg - sub_groups).has_color Then
+                    _group(k).has_color = 1
                     ReDim _group(k).color_data(ordered_names(sg - sub_groups).color_data.Length)
                     ordered_names(sg - sub_groups).color_data.CopyTo(_group(k).color_data, 0)
                 End If
@@ -950,6 +966,13 @@ next_m:
                     If has_uv2 Then
                         _group(k).vertices(cnt).u2 = uv2_data(i).u
                         _group(k).vertices(cnt).v2 = uv2_data(i).v
+                    End If
+                    If has_color Then
+                        _group(k).vertices(cnt).r = _group(k).color_data((i * 4) + 0)
+                        _group(k).vertices(cnt).g = _group(k).color_data((i * 4) + 1)
+                        _group(k).vertices(cnt).b = _group(k).color_data((i * 4) + 2)
+                        _group(k).vertices(cnt).a = _group(k).color_data((i * 4) + 3)
+
                     End If
                     i += 1
                 Next cnt
