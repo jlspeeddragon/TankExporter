@@ -3,6 +3,12 @@
 ## A tool to export Tanks from World of Tanks.
 #### This is an ongoing project by me.. Coffee_
 
+### Version 17:
+More fixes in FBX import/export
+
+### Version 16:
+Fixes in FBX import/expore
+
 ### Version 15:
 Fixed a issue while writing Turret models.
 Added a model info window.

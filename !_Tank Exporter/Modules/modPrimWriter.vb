@@ -57,7 +57,7 @@ Module modPrimWriter
         'write colored vertice data if the model has them.
         Dim has_color As Boolean = False ' flag for wrting table at the end of the .primitive
         Dim color_data_size As Integer
-        pnter = m_groups(ID).list(1)
+        pnter = m_groups(ID).list(0)
         If _group(pnter).has_color = 1 Then
             has_color = True ' yes.. make it true
             Dim c_buff(_group(pnter).color_data.Length - 1) As Byte

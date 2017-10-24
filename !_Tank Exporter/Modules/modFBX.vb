@@ -930,7 +930,7 @@ whichone:
             frmMain.m_write_primitive.Enabled = True
         End If
         'We give the user the opertunity to extract the model. We need some where to write any changed data too.
-        ar = file_name.Split("\")
+        ar = file_name.Replace("/", "\").Split("\")
         Dim fn = ar(0) + "\" + ar(1) + "\" + ar(2)
         Dim dp = My.Settings.res_mods_path + "\" + fn
         frmWritePrimitive.SAVE_NAME = dp

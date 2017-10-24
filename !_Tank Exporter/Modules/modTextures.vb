@@ -470,7 +470,7 @@ Module modTextures
             Ilu.iluDeleteImage(texID)
             Return image_id
         Else
-            Stop
+            log_text.AppendLine("Png did not load:" + fs)
         End If
         Return Nothing
     End Function
