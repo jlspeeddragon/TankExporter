@@ -439,32 +439,58 @@ Module modPrimWriter
                 'note: my routine uses other rotation
                 If fbxgrp(pnter).is_new_model Then
                     If ind_scale = 2 Then
-                        br.Write(Convert.ToUInt16(fbxgrp(pnter).indicies(j).v2 + off))
-                        br.Write(Convert.ToUInt16(fbxgrp(pnter).indicies(j).v1 + off))
-                        br.Write(Convert.ToUInt16(fbxgrp(pnter).indicies(j).v3 + off))
+                        If frmWritePrimitive.flipWindingOrder_cb.Checked Then
+                            br.Write(Convert.ToUInt16(fbxgrp(pnter).indicies(j).v1 + off))
+                            br.Write(Convert.ToUInt16(fbxgrp(pnter).indicies(j).v2 + off))
+                            br.Write(Convert.ToUInt16(fbxgrp(pnter).indicies(j).v3 + off))
+                        Else
+                            br.Write(Convert.ToUInt16(fbxgrp(pnter).indicies(j).v2 + off))
+                            br.Write(Convert.ToUInt16(fbxgrp(pnter).indicies(j).v1 + off))
+                            br.Write(Convert.ToUInt16(fbxgrp(pnter).indicies(j).v3 + off))
+
+                        End If
                         If fbxgrp(pnter).indicies(j).v1 + off > cnt Then cnt = fbxgrp(pnter).indicies(j).v1
                         If fbxgrp(pnter).indicies(j).v2 + off > cnt Then cnt = fbxgrp(pnter).indicies(j).v2
                         If fbxgrp(pnter).indicies(j).v3 + off > cnt Then cnt = fbxgrp(pnter).indicies(j).v3
                     Else
-                        br.Write(fbxgrp(pnter).indicies(j).v2 + off)
-                        br.Write(fbxgrp(pnter).indicies(j).v1 + off)
-                        br.Write(fbxgrp(pnter).indicies(j).v3 + off)
+                        If frmWritePrimitive.flipWindingOrder_cb.Checked Then
+                            br.Write(fbxgrp(pnter).indicies(j).v1 + off)
+                            br.Write(fbxgrp(pnter).indicies(j).v2 + off)
+                            br.Write(fbxgrp(pnter).indicies(j).v3 + off)
+                        Else
+                            br.Write(fbxgrp(pnter).indicies(j).v2 + off)
+                            br.Write(fbxgrp(pnter).indicies(j).v2 + off)
+                            br.Write(fbxgrp(pnter).indicies(j).v1 + off)
+
+                        End If
                         If fbxgrp(pnter).indicies(j).v1 + off > cnt Then cnt = fbxgrp(pnter).indicies(j).v1
                         If fbxgrp(pnter).indicies(j).v2 + off > cnt Then cnt = fbxgrp(pnter).indicies(j).v2
                         If fbxgrp(pnter).indicies(j).v3 + off > cnt Then cnt = fbxgrp(pnter).indicies(j).v3
                     End If
                 Else
                     If ind_scale = 2 Then
-                        br.Write(Convert.ToUInt16(fbxgrp(pnter).indicies(j).v1 + off))
-                        br.Write(Convert.ToUInt16(fbxgrp(pnter).indicies(j).v2 + off))
-                        br.Write(Convert.ToUInt16(fbxgrp(pnter).indicies(j).v3 + off))
+                        If frmWritePrimitive.flipWindingOrder_cb.Checked Then
+                            br.Write(Convert.ToUInt16(fbxgrp(pnter).indicies(j).v2 + off))
+                            br.Write(Convert.ToUInt16(fbxgrp(pnter).indicies(j).v1 + off))
+                            br.Write(Convert.ToUInt16(fbxgrp(pnter).indicies(j).v3 + off))
+                        Else
+                            br.Write(Convert.ToUInt16(fbxgrp(pnter).indicies(j).v1 + off))
+                            br.Write(Convert.ToUInt16(fbxgrp(pnter).indicies(j).v2 + off))
+                            br.Write(Convert.ToUInt16(fbxgrp(pnter).indicies(j).v3 + off))
+                        End If
                         If fbxgrp(pnter).indicies(j).v1 + off > cnt Then cnt = fbxgrp(pnter).indicies(j).v1
                         If fbxgrp(pnter).indicies(j).v2 + off > cnt Then cnt = fbxgrp(pnter).indicies(j).v2
                         If fbxgrp(pnter).indicies(j).v3 + off > cnt Then cnt = fbxgrp(pnter).indicies(j).v3
                     Else
-                        br.Write(fbxgrp(pnter).indicies(j).v1 + off)
-                        br.Write(fbxgrp(pnter).indicies(j).v2 + off)
-                        br.Write(fbxgrp(pnter).indicies(j).v3 + off)
+                        If frmWritePrimitive.flipWindingOrder_cb.Checked Then
+                            br.Write(fbxgrp(pnter).indicies(j).v2 + off)
+                            br.Write(fbxgrp(pnter).indicies(j).v1 + off)
+                            br.Write(fbxgrp(pnter).indicies(j).v3 + off)
+                        Else
+                            br.Write(fbxgrp(pnter).indicies(j).v1 + off)
+                            br.Write(fbxgrp(pnter).indicies(j).v2 + off)
+                            br.Write(fbxgrp(pnter).indicies(j).v3 + off)
+                        End If
                         If fbxgrp(pnter).indicies(j).v1 + off > cnt Then cnt = fbxgrp(pnter).indicies(j).v1
                         If fbxgrp(pnter).indicies(j).v2 + off > cnt Then cnt = fbxgrp(pnter).indicies(j).v2
                         If fbxgrp(pnter).indicies(j).v3 + off > cnt Then cnt = fbxgrp(pnter).indicies(j).v3

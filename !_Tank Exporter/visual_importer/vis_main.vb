@@ -415,9 +415,8 @@ remove_more:
             DecodePackedFile(reader)
         ElseIf head = Binary_Header Then
         Else
-            If Not PackedFileName.Contains(".xml") Then
-                PackedFileName &= ".xml"
-            End If
+            Return False
+
         End If
         reader.Close()
         Return True

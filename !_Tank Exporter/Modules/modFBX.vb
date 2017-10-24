@@ -579,7 +579,8 @@ outofhere:
             mat_NM = FBX_Texture_path + "\" + Path.GetFileNameWithoutExtension(_group(id).normal_name) + ".png"
             mat_uv2 = _group(id).detail_name
 
-            model_name = _group(id).name
+            model_name = _group(id).name.Replace("/", "\")
+            model_name = model_name.Replace(":", "~")
             node_list(id) = FbxNode.Create(pManager, model_name)
 
             frmFBX.Label2.Text = model_name
@@ -762,7 +763,7 @@ outahere:
                 m_groups(1).cnt = ct + 1
                 m_groups(1).list(ct) = i
                 m_groups(1).m_type = 1
-                ar = fbxgrp(i).name.Split(":")
+                ar = fbxgrp(i).name.Split("~")
                 m_groups(1).f_name(ct) = ar(0)
                 If ar.Length > 1 Then
                     m_groups(1).package_id(ct) = CInt(ar(1))
@@ -778,7 +779,7 @@ outahere:
                 m_groups(2).cnt = ht + 1
                 m_groups(2).list(ht) = i
                 m_groups(2).m_type = 2
-                ar = fbxgrp(i).name.Split(":")
+                ar = fbxgrp(i).name.Split("~")
                 m_groups(2).f_name(ht) = ar(0)
                 If ar.Length > 1 Then
                     m_groups(2).package_id(ht) = CInt(ar(1))
@@ -794,7 +795,7 @@ outahere:
                 m_groups(3).cnt = tt + 1
                 m_groups(3).list(tt) = i
                 m_groups(3).m_type = 3
-                ar = fbxgrp(i).name.Split(":")
+                ar = fbxgrp(i).name.Split("~")
                 m_groups(3).f_name(tt) = ar(0)
                 If ar.Length > 1 Then
                     m_groups(3).package_id(tt) = CInt(ar(1))
@@ -810,7 +811,7 @@ outahere:
                 m_groups(4).cnt = gt + 1
                 m_groups(4).list(gt) = i
                 m_groups(4).m_type = 4
-                ar = fbxgrp(i).name.Split(":")
+                ar = fbxgrp(i).name.Split("~")
                 m_groups(4).f_name(gt) = ar(0)
                 If ar.Length > 1 Then
                     m_groups(4).package_id(gt) = CInt(ar(1))
@@ -912,7 +913,7 @@ whichone:
 
         End If
         For i = 1 To fbxgrp.Length - 1
-            If Not fbxgrp(i).name.Contains("vehicles/") Then
+            If Not fbxgrp(i).name.Contains("vehicles\") Then
                 fbxgrp(i).is_new_model = True
             End If
         Next
@@ -929,10 +930,10 @@ whichone:
             frmMain.m_write_primitive.Enabled = True
         End If
         'We give the user the opertunity to extract the model. We need some where to write any changed data too.
-        ar = file_name.Split("/")
-        Dim fn = ar(0) + "/" + ar(1) + "/" + ar(2)
-        Dim dp = My.Settings.res_mods_path + "/" + fn
-        write_uv2s_cb.SAVE_NAME = dp
+        ar = file_name.Split("\")
+        Dim fn = ar(0) + "\" + ar(1) + "\" + ar(2)
+        Dim dp = My.Settings.res_mods_path + "\" + fn
+        frmWritePrimitive.SAVE_NAME = dp
         If Not Directory.Exists(dp) Then
             If MsgBox("It appears You have not extracted data for this model." + vbCrLf + _
                       "There is no place to save this new Model." + vbCrLf + _
@@ -943,26 +944,26 @@ whichone:
 
         End If
         'set which group has new models or changed data
-        write_uv2s_cb.Visible = True
-        write_uv2s_cb.cew_cb.Checked = False '= CB
-        write_uv2s_cb.cew_cb.Enabled = False
+        frmWritePrimitive.Visible = True
+        frmWritePrimitive.cew_cb.Checked = False '= CB
+        frmWritePrimitive.cew_cb.Enabled = False
         m_groups(1).changed = False ' = CB
         m_groups(1).new_objects = c_new
 
-        write_uv2s_cb.hew_cb.Checked = HB
+        frmWritePrimitive.hew_cb.Checked = HB
         m_groups(2).changed = HB
         m_groups(2).new_objects = h_new
 
-        write_uv2s_cb.tew_cb.Checked = TB
+        frmWritePrimitive.tew_cb.Checked = TB
         m_groups(3).changed = TB
         m_groups(3).new_objects = t_new
 
-        write_uv2s_cb.gew_cb.Checked = False ' = GB
-        write_uv2s_cb.gew_cb.Enabled = False
+        frmWritePrimitive.gew_cb.Checked = False ' = GB
+        frmWritePrimitive.gew_cb.Enabled = False
         m_groups(4).changed = False '= GB
         m_groups(4).new_objects = g_new
 
-        write_uv2s_cb.Visible = False
+        frmWritePrimitive.Visible = False
         MODEL_LOADED = True
     End Sub
 
@@ -1201,7 +1202,7 @@ whichone:
         Dim SpecularColor = New FbxDouble3(0.7, 0.7, 0.7)
         Dim DiffuseColor As New FbxDouble3(0.8, 0.8, 0.8)
         'Need a name for this material
-        lMaterial = FbxSurfacePhong.Create(pManager, m_name + ":" + id.ToString("000"))
+        lMaterial = FbxSurfacePhong.Create(pManager, m_name + "" + id.ToString("000"))
         lMaterial.EmissiveColor = EmissiveColor
         lMaterial.AmbientColor = AmbientColor
         lMaterial.DiffuseColor = DiffuseColor
@@ -1215,7 +1216,8 @@ whichone:
 
     Public Function fbx_create_texture(pManager As FbxSdkManager, id As Integer) As FbxTexture
         'need a name for this texture
-        Dim texture = FbxTexture.Create(pManager, "DiffuseMap" + ":" + id.ToString("000"))
+        'Dim texture = FbxTexture.Create(pManager, "DiffuseMap" + ":" + id.ToString("000"))
+        Dim texture = FbxTexture.Create(pManager, FBX_Texture_path + "\" + Path.GetFileNameWithoutExtension(textures(id).c_name) + ".png")
         ' Set texture properties.
         texture.SetFileName(FBX_Texture_path + "\" + Path.GetFileNameWithoutExtension(textures(id).c_name) + ".png") 'Get the Texture path from the list
         texture.TextureUseType = FbxTexture.TextureUse.Standard
@@ -1230,7 +1232,8 @@ whichone:
 
     Public Function fbx_create_texture_N(pManager As FbxSdkManager, id As Integer) As FbxTexture
         'need a name for this texture
-        Dim texture = FbxTexture.Create(pManager, "NormalMap" + ":" + id.ToString("000"))
+        'Dim texture = FbxTexture.Create(pManager, "NormalMap" + ":" + id.ToString("000"))
+        Dim texture = FbxTexture.Create(pManager, FBX_Texture_path + "\" + Path.GetFileNameWithoutExtension(textures(id).n_name) + ".png")
         ' Set texture properties.
         texture.SetFileName(FBX_Texture_path + "\" + Path.GetFileNameWithoutExtension(textures(id).n_name) + ".png") 'Get the Texture path from the list
         texture.TextureUseType = FbxTexture.TextureUse.BumpNormalMap

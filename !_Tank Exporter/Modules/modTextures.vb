@@ -154,20 +154,13 @@ Module modTextures
                 id = get_texture(mStream, name)
             Else
                 'look in shared_content.pkg
-                ent = frmMain.shared_pkg(name)
+                ent = frmMain.packages(11)(name)
                 If ent IsNot Nothing Then
                     mStream = New MemoryStream
                     ent.Extract(mStream)
                     id = get_texture(mStream, name)
                 Else
-                    ent = frmMain.shared_sandbox_pkg(name)
-                    If ent IsNot Nothing Then
-                        mStream = New MemoryStream
-                        ent.Extract(mStream)
-                        id = get_texture(mStream, name)
-                    Else
-                        log_text.AppendLine("Cant find:" + name)
-                    End If
+                    log_text.AppendLine("Cant find:" + name)
                 End If
             End If
         End If

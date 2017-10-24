@@ -1,7 +1,7 @@
 ﻿Imports System.Windows.Forms
 Imports System.IO
 
-Public Class write_uv2s_cb
+Public Class frmWritePrimitive
     Public SAVE_NAME As String = ""
     Private Sub Button1_Click(sender As Object, e As EventArgs) Handles Button1.Click
         If Not FBX_LOADED Then

@@ -1494,6 +1494,25 @@ no_more:
         Try
 
             Dim mstream = New MemoryStream
+            If File.Exists(My.Settings.res_mods_path + "\" + filename) Then
+                Dim buf = File.ReadAllBytes(My.Settings.res_mods_path + "\" + filename.Replace(".model", ".visual_processed"))
+                mstream = New MemoryStream(buf)
+                If openXml_stream(mstream, "") Then
+                    file_name = filename.Replace(".model", ".primitives_processed")
+                    mstream.Dispose()
+                    buf = Nothing
+                    Return True
+                End If
+
+                TheXML_String = File.ReadAllText(My.Settings.res_mods_path + "\" + filename.Replace(".model", ".visual_processed"))
+                Dim tr As New StringReader(TheXML_String)
+                Dim xmlr = New XmlTextReader(tr)
+                xmldataset.ReadXml(xmlr)
+                tr.Dispose()
+                file_name = filename.Replace(".model", ".primitives_processed")
+                GC.Collect()
+                Return True
+            End If
             Dim e As ZipEntry = frmMain.packages(current_tank_package)(filename)
             If e IsNot Nothing Then
                 e.Extract(mstream)
