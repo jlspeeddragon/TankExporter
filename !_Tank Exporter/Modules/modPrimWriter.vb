@@ -33,7 +33,8 @@ Module modPrimWriter
             r = New FileStream(My.Settings.res_mods_path + "\" + m_groups(ID).f_name(0), FileMode.Create, FileAccess.Write)
         Catch e As Exception
             MsgBox("I could not open """ + My.Settings.res_mods_path + "\" + m_groups(ID).f_name(0) + """!" + vbCrLf + _
-                    "Exception: " + e.Message, MsgBoxStyle.Exclamation, "Can find folder!")
+                    "The Root folder is there but there are no  .primitive_processed files." + vbCrLf _
+                    + " Did you delete them?", MsgBoxStyle.Exclamation, "Can find folder!")
             Return
         End Try
 
@@ -211,23 +212,8 @@ Module modPrimWriter
         If OBJECT_WAS_INSERTED Then
 
 
-            Dim new_id As Integer = m_groups(ID).cnt - 1
-            Dim fbx_id As Integer = m_groups(ID).list(new_id)
-            Dim new_name = fbxgrp(fbx_id).name
             '------------------------
-            'make text matrix entry in visual
-            Dim v1, v2, v3, v4 As vect3
-            Dim m = fbxgrp(fbx_id).matrix
-            v1.x = m(0) : v1.y = m(1) : v1.z = m(2)
-            v2.x = m(4) : v2.y = m(5) : v2.z = m(6)
-            v3.x = m(8) : v3.y = m(9) : v3.z = m(10)
-            v4.x = m(12) : v4.y = m(13) : v4.z = m(14)
-            Dim ns As String = "<node>" + vbCrLf + "<identifier>" + new_name + "_" + new_id.ToString("00") + "</identifier>" + vbCrLf + "<transform>" + vbCrLf
-            ns += "<row0>" + v1.x.ToString("0.000000") + " " + v1.y.ToString("0.000000") + " " + v1.z.ToString("0.000000") + "</row0>" + vbCrLf
-            ns += "<row1>" + v2.x.ToString("0.000000") + " " + v2.y.ToString("0.000000") + " " + v2.z.ToString("0.000000") + "</row1>" + vbCrLf
-            ns += "<row2>" + v3.x.ToString("0.000000") + " " + v3.y.ToString("0.000000") + " " + v3.z.ToString("0.000000") + "</row2>" + vbCrLf
-            ns += "<row3>" + v4.x.ToString("0.000000") + " " + v4.y.ToString("0.000000") + " " + v4.z.ToString("0.000000") + "</row3>" + vbCrLf
-            ns += "</transform>" + vbCrLf + "</node>" + vbCrLf
+          
             Dim inst_start As Integer = 0
             Dim pgrp As Integer = 0
             For pos = 0 To m_groups(ID).cnt
@@ -245,48 +231,68 @@ Module modPrimWriter
 
             pos = 0
             Dim rp As String = Application.StartupPath
-            rp += "\Templates\template.txt"
-            Dim primObj As String = File.ReadAllText(rp)
-            primObj = primObj.Replace("<PG_ID>0</PG_ID>", "<PG_ID>" + pgrp.ToString + "</PG_ID>") ' update primitive grp id
-            ' primObj = primObj.Replace("new_node", new_name + "_" + new_id.ToString("00"))
-            primObj = primObj.Replace("Kustom_mat", new_name) ' update indentity name
-            Try
+            rp += "\Templates\templateColorOnly.txt"
+            Dim templateColorOnly As String = File.ReadAllText(Application.StartupPath + "\Templates\templateColorOnly.txt")
+            Dim templateNormal As String = File.ReadAllText(Application.StartupPath + "\Templates\templateNormal.txt")
+            Dim templateNormalSpec As String = File.ReadAllText(Application.StartupPath + "\Templates\templateNormalSpec.txt")
+            Dim first, last As Integer
+            first = m_groups(ID).existingCount
+            last = m_groups(ID).cnt - first
+            For item_num = first To last
+                Dim primObj As String = ""
+                Dim fbx_id As Integer = m_groups(ID).list(item_num) 'get id for this new item
+                Dim new_name = fbxgrp(fbx_id).name ' get objects name
 
-                Dim new_s As String = fbxgrp(fbx_id).normal_name
-                primObj = primObj.Replace("NORMAL_NAME", new_s)
-            Catch ex As Exception
-            End Try
-            Try
+                'default.....
+                primObj = templateColorOnly
 
-                Dim new_s As String = fbxgrp(fbx_id).color_name
-                primObj = primObj.Replace("COLOR_NAME", new_s) ' update diffuse texture name
-            Catch ex As Exception
-            End Try
-            Try
+                'normalMap.....
+                If fbxgrp(fbx_id).normal_name IsNot Nothing Then
+                    primObj = templateNormal ' bump shader
+                End If
 
-                'Dim new_s As String = _group(1).color2_name
-                'primObj = primObj.Replace("UV_NAME", new_s)
-            Catch ex As Exception
-            End Try
-            pos = f.IndexOf("<groupOrigin>", inst_start)
-            f = f.Insert(pos, primObj)
+                'specular.....
+                If fbxgrp(fbx_id).normal_name IsNot Nothing And fbxgrp(fbx_id).specular_name IsNot Nothing Then
+                    primObj = templateNormalSpec  ' bump shader
+                End If
 
-            Try
-                ' f = xDoc.OuterXml.ToString
-                'If f.Length > 0 Then
-                '    For i = 0 To 100
-                '        pos = f.IndexOf("<primitiveGroup>", pos)
-                '        If pos < 0 Then Exit For
+                'check for legit texture assignments
+                If fbxgrp(fbx_id).normal_name Is Nothing And fbxgrp(fbx_id).specular_name IsNot Nothing Then
+                    MsgBox("You have a specularMap but no normalMap for " + new_name + "..." + vbCrLf + _
+                            "Defaulting to colorOnly shader...", MsgBoxStyle.Exclamation, "Texture Mapping Issue...")
+                End If
 
-                '        Dim rs As String = "<primitiveGroup>" + vbTab + i.ToString + vbCrLf
-                '        f = f.Substring(0, pos) + rs + f.Substring(pos + rs.Length)
-                '        pos += rs.Length
-                '    Next
+                primObj = primObj.Replace("<PG_ID>0</PG_ID>", "<PG_ID>" + pgrp.ToString + "</PG_ID>") ' update primitive grp id
+                pgrp += 1 ' add one for each new item
+                primObj = primObj.Replace("Kustom_mat", new_name) ' update indentity name
 
-                'End If
-                'f = f.Replace(vbLf, vbCrLf)
-            Catch ex As Exception
-            End Try
+                Try ' this will change shortly
+                    Dim new_s As String = fbxgrp(fbx_id).normal_name
+                    primObj = primObj.Replace("NORMAL_NAME", new_s)
+                Catch ex As Exception
+                End Try
+                Try
+                    Dim new_s As String = fbxgrp(fbx_id).color_name
+                    primObj = primObj.Replace("COLOR_NAME", new_s) ' update diffuse texture name
+                Catch ex As Exception
+                End Try
+                Try
+                    Dim new_s As String = fbxgrp(fbx_id).specular_name
+                    primObj = primObj.Replace("SPECULAR_NAME", new_s) ' update diffuse texture name
+                Catch ex As Exception
+                End Try
+                Try
+
+                    'Dim new_s As String = _group(1).color2_name
+                    'primObj = primObj.Replace("UV_NAME", new_s)
+                Catch ex As Exception
+                End Try
+                pos = f.IndexOf("<groupOrigin>", inst_start)
+                inst_start = pos
+                f = f.Insert(pos, primObj)
+            Next
+
+
         End If
         f = f.Replace("  ", "")
         'f = f.Replace(vbCrLf, "")
@@ -294,7 +300,7 @@ Module modPrimWriter
         'f = f.Replace(vbCr, "")
         f = f.Replace(vbCrLf, vbLf)
         f = f.Replace(vbTab, "")
-        For i = 0 To 30
+        For i = 0 To 100
             f = f.Replace("<primitiveGroup>" + vbLf + "<PG_ID>" + i.ToString + "</PG_ID>", "<primitiveGroup>" + i.ToString)
         Next
 

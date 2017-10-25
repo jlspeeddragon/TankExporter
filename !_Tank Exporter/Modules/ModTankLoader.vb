@@ -296,7 +296,9 @@ Module ModTankLoader
         Public ao_name As String
         Public ao_id As Integer
         Public normal_Id As Integer
+        Public specular_id As Integer
         Public normal_name As String
+        Public specular_name As String
         Public detail_name As String
         Public multi_textured As Boolean
         Public metal_textured As Boolean
@@ -1882,7 +1884,8 @@ get_visual:
         Dim delim As String() = New String(0) {"<primitiveGroup>"}
         Dim sp1 = TheXML_String.Split(delim, StringSplitOptions.None)
         If loop_count > sp1.Length - 1 Then
-            MsgBox("Huston, We have a problem!" + vbCrLf + "String has less sections than primitive has objects.")
+            MsgBox("We have a problem!" + vbCrLf + "There are more models than entries in the Visual." + _
+                   vbCrLf + "I can load them but with not texture info!")
             Return ""
         End If
 

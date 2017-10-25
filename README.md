@@ -3,12 +3,15 @@
 ## A tool to export Tanks from World of Tanks.
 #### This is an ongoing project by me.. Coffee_
 
-### Version 17:
-More fixes in FBX import/export
+### Version 19:
+Added support for adding more than one one object to the turret or hull.
 
-### Version 18:
+### Version 17:
 Fixed a nasty issue with the normals of added items.
 They were not being translated correctly.
+
+### Version 18:
+More fixes in FBX import/export
 
 ### Version 16:
 Fixes in FBX import/expore

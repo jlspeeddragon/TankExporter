@@ -29,6 +29,7 @@ Module modFBX
     Public m_groups() As mgrp_
     Public Structure mgrp_
         Public list() As Integer
+        Public existingCount As Integer
         Public m_type As Integer
         Public cnt As Integer
         Public f_name() As String
@@ -301,6 +302,24 @@ Module modFBX
                     Catch ex As Exception
 
                     End Try
+                    Try
+                        'specular map... specular_name
+                        property_ = material.FindProperty(FbxSurfaceMaterial.SSpecularFactor)
+                        texture = property_.GetSrcObject(FbxTexture.ClassId, 0)
+                        'If texture IsNot Nothing Then
+                        '    Stop
+                        'End If
+                        If texture IsNot Nothing Then
+
+                            fbxgrp(i).specular_name = texture.FileName
+                            frmMain.info_Label.Text = "Loading Texture: " + texture.FileName
+                            Application.DoEvents()
+                            fbxgrp(i).specular_id = -1
+                            fbxgrp(i).specular_id = get_fbx_texture(texture.FileName)
+                        End If
+                    Catch ex As Exception
+
+                    End Try
 
                     'geo = childnode.NodeAttribute
                     '##############################################
@@ -320,8 +339,13 @@ Module modFBX
                     Dim eNormals As FbxLayerElementNormal = mesh.GetLayer(0).Normals
                     Dim uv2Layer As FbxLayerElementUV = Nothing
                     If mesh.UVLayerCount = 3 Then
-                        uv2Layer = mesh.GetLayer(1).GetUVs
-                        fbxgrp(i).has_uv2 = 1
+                        property_ = material.FindProperty(FbxSurfaceMaterial.SSpecularFactor)
+                        texture = property_.GetSrcObject(FbxTexture.ClassId, 0)
+                        If texture Is Nothing Then
+                            uv2Layer = mesh.GetLayer(1).GetUVs
+                            fbxgrp(i).has_uv2 = 1
+                            'Stop
+                        End If
                     End If
                     '------ Look for vertexColor information
                     '-----------------------------------------------------------------------------------
@@ -430,10 +454,10 @@ Module modFBX
                         fbxgrp(i).vertices(v1).n = packnormalFBX888(n1)
 
                         ' these commented out lines are for debuging the packnormalFBX888 method
-                        Dim nup = unpackNormal_8_8_8(fbxgrp(i).vertices(v1).n)
-                        fbxgrp(i).vertices(v1).nx = nup.nx
-                        fbxgrp(i).vertices(v1).ny = nup.ny
-                        fbxgrp(i).vertices(v1).nz = nup.nz
+                        'Dim nup = unpackNormal_8_8_8(fbxgrp(i).vertices(v1).n)
+                        'fbxgrp(i).vertices(v1).nx = nup.nx
+                        'fbxgrp(i).vertices(v1).ny = nup.ny
+                        'fbxgrp(i).vertices(v1).nz = nup.nz
 
                         cnt += 1
                         fbxgrp(i).vertices(v2).x = vt2.X
@@ -448,10 +472,10 @@ Module modFBX
                         fbxgrp(i).vertices(v2).nz = n2.Z
                         fbxgrp(i).vertices(v2).n = packnormalFBX888(n2)
 
-                        nup = unpackNormal_8_8_8(fbxgrp(i).vertices(v2).n)
-                        fbxgrp(i).vertices(v2).nx = nup.nx
-                        fbxgrp(i).vertices(v2).ny = nup.ny
-                        fbxgrp(i).vertices(v2).nz = nup.nz
+                        'nup = unpackNormal_8_8_8(fbxgrp(i).vertices(v2).n)
+                        'fbxgrp(i).vertices(v2).nx = nup.nx
+                        'fbxgrp(i).vertices(v2).ny = nup.ny
+                        'fbxgrp(i).vertices(v2).nz = nup.nz
 
                         cnt += 1
                         fbxgrp(i).vertices(v3).x = vt3.X
@@ -466,10 +490,10 @@ Module modFBX
                         fbxgrp(i).vertices(v3).nz = n3.Z
                         fbxgrp(i).vertices(v3).n = packnormalFBX888(n3)
 
-                        nup = unpackNormal_8_8_8(fbxgrp(i).vertices(v3).n)
-                        fbxgrp(i).vertices(v3).nx = nup.nx
-                        fbxgrp(i).vertices(v3).ny = nup.ny
-                        fbxgrp(i).vertices(v3).nz = nup.nz
+                        'nup = unpackNormal_8_8_8(fbxgrp(i).vertices(v3).n)
+                        'fbxgrp(i).vertices(v3).nx = nup.nx
+                        'fbxgrp(i).vertices(v3).ny = nup.ny
+                        'fbxgrp(i).vertices(v3).nz = nup.nz
 
                         cnt += 1
 
@@ -477,7 +501,7 @@ Module modFBX
                     create_TBNS(i)
                 End If
             Catch ex As Exception
-
+                Return
             End Try
 
         Next
@@ -836,15 +860,19 @@ outahere:
         For i = 1 To object_count
             If _group(i).name.ToLower.Contains("chassis") Then
                 c_cnt += 1
+                m_groups(1).existingCount = c_cnt
             End If
             If _group(i).name.ToLower.Contains("hull") Then
                 h_cnt += 1
+                m_groups(2).existingCount = h_cnt
             End If
             If _group(i).name.ToLower.Contains("turret") Then
                 t_cnt += 1
+                m_groups(3).existingCount = t_cnt
             End If
             If _group(i).name.ToLower.Contains("gun") Then
                 g_cnt += 1
+                m_groups(4).existingCount = g_cnt
             End If
         Next
         '---------------------------------------------------------------------------------------------------

@@ -26,7 +26,9 @@ C:\!_Tank Exporter\!_Tank Exporter\bin\x86\Debug\Tao.DevIl.dll
 C:\!_Tank Exporter\!_Tank Exporter\bin\x86\Debug\Tao.FreeGlut.dll
 C:\!_Tank Exporter\!_Tank Exporter\bin\x86\Debug\Tao.OpenGl.dll
 C:\!_Tank Exporter\!_Tank Exporter\bin\x86\Debug\Tao.Platform.Windows.dll
-C:\!_Tank Exporter\!_Tank Exporter\bin\x86\Debug\Templates\template.txt
+C:\!_Tank Exporter\!_Tank Exporter\bin\x86\Debug\Templates\templateColorOnly.txt
+C:\!_Tank Exporter\!_Tank Exporter\bin\x86\Debug\Templates\templateNormal.txt
+C:\!_Tank Exporter\!_Tank Exporter\bin\x86\Debug\Templates\templateNormalSpec.txt
 C:\!_Tank Exporter\!_Tank Exporter\bin\x86\Debug\Zip\Ionic.Zip.dll
 C:\!_Tank Exporter\!_Tank Exporter\bin\x86\Debug\Zip\Ionic.Zlib.dll
 C:\!_Tank Exporter\!_Tank Exporter\bin\x86\Debug\resources\chassis.png
