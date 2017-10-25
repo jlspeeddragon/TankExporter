@@ -353,6 +353,30 @@ Module modPrimWriter
                     v.x -= fbxgrp(parent).matrix(12)
                     v.y -= fbxgrp(parent).matrix(13)
                     v.z -= fbxgrp(parent).matrix(14)
+                    'sucks but we have to transform N, T and Bt
+                    ' N --------------------------------------------------
+                    Dim n As vect3
+                    n.x = fbxgrp(pnter).vertices(k).nx
+                    n.y = fbxgrp(pnter).vertices(k).ny
+                    n.z = fbxgrp(pnter).vertices(k).nz
+
+                    n = rotate_transform(n, fbxgrp(pnter).matrix)
+                    fbxgrp(pnter).vertices(k).n = packnormalFBX888_writePrimitive(toFBXv(n))
+                    ' T --------------------------------------------------
+                    n.x = fbxgrp(pnter).vertices(k).tx
+                    n.y = fbxgrp(pnter).vertices(k).ty
+                    n.z = fbxgrp(pnter).vertices(k).tz
+
+                    n = rotate_transform(n, fbxgrp(pnter).matrix)
+                    'fbxgrp(pnter).vertices(k).t = packnormalFBX888(toFBXv(n))
+                    ' Tb --------------------------------------------------
+                    n.x = fbxgrp(pnter).vertices(k).bnx
+                    n.y = fbxgrp(pnter).vertices(k).bny
+                    n.z = fbxgrp(pnter).vertices(k).bnz
+
+                    n = rotate_transform(n, fbxgrp(pnter).matrix)
+                    'fbxgrp(pnter).vertices(k).bn = packnormalFBX888(toFBXv(n))
+
 
                     br.Write(v.x)
                     br.Write(v.y)
@@ -459,8 +483,8 @@ Module modPrimWriter
                             br.Write(fbxgrp(pnter).indicies(j).v3 + off)
                         Else
                             br.Write(fbxgrp(pnter).indicies(j).v2 + off)
-                            br.Write(fbxgrp(pnter).indicies(j).v2 + off)
                             br.Write(fbxgrp(pnter).indicies(j).v1 + off)
+                            br.Write(fbxgrp(pnter).indicies(j).v3 + off)
 
                         End If
                         If fbxgrp(pnter).indicies(j).v1 + off > cnt Then cnt = fbxgrp(pnter).indicies(j).v1

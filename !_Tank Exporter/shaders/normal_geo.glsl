@@ -6,10 +6,7 @@ uniform int mode;
 varying in vec3 normal[];      
 void main()
 {
-    // assert(gl_VerticesIn == 3);
-    // assert(GL_GEOMETRY_INPUT_TYPE_EXT == GL_TRIANGLES);
-    // assert(GL_GEOMETRY_OUTPUT_TYPE_EXT == GL_LINE_STRIP);
-    // assert(GL_GEOMETRY_VERTICES_OUT_EXT == 6);      
+   
  if (mode == 1) {
  vec4 sumV;
  vec4 sumN;

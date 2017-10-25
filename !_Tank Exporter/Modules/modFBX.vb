@@ -414,8 +414,9 @@ Module modFBX
                             End If
                             k += 3
                         End If
-
-
+                        n1.Normalize()
+                        n2.Normalize()
+                        n3.Normalize()
                         fbxgrp(i).vertices(v1).x = vt1.X
                         fbxgrp(i).vertices(v1).y = vt1.Y
                         fbxgrp(i).vertices(v1).z = vt1.Z
@@ -429,10 +430,10 @@ Module modFBX
                         fbxgrp(i).vertices(v1).n = packnormalFBX888(n1)
 
                         ' these commented out lines are for debuging the packnormalFBX888 method
-                        'Dim nup = unpackNormal_8_8_8(fbxgrp(i).vertices(v1).n)
-                        'fbxgrp(i).vertices(v1).nx = nup.nx
-                        'fbxgrp(i).vertices(v1).ny = nup.ny
-                        'fbxgrp(i).vertices(v1).nz = nup.nz
+                        Dim nup = unpackNormal_8_8_8(fbxgrp(i).vertices(v1).n)
+                        fbxgrp(i).vertices(v1).nx = nup.nx
+                        fbxgrp(i).vertices(v1).ny = nup.ny
+                        fbxgrp(i).vertices(v1).nz = nup.nz
 
                         cnt += 1
                         fbxgrp(i).vertices(v2).x = vt2.X
@@ -447,10 +448,10 @@ Module modFBX
                         fbxgrp(i).vertices(v2).nz = n2.Z
                         fbxgrp(i).vertices(v2).n = packnormalFBX888(n2)
 
-                        'nup = unpackNormal_8_8_8(fbxgrp(i).vertices(v1).n)
-                        'fbxgrp(i).vertices(v2).nx = nup.nx
-                        'fbxgrp(i).vertices(v2).ny = nup.ny
-                        'fbxgrp(i).vertices(v2).nz = nup.nz
+                        nup = unpackNormal_8_8_8(fbxgrp(i).vertices(v2).n)
+                        fbxgrp(i).vertices(v2).nx = nup.nx
+                        fbxgrp(i).vertices(v2).ny = nup.ny
+                        fbxgrp(i).vertices(v2).nz = nup.nz
 
                         cnt += 1
                         fbxgrp(i).vertices(v3).x = vt3.X
@@ -465,10 +466,10 @@ Module modFBX
                         fbxgrp(i).vertices(v3).nz = n3.Z
                         fbxgrp(i).vertices(v3).n = packnormalFBX888(n3)
 
-                        'nup = unpackNormal_8_8_8(fbxgrp(i).vertices(v1).n)
-                        'fbxgrp(i).vertices(v3).nx = nup.nx
-                        'fbxgrp(i).vertices(v3).ny = nup.ny
-                        'fbxgrp(i).vertices(v3).nz = nup.nz
+                        nup = unpackNormal_8_8_8(fbxgrp(i).vertices(v3).n)
+                        fbxgrp(i).vertices(v3).nx = nup.nx
+                        fbxgrp(i).vertices(v3).ny = nup.ny
+                        fbxgrp(i).vertices(v3).nz = nup.nz
 
                         cnt += 1
 
@@ -1058,7 +1059,7 @@ whichone:
         fbxgrp(id).vertices(i).bnz = bn.z
 
     End Sub
-    Private Function toFBXv(ByVal inv As vect3) As FbxVector4
+    Public Function toFBXv(ByVal inv As vect3) As FbxVector4
         Dim v As New FbxVector4
         v.X = inv.x
         v.Y = inv.y
@@ -1139,48 +1140,10 @@ whichone:
 
     End Sub
 
-    Public Function packnormalFBX888(ByVal n As FbxVector4) As UInt32
-        'This took an entire night to get working correctly
-        Try
-            'n.X = -0.715007 ' debug testing shit
-            'n.X = -1.0
-            'n.Y = 0.0
-            'n.Z = 1.0
-            n.X = Round(n.X, 4)
-            n.Y = Round(n.Y, 4)
-            n.Z = Round(n.Z, 4)
-            Dim nx, ny, nz As Int32
-            If n.X >= 0 Then
-                nx = n.X * 127
-                nx += 127
-            Else
-                nx = n.X * 128
-                nx += -128
-            End If
-            If n.Y >= 0 Then
-                ny = n.Y * 127
-                ny += 127
-            Else
-                ny = n.Y * 128
-                ny += -128
-            End If
-            If n.Z >= 0 Then
-                nz = n.Z * 127
-                nz += 127
-            Else
-                nz = n.Z * 128
-                nz += -128
-            End If
-
-            Dim nu = CLng(nz << 16)
-            Dim nm = CLng(ny << 8)
-            Dim nb = CInt(nx)
-            Dim ru = Convert.ToInt32((nu And &HFF0000) + (nm And &HFF00) + (nb And &HFF))
-            Return ru
-        Catch ex As Exception
-
-        End Try
-        Return New Int32
+    Private Function s_to_int(ByRef n As Single) As Int32
+        Dim i As Int32
+        i = lookup(((n + 1.0) * 0.5) * 254)
+        Return i
     End Function
 
     Public Function packnormalFBX_old(ByVal n As FbxVector4) As UInt32
@@ -1449,6 +1412,69 @@ whichone:
         Return myMesh
     End Function
 
+    Public Function packnormalFBX888(ByVal n As FbxVector4) As UInt32
+        'This took an entire night to get working correctly
+        Try
+            'n.X = -0.715007 ' debug testing shit
+            'n.X = -0.5
+            'n.Y = 0.0
+            'n.Z = 1.0
+            n.Normalize()
+            n.X = Round(n.X, 4)
+            n.Y = Round(n.Y, 4)
+            n.Z = Round(n.Z, 4)
+            Dim nx, ny, nz As Int32
+
+            nx = s_to_int(-n.X)
+            ny = s_to_int(-n.Y)
+            nz = s_to_int(-n.Z)
+
+            'nx = Convert.ToSByte(Round(n.X * 127))
+            'ny = Convert.ToSByte(Round(n.Y * 127))
+            'nz = Convert.ToSByte(Round(n.Z * 127))
+
+            Dim nu = CLng(nz << 16)
+            Dim nm = CLng(ny << 8)
+            Dim nb = CInt(nx)
+            Dim ru = Convert.ToUInt32((nu And &HFF0000) + (nm And &HFF00) + (nb And &HFF))
+            Return ru
+        Catch ex As Exception
+
+        End Try
+        Return New Int32
+    End Function
+    Public Function packnormalFBX888_writePrimitive(ByVal n As FbxVector4) As UInt32
+        'This took an entire night to get working correctly
+        Try
+            'n.X = -0.715007 ' debug testing shit
+            'n.X = -0.5
+            'n.Y = 0.0
+            'n.Z = 1.0
+            n.Normalize()
+            n.X = Round(n.X, 4)
+            n.Y = Round(n.Y, 4)
+            n.Z = Round(n.Z, 4)
+            Dim nx, ny, nz As Int32
+
+            nx = s_to_int(-n.X)
+            ny = s_to_int(-n.Y)
+            nz = s_to_int(-n.Z)
+
+            'nx = Convert.ToSByte(Round(n.X * 127))
+            'ny = Convert.ToSByte(Round(n.Y * 127))
+            'nz = Convert.ToSByte(Round(n.Z * 127))
+
+            Dim nu = CLng(nz << 16)
+            Dim nm = CLng(ny << 8)
+            Dim nb = CInt(nx)
+            Dim ru = Convert.ToUInt32((nu And &HFF0000) + (nm And &HFF00) + (nb And &HFF))
+            Return ru
+        Catch ex As Exception
+
+        End Try
+        Return New Int32
+    End Function
+
     Private Function unpackNormal_8_8_8(ByVal packed As UInt32) As vect3Norm
         'Console.WriteLine(packed.ToString("x"))
         Dim pkz, pky, pkx As Int32
@@ -1479,12 +1505,13 @@ whichone:
         If len = 0.0F Then len = 1.0F
         'len = 1.0
         'reduce to unit size
-        p.nx = (p.nx / len)
+        p.nx = -(p.nx / len)
         p.ny = -(p.ny / len)
         p.nz = -(p.nz / len)
         'Console.WriteLine(p.x.ToString("0.000000") + " " + p.y.ToString("0.000000") + " " + p.z.ToString("0.000000"))
         Return p
     End Function
+    Public lookup(255) As Byte
 
     Private Function unpackNormal(ByVal packed As UInt32, type As Boolean) As vect3Norm
         If type Then

@@ -6,6 +6,10 @@
 ### Version 17:
 More fixes in FBX import/export
 
+### Version 18:
+Fixed a nasty issue with the normals of added items.
+They were not being translated correctly.
+
 ### Version 16:
 Fixes in FBX import/expore
 

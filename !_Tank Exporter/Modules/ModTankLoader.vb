@@ -1134,7 +1134,7 @@ next_m:
                         _object(jj).tris(i).n1.z = tbuf(p1).nz
                     Else
                         If BPVT_mode Then
-                            v3 = unpackNormal_8_8_8(tbuf(p1).n, i)   ' unpack normals
+                            v3 = unpackNormal_8_8_8(tbuf(p1).n)   ' unpack normals
                         Else
                             v3 = unpackNormal(tbuf(p1).n)   ' unpack normals
 
@@ -1168,7 +1168,7 @@ next_m:
                         _object(jj).tris(i).n2.z = tbuf(p2).nz
                     Else
                         If BPVT_mode Then
-                            v3 = unpackNormal_8_8_8(tbuf(p2).n, 30)   ' unpack normals
+                            v3 = unpackNormal_8_8_8(tbuf(p2).n)   ' unpack normals
                         Else
                             v3 = unpackNormal(tbuf(p2).n)   ' unpack normals
                         End If
@@ -1201,7 +1201,7 @@ next_m:
                         _object(jj).tris(i).n3.z = tbuf(p3).nz
                     Else
                         If BPVT_mode Then
-                            v3 = unpackNormal_8_8_8(tbuf(p3).n, 30)   ' unpack nromals
+                            v3 = unpackNormal_8_8_8(tbuf(p3).n)   ' unpack nromals
                         Else
                             v3 = unpackNormal(tbuf(p3).n)   ' unpack nromals
                         End If
@@ -2125,10 +2125,12 @@ get_visual:
         p.z = (p.z / len)
         Return p
     End Function
-    Public Function unpackNormal_8_8_8(ByVal packed As UInt32, ByVal cnt As Integer) As vect3
+    Private Function unpackNormal_8_8_8(ByVal packed As UInt32) As vect3
         'Console.WriteLine(packed.ToString("x"))
         Dim pkz, pky, pkx As Int32
+        'Dim sample As Byte
         pkx = CLng(packed) And &HFF Xor 127
+        'sample = packed And &HFF
         pky = CLng(packed >> 8) And &HFF Xor 127
         pkz = CLng(packed >> 16) And &HFF Xor 127
 
@@ -2140,6 +2142,8 @@ get_visual:
         If x > 127 Then
             x = -128 + (x - 128)
         End If
+        'lookup(CInt(x + 127)) = sample
+
         If y > 127 Then
             y = -128 + (y - 128)
         End If
@@ -2158,13 +2162,6 @@ get_visual:
         p.x = -(p.x / len)
         p.y = -(p.y / len)
         p.z = -(p.z / len)
-        If cnt = 1 Then
-            'Console.WriteLine("---------------------------------------------------------------------------------------------")
-        End If
-        If cnt < 11 Then
-            'Console.WriteLine(p.x.ToString("0.000000") + " " + p.y.ToString("0.000000") + " " + p.z.ToString("0.000000") + " " + packed.ToString("X"))
-
-        End If
         Return p
     End Function
     Public Sub make_lists(I As Integer)
