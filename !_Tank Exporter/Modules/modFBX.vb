@@ -277,15 +277,16 @@ Module modFBX
                         'diffuse texture.. color_name
                         property_ = material.FindProperty(FbxSurfaceMaterial.SDiffuse)
                         texture = property_.GetSrcObject(FbxTexture.ClassId, 0)
-                        uv_offset.x = texture.TranslationU
+                        uv_offset.X = texture.TranslationU
                         uv_offset.y = texture.TranslationV
                         uv_scaling.x = texture.ScaleU
-                        uv_scaling.y = texture.ScaleV
-                        fbxgrp(i).color_name = texture.FileName
+                        uv_scaling.Y = texture.ScaleV
+
+                        fbxgrp(i).color_name = fix_texture_path(texture.FileName)
                         fbxgrp(i).color_Id = -1
-                        frmMain.info_Label.Text = "Loading Texture: " + texture.FileName
+                        frmMain.info_Label.Text = "Loading Texture: " + fix_texture_path(texture.FileName)
                         Application.DoEvents()
-                        fbxgrp(i).color_Id = get_fbx_texture(texture.FileName)
+                        fbxgrp(i).color_Id = get_fbx_texture(fbxgrp(i).color_name)
                     Catch ex As Exception
                     End Try
 
@@ -293,11 +294,11 @@ Module modFBX
                         'normal map... normal_name
                         property_ = material.FindProperty(FbxSurfaceMaterial.SBump)
                         texture = property_.GetSrcObject(FbxTexture.ClassId, 0)
-                        fbxgrp(i).normal_name = texture.FileName
-                        frmMain.info_Label.Text = "Loading Texture: " + texture.FileName
+                        fbxgrp(i).normal_name = fix_texture_path(texture.FileName)
+                        frmMain.info_Label.Text = "Loading Texture: " + fix_texture_path(texture.FileName)
                         Application.DoEvents()
                         fbxgrp(i).normal_Id = -1
-                        fbxgrp(i).normal_Id = get_fbx_texture(texture.FileName)
+                        fbxgrp(i).normal_Id = get_fbx_texture(fbxgrp(i).normal_name)
                         fbxgrp(i).bumped = True
                     Catch ex As Exception
 
@@ -306,16 +307,12 @@ Module modFBX
                         'specular map... specular_name
                         property_ = material.FindProperty(FbxSurfaceMaterial.SSpecularFactor)
                         texture = property_.GetSrcObject(FbxTexture.ClassId, 0)
-                        'If texture IsNot Nothing Then
-                        '    Stop
-                        'End If
                         If texture IsNot Nothing Then
-
-                            fbxgrp(i).specular_name = texture.FileName
-                            frmMain.info_Label.Text = "Loading Texture: " + texture.FileName
+                            fbxgrp(i).specular_name = fix_texture_path(texture.FileName)
+                            frmMain.info_Label.Text = "Loading Texture: " + fix_texture_path(texture.FileName)
                             Application.DoEvents()
                             fbxgrp(i).specular_id = -1
-                            fbxgrp(i).specular_id = get_fbx_texture(texture.FileName)
+                            fbxgrp(i).specular_id = get_fbx_texture(fbxgrp(i).specular_name)
                         End If
                     Catch ex As Exception
 
@@ -744,13 +741,23 @@ outahere:
 
     End Sub
 #Region "Import helpers"
+    Private Function fix_texture_path(s As String) As String
+        If s.ToLower.Contains("vehicles") Then
+            s = s.Replace("vehicles", "~")
+            Dim a = s.Split("~")
+            s = My.Settings.res_mods_path + "\vehicles" + a(1)
+            Return s
+        End If
+        Return s
+    End Function
+
+
     Private Sub process_fbx_data()
         get_component_index() 'build indexing table
     End Sub
 
     Private Sub get_component_index()
         Dim ct, ht, tt, gt As Integer
-        Dim d_len As Integer
         Dim c_cnt, h_cnt, t_cnt, g_cnt As Integer
         Dim odd_model As Boolean
         '---------------------------------------------------------------------------------------------------
@@ -959,7 +966,8 @@ whichone:
             frmMain.m_write_primitive.Enabled = True
         End If
         'We give the user the opertunity to extract the model. We need some where to write any changed data too.
-        ar = file_name.Replace("/", "\").Split("\")
+        file_name = file_name.Replace("/", "\")
+        ar = file_name.Split("\")
         Dim fn = ar(0) + "\" + ar(1) + "\" + ar(2)
         Dim dp = My.Settings.res_mods_path + "\" + fn
         frmWritePrimitive.SAVE_NAME = dp

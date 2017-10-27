@@ -3,6 +3,9 @@
 ## A tool to export Tanks from World of Tanks.
 #### This is an ongoing project by me.. Coffee_
 
+### Version 20:
+This fixes a path issue when texture paths reference the a old game version folder. It nows repaces that path with the current game version path to the res_mods folder.
+
 ### Version 19:
 Added support for adding more than one one object to the turret or hull.
 

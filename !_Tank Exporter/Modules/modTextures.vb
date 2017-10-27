@@ -71,8 +71,6 @@ Module modTextures
             End If
         Next
 
-
-
         Dim n_id, c_id, m_id, ao_id, detail_id As Integer
 
         c_id = get_texture_id(diffuse)
@@ -117,6 +115,9 @@ Module modTextures
         If name = "" Then Return -1
         If My.Settings.res_mods_path.Contains("res_mods") Then
             Dim r_path = My.Settings.res_mods_path + "\" + name.Replace(".dds", "_hd.dds")
+            If name.Contains("res_mods") Then
+                r_path = name
+            End If
             If File.Exists(r_path) Then
                 log_text.AppendLine("loaded HD res_mods : " + Path.GetFileName(name))
                 Dim raw = File.ReadAllBytes(r_path)

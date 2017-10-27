@@ -4571,6 +4571,7 @@ make_this_tank:
             End If
             path_set = True
             My.Settings.game_path = FolderBrowserDialog1.SelectedPath
+            My.Settings.Save()
             Return
         End If
     End Sub
