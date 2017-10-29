@@ -273,6 +273,7 @@ Module modFBX
                     Dim texture As FbxTexture
                     'we never read a Ambient texture. Only Diffuse and Bump....
                     Dim uv_scaling, uv_offset As New FbxVector2
+                    fbxgrp(i).texture_count = 1
                     Try
                         'diffuse texture.. color_name
                         property_ = material.FindProperty(FbxSurfaceMaterial.SDiffuse)
@@ -294,12 +295,15 @@ Module modFBX
                         'normal map... normal_name
                         property_ = material.FindProperty(FbxSurfaceMaterial.SBump)
                         texture = property_.GetSrcObject(FbxTexture.ClassId, 0)
-                        fbxgrp(i).normal_name = fix_texture_path(texture.FileName)
-                        frmMain.info_Label.Text = "Loading Texture: " + fix_texture_path(texture.FileName)
-                        Application.DoEvents()
-                        fbxgrp(i).normal_Id = -1
-                        fbxgrp(i).normal_Id = get_fbx_texture(fbxgrp(i).normal_name)
-                        fbxgrp(i).bumped = True
+                        If texture IsNot Nothing Then
+                            fbxgrp(i).normal_name = fix_texture_path(texture.FileName)
+                            frmMain.info_Label.Text = "Loading Texture: " + fix_texture_path(texture.FileName)
+                            Application.DoEvents()
+                            fbxgrp(i).normal_Id = -1
+                            fbxgrp(i).normal_Id = get_fbx_texture(fbxgrp(i).normal_name)
+                            fbxgrp(i).bumped = True
+                            fbxgrp(i).texture_count = 2
+                        End If
                     Catch ex As Exception
 
                     End Try
@@ -313,6 +317,7 @@ Module modFBX
                             Application.DoEvents()
                             fbxgrp(i).specular_id = -1
                             fbxgrp(i).specular_id = get_fbx_texture(fbxgrp(i).specular_name)
+                            fbxgrp(i).texture_count = 3
                         End If
                     Catch ex As Exception
 
@@ -951,6 +956,11 @@ whichone:
         For i = 1 To fbxgrp.Length - 1
             If Not fbxgrp(i).name.Contains("vehicles\") Then
                 fbxgrp(i).is_new_model = True
+                fbxgrp(i).is_GAmap = 0 ' not PBS
+                fbxgrp(i).alphaTest = 1
+            Else
+                fbxgrp(i).is_GAmap = 1 'is PBS
+                fbxgrp(i).alphaTest = _group(i).alphaTest
             End If
         Next
         'need to find out if there is a dangling model that was imported.
@@ -1001,6 +1011,7 @@ whichone:
         m_groups(4).new_objects = g_new
 
         frmWritePrimitive.Visible = False
+
         MODEL_LOADED = True
     End Sub
 

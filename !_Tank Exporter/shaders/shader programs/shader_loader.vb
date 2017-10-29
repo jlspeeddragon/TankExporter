@@ -10,6 +10,7 @@ Module shader_loader
         Public normal_shader As Integer
         Public mixer_shader As Integer
         Public tank_shader As Integer
+        Public fbx_shader As Integer
     End Class
 
 #Region "variables"
@@ -326,6 +327,22 @@ Module shader_loader
     End Sub
 
     '==============================================================================================================
+
+    Public fbx_ambient, fbx_specular, fbx_level As Integer
+    Public fbx_colorMap, fbx_specularMap, fbx_normalMap, fbx_is_GAmap As Integer
+    Public fbx_texture_count, fbx_alphatest As Integer
+    Private Sub set_fbx_shader_variables()
+        fbx_ambient = Gl.glGetUniformLocation(shader_list.fbx_shader, "A_level")
+        fbx_specular = Gl.glGetUniformLocation(shader_list.fbx_shader, "S_level")
+        fbx_level = Gl.glGetUniformLocation(shader_list.fbx_shader, "T_level")
+        fbx_colorMap = Gl.glGetUniformLocation(shader_list.fbx_shader, "colorMap")
+        fbx_normalMap = Gl.glGetUniformLocation(shader_list.fbx_shader, "normalMap")
+        fbx_specularMap = Gl.glGetUniformLocation(shader_list.fbx_shader, "specularMap")
+        fbx_texture_count = Gl.glGetUniformLocation(shader_list.fbx_shader, "t_cnt")
+        fbx_is_GAmap = Gl.glGetUniformLocation(shader_list.fbx_shader, "is_GAmap")
+        fbx_alphatest = Gl.glGetUniformLocation(shader_list.fbx_shader, "alphaTest")
+    End Sub
+    '==============================================================================================================
     Public normal_shader_mode As Integer
     Public normal_shader_mode_id As Integer
     Private Sub set_normal_shader_variables()
@@ -349,6 +366,7 @@ Module shader_loader
         set_tank_shader_variables()
         set_normal_shader_variables()
         set_mixer_shader_variables()
+        set_fbx_shader_variables()
         Return
 
     End Sub

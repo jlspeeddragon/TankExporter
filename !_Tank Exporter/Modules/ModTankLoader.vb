@@ -276,6 +276,8 @@ Module ModTankLoader
     End Class
     Public _group() As _grps
     Public Structure _grps
+        Public is_GAmap As Integer
+        Public texture_count As Integer
         Public is_new_model As Boolean
         Public bsp2_id As Integer
         Public bsp2_tree_id As Integer

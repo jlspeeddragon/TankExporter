@@ -1965,16 +1965,42 @@ tryagain:
             If Not wire_cb.Checked Then
                 Gl.glEnable(Gl.GL_POLYGON_OFFSET_FILL)
             End If
-            For jj = 1 To fbxgrp.Length - 1
-                If m_load_textures.Checked Then
-                    Gl.glColor3f(0.5, 0.5, 0.5)
-                    Gl.glBindTexture(Gl.GL_TEXTURE_2D, fbxgrp(jj).color_Id)
-                End If
-                Gl.glPushMatrix()
-                Gl.glMultMatrixd(fbxgrp(jj).matrix)
-                Gl.glCallList(fbxgrp(jj).call_list)
-                Gl.glPopMatrix()
-            Next
+            If m_load_textures.Checked Then
+                Gl.glUseProgram(shader_list.fbx_shader)
+                Gl.glUniform1i(fbx_colorMap, 0)
+                Gl.glUniform1i(fbx_normalMap, 1)
+                Gl.glUniform1i(fbx_specularMap, 2)
+                Gl.glUniform1f(fbx_specular, CSng(frmLighting.specular_slider.Value / 100)) ' convert to 0.0 to 1.0
+                Gl.glUniform1f(fbx_ambient, CSng(frmLighting.ambient_slider.Value / 100))
+                Gl.glUniform1f(fbx_level, CSng(frmLighting.total_slider.Value / 100))
+                For jj = 1 To fbxgrp.Length - 1
+                    Gl.glUniform1i(fbx_texture_count, fbxgrp(jj).texture_count)
+                    Gl.glUniform1i(fbx_is_GAmap, fbxgrp(jj).is_GAmap)
+                    Gl.glUniform1i(fbx_alphatest, fbxgrp(jj).alphaTest)
+                    If m_load_textures.Checked Then
+                        Gl.glColor3f(0.5, 0.5, 0.5)
+                        Gl.glActiveTexture(Gl.GL_TEXTURE0)
+                        Gl.glBindTexture(Gl.GL_TEXTURE_2D, fbxgrp(jj).color_Id)
+                        Gl.glActiveTexture(Gl.GL_TEXTURE0 + 1)
+                        Gl.glBindTexture(Gl.GL_TEXTURE_2D, fbxgrp(jj).normal_Id)
+                        Gl.glActiveTexture(Gl.GL_TEXTURE0 + 2)
+                        Gl.glBindTexture(Gl.GL_TEXTURE_2D, fbxgrp(jj).specular_id)
+                    End If
+                    Gl.glPushMatrix()
+                    Gl.glMultMatrixd(fbxgrp(jj).matrix)
+                    Gl.glCallList(fbxgrp(jj).call_list)
+                    Gl.glPopMatrix()
+                Next
+            Else
+                For jj = 1 To fbxgrp.Length - 1
+                    Gl.glPushMatrix()
+                    Gl.glMultMatrixd(fbxgrp(jj).matrix)
+                    Gl.glCallList(fbxgrp(jj).call_list)
+                    Gl.glPopMatrix()
+                Next
+
+            End If
+            Gl.glUseProgram(0)
             Gl.glBindTexture(Gl.GL_TEXTURE_2D, 0)
             If Not wire_cb.Checked Then
                 Gl.glDisable(Gl.GL_TEXTURE_2D)
@@ -2014,7 +2040,7 @@ tryagain:
             End If
         End If
         'draw BSP2?
-        If MODEL_LOADED And Not m_show_fbx.Checked And m_show_bsp2.Checked Then
+        If MODEL_LOADED And m_show_bsp2.Checked Then
             Gl.glEnable(Gl.GL_LIGHTING)
             Gl.glEnable(Gl.GL_POLYGON_OFFSET_FILL)
             Gl.glPolygonMode(Gl.GL_FRONT_AND_BACK, Gl.GL_FILL)

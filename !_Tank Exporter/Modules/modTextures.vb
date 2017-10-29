@@ -115,6 +115,7 @@ Module modTextures
         If name = "" Then Return -1
         If My.Settings.res_mods_path.Contains("res_mods") Then
             Dim r_path = My.Settings.res_mods_path + "\" + name.Replace(".dds", "_hd.dds")
+            Dim r_pathSD = My.Settings.res_mods_path + "\" + name
             If name.Contains("res_mods") Then
                 r_path = name
             End If
@@ -124,21 +125,19 @@ Module modTextures
                 mStream = New MemoryStream(raw)
                 id = get_texture(mStream, name)
                 Return id
-            Else
-                r_path = My.Settings.res_mods_path + "\" + name
-                If File.Exists(r_path) Then
-                    log_text.AppendLine("loaded SD res_mods : " + Path.GetFileName(name))
-                    Dim raw = File.ReadAllBytes(r_path)
-                    mStream = New MemoryStream(raw)
-                    id = get_texture(mStream, name)
-                    Return id
-                End If
+            End If
+            If File.Exists(r_pathSD) Then
+                log_text.AppendLine("loaded SD res_mods : " + Path.GetFileName(name))
+                Dim raw = File.ReadAllBytes(r_pathSD)
+                mStream = New MemoryStream(raw)
+                id = get_texture(mStream, name)
+                Return id
             End If
         End If
         'No HD.. try rd
         Try
             ent = frmMain.packages(11)(name.Replace(".dds", "_hd.dds")) ' look in tank package
-          
+
             log_text.AppendLine("loaded HD from PKG : " + Path.GetFileName(name))
         Catch ex As Exception
             log_text.AppendLine("loaded SD from PKG : " + Path.GetFileName(name))

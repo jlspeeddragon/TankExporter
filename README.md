@@ -3,6 +3,10 @@
 ## A tool to export Tanks from World of Tanks.
 #### This is an ongoing project by me.. Coffee_
 
+### Version 21:
+Added a shader while viewing the FBX.
+A few minor big fixes with loading textures from the res_mods folder path.
+
 ### Version 20:
 This fixes a path issue when texture paths reference the a old game version folder. It nows repaces that path with the current game version path to the res_mods folder.
 
