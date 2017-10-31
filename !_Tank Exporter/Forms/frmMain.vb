@@ -571,14 +571,21 @@ Public Class frmMain
             System.IO.Directory.CreateDirectory(Temp_Storage)
         End If
         '====================================================================================================
-
-        If My.Settings.game_path = "" Then
-            MsgBox("Game Location needs to be set.", MsgBoxStyle.Information)
-            M_Path.PerformClick()
+        If File.Exists(Temp_Storage + "\game_path.txt") Then
+            My.Settings.game_path = File.ReadAllText(Temp_Storage + "\game_Path.txt")
+        Else
+            If My.Settings.game_path = "" Then
+                MsgBox("Game Location needs to be set.", MsgBoxStyle.Information)
+                M_Path.PerformClick()
+            End If
         End If
-        If My.Settings.game_path = "C:\" Then
-            MsgBox("res_mods Location needs to be set.", MsgBoxStyle.Information)
-            m_res_mods_path.PerformClick()
+        If File.Exists(Temp_Storage + "\res_mods_path.txt") Then
+            My.Settings.res_mods_path = File.ReadAllText(Temp_Storage + "\res_mods_Path.txt")
+        Else
+            If My.Settings.game_path = "C:\" Then
+                MsgBox("res_mods Location needs to be set.", MsgBoxStyle.Information)
+                m_res_mods_path.PerformClick()
+            End If
         End If
         '====================================================================================================
         info_Label.Text = "Loading Data from Packages..."
@@ -784,7 +791,7 @@ Public Class frmMain
         Me.KeyPreview = True    'so i catch keyboard before despatching it
         w_changing = False
 
-        'make table used for normal to packed in converstion
+        'make table used for repacking 888 normal uint32 in converstion
         make_888_lookup_table()
 
         MM.Enabled = True
@@ -1469,7 +1476,7 @@ tryagain:
         alltanks.Append("# Tier " + i.ToString("00") + vbCrLf)
         'Get tanks fron tier packages
         For Each entry As ZipEntry In packages(i)
-            If entry.FileName.ToLower.Contains("normal/lod0/chassis.model") Then
+            If entry.FileName.ToLower.Contains("collision_client/chassis.model") Then
                 Dim t_name = entry.FileName
                 Dim ta = t_name.Split("/")
                 t_name = ""
@@ -1543,7 +1550,7 @@ tryagain:
 
     Private Sub get_tanks_shared()
         For Each entry As ZipEntry In packages(11)
-            If entry.FileName.Contains("normal/lod0/Chassis.model") Then
+            If entry.FileName.Contains("collision_client/Chassis.model") Then
                 Dim t_name = entry.FileName
                 Dim ta = t_name.Split("/")
                 t_name = ""
@@ -4582,6 +4589,7 @@ make_this_tank:
             'End If
             res_mods_path_set = True
             My.Settings.res_mods_path = FolderBrowserDialog1.SelectedPath
+            File.WriteAllText(Temp_Storage + "\res_mods_Path.txt", My.Settings.res_mods_path)
             My.Settings.Save()
             Return
         End If
@@ -4597,6 +4605,7 @@ make_this_tank:
             End If
             path_set = True
             My.Settings.game_path = FolderBrowserDialog1.SelectedPath
+            File.WriteAllText(Temp_Storage + "\gamePath.txt", My.Settings.game_path)
             My.Settings.Save()
             Return
         End If

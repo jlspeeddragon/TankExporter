@@ -3,6 +3,11 @@
 ## A tool to export Tanks from World of Tanks.
 #### This is an ongoing project by me.. Coffee_
 
+### Version 22:
+Paths to folders are now saved to the wot_temp folder.
+You won't need to reset the game and res_mods/currentversion
+paths after every update to Tank Exporter.
+
 ### Version 21:
 Added a shader while viewing the FBX.
 A few minor big fixes with loading textures from the res_mods folder path.
