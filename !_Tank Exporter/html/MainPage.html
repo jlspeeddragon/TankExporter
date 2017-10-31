@@ -41,6 +41,8 @@ a:active {
 .style6 {color: #CC3300}
 .style7 {font-size: 16px}
 .style8 {font-size: 24px}
+.style9 {color: #660000}
+.style10 {color: #FFFFFF}
 -->
 </style></head>
 <body>
@@ -55,17 +57,21 @@ a:active {
                 <td height="69" background="imgs/transparent_fill.png"><p>The first time Tank Exporter is ran, It will need to gather lots of data.<br>
                   It will read and convert the shared_content and shared_content_sandbox and their HD counter parts and save only data related to the tanks in a file called shared_content_build.pkg in your temp folder section. The folder is called wot_temp.<br>
                   This process takes a LOT of time.. Be patient.. It makes accessing the data easier for the app and faster.<br>
+                  <span class="style9"><span class="style6">When a game update changes tanks.. IE.. one is added or converted to HD.. you will need to delete the temp data and restart TE. You can do this under the File Menu item</span>.
                   <br>
+                  </span><br>
 When Tank Exporter runs for the first time, it will also need to download data from the <a href="https://developers.wargaming.net/reference/all/wot/account/list/?application_id=demo&language=en&r_realm=eu">WoT Dev API site.</a><br>
 There is a lot of data there about the tanks such as their in game name which TE needs to function correctly.<br>
 The loading of data from the API is stored in a temp folder so this only needs to happen once after you install TE.<br>
 Under the File menu, you can delete the temp folder. Use this when new tanks have been added or existing ones changed. TE will shut down because it can not function with out the data. When you run the app again, it will go through all the loading of the data again. Don't reset the data unless you really need the new or changed tanks! </p>
                   <p>Tank Exporter will need the path to the game set.. It will ask for this after its done gathering data.<br>
-                    Usually its something like &quot;C:\Games\World_of_Tanks&quot;</p>
+                    Usually its something like &quot;C:\Games\World_of_Tanks_NA&quot;</p>
+                  <p>Paths are saved to the wot_temp folder... &quot;username/appdata/local/temp/wot_temp&quot;<br>
+                  </p>
                   <p>Also.. you should set the path to the res_mods folder. Its located under the File menu.<br>
                     NOTE that the version may be different from what's shown here:<br>
                     Usually the res_mods folder looks like this: &quot;C:\Games\World_of_Tanks\res_mods\0.9.20.0&quot;<br>
-                    By setting the res_mods folder, TE will look for textures in that path and load them. Nice for custom skin mods.<br>
+                    By setting the res_mods folder, TE will look for textures and models in that path and load them. Nice for custom skin mods.<br>
                     Also.. if you extract data, this is where it will be placed.. More on this below. You can change this path and extract the tank data anywhere you would like. <br>
                   </p></td>
               </tr>
@@ -76,7 +82,7 @@ Under the File menu, you can delete the temp folder. Use this when new tanks hav
             <table width="90%" height="71" border="0" align="center">
               <tr>
                 <td background="imgs/transparent_fill.png">Loading of tanks is done by RIGHT clicking on a tank name in the list.<br>
-                  Exporting them is done in the same way.<br>
+                  Exporting them as FBX is done in the same way.<br>
                   NOTE: If there is a model with the same name in the current res_mods folder path, it will be loaded from there. <br>
 Also.. To make life easier, you can also extract and create the data in the World of Tanks res_mods folder or where ever you chose. YOU WILL NEED TO SET THIS PATH!!!! </td>
               </tr>
@@ -121,11 +127,11 @@ Be sure to backup your files before using mod installers such as <a href="http:/
             <br>
 			<table width="90%" height="623" border="0" align="center">
               <tr>
-                <td height="619" background="imgs/transparent_fill.png"><p><span class="style6">The Workd Flow goes like this....</span><br> 
+                <td height="619" background="imgs/transparent_fill.png"><p><span class="style6">The Work Flow goes like this....</span><br> 
                     <br>
                     NOTE: You can NOT edit Guns or Chassis because of the vertex format these models use! <br>
                     <br>
-                  <span class="style8">1:</span> Set the game path.. "/games/World_of_tanks" and res_mods paths... Res_mods should be pointing to the latest version .. Like this: "C:\Games\World_of_Tanks\res_mods\0.9.20.0"<br>
+                  <span class="style8">1:</span> Set the game path.. "/games/World_of_tanks" and res_mods paths... Res_mods should be pointing to the latest version .. Like this: "C:\Games\World_of_Tanks_NA\res_mods\0.9.20.0" <br>
                   <br>
                   <span class="style8">2:</span> Right click on a tank and select "Extract to res_mods Folder".. This will created the folder tree with the correct paths for that tank.. You can decide what to extract in the panel that pops up. The default settings will extract all the textures and models for LOD0. There is a bug that might show up if for instance the HULL is not in LOD0. I will fix this later. It is a good idea to ONLY extract parts you want to change.. It slow the loading down in game if it has to load a bunch a crap that is not changed. IT WILL NOT OVER WRITE EXISTING FILES! If you want to start over.. delete them in Explorer.<br>
                   <br>
@@ -136,13 +142,16 @@ Be sure to backup your files before using mod installers such as <a href="http:/
                   <br>
                   <span class="style8">5:</span> Import the FBX.. There are no lights or cameras in the scene so you can uncheck these if you want. MAKE SURE its set to Y UP!!!<br>
                   <br>
-                  <span class="style8">6:</span> Edit your model.. OR add something.. You can import something also BUT... REMEMBER TO ADD "_hull" or "_turret" to the name of the object!. As of now, I can NOT export the gun or chassis.. they are skinned meshes using the xyznuviiiwwtb format.. This will take reserch to figure out how to dea with weighted maps.</p>
-                  <p><span class="style8">7:</span> After you have you new object where you want it.. use the Reset Xform i mentioned above. What this does exactly I am not sure but it works.</p>
-                  <p><span class="style8">8:</span> Import the model in to Tank Exporter. Its under the File Menu.<br>
+                  <span class="style8">6:</span> Edit your model.. OR add something.. You can import something also BUT... REMEMBER TO ADD "_hull" or "_turret" to the name of the object!. As of now, I can NOT export the gun or chassis.. they are skinned meshes using the xyznuviiiwwtb format.. This will take reserch to figure out how to deal with weighted maps.<br>
+                You can added more than one item as a seperate mesh. Make sure you have the UVs and material set up.<br>
+                You can use up to 3 textures for the material. Diffuse, Normal and Specular. TE will modify the visual and add these textures and pick which shader to use based on the textures assigned.
+</p>
+                  <p><span class="style8">7:</span> After you have your new object where you want it.. use the Reset Xform I mentioned above. What this does exactly I am not sure but it works.</p>
+                  <p><span class="style8">8:</span> Import the model in to Tank Exporter. Its under the File Menu. This loads the original model as well to figure out what has been changed. <br>
                     <br>
                       <span class="style8">9.</span> Under File menu,, Click "Write Primitive".. This will bring up a panel with check boxes on it. If you added something or changed the hull or turret in anyway, these boxes should be checked. (As of now.. The engine can only handle adding items to either the hull or turret.. you can NOT add to both and write them both out as primitives at the same time.. You will need to do this as separate steps.<br>
                     <br>
-                    <span class="style8">10.</span> Load world of tanks and load that tank.</p>
+                  <span class="style8">10.</span> Load world of tanks and load that tank.</p>
                 </td>
               </tr>
             </table>
@@ -154,7 +163,7 @@ Be sure to backup your files before using mod installers such as <a href="http:/
                   Under the File Menu, there is a selection to show the folder where all the tanks are exported to. This is not much use to the average user of TE.. However.. 
                   Using Tank Exporter, you can create your own custom tank list for Terra..<br>
                   This is how its done:<br>
-                  1. Load the tank list ( File &gt; Load )and change want to export by clicking them on the tanks.. If they are highlighted, they will be exported.<br>
+                  1. Load the tank list ( File &gt; Load ) and change what to export by clicking on the tanks.. If they are highlighted, they will be exported.<br>
                   2. SAVE your list.. Creating a custom list and not saving it can cause you a lot of un-needed work!.<br>
                   3. Click &quot;Export Tank List&quot;. This will bring up a dialog asking if you really want to do this. (Get some Coffee.. this can take a while if the list is long.. and you want lots of tanks to select from in Terra!) <br>
                   4. Go to &quot;File&quot; &gt; &quot;Open Tank Folder&quot;... This is where all the tank data will be placed.<br>
