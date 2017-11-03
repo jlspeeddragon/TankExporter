@@ -3,6 +3,11 @@
 ## A tool to export Tanks from World of Tanks.
 #### This is an ongoing project by me.. Coffee_
 
+### Version 23:
+Fixed a stupid bug in the path names to where the game and res_mods.
+Added some code to find more of the missing tank parts.
+WG has split the tier 8 tanks in to 2 pgk files. I will need to change the code to deal with this as some point. As it is, tanks from that 2nd pkg are ignore.
+
 ### Version 22:
 Paths to folders are now saved to the wot_temp folder.
 You won't need to reset the game and res_mods/currentversion

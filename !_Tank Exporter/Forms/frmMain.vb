@@ -571,7 +571,7 @@ Public Class frmMain
             System.IO.Directory.CreateDirectory(Temp_Storage)
         End If
         '====================================================================================================
-        If File.Exists(Temp_Storage + "\game_path.txt") Then
+        If File.Exists(Temp_Storage + "\game_Path.txt") Then
             My.Settings.game_path = File.ReadAllText(Temp_Storage + "\game_Path.txt")
         Else
             If My.Settings.game_path = "" Then
@@ -3121,7 +3121,7 @@ tryagain:
 
         Catch ex As Exception
             Try
-                If ts.ToLower.Contains("\shared") Then
+                If ts.ToLower.Contains("tanks") Then
                     current_tank_package = 11
                 End If
                 If ts.ToLower.Contains("\shared_sandbox") Then
@@ -3538,8 +3538,14 @@ tryagain:
         file_name = turret_name
         build_primitive_data(True) ' -- chassis
 
-        file_name = gun_name
-        build_primitive_data(True) ' -- chassis
+        For gn = guns.Length - 2 To 0 Step -1
+            file_name = guns(gn)
+            gun_name = file_name
+            If build_primitive_data(True) Then ' -- chassis
+                Exit For
+            End If
+
+        Next
 
         If TESTING Then
             file_name = track_info.left_path1
@@ -4605,7 +4611,7 @@ make_this_tank:
             End If
             path_set = True
             My.Settings.game_path = FolderBrowserDialog1.SelectedPath
-            File.WriteAllText(Temp_Storage + "\gamePath.txt", My.Settings.game_path)
+            File.WriteAllText(Temp_Storage + "\game_Path.txt", My.Settings.game_path)
             My.Settings.Save()
             Return
         End If

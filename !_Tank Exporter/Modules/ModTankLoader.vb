@@ -1548,7 +1548,7 @@ get_visual:
             If e IsNot Nothing Then
                 e.Extract(mstream)
             Else
-                e = frmMain.shared_pkg(filename)
+                e = frmMain.packages(11)(filename)
                 If e IsNot Nothing Then
                     e.Extract(mstream)
                 Else
