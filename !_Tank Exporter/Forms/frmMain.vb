@@ -4250,6 +4250,103 @@ tryagain:
                 End If ' filename match
             Next ' next entry
         Next 'next package
+        ' now check package_1 data
+        For i = 1 To packages_1.Length - 2
+            If packages_1(i) IsNot Nothing Then
+
+                For Each ent In packages_1(i)
+                    If ent.FileName.Contains(ar(2)) Then
+                        If Not ent.FileName.Contains("collision_client") Then
+                            If Not ent.FileName.Contains("crash") Then
+                                If Not models Then
+                                    Select Case all_lods
+                                        Case True
+                                            Select Case frmExtract.ext_chassis.Checked
+                                                Case True
+                                                    If ent.FileName.ToLower.Contains("chassis") Then
+                                                        ent.Extract(My.Settings.res_mods_path, ExtractExistingFileAction.DoNotOverwrite)
+                                                    End If
+                                            End Select
+                                            Select Case frmExtract.ext_hull.Checked
+                                                Case True
+                                                    If ent.FileName.ToLower.Contains("hull") Then
+                                                        ent.Extract(My.Settings.res_mods_path, ExtractExistingFileAction.DoNotOverwrite)
+                                                    End If
+                                            End Select
+                                            Select Case frmExtract.ext_turret.Checked
+                                                Case True
+                                                    If ent.FileName.ToLower.Contains("turret") Then
+                                                        ent.Extract(My.Settings.res_mods_path, ExtractExistingFileAction.DoNotOverwrite)
+                                                    End If
+                                            End Select
+                                            Select Case frmExtract.ext_gun.Checked
+                                                Case True
+                                                    If ent.FileName.ToLower.Contains("gun") Then
+                                                        ent.Extract(My.Settings.res_mods_path, ExtractExistingFileAction.DoNotOverwrite)
+                                                    End If
+                                            End Select
+                                        Case False
+                                            If ent.FileName.ToLower.Contains("lod0") Then
+                                                Select Case frmExtract.ext_chassis.Checked
+                                                    Case True
+                                                        If ent.FileName.ToLower.Contains("chassis") Then
+                                                            ent.Extract(My.Settings.res_mods_path, ExtractExistingFileAction.DoNotOverwrite)
+                                                        End If
+                                                End Select
+                                                Select Case frmExtract.ext_hull.Checked
+                                                    Case True
+                                                        If ent.FileName.ToLower.Contains("hull") Then
+                                                            ent.Extract(My.Settings.res_mods_path, ExtractExistingFileAction.DoNotOverwrite)
+                                                        End If
+                                                End Select
+                                                Select Case frmExtract.ext_turret.Checked
+                                                    Case True
+                                                        If ent.FileName.ToLower.Contains("turret") Then
+                                                            ent.Extract(My.Settings.res_mods_path, ExtractExistingFileAction.DoNotOverwrite)
+                                                        End If
+                                                End Select
+                                                Select Case frmExtract.ext_gun.Checked
+                                                    Case True
+                                                        If ent.FileName.ToLower.Contains("gun") Then
+                                                            ent.Extract(My.Settings.res_mods_path, ExtractExistingFileAction.DoNotOverwrite)
+                                                        End If
+                                                End Select
+                                            End If
+                                    End Select
+                                End If 'if model
+                                Select Case ent.FileName.Contains("dds")
+                                    Case True
+                                        Select Case frmExtract.ext_chassis.Checked
+                                            Case True
+                                                If ent.FileName.ToLower.Contains("chassis") Then
+                                                    ent.Extract(My.Settings.res_mods_path, ExtractExistingFileAction.DoNotOverwrite)
+                                                End If
+                                        End Select
+                                        Select Case frmExtract.ext_hull.Checked
+                                            Case True
+                                                If ent.FileName.ToLower.Contains("hull") Then
+                                                    ent.Extract(My.Settings.res_mods_path, ExtractExistingFileAction.DoNotOverwrite)
+                                                End If
+                                        End Select
+                                        Select Case frmExtract.ext_turret.Checked
+                                            Case True
+                                                If ent.FileName.ToLower.Contains("turret") Then
+                                                    ent.Extract(My.Settings.res_mods_path, ExtractExistingFileAction.DoNotOverwrite)
+                                                End If
+                                        End Select
+                                        Select Case frmExtract.ext_gun.Checked
+                                            Case True
+                                                If ent.FileName.ToLower.Contains("gun") Then
+                                                    ent.Extract(My.Settings.res_mods_path, ExtractExistingFileAction.DoNotOverwrite)
+                                                End If
+                                        End Select
+                                End Select
+                            End If ' crash
+                        End If ' collision_client
+                    End If ' filename match
+                Next ' next entry
+            End If 'isnot nothing
+        Next 'next package
         TC1.Enabled = True
     End Sub
 
