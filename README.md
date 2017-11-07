@@ -3,6 +3,9 @@
 ## A tool to export Tanks from World of Tanks.
 #### This is an ongoing project by me.. Coffee_
 
+### Version 24:
+Tank Exporter now loads all tanks in the extended pkg files.
+
 ### Version 23:
 Fixed a stupid bug in the path names to where the game and res_mods.
 Added some code to find more of the missing tank parts.

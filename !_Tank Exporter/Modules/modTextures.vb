@@ -134,7 +134,7 @@ Module modTextures
                 Return id
             End If
         End If
-        'No HD.. try rd
+        'No HD.. try sd
         Try
             ent = frmMain.packages(11)(name.Replace(".dds", "_hd.dds")) ' look in tank package
 
@@ -148,6 +148,9 @@ Module modTextures
             id = get_texture(mStream, name)
         Else
             ent = frmMain.packages(current_tank_package)(name) ' look in tank package
+            If ent Is Nothing Then
+                ent = frmMain.packages_1(current_tank_package)(name) ' look in 2nd tank package
+            End If
             If ent Is Nothing Then
                 ent = frmMain.packages(11)(name) ' look in tank combined package
             End If

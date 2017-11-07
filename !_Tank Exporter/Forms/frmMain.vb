@@ -43,8 +43,12 @@ Public Class frmMain
     Private mouse_delta As New Point
     Private mouse_pos As New Point
 
+    Private TOTAL_TANKS_FOUND As Integer = 0
+
     Public Shared packages(12) As ZipFile
+    Public Shared packages_1(12) As ZipFile
     Public Shared packages_HD(12) As ZipFile
+    Public Shared packages_HD_1(12) As ZipFile
     Public Shared shared_pkg As Ionic.Zip.ZipFile
     Public Shared shared_sandbox_pkg As Ionic.Zip.ZipFile
     Public shared_contents_build As New Ionic.Zip.ZipFile
@@ -1422,8 +1426,11 @@ tryagain:
                 Application.DoEvents()
                 Application.DoEvents()
                 store_in_treeview(i, treeviews(i))
+                store_in_treeview_1(i, treeviews(i))
             Next
             get_tanks_shared()
+            'add count to log
+            start_up_log.AppendLine("Total Tanks Found:" + TOTAL_TANKS_FOUND.ToString("000"))
             'get_tanks_sandbox()
             For i = 1 To 10
                 info_Label.Text = "Adding Nodes to TreeView Lists (" + i.ToString("00") + ")"
@@ -1462,14 +1469,21 @@ tryagain:
         Application.DoEvents()
 
         Dim fpath = My.Settings.game_path + "\res\packages\vehicles_level_" + i.ToString("00") + ".pkg"
-        packages(i) = Ionic.Zip.ZipFile.Read(fpath)
-        Try
-            fpath = My.Settings.game_path + "\res\packages\vehicles_level_" + i.ToString("00") + "_hd.pkg"
-            packages_HD(i) = Ionic.Zip.ZipFile.Read(fpath)
-        Catch ex As Exception
-            start_up_log.AppendLine("!!!!! vehicles_level package did not OPEN !!!!! :" + fpath)
-        End Try
-        start_up_log.AppendLine("Getting Tank data from: " + fpath)
+        If File.Exists(fpath) Then
+            packages(i) = Ionic.Zip.ZipFile.Read(fpath)
+            start_up_log.AppendLine("Getting Tank data from: " + fpath)
+        Else
+            start_up_log.AppendLine("Could not find: " + fpath)
+            Return
+        End If
+        Dim fpath_1 = My.Settings.game_path + "\res\packages\vehicles_level_" + i.ToString("00") + "_hd.pkg"
+        If File.Exists(fpath_1) Then
+            packages_HD(i) = Ionic.Zip.ZipFile.Read(fpath_1)
+            start_up_log.AppendLine("Getting Tank data from: " + fpath_1)
+        Else
+            'todo
+        End If
+
         Dim cnt As Integer = 0
         ReDim icons(i).img(150)
         ReDim node_list(i).item(150)
@@ -1522,6 +1536,104 @@ tryagain:
                         s = get_user_name(n.Text)
                 End Select
                 If s.Length > 0 Then ' only save what actually exist
+                    TOTAL_TANKS_FOUND += 1
+                    node_list(i).item(cnt) = New t_items_
+                    Dim na = n.Text.Split("_")
+                    If na(0).Length = 3 Then
+                        na(0) += "99"
+                    End If
+                    node_list(i).item(cnt).name = na(0)
+                    node_list(i).item(cnt).node = n
+                    node_list(i).item(cnt).package = packages(i).Name
+                    icons(i).img(cnt) = get_tank_icon(n.Text).Clone
+                    If icons(i).img(cnt) IsNot Nothing Then
+                        node_list(i).item(cnt).icon = icons(i).img(cnt).Clone
+                        node_list(i).item(cnt).icon.Tag = current_png_path
+                        cnt += 1
+                    Else
+                        start_up_log.AppendLine("!!!!! Missing Tank Icon PNG !!!!! :" + current_png_path)
+                    End If
+                End If
+            End If
+        Next
+        ReDim Preserve node_list(i).item(cnt)
+
+        Application.DoEvents()
+        ReDim Preserve icons(i).img(cnt)
+        Application.DoEvents()
+    End Sub
+    Private Sub store_in_treeview_1(ByVal i As Integer, tn As TreeView)
+
+        Dim fpath = My.Settings.game_path + "\res\packages\vehicles_level_" + i.ToString("00") + "_1.pkg"
+        If File.Exists(fpath) Then ' check if it even exist.. some dont.
+            packages_1(i) = Ionic.Zip.ZipFile.Read(fpath)
+        Else
+            Return
+        End If
+        Try
+            Dim fpath_1 = My.Settings.game_path + "\res\packages\vehicles_level_" + i.ToString("00") + "_hd_1.pkg"
+            If File.Exists(fpath_1) Then
+                packages_HD_1(i) = Ionic.Zip.ZipFile.Read(fpath_1)
+            Else
+                'todo
+            End If
+        Catch ex As Exception
+            start_up_log.AppendLine("!!!!! vehicles_level HD package did not OPEN !!!!! :" + fpath)
+        End Try
+        start_up_log.AppendLine("Getting 2nd pkg Tank data from: " + fpath)
+        Dim cnt As Integer = icons(i).img.Length - 1
+        ReDim Preserve icons(i).img(150)
+        ReDim Preserve node_list(i).item(150)
+        alltanks.Append("# Tier " + i.ToString("00") + vbCrLf)
+        'Get tanks fron tier packages
+        For Each entry As ZipEntry In packages_1(i)
+            If entry.FileName.ToLower.Contains("collision_client/chassis.model") Then
+                Dim t_name = entry.FileName
+                Dim ta = t_name.Split("/")
+                t_name = ""
+                For j = 0 To 2
+                    t_name += ta(j) + "/"
+                Next
+                Dim n As New TreeNode
+                n.Text = ta(2)
+                n.Tag = fpath + ":" + t_name
+                'need this to look up actual tanks game name in the
+                '\res\packages\scripts.pkg\scripts\item_defs\vehicles\***poland***\list.xml
+                Dim s As String = ""
+                Select Case ta(1)
+                    Case "american"
+                        n.Name = "usa"
+                        s = get_user_name(n.Text)
+                    Case "british"
+                        n.Name = "uk"
+                        s = get_user_name(n.Text)
+                    Case "chinese"
+                        n.Name = "china"
+                        s = get_user_name(n.Text)
+                    Case "czech"
+                        n.Name = "czech"
+                        s = get_user_name(n.Text)
+                    Case "french"
+                        n.Name = "france"
+                        s = get_user_name(n.Text)
+                    Case "german"
+                        n.Name = "germany"
+                        s = get_user_name(n.Text)
+                    Case "japan"
+                        n.Name = "japan"
+                        s = get_user_name(n.Text)
+                    Case "poland"
+                        n.Name = "poland"
+                        s = get_user_name(n.Text)
+                    Case "russian"
+                        n.Name = "ussr"
+                        s = get_user_name(n.Text)
+                    Case "sweden"
+                        n.Name = "sweden"
+                        s = get_user_name(n.Text)
+                End Select
+                If s.Length > 0 Then ' only save what actually exist
+                    TOTAL_TANKS_FOUND += 1
                     node_list(i).item(cnt) = New t_items_
                     Dim na = n.Text.Split("_")
                     If na(0).Length = 3 Then
@@ -1607,6 +1719,7 @@ tryagain:
                         i = CInt(get_tier_id(n.Text))
                 End Select
                 If s.Length > 0 Then ' only save what actually exist
+                    TOTAL_TANKS_FOUND += 1
                     Dim cnt As Integer = node_list(i).item.Length
                     ReDim Preserve node_list(i).item(cnt)
                     ReDim Preserve icons(i).img(cnt)

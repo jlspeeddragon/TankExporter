@@ -527,19 +527,18 @@ Module ModTankLoader
             If entry IsNot Nothing Then
                 entry.Extract(r)
             Else
-                entry = frmMain.shared_pkg(file_name)
+                entry = frmMain.packages_1(current_tank_package)(file_name)
                 If entry IsNot Nothing Then
                     entry.Extract(r)
                 Else
-                    entry = frmMain.shared_sandbox_pkg(file_name)
+                    entry = frmMain.packages(11)(file_name)
                     If entry IsNot Nothing Then
                         entry.Extract(r)
                     Else
-
+                        log_text.Append("File Not Found in package.." + file_name + vbCrLf)
+                        Return False
                     End If
-                    log_text.Append("File Not Found in package.." + file_name + vbCrLf)
                 End If
-                Return False
             End If
             r.Position = 0
             File_len = r.Length
@@ -1521,9 +1520,14 @@ no_more:
             If e IsNot Nothing Then
                 e.Extract(mstream)
             Else
-                e = frmMain.packages(11)(filename)
+                e = frmMain.packages_1(current_tank_package)(filename)
                 If e IsNot Nothing Then
                     e.Extract(mstream)
+                Else
+                    e = frmMain.packages(11)(filename)
+                    If e IsNot Nothing Then
+                        e.Extract(mstream)
+                    End If
                 End If
             End If
             'e.Extract(mstream)
@@ -1548,16 +1552,17 @@ get_visual:
             If e IsNot Nothing Then
                 e.Extract(mstream)
             Else
-                e = frmMain.packages(11)(filename)
+                e = frmMain.packages_1(current_tank_package)(filename)
                 If e IsNot Nothing Then
                     e.Extract(mstream)
                 Else
-                    e = frmMain.shared_sandbox_pkg(filename)
+                    e = frmMain.packages(11)(filename)
                     If e IsNot Nothing Then
                         e.Extract(mstream)
                     End If
                 End If
             End If
+
             openXml_stream(mstream, "")
         Catch ex As Exception
             Return False
