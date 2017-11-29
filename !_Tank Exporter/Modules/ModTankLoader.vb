@@ -51,7 +51,7 @@ Module ModTankLoader
     Public bsp_data() As Byte
     Public color_data() As Byte
     Public bsp_materials_data() As Byte
-    Public save_has_uv2, MODEL_LOADED As Boolean
+    Public save_has_uv2, MODEL_LOADED, IGNORE_TEXTURES As Boolean
     Dim ih As IndexHeader
     Dim vh As VerticesHeader
     Dim temo_text_string As String = ""
@@ -1015,7 +1015,7 @@ next_m:
                 'End If
                 'get the textures if we are exporting
 
-                build_textures(jj) ' make a new texture and find out if this texture as been used... if so, existing texture will be pointed at
+                If Not IGNORE_TEXTURES Then build_textures(jj) ' make a new texture and find out if this texture as been used... if so, existing texture will be pointed at
 
                 log_text.Append("loaded Model:" + "ID:" + object_count.ToString + ":" + file_name + vbCrLf)
 
@@ -1246,6 +1246,7 @@ next_m:
 
                 _object(jj).find_center()
                 _object(jj).modified = False
+                GC.Collect()
             Next jj
 no_line:
 
@@ -1262,7 +1263,7 @@ all_done:
             _add = True ' need to set this if we are going to loop again
             If sub_groups > 0 Then
 
-                'im making a horrible guess that the verts and indices are always frist on the list!!!
+                'im making a horrible guess that the verts and indices are always frist on the visual list!!!
                 f_name_vertices = ordered_names(sg - sub_groups).vert_name
                 f_name_indices = ordered_names(sg - sub_groups).indi_name
                 f_name_uv2 = ordered_names(sg - sub_groups).uv2_name

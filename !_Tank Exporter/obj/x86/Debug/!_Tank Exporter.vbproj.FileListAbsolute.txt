@@ -1,13 +1,3 @@
-C:\!_Tank Exporter\!_Tank Exporter\bin\x86\Debug\FbxSDK.dll
-C:\!_Tank Exporter\!_Tank Exporter\bin\x86\Debug\Tao.OpenGl.dll
-C:\!_Tank Exporter\!_Tank Exporter\bin\x86\Debug\Tao.Platform.Windows.dll
-C:\!_Tank Exporter\!_Tank Exporter\bin\x86\Debug\!_Tank Exporter.exe
-C:\!_Tank Exporter\!_Tank Exporter\bin\x86\Debug\FastColoredTextBox.dll
-C:\!_Tank Exporter\!_Tank Exporter\bin\x86\Debug\Ionic.Zip.dll
-C:\!_Tank Exporter\!_Tank Exporter\bin\x86\Debug\!_Tank Exporter.exe.config
-C:\!_Tank Exporter\!_Tank Exporter\obj\x86\Debug\!_Tank Exporter.exe
-C:\!_Tank Exporter\!_Tank Exporter\obj\x86\Debug\!_Tank Exporter.xml
-C:\!_Tank Exporter\!_Tank Exporter\obj\x86\Debug\!_Tank Exporter.pdb
 C:\!_Tank Exporter\!_Tank Exporter\bin\x86\Debug\cttools.dll
 C:\!_Tank Exporter\!_Tank Exporter\bin\x86\Debug\html\imgs\background.jpg
 C:\!_Tank Exporter\!_Tank Exporter\bin\x86\Debug\html\imgs\become_a_patron_button.png
@@ -27,12 +17,15 @@ C:\!_Tank Exporter\!_Tank Exporter\bin\x86\Debug\resources\Nbutt_over.png
 C:\!_Tank Exporter\!_Tank Exporter\bin\x86\Debug\tank.ico
 C:\!_Tank Exporter\!_Tank Exporter\bin\x86\Debug\banner.jpg
 C:\!_Tank Exporter\!_Tank Exporter\bin\x86\Debug\DevIL.dll
+C:\!_Tank Exporter\!_Tank Exporter\bin\x86\Debug\FbxSDK.dll
 C:\!_Tank Exporter\!_Tank Exporter\bin\x86\Debug\tanks\tanknames.txt
 C:\!_Tank Exporter\!_Tank Exporter\bin\x86\Debug\freeglut.dll
 C:\!_Tank Exporter\!_Tank Exporter\bin\x86\Debug\ILU.dll
 C:\!_Tank Exporter\!_Tank Exporter\bin\x86\Debug\ILUT.dll
 C:\!_Tank Exporter\!_Tank Exporter\bin\x86\Debug\Tao.DevIl.dll
 C:\!_Tank Exporter\!_Tank Exporter\bin\x86\Debug\Tao.FreeGlut.dll
+C:\!_Tank Exporter\!_Tank Exporter\bin\x86\Debug\Tao.OpenGl.dll
+C:\!_Tank Exporter\!_Tank Exporter\bin\x86\Debug\Tao.Platform.Windows.dll
 C:\!_Tank Exporter\!_Tank Exporter\bin\x86\Debug\Templates\templateColorOnly.txt
 C:\!_Tank Exporter\!_Tank Exporter\bin\x86\Debug\Templates\templateNormal.txt
 C:\!_Tank Exporter\!_Tank Exporter\bin\x86\Debug\Templates\templateNormalSpec.txt
@@ -51,8 +44,12 @@ C:\!_Tank Exporter\!_Tank Exporter\bin\x86\Debug\shaders\normal_geo.glsl
 C:\!_Tank Exporter\!_Tank Exporter\bin\x86\Debug\shaders\normal_vertex.glsl
 C:\!_Tank Exporter\!_Tank Exporter\bin\x86\Debug\shaders\tank_vertex.glsl
 C:\!_Tank Exporter\!_Tank Exporter\bin\x86\Debug\shaders\tank_fragment.glsl
+C:\!_Tank Exporter\!_Tank Exporter\bin\x86\Debug\!_Tank Exporter.exe.config
+C:\!_Tank Exporter\!_Tank Exporter\bin\x86\Debug\!_Tank Exporter.exe
 C:\!_Tank Exporter\!_Tank Exporter\bin\x86\Debug\!_Tank Exporter.pdb
 C:\!_Tank Exporter\!_Tank Exporter\bin\x86\Debug\!_Tank Exporter.xml
+C:\!_Tank Exporter\!_Tank Exporter\bin\x86\Debug\FastColoredTextBox.dll
+C:\!_Tank Exporter\!_Tank Exporter\bin\x86\Debug\Ionic.Zip.dll
 C:\!_Tank Exporter\!_Tank Exporter\bin\x86\Debug\Ionic.Zlib.dll
 C:\!_Tank Exporter\!_Tank Exporter\bin\x86\Debug\FastColoredTextBox.xml
 C:\!_Tank Exporter\!_Tank Exporter\bin\x86\Debug\Ionic.Zip.pdb
@@ -76,3 +73,6 @@ C:\!_Tank Exporter\!_Tank Exporter\obj\x86\Debug\Tank_Exporter.Resources.resourc
 C:\!_Tank Exporter\!_Tank Exporter\obj\x86\Debug\Tank_Exporter.frmEditFrag.resources
 C:\!_Tank Exporter\!_Tank Exporter\obj\x86\Debug\Tank_Exporter.frmShaderError.resources
 C:\!_Tank Exporter\!_Tank Exporter\obj\x86\Debug\!_Tank Exporter.vbproj.GenerateResource.Cache
+C:\!_Tank Exporter\!_Tank Exporter\obj\x86\Debug\!_Tank Exporter.exe
+C:\!_Tank Exporter\!_Tank Exporter\obj\x86\Debug\!_Tank Exporter.xml
+C:\!_Tank Exporter\!_Tank Exporter\obj\x86\Debug\!_Tank Exporter.pdb

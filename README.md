@@ -3,6 +3,9 @@
 ## A tool to export Tanks from World of Tanks.
 #### This is an ongoing project by me.. Coffee_
 
+### Version 25:
+This version fixes a memory leak. Updated the tank list for Terra.
+
 ### Version 24:
 Tank Exporter now loads all tanks in the extended pkg files.
 

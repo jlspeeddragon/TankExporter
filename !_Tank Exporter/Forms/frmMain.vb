@@ -3165,7 +3165,6 @@ tryagain:
         GLOBAL_exclusionMask = 0
         exclusionMask_sd = -1
         HD_TANK = True
-        object_count = 0
         turret_count = 0
         hull_count = 0
         XML_Strings(1) = ""
@@ -3190,6 +3189,13 @@ tryagain:
                 Gl.glFinish()
                 Gl.glDeleteLists(_object(i).vertex_pick_list, 1)
                 Gl.glFinish()
+                Gl.glDeleteLists(_object(i).uv2_display_list, 1)
+                Gl.glFinish()
+                Gl.glDeleteLists(_group(i).bsp2_id, 1)
+                Gl.glFinish()
+                Gl.glDeleteLists(_group(i).bsp2_tree_id, 1)
+                Gl.glFinish()
+                '-------
                 Gl.glDeleteTextures(1, _group(i).color_Id)
                 Gl.glFinish()
                 Gl.glDeleteTextures(1, _group(i).normal_Id)
@@ -3202,6 +3208,9 @@ tryagain:
                 Gl.glFinish()
             Next
         End If
+        object_count = 0
+        ReDim _group(0)
+        _group(0) = New _grps
         ReDim _object(0)
         _object(0) = New obj
         object_count = 0
@@ -3277,6 +3286,7 @@ tryagain:
             Else
                 log_text.AppendLine("unable to locate : " + exclusionMask_name)
             End If
+            et.Dispose()
         End If
         '-------------------------------------------------------
         'Return
@@ -3502,7 +3512,7 @@ tryagain:
         Select _
         armorC = row.Field(Of String)("armorcolor")
         ARMORCOLOR = get_vect4(qq(0))
-
+        tt.Dispose()
 
         'clear tank variables
         gun_trans = New vect3
@@ -3730,6 +3740,7 @@ tryagain:
             Dim ms As New MemoryStream
             ent.Extract(ms)
             openXml_stream(ms, "")
+            ms.Dispose()
             Dim docx = XDocument.Parse(TheXML_String)
             Dim xmlroot As XmlNode = xDoc.CreateElement(XmlNodeType.Element, "root", "")
             'doc.DocumentElement.ParentNode.Value = "<root>" + vbCrLf + "</root>"
@@ -3825,6 +3836,9 @@ tryagain:
 
             fo.Close()
         End If
+        t.Dispose()
+        tbl.Dispose()
+        GC.Collect()
         If FBX_LOADED Then
             m_show_fbx.Visible = True
             m_show_fbx.Checked = False
@@ -4383,7 +4397,11 @@ tryagain:
                 End If
             Next
         End If
-
+        IGNORE_TEXTURES = True
+        MM.Enabled = False
+        Dim show_text_State = m_load_textures.Checked
+        m_load_textures.Checked = False
+        Application.DoEvents()
         Dim tank As String = ""
         Dim ta = tanklist.Text.Split(vbCr)
         For i = 0 To ta.Length - 2
@@ -4480,7 +4498,9 @@ make_this_tank:
         Next
         MODEL_LOADED = True
         TC1.Enabled = True
-
+        IGNORE_TEXTURES = False
+        MM.Enabled = True
+        m_load_textures.Checked = show_text_State
     End Sub
 
     Private Sub m_create_and_extract_Click(sender As Object, e As EventArgs) Handles m_create_and_extract.Click
