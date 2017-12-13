@@ -574,6 +574,16 @@ Public Class frmMain
         If Not System.IO.Directory.Exists(Temp_Storage) Then
             System.IO.Directory.CreateDirectory(Temp_Storage)
         End If
+        ' Setup loaction for tank data.. sucks to do it this way but UAC wont allow it any other way.
+        TankListTempFolder = Temp_Storage + "\tanklist\"
+        If Not System.IO.Directory.Exists(TankListTempFolder) Then
+            System.IO.Directory.CreateDirectory(TankListTempFolder)
+        End If
+        If My.Settings.firstRun Then ' check for possible update to tank list.
+            My.Settings.firstRun = False
+            Dim ts = IO.File.ReadAllText(Application.StartupPath + "\tanks\tanknames.txt")
+            File.WriteAllText(TankListTempFolder + "tanknames.txt", ts)
+        End If
         '====================================================================================================
         If File.Exists(Temp_Storage + "\game_Path.txt") Then
             My.Settings.game_path = File.ReadAllText(Temp_Storage + "\game_Path.txt")
@@ -609,7 +619,7 @@ Public Class frmMain
             'packages(12) = shared_sandbox_pkg
 
         Catch ex As Exception
-            MsgBox("I was unable to load required pkg files!", MsgBoxStyle.Exclamation, "Error!")
+            MsgBox("I was unable to load required pkg files! Path Issue?", MsgBoxStyle.Exclamation, "Error!")
             My.Settings.game_path = ""
             My.Settings.res_mods_path = ""
             My.Settings.Save()
@@ -3769,7 +3779,7 @@ tryagain:
             If rot_limit_l = -180 Then rot_limit_l = -400
             If rot_limit_r = 180 Then rot_limit_r = 400
 
-            Dim fo = File.Open(Application.StartupPath + "\tanks\" + ar(2) + ".tank", FileMode.OpenOrCreate)
+            Dim fo = File.Open(TankListTempFolder + ar(2) + ".tank", FileMode.OpenOrCreate)
             Dim fw As New BinaryWriter(fo)
             'version changes
             'ver 1 
@@ -4398,6 +4408,8 @@ tryagain:
             Next
         End If
         IGNORE_TEXTURES = True
+        show_textures_cb.Checked = False
+        Application.DoEvents()
         MM.Enabled = False
         Dim show_text_State = m_load_textures.Checked
         m_load_textures.Checked = False
@@ -4565,7 +4577,7 @@ make_this_tank:
 
     Private Sub m_load_file_Click(sender As Object, e As EventArgs) Handles m_load_file.Click
         out_string.Length = 0
-        Dim in_s = IO.File.ReadAllText(Application.StartupPath + "\tanks\tanknames.txt")
+        Dim in_s = IO.File.ReadAllText(TankListTempFolder + "tanknames.txt")
         If in_s = "" Then
             Return
         End If
@@ -4768,13 +4780,14 @@ make_this_tank:
             Next
 
         Next
-        File.WriteAllText(Application.StartupPath + "\tanks\tanknames.txt", out_string.ToString)
+
+        File.WriteAllText(TankListTempFolder + "tanknames.txt", out_string.ToString)
     End Sub
 
     Private Sub m_open_temp_folder_Click(sender As Object, e As EventArgs) Handles m_open_temp_folder.Click
         Dim f As DirectoryInfo = New DirectoryInfo(Temp_Storage)
         If f.Exists Then
-            Process.Start("explorer.exe", Application.StartupPath + "\tanks\")
+            Process.Start("explorer.exe", TankListTempFolder)
         End If
 
     End Sub

@@ -4,6 +4,8 @@ Module modGlobals
     '##################################
     Public TESTING As Boolean = False
     '##################################
+    Public TankListTempFolder As String
+
     Public current_vertex As UInt32
     Public current_part As UInt32
 

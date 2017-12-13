@@ -3,6 +3,9 @@
 ## A tool to export Tanks from World of Tanks.
 #### This is an ongoing project by me.. Coffee_
 
+### Version 26:
+Changed where the Terra tank list and data is stored because of UAC problems. Updated the tank list for Terra.
+
 ### Version 25:
 This version fixes a memory leak. Updated the tank list for Terra.
 
