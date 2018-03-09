@@ -96,6 +96,8 @@ Partial Class frmMain
         Me.m_create_and_extract = New System.Windows.Forms.ToolStripMenuItem()
         Me.SaveFileDialog1 = New System.Windows.Forms.SaveFileDialog()
         Me.OpenFileDialog1 = New System.Windows.Forms.OpenFileDialog()
+        Me.m_simple_lighting = New System.Windows.Forms.ToolStripMenuItem()
+        Me.ToolStripSeparator10 = New System.Windows.Forms.ToolStripSeparator()
         Me.MM.SuspendLayout()
         CType(Me.SplitContainer1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SplitContainer1.Panel1.SuspendLayout()
@@ -129,7 +131,7 @@ Partial Class frmMain
         '
         'm_file
         '
-        Me.m_file.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.m_load_file, Me.m_save, Me.ToolStripSeparator7, Me.m_Import_FBX, Me.m_remove_fbx, Me.ToolStripSeparator1, Me.m_write_primitive, Me.ToolStripSeparator9, Me.m_edit_visual, Me.ToolStripSeparator8, Me.m_open_temp_folder, Me.ToolStripSeparator4, Me.M_Path, Me.m_res_mods_path, Me.ToolStripSeparator2, Me.m_clear_temp_folder_data, Me.m_reload_api_data, Me.ToolStripSeparator3, Me.M_Exit, Me.ToolStripSeparator5, Me.m_show_log, Me.m_edit_shaders, Me.m_make_template})
+        Me.m_file.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.m_load_file, Me.m_save, Me.ToolStripSeparator7, Me.m_Import_FBX, Me.m_remove_fbx, Me.ToolStripSeparator1, Me.m_write_primitive, Me.ToolStripSeparator9, Me.m_edit_visual, Me.ToolStripSeparator8, Me.m_open_temp_folder, Me.ToolStripSeparator4, Me.M_Path, Me.m_res_mods_path, Me.ToolStripSeparator2, Me.m_clear_temp_folder_data, Me.m_reload_api_data, Me.ToolStripSeparator3, Me.m_simple_lighting, Me.ToolStripSeparator5, Me.m_show_log, Me.m_edit_shaders, Me.m_make_template, Me.ToolStripSeparator10, Me.M_Exit})
         Me.m_file.Name = "m_file"
         Me.m_file.Size = New System.Drawing.Size(37, 20)
         Me.m_file.Text = "&File"
@@ -358,7 +360,7 @@ Partial Class frmMain
         Me.SplitContainer1.Panel2.BackColor = System.Drawing.Color.FromArgb(CType(CType(30, Byte), Integer), CType(CType(30, Byte), Integer), CType(CType(30, Byte), Integer))
         Me.SplitContainer1.Panel2.Controls.Add(Me.SplitContainer2)
         Me.SplitContainer1.Size = New System.Drawing.Size(968, 509)
-        Me.SplitContainer1.SplitterDistance = 828
+        Me.SplitContainer1.SplitterDistance = 834
         Me.SplitContainer1.SplitterWidth = 1
         Me.SplitContainer1.TabIndex = 2
         '
@@ -390,7 +392,7 @@ Partial Class frmMain
         Me.SplitContainer3.Panel2.Controls.Add(Me.font_holder)
         Me.SplitContainer3.Panel2.Controls.Add(Me.PG1)
         Me.SplitContainer3.Panel2.Controls.Add(Me.pb2)
-        Me.SplitContainer3.Size = New System.Drawing.Size(828, 486)
+        Me.SplitContainer3.Size = New System.Drawing.Size(834, 486)
         Me.SplitContainer3.SplitterDistance = 56
         Me.SplitContainer3.SplitterWidth = 1
         Me.SplitContainer3.TabIndex = 3
@@ -527,7 +529,7 @@ Partial Class frmMain
         Me.pb1.Dock = System.Windows.Forms.DockStyle.Fill
         Me.pb1.Location = New System.Drawing.Point(0, 23)
         Me.pb1.Name = "pb1"
-        Me.pb1.Size = New System.Drawing.Size(767, 459)
+        Me.pb1.Size = New System.Drawing.Size(773, 459)
         Me.pb1.TabIndex = 0
         Me.pb1.TabStop = False
         '
@@ -548,7 +550,7 @@ Partial Class frmMain
         Me.PG1.Dock = System.Windows.Forms.DockStyle.Top
         Me.PG1.Location = New System.Drawing.Point(0, 0)
         Me.PG1.Name = "PG1"
-        Me.PG1.Size = New System.Drawing.Size(767, 23)
+        Me.PG1.Size = New System.Drawing.Size(773, 23)
         Me.PG1.TabIndex = 2
         Me.PG1.Visible = False
         '
@@ -568,7 +570,7 @@ Partial Class frmMain
         Me.info_Label.ForeColor = System.Drawing.Color.Silver
         Me.info_Label.Location = New System.Drawing.Point(0, 0)
         Me.info_Label.Name = "info_Label"
-        Me.info_Label.Size = New System.Drawing.Size(828, 23)
+        Me.info_Label.Size = New System.Drawing.Size(834, 23)
         Me.info_Label.TabIndex = 1
         Me.info_Label.Text = "Label1"
         '
@@ -591,8 +593,8 @@ Partial Class frmMain
         Me.SplitContainer2.Panel2.BackColor = System.Drawing.Color.FromArgb(CType(CType(30, Byte), Integer), CType(CType(30, Byte), Integer), CType(CType(30, Byte), Integer))
         Me.SplitContainer2.Panel2.Controls.Add(Me.tank_label)
         Me.SplitContainer2.Panel2.Controls.Add(Me.iconbox)
-        Me.SplitContainer2.Size = New System.Drawing.Size(139, 509)
-        Me.SplitContainer2.SplitterDistance = 475
+        Me.SplitContainer2.Size = New System.Drawing.Size(133, 509)
+        Me.SplitContainer2.SplitterDistance = 481
         Me.SplitContainer2.SplitterWidth = 1
         Me.SplitContainer2.TabIndex = 1
         '
@@ -613,7 +615,7 @@ Partial Class frmMain
         Me.TC1.Location = New System.Drawing.Point(0, 0)
         Me.TC1.Name = "TC1"
         Me.TC1.SelectedIndex = 0
-        Me.TC1.Size = New System.Drawing.Size(139, 475)
+        Me.TC1.Size = New System.Drawing.Size(133, 481)
         Me.TC1.SizeMode = System.Windows.Forms.TabSizeMode.Fixed
         Me.TC1.TabIndex = 0
         '
@@ -622,7 +624,7 @@ Partial Class frmMain
         Me.TabPage1.Location = New System.Drawing.Point(4, 25)
         Me.TabPage1.Name = "TabPage1"
         Me.TabPage1.Padding = New System.Windows.Forms.Padding(3)
-        Me.TabPage1.Size = New System.Drawing.Size(131, 446)
+        Me.TabPage1.Size = New System.Drawing.Size(125, 452)
         Me.TabPage1.TabIndex = 0
         Me.TabPage1.Text = "1"
         Me.TabPage1.UseVisualStyleBackColor = True
@@ -632,7 +634,7 @@ Partial Class frmMain
         Me.TabPage2.Location = New System.Drawing.Point(4, 25)
         Me.TabPage2.Name = "TabPage2"
         Me.TabPage2.Padding = New System.Windows.Forms.Padding(3)
-        Me.TabPage2.Size = New System.Drawing.Size(131, 446)
+        Me.TabPage2.Size = New System.Drawing.Size(125, 452)
         Me.TabPage2.TabIndex = 1
         Me.TabPage2.Text = "2"
         Me.TabPage2.UseVisualStyleBackColor = True
@@ -642,7 +644,7 @@ Partial Class frmMain
         Me.TabPage3.Location = New System.Drawing.Point(4, 25)
         Me.TabPage3.Name = "TabPage3"
         Me.TabPage3.Padding = New System.Windows.Forms.Padding(3)
-        Me.TabPage3.Size = New System.Drawing.Size(131, 446)
+        Me.TabPage3.Size = New System.Drawing.Size(125, 452)
         Me.TabPage3.TabIndex = 2
         Me.TabPage3.Text = "3"
         Me.TabPage3.UseVisualStyleBackColor = True
@@ -651,7 +653,7 @@ Partial Class frmMain
         '
         Me.TabPage4.Location = New System.Drawing.Point(4, 25)
         Me.TabPage4.Name = "TabPage4"
-        Me.TabPage4.Size = New System.Drawing.Size(131, 446)
+        Me.TabPage4.Size = New System.Drawing.Size(125, 452)
         Me.TabPage4.TabIndex = 3
         Me.TabPage4.Text = "4"
         Me.TabPage4.UseVisualStyleBackColor = True
@@ -660,7 +662,7 @@ Partial Class frmMain
         '
         Me.TabPage5.Location = New System.Drawing.Point(4, 25)
         Me.TabPage5.Name = "TabPage5"
-        Me.TabPage5.Size = New System.Drawing.Size(131, 446)
+        Me.TabPage5.Size = New System.Drawing.Size(125, 452)
         Me.TabPage5.TabIndex = 4
         Me.TabPage5.Text = "5"
         Me.TabPage5.UseVisualStyleBackColor = True
@@ -669,7 +671,7 @@ Partial Class frmMain
         '
         Me.TabPage6.Location = New System.Drawing.Point(4, 25)
         Me.TabPage6.Name = "TabPage6"
-        Me.TabPage6.Size = New System.Drawing.Size(131, 446)
+        Me.TabPage6.Size = New System.Drawing.Size(125, 452)
         Me.TabPage6.TabIndex = 5
         Me.TabPage6.Text = "6"
         Me.TabPage6.UseVisualStyleBackColor = True
@@ -678,7 +680,7 @@ Partial Class frmMain
         '
         Me.TabPage7.Location = New System.Drawing.Point(4, 25)
         Me.TabPage7.Name = "TabPage7"
-        Me.TabPage7.Size = New System.Drawing.Size(131, 446)
+        Me.TabPage7.Size = New System.Drawing.Size(125, 452)
         Me.TabPage7.TabIndex = 6
         Me.TabPage7.Text = "7"
         Me.TabPage7.UseVisualStyleBackColor = True
@@ -687,7 +689,7 @@ Partial Class frmMain
         '
         Me.TabPage8.Location = New System.Drawing.Point(4, 25)
         Me.TabPage8.Name = "TabPage8"
-        Me.TabPage8.Size = New System.Drawing.Size(131, 446)
+        Me.TabPage8.Size = New System.Drawing.Size(125, 452)
         Me.TabPage8.TabIndex = 7
         Me.TabPage8.Text = "8"
         Me.TabPage8.UseVisualStyleBackColor = True
@@ -696,7 +698,7 @@ Partial Class frmMain
         '
         Me.TabPage9.Location = New System.Drawing.Point(4, 25)
         Me.TabPage9.Name = "TabPage9"
-        Me.TabPage9.Size = New System.Drawing.Size(131, 446)
+        Me.TabPage9.Size = New System.Drawing.Size(125, 452)
         Me.TabPage9.TabIndex = 8
         Me.TabPage9.Text = "9"
         Me.TabPage9.UseVisualStyleBackColor = True
@@ -705,7 +707,7 @@ Partial Class frmMain
         '
         Me.TabPage10.Location = New System.Drawing.Point(4, 25)
         Me.TabPage10.Name = "TabPage10"
-        Me.TabPage10.Size = New System.Drawing.Size(131, 446)
+        Me.TabPage10.Size = New System.Drawing.Size(125, 452)
         Me.TabPage10.TabIndex = 9
         Me.TabPage10.Text = "10"
         Me.TabPage10.UseVisualStyleBackColor = True
@@ -729,7 +731,7 @@ Partial Class frmMain
         Me.iconbox.Dock = System.Windows.Forms.DockStyle.Fill
         Me.iconbox.Location = New System.Drawing.Point(0, 0)
         Me.iconbox.Name = "iconbox"
-        Me.iconbox.Size = New System.Drawing.Size(139, 33)
+        Me.iconbox.Size = New System.Drawing.Size(133, 27)
         Me.iconbox.TabIndex = 2
         Me.iconbox.TabStop = False
         '
@@ -765,6 +767,19 @@ Partial Class frmMain
         'OpenFileDialog1
         '
         Me.OpenFileDialog1.FileName = "OpenFileDialog1"
+        '
+        'm_simple_lighting
+        '
+        Me.m_simple_lighting.Checked = Global.Tank_Exporter.My.MySettings.Default.m_simple_lighting
+        Me.m_simple_lighting.CheckOnClick = True
+        Me.m_simple_lighting.Name = "m_simple_lighting"
+        Me.m_simple_lighting.Size = New System.Drawing.Size(190, 22)
+        Me.m_simple_lighting.Text = "Simple Lighting"
+        '
+        'ToolStripSeparator10
+        '
+        Me.ToolStripSeparator10.Name = "ToolStripSeparator10"
+        Me.ToolStripSeparator10.Size = New System.Drawing.Size(187, 6)
         '
         'frmMain
         '
@@ -875,5 +890,7 @@ Partial Class frmMain
     Friend WithEvents m_edit_visual As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents m_write_primitive As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents m_show_model_info As System.Windows.Forms.ToolStripMenuItem
+    Friend WithEvents m_simple_lighting As System.Windows.Forms.ToolStripMenuItem
+    Friend WithEvents ToolStripSeparator10 As System.Windows.Forms.ToolStripSeparator
 
 End Class

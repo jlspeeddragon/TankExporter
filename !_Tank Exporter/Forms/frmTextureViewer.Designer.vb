@@ -26,14 +26,14 @@ Partial Class frmTextureViewer
         Me.ToolStrip1 = New System.Windows.Forms.ToolStrip()
         Me.m_alpha_enabled = New System.Windows.Forms.ToolStripButton()
         Me.m_show_uvs = New System.Windows.Forms.ToolStripButton()
-        Me.m_top_most = New System.Windows.Forms.ToolStripButton()
+        Me.m_uvs_only = New System.Windows.Forms.ToolStripButton()
         Me.ToolStripSeparator1 = New System.Windows.Forms.ToolStripSeparator()
         Me.zoom = New System.Windows.Forms.ToolStripTextBox()
         Me.ToolStripSeparator2 = New System.Windows.Forms.ToolStripSeparator()
         Me.m_save_image = New System.Windows.Forms.ToolStripButton()
-        Me.SaveFileDialog1 = New System.Windows.Forms.SaveFileDialog()
-        Me.m_uvs_only = New System.Windows.Forms.ToolStripButton()
         Me.ToolStripSeparator3 = New System.Windows.Forms.ToolStripSeparator()
+        Me.m_top_most = New System.Windows.Forms.ToolStripButton()
+        Me.SaveFileDialog1 = New System.Windows.Forms.SaveFileDialog()
         Me.ToolStrip1.SuspendLayout()
         Me.SuspendLayout()
         '
@@ -43,6 +43,7 @@ Partial Class frmTextureViewer
         Me.ToolStrip1.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.m_alpha_enabled, Me.m_show_uvs, Me.m_uvs_only, Me.ToolStripSeparator1, Me.zoom, Me.ToolStripSeparator2, Me.m_save_image, Me.ToolStripSeparator3, Me.m_top_most})
         Me.ToolStrip1.Location = New System.Drawing.Point(0, 0)
         Me.ToolStrip1.Name = "ToolStrip1"
+        Me.ToolStrip1.RenderMode = System.Windows.Forms.ToolStripRenderMode.System
         Me.ToolStrip1.Size = New System.Drawing.Size(474, 25)
         Me.ToolStrip1.TabIndex = 0
         Me.ToolStrip1.Text = "ToolStrip1"
@@ -65,16 +66,15 @@ Partial Class frmTextureViewer
         Me.m_show_uvs.Size = New System.Drawing.Size(63, 22)
         Me.m_show_uvs.Text = "Show UVs"
         '
-        'm_top_most
+        'm_uvs_only
         '
-        Me.m_top_most.CheckOnClick = True
-        Me.m_top_most.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text
-        Me.m_top_most.ForeColor = System.Drawing.Color.Red
-        Me.m_top_most.Image = CType(resources.GetObject("m_top_most.Image"), System.Drawing.Image)
-        Me.m_top_most.ImageTransparentColor = System.Drawing.Color.Magenta
-        Me.m_top_most.Name = "m_top_most"
-        Me.m_top_most.Size = New System.Drawing.Size(62, 22)
-        Me.m_top_most.Text = "Top Most"
+        Me.m_uvs_only.CheckOnClick = True
+        Me.m_uvs_only.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text
+        Me.m_uvs_only.Image = CType(resources.GetObject("m_uvs_only.Image"), System.Drawing.Image)
+        Me.m_uvs_only.ImageTransparentColor = System.Drawing.Color.Magenta
+        Me.m_uvs_only.Name = "m_uvs_only"
+        Me.m_uvs_only.Size = New System.Drawing.Size(59, 22)
+        Me.m_uvs_only.Text = "UVs Only"
         '
         'ToolStripSeparator1
         '
@@ -100,25 +100,26 @@ Partial Class frmTextureViewer
         Me.m_save_image.Size = New System.Drawing.Size(71, 22)
         Me.m_save_image.Text = "Save Image"
         '
-        'SaveFileDialog1
-        '
-        Me.SaveFileDialog1.Filter = "PNG (*.png)|*.png"
-        Me.SaveFileDialog1.Title = "Save Png"
-        '
-        'm_uvs_only
-        '
-        Me.m_uvs_only.CheckOnClick = True
-        Me.m_uvs_only.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text
-        Me.m_uvs_only.Image = CType(resources.GetObject("m_uvs_only.Image"), System.Drawing.Image)
-        Me.m_uvs_only.ImageTransparentColor = System.Drawing.Color.Magenta
-        Me.m_uvs_only.Name = "m_uvs_only"
-        Me.m_uvs_only.Size = New System.Drawing.Size(59, 22)
-        Me.m_uvs_only.Text = "UVs Only"
-        '
         'ToolStripSeparator3
         '
         Me.ToolStripSeparator3.Name = "ToolStripSeparator3"
         Me.ToolStripSeparator3.Size = New System.Drawing.Size(6, 25)
+        '
+        'm_top_most
+        '
+        Me.m_top_most.CheckOnClick = True
+        Me.m_top_most.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text
+        Me.m_top_most.ForeColor = System.Drawing.Color.Red
+        Me.m_top_most.Image = CType(resources.GetObject("m_top_most.Image"), System.Drawing.Image)
+        Me.m_top_most.ImageTransparentColor = System.Drawing.Color.Magenta
+        Me.m_top_most.Name = "m_top_most"
+        Me.m_top_most.Size = New System.Drawing.Size(62, 22)
+        Me.m_top_most.Text = "Top Most"
+        '
+        'SaveFileDialog1
+        '
+        Me.SaveFileDialog1.Filter = "PNG (*.png)|*.png"
+        Me.SaveFileDialog1.Title = "Save Png"
         '
         'frmTextureViewer
         '

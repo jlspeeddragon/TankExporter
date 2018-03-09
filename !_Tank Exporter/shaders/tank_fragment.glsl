@@ -216,5 +216,6 @@ vec4   sum = vec4(0.0);
     } //next light
 
 gl_FragColor = (Iamb + sum) * T_level * 2.0;   // write mixed Color:  
+//gl_FragColor = base;   // write mixed Color:  
 }
 

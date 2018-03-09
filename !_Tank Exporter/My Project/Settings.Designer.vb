@@ -149,6 +149,18 @@ Namespace My
                 Me("firstRun") = value
             End Set
         End Property
+        
+        <Global.System.Configuration.UserScopedSettingAttribute(),  _
+         Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.Configuration.DefaultSettingValueAttribute("False")>  _
+        Public Property m_simple_lighting() As Boolean
+            Get
+                Return CType(Me("m_simple_lighting"),Boolean)
+            End Get
+            Set
+                Me("m_simple_lighting") = value
+            End Set
+        End Property
     End Class
 End Namespace
 

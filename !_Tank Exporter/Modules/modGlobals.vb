@@ -29,6 +29,7 @@ Module modGlobals
     Public path_data1(0) As path_data_
     Public path_data2(0) As path_data_
     Public XML_Strings(5) As String
+    Public m_position As Point
     Public Structure path_data_
         Dim dist As Single
         Dim pos1 As SlimDX.Vector3

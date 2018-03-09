@@ -27,27 +27,23 @@ Partial Class frmShaderError
         '
         'er_tb
         '
-        Me.er_tb.BackColor = System.Drawing.Color.Black
+        Me.er_tb.BackColor = System.Drawing.Color.FromArgb(CType(CType(33, Byte), Integer), CType(CType(33, Byte), Integer), CType(CType(33, Byte), Integer))
         Me.er_tb.Dock = System.Windows.Forms.DockStyle.Fill
-        Me.er_tb.ForeColor = System.Drawing.Color.White
+        Me.er_tb.ForeColor = System.Drawing.SystemColors.Info
         Me.er_tb.Location = New System.Drawing.Point(0, 0)
         Me.er_tb.Multiline = True
         Me.er_tb.Name = "er_tb"
-        Me.er_tb.ScrollBars = System.Windows.Forms.ScrollBars.Vertical
-        Me.er_tb.Size = New System.Drawing.Size(683, 230)
+        Me.er_tb.Size = New System.Drawing.Size(575, 262)
         Me.er_tb.TabIndex = 0
         '
         'frmShaderError
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-        Me.ClientSize = New System.Drawing.Size(683, 230)
+        Me.ClientSize = New System.Drawing.Size(575, 262)
         Me.Controls.Add(Me.er_tb)
-        Me.FormBorderStyle = System.Windows.Forms.FormBorderStyle.SizableToolWindow
-        Me.MaximizeBox = False
         Me.Name = "frmShaderError"
-        Me.Text = "OpenGL Error"
-        Me.TopMost = True
+        Me.Text = "frmShaderError"
         Me.ResumeLayout(False)
         Me.PerformLayout()
 

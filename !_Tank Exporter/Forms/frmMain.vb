@@ -2199,7 +2199,7 @@ tryagain:
         End If
         Dim id As Integer = SELECTED_CAMO_BUTTON
         'Draw fully rendered?
-        If MODEL_LOADED And m_load_textures.Checked And Not m_show_fbx.Checked And Not m_show_bsp2.Checked Then
+        If MODEL_LOADED And m_load_textures.Checked And Not m_show_fbx.Checked And Not m_show_bsp2.Checked And Not m_simple_lighting.Checked Then
             view_status_string += "Textured : "
             Gl.glUseProgram(shader_list.tank_shader)
             Gl.glUniform1i(tank_colorMap, 0)
@@ -2286,6 +2286,57 @@ tryagain:
             End If
         End If
         Gl.glPolygonMode(Gl.GL_FRONT_AND_BACK, Gl.GL_FILL)
+        'simple lighting
+        If MODEL_LOADED And m_load_textures.Checked And Not m_show_fbx.Checked And Not m_show_bsp2.Checked And m_simple_lighting.Checked Then
+            view_status_string += "Simple Lighting : "
+            Gl.glEnable(Gl.GL_TEXTURE_2D)
+            Gl.glEnable(Gl.GL_LIGHTING)
+
+            'set lighting
+            Dim spec As Single = CSng(frmLighting.specular_slider.Value / 100)
+            Dim mc As Single = CSng(frmLighting.ambient_slider.Value / 100) * 0.75
+            Dim brightness As Single = CSng(frmLighting.total_slider.Value / 100)
+            Dim mcolor(4) As Single
+            Dim specReflection(4) As Single
+            Dim diffuseLight(4) As Single
+            mcolor(0) = mc : mcolor(1) = mc : mcolor(2) = mc : mcolor(3) = 0.0
+            specReflection(0) = spec : specReflection(1) = spec : specReflection(2) = spec : specReflection(3) = 1.0
+            diffuseLight(0) = brightness : diffuseLight(1) = brightness : diffuseLight(2) = brightness : diffuseLight(3) = 1.0
+            Gl.glColor3f(mc, mc, mc)
+            Gl.glMaterialfv(Gl.GL_FRONT, Gl.GL_AMBIENT, mcolor)
+            Gl.glMaterialfv(Gl.GL_FRONT, Gl.GL_SPECULAR, specReflection)
+            'Gl.glMaterialfv(Gl.GL_FRONT, Gl.GL_DIFFUSE, diffuseLight)
+            'Gl.glColorMaterial(Gl.GL_FRONT, Gl.GL_SPECULAR Or Gl.GL_AMBIENT_AND_DIFFUSE)
+
+
+            Gl.glMateriali(Gl.GL_FRONT, Gl.GL_SHININESS, CInt(spec * 128))
+
+            For jj = 1 To object_count - track_info.segment_count
+                If Not wire_cb.Checked Then
+                    Gl.glEnable(Gl.GL_POLYGON_OFFSET_FILL)
+                End If
+
+                If _object(jj).visible Then
+                    Gl.glActiveTexture(Gl.GL_TEXTURE0)
+                    Gl.glBindTexture(Gl.GL_TEXTURE_2D, _group(jj).color_Id)
+                    Gl.glCallList(_object(jj).main_display_list)
+
+                End If
+            Next
+            If Not wire_cb.Checked Then
+                Gl.glDisable(Gl.GL_TEXTURE_2D)
+                Gl.glDisable(Gl.GL_LIGHTING)
+                Gl.glDisable(Gl.GL_POLYGON_OFFSET_FILL)
+                Gl.glPolygonMode(Gl.GL_FRONT_AND_BACK, Gl.GL_LINE)
+                Gl.glColor3f(0.0, 0.0, 0.0)
+                For jj = 1 To object_count
+                    If _object(jj).visible Then
+                        Gl.glCallList(_object(jj).main_display_list)
+                    End If
+                Next
+            End If
+
+        End If
 
         'Draw Surface Normals?
         If normal_shader_mode > 0 Then

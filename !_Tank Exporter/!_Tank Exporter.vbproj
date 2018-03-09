@@ -24,7 +24,7 @@
     <UpdatePeriodically>false</UpdatePeriodically>
     <UpdateRequired>false</UpdateRequired>
     <MapFileExtensions>true</MapFileExtensions>
-    <ApplicationRevision>26</ApplicationRevision>
+    <ApplicationRevision>27</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
@@ -419,6 +419,8 @@
     <Content Include="resources\t_footer.txt" />
     <Content Include="resources\t_header.txt" />
     <None Include="resources\upton.jpg" />
+    <None Include="shaders\basic_fragment.glsl" />
+    <None Include="shaders\basic_vertex.glsl" />
     <None Include="shaders\fbx_vertex.glsl">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
