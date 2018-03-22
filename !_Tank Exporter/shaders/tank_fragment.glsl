@@ -1,6 +1,6 @@
 ﻿// tank_fragment.glsl
 //Used to light all models
-#version 130
+#version 120
 uniform sampler2D colorMap;
 uniform sampler2D normalMap;
 uniform sampler2D gmmMap;
@@ -26,13 +26,11 @@ uniform float S_level;
 uniform float T_level;
 in vec2 TC1;
 in vec3 vVertex;
-//in vec3 lightDirection;
 in mat3 TBN;
 in vec3 t;
 in vec3 b;
 in vec3 n;
 
-out vec4 color_out;
 // ========================================================
 // rextimmy gets full credit for figuring out how mixing works!
 vec4 applyCamo(vec4 cc,vec4 camoTex){
@@ -59,7 +57,6 @@ vec3   PN_D;
 float  alpha;
 vec4   color;
 float  a;
-//float  spec_l = 1.0;
 float  specPower = 60.0;
 float  MetalSpec = 5.0;
 vec4   Ispec1 = vec4(0.0);
@@ -89,8 +86,7 @@ vec4   sum = vec4(0.0);
     color = base;
     float factor = 1.0;
     a = base.a;
-    //convert to -1.0 to 1.0
-    
+    //convert to -1.0 to 1.0    
     detailBump.xyz = detail.xyz * 2.0 - 1.0;
 //==================================
 
@@ -131,8 +127,6 @@ vec4   sum = vec4(0.0);
             // If we are here, we are on the track treads
             AO = vec4(0.5,0.5,0.5,0.5);
              color.rgb = mix(color.rgb,detail.rgb*color.rgb,GMM.r)*1.0;
-            //color.rgb *= vec3(GMM.r);
-           // color.rgb += (color.rgb * vec3(0.5-GMM.g)*1.5);
             AO.g      = 0.8;
             AO.r      = 2.5;
             specPower = 30.0;
@@ -190,14 +184,14 @@ vec4   sum = vec4(0.0);
         vec3 R = normalize(reflect(-L,PN));  
         vec3 R_D = normalize(reflect(-L,PN_D)); 
         if (is_GAmap != 1) {GMM.xy = vec2(0.3,0.3); AO.a = 0.0;}
-        //calculate Diffuse Term:  
+        //calculate Diffuse Terms:  
         Idiff1 = color * max(dot(PN,L*GMM.g), 0.0) * AO.g * 3.0;//color light level
         Idiff2 = color *  max(dot(PN_D,L), 0.0)* 0.5 * AO.g * detail.a; // detail color light level
         
         Idiff1 = clamp(Idiff1, 0.0, 1.0);     
         Idiff2 = clamp(Idiff2, 0.0, 1.0);     
 
-        // calculate Specular Term:
+        // calculate Specular Terms:
         Ispec1 = vec4(0.1,0.1,0.15,1.0) * pow(max(dot(R,E*GMM.g),0.0), MetalSpec * max(GMM.g-.5,0.0))
                 * (max(GMM.g-.5,0.0)) * AO.r * 5.0 * factor*0.8; //metel spec
 

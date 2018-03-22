@@ -80,7 +80,7 @@ Module modPrimWriter
         End If
         '-------------------------------------------------------------
 
-        write_BSP2(ID)
+        'write_BSP2(ID)
         '-------------------------------------------------------------
 
         Dim header_length As UInt32 = 68 + 64
@@ -161,6 +161,7 @@ Module modPrimWriter
 
         '-------------------------------------------------------------
         'write BSP2 if it exists
+        GoTo noBSP_anymore
         For i = 1 To obj_cnt
             pnter = m_groups(ID).list(i - 1)
 
@@ -198,6 +199,7 @@ Module modPrimWriter
                 Exit For
             End If
         Next
+noBSP_anymore:
         br.Write(offset)
         'thats all folks !!
         br.Close()

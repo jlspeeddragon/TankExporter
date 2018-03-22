@@ -627,84 +627,140 @@ Public Class frmMain
         End Try
         '====================================================================================================
         'MsgBox("I LOADED required pkg files!", MsgBoxStyle.Exclamation, "Error!")
-        Try
-            If File.Exists(Temp_Storage + "\shared_contents_build.pkg") Then
-                packages(11) = ZipFile.Read(Temp_Storage + "\shared_contents_build.pkg")
-                start_up_log.AppendLine("Loaded: " + Temp_Storage + "\shared_contents_build.pkg")
+        'Try
+        If File.Exists(Temp_Storage + "\shared_contents_build.pkg") Then
+            packages(11) = ZipFile.Read(Temp_Storage + "\shared_contents_build.pkg")
+            start_up_log.AppendLine("Loaded: " + Temp_Storage + "\shared_contents_build.pkg")
 
-            Else
-                shared_contents_build = New ZipFile(Temp_Storage + "\shared_contents_build.pkg")
-                start_up_log.AppendLine("shared_contents_build.pkg does not exist. Building shared_contents_build.pkg")
-                start_up_log.AppendLine("Only Entries that contain Vehicle will be read.")
-                'add handler for progression call back to display progressbar value
-                AddHandler (shared_contents_build.SaveProgress), New EventHandler(Of SaveProgressEventArgs)(AddressOf save_progress)
+        Else
+            shared_contents_build = New ZipFile(Temp_Storage + "\shared_contents_build.pkg")
+            start_up_log.AppendLine("shared_contents_build.pkg does not exist. Building shared_contents_build.pkg")
+            start_up_log.AppendLine("Only Entries that contain Vehicle will be read.")
+            'add handler for progression call back to display progressbar value
+            AddHandler (shared_contents_build.SaveProgress), New EventHandler(Of SaveProgressEventArgs)(AddressOf save_progress)
 
-                info_Label.Text = "Reading all shared content packages. This only needs to be done once."
+            info_Label.Text = "Reading all shared content packages. This only needs to be done once."
+            Application.DoEvents()
+            Application.DoEvents()
+
+            IO.Directory.CreateDirectory(Temp_Storage + "\zip")
+            info_Label.Text = "Reading shared_content-part1.pkg"
+            Application.DoEvents()
+            Dim z_path = Temp_Storage + "\zip"
+            '================================================================================
+            'part 1
+            Dim arc = ZipFile.Read(My.Settings.game_path + "\res\packages\shared_content-part1.pkg")
+            start_up_log.AppendLine("reading: \res\packages\shared_content-part2.pkg")
+
+            For Each entry In arc
+                If entry.FileName.ToLower.Contains("vehicle") Then
+                    entry.Extract(z_path, True)
+                End If
+            Next
+            Try
+                info_Label.Text = "Reading shared_content_hd-part1.pkg"
                 Application.DoEvents()
-                Application.DoEvents()
-
-                IO.Directory.CreateDirectory(Temp_Storage + "\zip")
-                info_Label.Text = "Reading shared_content.pkg"
-                Application.DoEvents()
-                Dim z_path = Temp_Storage + "\zip"
-                Dim arc = ZipFile.Read(My.Settings.game_path + "\res\packages\shared_content.pkg")
-                start_up_log.AppendLine("reading: \res\packages\shared_content.pkg")
-
+                arc = ZipFile.Read(My.Settings.game_path + "\res\packages\shared_content_hd-part1.pkg")
+                start_up_log.AppendLine("reading: \res\packages\shared_content_hd-part1.pkg")
                 For Each entry In arc
                     If entry.FileName.ToLower.Contains("vehicle") Then
                         entry.Extract(z_path, True)
                     End If
                 Next
-                Try
-                    info_Label.Text = "Reading shared_content_hd.pkg"
-                    Application.DoEvents()
-                    arc = ZipFile.Read(My.Settings.game_path + "\res\packages\shared_content_hd.pkg")
-                    start_up_log.AppendLine("reading: \res\packages\shared_content_hd.pkg")
-                    For Each entry In arc
-                        If entry.FileName.ToLower.Contains("vehicle") Then
-                            entry.Extract(z_path, True)
-                        End If
-                    Next
-                Catch ex As Exception
-                End Try
-                info_Label.Text = "Reading shared_content_sandbox.pkg"
+            Catch ex As Exception
+                start_up_log.AppendLine("Could not find: \res\packages\shared_content-part1.pkg")
+            End Try
+            '================================================================================
+            'part 2
+            info_Label.Text = "Reading shared_content-part2.pkg"
+            Application.DoEvents()
+            arc = ZipFile.Read(My.Settings.game_path + "\res\packages\shared_content-part2.pkg")
+            start_up_log.AppendLine("reading: \res\packages\shared_content-part2.pkg")
+
+            For Each entry In arc
+                If entry.FileName.ToLower.Contains("vehicle") Then
+                    entry.Extract(z_path, True)
+                End If
+            Next
+            Try
+                info_Label.Text = "Reading shared_content_hd-part2.pkg"
                 Application.DoEvents()
-                arc = ZipFile.Read(My.Settings.game_path + "\res\packages\shared_content_sandbox.pkg")
-                start_up_log.AppendLine("reading: \res\packages\shared_content_sandbox.pkg")
+                arc = ZipFile.Read(My.Settings.game_path + "\res\packages\shared_content_hd-part2.pkg")
+                start_up_log.AppendLine("reading: \res\packages\shared_content_hd-part2.pkg")
                 For Each entry In arc
                     If entry.FileName.ToLower.Contains("vehicle") Then
                         entry.Extract(z_path, True)
                     End If
                 Next
-                Try
-                    info_Label.Text = "Reading shared_content_sandbox_hd.pkg"
-                    Application.DoEvents()
-                    arc = ZipFile.Read(My.Settings.game_path + "\res\packages\shared_content_sandbox_hd.pkg")
-                    start_up_log.AppendLine("reading: \res\packages\shared_content_sandbox_hd.pkg")
-                    For Each entry In arc
-                        If entry.FileName.ToLower.Contains("vehicle") Then
-                            entry.Extract(z_path, True)
-                        End If
-                    Next
-                Catch ex As Exception
-                End Try
-
-                shared_contents_build.AddDirectory(z_path)
-
-                GC.Collect()
-                GC.WaitForFullGCComplete()
-                shared_contents_build.CompressionLevel = 0 ' no compression
-                shared_contents_build.ParallelDeflateThreshold = 0
-                info_Label.Text = "Saving " + shared_contents_build.Entries.Count.ToString + " files to shared_contents_build.pkg.. This will take a long time!"
-                start_up_log.AppendLine("Saving: " + Temp_Storage + "\shared_contents_build.pkg")
+            Catch ex As Exception
+                start_up_log.AppendLine("Could not find: \res\packages\shared_content-part2.pkg")
+            End Try
+            '================================================================================
+            'part 1
+            info_Label.Text = "Reading shared_content_sandbox-part1.pkg"
+            Application.DoEvents()
+            arc = ZipFile.Read(My.Settings.game_path + "\res\packages\shared_content_sandbox-part1.pkg")
+            start_up_log.AppendLine("reading: \res\packages\shared_content_sandbox-part1.pkg")
+            For Each entry In arc
+                If entry.FileName.ToLower.Contains("vehicle") Then
+                    entry.Extract(z_path, True)
+                End If
+            Next
+            Try
+                info_Label.Text = "Reading shared_content_sandbox_hd-part1.pkg"
                 Application.DoEvents()
-                shared_contents_build.Save()
-                packages(11) = New ZipFile
-                packages(11) = shared_contents_build ' save this in to 11th position
-            End If
-        Catch ex As Exception
-            start_up_log.AppendLine("Something went very wrong creating the shared_contents_build.pkg!")
-        End Try
+                arc = ZipFile.Read(My.Settings.game_path + "\res\packages\shared_content_sandbox_hd-part1.pkg")
+                start_up_log.AppendLine("reading: \res\packages\shared_content_sandbox_hd-part1.pkg")
+                For Each entry In arc
+                    If entry.FileName.ToLower.Contains("vehicle") Then
+                        entry.Extract(z_path, True)
+                    End If
+                Next
+            Catch ex As Exception
+                start_up_log.AppendLine("Could not find: \res\packages\shared_content_sandbox_hd-part1.pkg")
+            End Try
+            '================================================================================
+            'part 2
+            info_Label.Text = "Reading shared_content_sandbox-part2.pkg"
+            Application.DoEvents()
+            arc = ZipFile.Read(My.Settings.game_path + "\res\packages\shared_content_sandbox-part2.pkg")
+            start_up_log.AppendLine("reading: \res\packages\shared_content_sandbox-part2.pkg")
+            For Each entry In arc
+                If entry.FileName.ToLower.Contains("vehicle") Then
+                    entry.Extract(z_path, True)
+                End If
+            Next
+            Try
+                info_Label.Text = "Reading shared_content_sandbox_hd-part2.pkg"
+                Application.DoEvents()
+                arc = ZipFile.Read(My.Settings.game_path + "\res\packages\shared_content_sandbox_hd-part2.pkg")
+                start_up_log.AppendLine("reading: \res\packages\shared_content_sandbox_hd-part2.pkg")
+                For Each entry In arc
+                    If entry.FileName.ToLower.Contains("vehicle") Then
+                        entry.Extract(z_path, True)
+                    End If
+                Next
+            Catch ex As Exception
+                start_up_log.AppendLine("Could not find: \res\packages\shared_content_sandbox_hd-part2.pkg")
+            End Try
+            '================================================================================
+
+            shared_contents_build.AddDirectory(z_path)
+
+            GC.Collect()
+            GC.WaitForFullGCComplete()
+            shared_contents_build.CompressionLevel = 0 ' no compression
+            shared_contents_build.ParallelDeflateThreshold = 0
+            info_Label.Text = "Saving " + shared_contents_build.Entries.Count.ToString + " files to shared_contents_build.pkg.. This will take a long time!"
+            start_up_log.AppendLine("Saving: " + Temp_Storage + "\shared_contents_build.pkg")
+            Application.DoEvents()
+            shared_contents_build.Save()
+            packages(11) = New ZipFile
+            packages(11) = shared_contents_build ' save this in to 11th position
+        End If
+        'Catch ex As Exception
+        '    start_up_log.AppendLine("Something went very wrong creating the shared_contents_build.pkg!")
+        'End Try
         screen_totaled_draw_time = 1 ' to stop divide by zero exception
         If Directory.Exists(Temp_Storage + "\zip") Then
             System.IO.Directory.Delete(Temp_Storage + "\zip", True)
@@ -837,7 +893,7 @@ Public Class frmMain
             If entry.FileName.Contains("customization.xml") Then
                 Dim index As Integer = -1
                 Dim filename As String = ""
-                If entry.FileName.Contains("common") Then
+                If entry.FileName.Contains("common") Or entry.FileName.Contains("italy") Then
                     Debug.WriteLine("----" + entry.FileName)
                 Else
                     Dim ms As New MemoryStream
@@ -1026,7 +1082,10 @@ Public Class frmMain
                 fi.Delete()
             Next
         End If
-        f.Delete()
+        Try
+            f.Delete()
+        Catch ex As Exception
+        End Try
         Application.Exit()
     End Sub
 
@@ -1500,7 +1559,7 @@ tryagain:
         alltanks.Append("# Tier " + i.ToString("00") + vbCrLf)
         'Get tanks fron tier packages
         For Each entry As ZipEntry In packages(i)
-            If entry.FileName.ToLower.Contains("collision_client/chassis.model") Then
+            If entry.FileName.ToLower.Contains("collision_client/chassis.havok") Then
                 Dim t_name = entry.FileName
                 Dim ta = t_name.Split("/")
                 t_name = ""

@@ -3,6 +3,12 @@
 ## A tool to export Tanks from World of Tanks.
 #### This is an ongoing project by me.. Coffee_
 
+### Verion 28:
+Removed BSP and BSP Tree from the menu.. The are no longer part of primitive files.
+Fixed coding to deal with part1 and part2 content files.
+I have not added code to deal with the Italy line yet so these tanks are NOT loaded in to the list.
+I removed writing BSP2 data to the prmitive files as these are now contained in VT files (I think... I need to do more exploring of these files formats).
+
 ### Version 27:
 Added a Simple Lighting mode for those that are having problems with rendering the tanks.
 If you are having issues with textures not showing up, please create a ticket explaining the issue and video hardware you are using
