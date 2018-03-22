@@ -122,6 +122,7 @@ Module modPrimWriter
             offset += i - 1
         End If
         '-------------------------------------------------------------
+        GoTo no_UV2EVER
         If save_has_uv2 Then
             'write uv2 table entry
             tsa = "uv2".ToArray
@@ -139,7 +140,7 @@ Module modPrimWriter
                 offset += i - 1
             End If
         End If
-
+no_UV2EVER:
         '-------------------------------------------------------------
         If has_color Then
             'write uv2 table entry
