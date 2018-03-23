@@ -893,7 +893,7 @@ Public Class frmMain
             If entry.FileName.Contains("customization.xml") Then
                 Dim index As Integer = -1
                 Dim filename As String = ""
-                If entry.FileName.Contains("common") Or entry.FileName.Contains("italy") Then
+                If entry.FileName.Contains("common") Then
                     Debug.WriteLine("----" + entry.FileName)
                 Else
                     Dim ms As New MemoryStream
@@ -923,6 +923,8 @@ Public Class frmMain
                             index = 8
                         Case "sweden"
                             index = 9
+                        Case "italy"
+                            index = 10
                     End Select
                 End If
                 build_customization_tables(index, filename)
@@ -1054,6 +1056,7 @@ Public Class frmMain
             End If
         Next
     End Sub
+
     Private Sub handle_imgbtn_click(sender As Object, e As MouseEventArgs)
         Dim b = DirectCast(sender, Button)
         'current_camo_selection = CInt(b.Tag)
@@ -1063,6 +1066,7 @@ Public Class frmMain
             End If
         Next
     End Sub
+
     Private Sub clear_temp_folder()
         If MsgBox("This will clean out all temp folder data!!" + vbCrLf + _
                   "Also this will close the application because it can not run with out" + vbCrLf + _
@@ -1603,6 +1607,9 @@ tryagain:
                     Case "sweden"
                         n.Name = "sweden"
                         s = get_user_name(n.Text)
+                    Case "italy"
+                        n.Name = "italy"
+                        s = get_user_name(n.Text)
                 End Select
                 If s.Length > 0 Then ' only save what actually exist
                     TOTAL_TANKS_FOUND += 1
@@ -1897,7 +1904,9 @@ tryagain:
     '    Application.DoEvents()
     'End Sub
     Private Function get_user_name(ByVal fname As String) As String
-
+        If fname.ToLower.Contains("progetto_m35") Then
+            Return "Progetto M35 mod 46"
+        End If
         Try
 
             Dim q = From row In TankDataTable _
@@ -1990,6 +1999,10 @@ tryagain:
         tn.Parent.Focus()
     End Sub
     Private Function get_shortname(ByVal n As TreeNode) As String
+        If n.Text.ToLower.Contains("progetto_m35") Then
+            Return "Progetto M35 mod 46"
+        End If
+
         Dim q = From row In TankDataTable _
             Where row.Field(Of String)("tag") = n.Text _
   Select _
@@ -3621,6 +3634,9 @@ tryagain:
             Case "sweden"
                 CURRENT_DATA_SET = 9
                 nation_string = "sweden"
+            Case "italy"
+                CURRENT_DATA_SET = 10
+                nation_string = "italy"
         End Select
         TANK_NAME = "vehicles\" + ar(1) + "\" + ar(2) + ":" + current_tank_package.ToString
         '===================================

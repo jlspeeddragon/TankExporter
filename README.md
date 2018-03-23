@@ -3,8 +3,13 @@
 ## A tool to export Tanks from World of Tanks.
 #### This is an ongoing project by me.. Coffee_
 
+### Version 29:
+Added code to load the Italy Tank line.
+There is currently only one tank in this line.. A preimium.
+This data is not in the WoT API site so I hard coded the name for the It13_Pregetto_M35_mod_46
+
 ### Verion 28:
-Removed BSP and BSP Tree from the menu.. The are no longer part of primitive files.
+Removed BSP and BSP Tree from the menu.. They are no longer part of primitive files.
 Fixed coding to deal with part1 and part2 content files.
 I have not added code to deal with the Italy line yet so these tanks are NOT loaded in to the list.
 I removed writing BSP2 data to the prmitive files as these are now contained in VT files (I think... I need to do more exploring of these files formats).

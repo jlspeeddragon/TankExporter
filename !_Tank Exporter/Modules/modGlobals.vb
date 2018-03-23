@@ -89,7 +89,7 @@ Module modGlobals
     Dim turret_prmitive, turret_visual As MemoryStream
     Dim gun_primitive, gun_visual As MemoryStream
     Public current_tank_package As Integer
-    Public custom_tables(9) As DataSet
+    Public custom_tables(10) As DataSet
     Public gun_tile() As vect4
     Public hull_tile() As vect4
     Public turret_tile() As vect4
@@ -97,24 +97,6 @@ Module modGlobals
     Public gun_tiling As vect4
     Public chassis_tiling As vect4
     Public turret_tiling As vect4
-    Public nation_folders() = {"vehicles/american", _
-                            "vehicles/russian", _
-                            "vehicles/chinese", _
-                            "vehicles/french", _
-                            "vehicles/british", _
-                            "vehicles/german", _
-                            "vehicles/japan"}
-    Public tier_name() As String = { _
-        "vehicles_level_01.pkg", _
-        "vehicles_level_02.pkg", _
-        "vehicles_level_03.pkg", _
-        "vehicles_level_04.pkg", _
-        "vehicles_level_05.pkg", _
-        "vehicles_level_06.pkg", _
-        "vehicles_level_07.pkg", _
-        "vehicles_level_08.pkg", _
-        "vehicles_level_09.pkg", _
-        "vehicles_level_10.pkg"}
     Public bspTree(0) As bsptree_
     Public Structure bsptree_
         Public v As vect3
