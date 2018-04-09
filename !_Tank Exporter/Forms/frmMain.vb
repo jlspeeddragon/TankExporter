@@ -489,7 +489,7 @@ Public Class frmMain
         lookup(255) = 0
 
     End Sub
- 
+
     '############################################################################ form load
     Private Sub frmMain_Load(sender As Object, e As EventArgs) Handles Me.Load
         Dim nonInvariantCulture As CultureInfo = New CultureInfo("en-US")
@@ -537,6 +537,8 @@ Public Class frmMain
         tanklist.Font = TreeView1.Font
         tanklist.SendToBack()
         Me.Show()
+        ToolStripComboBox1.Visible = False
+        ToolStripComboBox1.Text = My.Settings.region_selection
         Application.DoEvents()
 
         'fire up OpenGL amd IL
@@ -1069,11 +1071,11 @@ Public Class frmMain
 
     Private Sub clear_temp_folder()
         If MsgBox("This will clean out all temp folder data!!" + vbCrLf + _
-                  "Also this will close the application because it can not run with out" + vbCrLf + _
-                   "the data." + vbCrLf + _
-                   "This only needs to be done if there was an update to the tank data." + vbCrLf + _
-                   "It will force a reload of all data and the long delay creating the shared file." + vbCrLf + _
-                  "Would you like to continue?", MsgBoxStyle.YesNo, "Warning..") = MsgBoxResult.No Then
+                    "Also this will close the application because it can not run with out" + vbCrLf + _
+                    "the data." + vbCrLf + _
+                    "This only needs to be done if there was an update to the tank data." + vbCrLf + _
+                    "It will force a reload of all data and the long delay creating the shared file." + vbCrLf + _
+                    "Would you like to continue?", MsgBoxStyle.YesNo, "Warning..") = MsgBoxResult.No Then
             Return
         End If
         Dim f As DirectoryInfo = New DirectoryInfo(Temp_Storage)
@@ -1270,7 +1272,7 @@ tryagain:
         Dim found_camo As Boolean = False
         For Each turret0 As XElement In docx.Descendants("turrets0")
             For Each model In turret0.Descendants("undamaged")
-                If model.Value.ToLower.ToLower.Contains("turret") Then
+                If model.Value.ToLower.ToLower.Contains("turret_") Then
 
                     Dim p = model.Parent.FirstNode
                     Dim pp = p.Parent
@@ -1368,7 +1370,7 @@ tryagain:
 
             Dim tur = turret.Descendants("models")
             For Each models In tur.Descendants("undamaged")
-                If models.Value.ToString.ToLower.Contains("turret") Then
+                If models.Value.ToString.ToLower.Contains("turret_") Then
                     ' Dim t_e = doc.CreateElement("turret_model")
                     Dim t_n = doc.CreateElement("turret_model")
                     Dim no = doc.GetElementsByTagName("turret_models") ' see if thsi has been created already
@@ -1526,8 +1528,81 @@ tryagain:
             MsgBox("Something went wrong adding to the Treeviews." + ex.Message, MsgBoxStyle.Exclamation, "Opps!")
         End Try
     End Sub
+    '================================================================================= Store in treeview
+    Private Sub store_in_treeview(ByVal i As Integer, ByRef tn As TreeView)
+        AddHandler tn.NodeMouseClick, AddressOf Me.tv_clicked
+        AddHandler tn.NodeMouseHover, AddressOf Me.tv_mouse_enter
+        AddHandler tn.MouseLeave, AddressOf Me.tv_mouse_leave
+        Dim cnt As Integer = 0
+        Dim fpath = My.Settings.game_path + "/res/packages/vehicles_level_" + i.ToString("00") + ".pkg"
+        If File.Exists(fpath) Then
+            packages(i) = Ionic.Zip.ZipFile.Read(fpath)
+            start_up_log.AppendLine("Getting Tank data from: " + fpath)
+        Else
+            start_up_log.AppendLine("Could not find: " + fpath)
+            Return
+        End If
 
-    Private Sub store_in_treeview(ByVal i As Integer, tn As TreeView)
+        get_tank_info_by_tier(i.ToString)
+        ReDim node_list(i).item(tier_list.Length)
+        ReDim icons(i).img(tier_list.Length)
+
+        For Each t In tier_list
+            Dim n As New TreeNode
+            n.Name = t.nation
+            n.Text = t.tag
+            n.Tag = fpath + ":" + "vehicles/" + get_nation(t.nation) + "/" + t.tag
+            node_list(i).item(cnt).name = t.tag
+            node_list(i).item(cnt).node = n
+            node_list(i).item(cnt).package = packages(i).Name
+            icons(i).img(cnt) = get_tank_icon(n.Text).Clone
+            If icons(i).img(cnt) IsNot Nothing Then
+                node_list(i).item(cnt).icon = icons(i).img(cnt).Clone
+                node_list(i).item(cnt).icon.Tag = current_png_path
+                cnt += 1
+                TOTAL_TANKS_FOUND += 1
+            Else
+                start_up_log.AppendLine("!!!!! Missing Tank Icon PNG !!!!! :" + current_png_path)
+            End If
+        Next
+        ReDim Preserve node_list(i).item(cnt)
+
+        Application.DoEvents()
+        ReDim Preserve icons(i).img(cnt)
+        Application.DoEvents()
+        tn.Tag = i
+
+    End Sub
+    Private Function get_nation(ByVal n As String) As String
+        Select Case n
+            Case "usa"
+                Return "american"
+            Case "uk"
+                Return "british"
+            Case "china"
+                Return "chinese"
+            Case "czech"
+                Return "czech"
+            Case "france"
+                Return "french"
+            Case "germany"
+                Return "german"
+            Case "japan"
+                Return "japan"
+            Case "poland"
+                Return "poland"
+            Case "ussr"
+                Return "russian"
+            Case "sweden"
+                Return "sweden"
+            Case "italy"
+                Return "italy"
+        End Select
+        Return "who knows what lurks in the minds of men"
+    End Function
+
+
+    Private Sub store_in_treeview_save(ByVal i As Integer, tn As TreeView)
         AddHandler tn.NodeMouseClick, AddressOf Me.tv_clicked
         AddHandler tn.NodeMouseHover, AddressOf Me.tv_mouse_enter
         AddHandler tn.MouseLeave, AddressOf Me.tv_mouse_leave
@@ -1573,6 +1648,10 @@ tryagain:
                 Dim n As New TreeNode
                 n.Text = ta(2)
                 n.Tag = fpath + ":" + t_name
+                If (i = 6 And ta(1) = "american") Then
+                    Debug.WriteLine(t_name)
+                End If
+
                 'need this to look up actual tanks game name in the
                 '\res\packages\scripts.pkg\scripts\item_defs\vehicles\***poland***\list.xml
                 Dim s As String = ""
@@ -1903,6 +1982,37 @@ tryagain:
 
     '    Application.DoEvents()
     'End Sub
+    Private Sub get_tank_info_by_tier(ByVal t As String)
+        ReDim tier_list(200)
+        Dim count As Integer = 0
+        Try
+
+            Dim q = From row In TankDataTable _
+                        Where row.Field(Of String)("tier") = t _
+                Select _
+                    un = row.Field(Of String)("shortname"), _
+                    tag = row.Field(Of String)("tag"), _
+                    nation = row.Field(Of String)("nation"), _
+                    type = row.Field(Of String)("type") _
+                        Order By nation Descending
+
+            'Dim a = q(0).un.Split(":")
+            For Each item In q
+                tier_list(count).tag = item.tag
+                tier_list(count).username = item.un
+                tier_list(count).nation = item.nation
+                tier_list(count).tier = t
+                count += 1
+            Next
+            ReDim Preserve tier_list(count - 1)
+
+        Catch ex As Exception
+            Return
+        End Try
+        Return
+
+
+    End Sub
     Private Function get_user_name(ByVal fname As String) As String
         If fname.ToLower.Contains("progetto_m35") Then
             Return "Progetto M35 mod 46"
@@ -1911,11 +2021,11 @@ tryagain:
 
             Dim q = From row In TankDataTable _
                         Where row.Field(Of String)("tag") = fname _
-              Select _
-                   un = row.Field(Of String)("shortname"), _
-                   tier = row.Field(Of String)("tier"), _
-                   natiom = row.Field(Of String)("nation")
-                   Order By tier Descending
+                Select _
+                    un = row.Field(Of String)("shortname"), _
+                    tier = row.Field(Of String)("tier"), _
+                    natiom = row.Field(Of String)("nation") _
+                    Order By tier Descending
 
             'Dim a = q(0).un.Split(":")
             If q(0) IsNot Nothing Then
@@ -1931,11 +2041,11 @@ tryagain:
         Try
             Dim q = From row In TankDataTable _
                         Where row.Field(Of String)("tag") = fname _
-              Select _
-                   un = row.Field(Of String)("shortname"), _
-                   tier = row.Field(Of String)("tier"), _
-                   natiom = row.Field(Of String)("nation")
-                   Order By tier Descending
+                Select _
+                    un = row.Field(Of String)("shortname"), _
+                    tier = row.Field(Of String)("tier"), _
+                    natiom = row.Field(Of String)("nation")
+                    Order By tier Descending
 
             'Dim a = q(0).un.Split(":")
             If q(0) IsNot Nothing Then
@@ -2005,11 +2115,11 @@ tryagain:
 
         Dim q = From row In TankDataTable _
             Where row.Field(Of String)("tag") = n.Text _
-  Select _
-       un = row.Field(Of String)("shortname"), _
-       tier = row.Field(Of String)("tier"), _
-       natiom = row.Field(Of String)("nation")
-       Order By tier Descending
+    Select _
+        un = row.Field(Of String)("shortname"), _
+        tier = row.Field(Of String)("tier"), _
+        natiom = row.Field(Of String)("nation")
+        Order By tier Descending
 
         'Dim a = q(0).un.Split(":")
         If q(0) IsNot Nothing Then
@@ -2853,7 +2963,7 @@ tryagain:
         cam_z = (cos_x - (1 - cos_y) * cos_x) * view_radius
 
         Glu.gluLookAt(cam_x + U_look_point_x, cam_y + U_look_point_y, cam_z + U_look_point_z, _
-                          U_look_point_x, U_look_point_y, U_look_point_z, 0.0F, 1.0F, 0.0F)
+                            U_look_point_x, U_look_point_y, U_look_point_z, 0.0F, 1.0F, 0.0F)
 
         eyeX = cam_x + U_look_point_x
         eyeY = cam_y + U_look_point_y
@@ -3360,7 +3470,7 @@ tryagain:
         Me.Text = "File: " + file_name
 
         Dim ts = ar(1)
-        ar = ts.Split("\")
+        ar = ts.Split("/")
         For i = 0 To ar.Length - 1
             If ar(i).ToLower.Contains("level_") Then
                 ts = ar(i)
@@ -3402,8 +3512,8 @@ tryagain:
         If GLOBAL_exclusionMask = 1 Then
             Dim et = t.Tables("exclusionMask")
             Dim eq = From row In et.AsEnumerable _
-                     Select _
-                     na = row.Field(Of String)("name")
+                        Select _
+                        na = row.Field(Of String)("name")
             exclusionMask_name = eq(0)
             Dim en = packages(current_tank_package)(exclusionMask_name)
             Dim ms As New MemoryStream
@@ -3476,8 +3586,8 @@ tryagain:
             tbl = t.Tables("turret_tiling")
 
             Dim q25 = From row In tbl.AsEnumerable _
-                      Select _
-                      tile = row.Field(Of String)("tiling")
+                        Select _
+                        tile = row.Field(Of String)("tiling")
 
             For Each thing In q25
                 Dim n = thing.Split(" ")
@@ -3493,8 +3603,8 @@ tryagain:
             tbl = t.Tables("tiling")
 
             Dim q25 = From row In tbl.AsEnumerable _
-                      Select _
-                      tile = row.Field(Of String)("tiling_Text")
+                        Select _
+                        tile = row.Field(Of String)("tiling_Text")
 
             For Each thing In q25
                 Dim n = thing.Split(" ")
@@ -3536,8 +3646,8 @@ tryagain:
 
         tbl = t.Tables("chassis")
         Dim q2 = From row In tbl.AsEnumerable _
-          Select _
-          chass = row.Field(Of String)("model")
+            Select _
+            chass = row.Field(Of String)("model")
         For Each thing In q2
 
             chassis(cnt) = thing
@@ -3553,9 +3663,9 @@ tryagain:
         '----- hull
         tbl = t.Tables("hull")
         Dim q3 = From row In tbl.AsEnumerable
-             Select _
-             model = row.Field(Of String)("model"), _
-             tile = row.Field(Of String)("hull_camouflage")
+                Select _
+                model = row.Field(Of String)("model"), _
+                tile = row.Field(Of String)("hull_camouflage")
 
         For Each thing In q3
             hulls(cnt) = thing.model
@@ -3579,7 +3689,18 @@ tryagain:
         'Array.Sort(turrets)
         'Array.Sort(hulls)
         'Array.Sort(chassis)
-        Dim turret_name = turrets(turrets.Length - 2)
+        'more hacks to deal with turret names
+        Dim turret_name As String
+        Try
+            turret_name = turrets(turrets.Length - 3)
+        Catch ex1 As Exception
+            Try
+                turret_name = turrets(turrets.Length - 2)
+            Catch ex2 As Exception
+                turret_name = turrets(turrets.Length - 1)
+            End Try
+
+        End Try
         turret_tiling = turret_tile(turrets.Length - 2)
         Dim hull_name = hulls(hulls.Length - 2)
         hull_tiling = hull_tile(hulls.Length - 2)
@@ -3676,18 +3797,18 @@ tryagain:
             'test stuff to grab track stuff
             tbl = t.Tables("track_info")
             Dim tq = From row In tbl.AsEnumerable
-                     Select _
-                     seg_cnt = row.Field(Of String)("seg_cnt")
+                        Select _
+                        seg_cnt = row.Field(Of String)("seg_cnt")
 
 
             If tq(0).Contains("1") Then
                 track_info.segment_count = 1
                 Dim t1q = From row In tbl.AsEnumerable
-                          Select _
-                          trp = row.Field(Of String)("right_filename"), _
-                          tlp = row.Field(Of String)("left_filename"), _
-                          seglength = row.Field(Of String)("segment_length"), _
-                          seg_off = row.Field(Of String)("segmentOffset")
+                            Select _
+                            trp = row.Field(Of String)("right_filename"), _
+                            tlp = row.Field(Of String)("left_filename"), _
+                            seglength = row.Field(Of String)("segment_length"), _
+                            seg_off = row.Field(Of String)("segmentOffset")
                 For Each tr In t1q
                     track_info.left_path1 = tr.tlp
                     track_info.right_path1 = tr.trp
@@ -3698,14 +3819,14 @@ tryagain:
             Else
                 track_info.segment_count = 2
                 Dim t1q = From row In tbl.AsEnumerable
-                          Select _
-                          trp = row.Field(Of String)("right_filename"), _
-                          tlp = row.Field(Of String)("left_filename"), _
-                          seglength = row.Field(Of String)("segment_length"), _
-                          seg_off = row.Field(Of String)("segmentOffset"), _
-                          trp2 = row.Field(Of String)("right2_filename"), _
-                          tlp2 = row.Field(Of String)("left2_filename"), _
-                          seg_off2 = row.Field(Of String)("segment2Offset")
+                            Select _
+                            trp = row.Field(Of String)("right_filename"), _
+                            tlp = row.Field(Of String)("left_filename"), _
+                            seglength = row.Field(Of String)("segment_length"), _
+                            seg_off = row.Field(Of String)("segmentOffset"), _
+                            trp2 = row.Field(Of String)("right2_filename"), _
+                            tlp2 = row.Field(Of String)("left2_filename"), _
+                            seg_off2 = row.Field(Of String)("segment2Offset")
                 For Each tr In t1q
                     track_info.left_path1 = tr.tlp
                     track_info.right_path1 = tr.trp
@@ -3788,6 +3909,7 @@ tryagain:
             End If
 
         End If
+        '================================= end testing
         file_name = chassis_name
         build_primitive_data(False) ' -- chassis
 
@@ -4045,7 +4167,7 @@ tryagain:
         Dim q = From row In t.AsEnumerable
                 Select _
                 Name = row.Field(Of String)("name"), _
-           Matrix = row.Field(Of String)("matrix")
+            Matrix = row.Field(Of String)("matrix")
         ' id = row.Field(Of String)("id"), _
 
         ReDim tracks(q.Count - 1)
@@ -4264,12 +4386,12 @@ tryagain:
     Private Sub get_tank_xml_data(ByVal n As TreeNode)
         Dim q = From row In TankDataTable _
             Where row.Field(Of String)("tag") = n.Text _
-  Select _
-       un = row.Field(Of String)("shortname"), _
-       tier = row.Field(Of String)("tier"), _
-       natiom = row.Field(Of String)("nation"), _
-       Type = row.Field(Of String)("type")
-       Order By tier Descending
+    Select _
+        un = row.Field(Of String)("shortname"), _
+        tier = row.Field(Of String)("tier"), _
+        natiom = row.Field(Of String)("nation"), _
+        Type = row.Field(Of String)("type")
+        Order By tier Descending
 
         'Dim a = q(0).un.Split(":")
         If q(0) IsNot Nothing Then
@@ -4285,9 +4407,9 @@ tryagain:
     Public Sub extract_selections()
         If Not My.Settings.res_mods_path.ToLower.Contains("res_mods") Then
             If MsgBox("You need to set the path to the res_mods folder!" + vbCrLf + _
-                   "Set it Now and continue?" + vbCrLf + _
-                   "It should be something like this:" + vbCrLf + _
-                   "C:\Games\World_of_Tanks\res_mods\0.9.20.0", MsgBoxStyle.YesNo, "Opps..") = MsgBoxResult.Yes Then
+                    "Set it Now and continue?" + vbCrLf + _
+                    "It should be something like this:" + vbCrLf + _
+                    "C:\Games\World_of_Tanks\res_mods\0.9.20.0", MsgBoxStyle.YesNo, "Opps..") = MsgBoxResult.Yes Then
                 m_res_mods_path.PerformClick()
                 If Not My.Settings.res_mods_path.ToLower.Contains("res_mods") Then
                     Return
@@ -4512,13 +4634,15 @@ tryagain:
     End Sub
 
     Private Sub m_reload_api_data_Click(sender As Object, e As EventArgs) Handles m_reload_api_data.Click
+        info_Label.Visible = True
         get_tank_names()
+        info_Label.Visible = False
     End Sub
 
     Private Sub m_export_tank_list_Click(sender As Object, e As EventArgs) Handles m_export_tank_list.Click
         If MsgBox("This can take a while and" + vbCrLf + _
-                  "will delete all previous tank files!" + vbCrLf + _
-                  "Are you sure?", MsgBoxStyle.YesNo, "Warning!") = MsgBoxResult.No Then
+                    "will delete all previous tank files!" + vbCrLf + _
+                    "Are you sure?", MsgBoxStyle.YesNo, "Warning!") = MsgBoxResult.No Then
             Return
         End If
         If tanklist.Text = "" Then
@@ -4948,7 +5072,7 @@ make_this_tank:
 
     Private Sub m_show_log_Click(sender As Object, e As EventArgs) Handles m_show_log.Click
         Dim t As String = Temp_Storage + "\log_text.txt"
-        File.WriteAllText(t, log_text.ToString  + vbCrLf + start_up_log.ToString)
+        File.WriteAllText(t, log_text.ToString + vbCrLf + start_up_log.ToString)
 
         System.Diagnostics.Process.Start("notepad.exe", t)
     End Sub
@@ -5137,4 +5261,23 @@ make_this_tank:
     Private Sub m_show_model_info_Click(sender As Object, e As EventArgs) Handles m_show_model_info.Click
         frmModelInfo.Show()
     End Sub
+
+    Private Sub m_region_Click(sender As Object, e As EventArgs) Handles m_region.Click
+        ToolStripComboBox1.Visible = True
+    End Sub
+
+    Private Sub ToolStripComboBox1_TextChanged(sender As Object, e As EventArgs) Handles ToolStripComboBox1.TextChanged
+        If Not _Started Then Return ' dont want to cause a trigger here!
+        API_REGION = ToolStripComboBox1.Text
+        My.Settings.region_selection = API_REGION
+        ToolStripComboBox1.Visible = False
+        MsgBox("You will need to clear the temp folder (under menu)" + vbCrLf + _
+                "and restart Tank Exporter." + vbCrLf + _
+                "This had to be done to reload data for your region!", MsgBoxStyle.Exclamation, "Warning!")
+
+        My.Settings.Save()
+
+    End Sub
+
+  
 End Class

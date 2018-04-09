@@ -99,7 +99,15 @@ Module WOT_Dev_interface
         Dim nations As String = "https://api.worldoftanks.com/wot/encyclopedia/vehicles/?application_id=demo&fields=nation"
         Dim types As String = "https://api.worldoftanks.com/wot/encyclopedia/vehicles/?application_id=demo&fields=type"
         'Dim turrets As String = "https://api.worldoftanks.com/wot/encyclopedia/vehicles/?application_id=demo&fields=turrets"
-
+        ' change region if not NA
+        Dim r_string = My.Settings.region_selection.ToLower
+        If Not My.Settings.region_selection = "NA" Then
+            tags = tags.Replace(".com", "." + r_string)
+            tiers = tiers.Replace(".com", "." + r_string)
+            shortnames = shortnames.Replace(".com", "." + r_string)
+            nations = nations.Replace(".com", "." + r_string)
+            types = types.Replace(".com", "." + r_string)
+        End If
         Dim reader As New StreamReader(client.OpenRead(tags))
         frmMain.info_Label.Text = "Getting Tags..."
         Application.DoEvents()
@@ -108,7 +116,7 @@ Module WOT_Dev_interface
         'save to temp_folder
         File.WriteAllText(Temp_Storage + "\in_tags.txt", in_tags)
 
-        frmMain.info_Label.Text = "Getting Tiers..."
+        frmMain.info_Label.Text = "Getting tiers..."
         Application.DoEvents()
         reader = New StreamReader(client.OpenRead(tiers))
         in_tiers = reader.ReadToEnd

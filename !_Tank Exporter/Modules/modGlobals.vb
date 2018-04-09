@@ -51,6 +51,7 @@ Module modGlobals
         Public spline_list() As SlimDX.Vector3
         Public spline_length As Integer
     End Structure
+    Public API_REGION As String = ""
     Public Z_Flipped As Boolean
     Public running As Single = 0
     Public track_length As Single = 0
@@ -172,5 +173,14 @@ Module modGlobals
         Public position As SlimDX.Vector3
     End Structure
 
+    Public tier_list(1) As tnk_list
+
+    Public Structure tnk_list
+        Public tag As String
+        Public username As String
+        Public tier As String
+        Public nation As String
+        Public type As String
+    End Structure
 
 End Module

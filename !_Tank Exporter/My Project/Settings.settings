@@ -29,5 +29,8 @@
     <Setting Name="m_simple_lighting" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
     </Setting>
+    <Setting Name="region_selection" Type="System.String" Scope="User">
+      <Value Profile="(Default)">NA</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

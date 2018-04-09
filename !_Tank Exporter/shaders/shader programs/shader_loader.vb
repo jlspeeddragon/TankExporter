@@ -47,7 +47,7 @@ Module shader_loader
 
 
     Public Sub make_shaders()
-        'I'm tired of all the work every time I add a shader.
+        'I'm tierd of all the work every time I add a shader.
         'So... Im going to automate the process.. Hey.. its a computer for fucks sake!
         Dim f_list() As String = IO.Directory.GetFiles(Application.StartupPath + "\shaders\", "*fragment.glsl")
         Dim v_list() As String = IO.Directory.GetFiles(Application.StartupPath + "\shaders\", "*vertex.glsl")

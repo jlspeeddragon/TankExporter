@@ -3,6 +3,10 @@
 ## A tool to export Tanks from World of Tanks.
 #### This is an ongoing project by me.. Coffee_
 
+### Version 30:
+I reworked how tanks are found in the PKG files.
+As of 4/8/2018 TE is finding 549 tanks.
+
 ### Version 29:
 Added code to load the Italy Tank line.
 There is currently only one tank in this line.. A preimium.

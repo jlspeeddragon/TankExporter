@@ -527,7 +527,7 @@ Module ModTankLoader
             If entry IsNot Nothing Then
                 entry.Extract(r)
             Else
-                entry = frmMain.packages_1(current_tank_package)(file_name)
+                entry = frmMain.packages(11)(file_name)
                 If entry IsNot Nothing Then
                     entry.Extract(r)
                 Else
@@ -1498,7 +1498,7 @@ no_more:
         Try
 
             Dim mstream = New MemoryStream
-            If File.Exists(My.Settings.res_mods_path + "\" + filename) Then
+            If File.Exists(My.Settings.res_mods_path + "/" + filename) Then
                 Dim buf = File.ReadAllBytes(My.Settings.res_mods_path + "\" + filename.Replace(".model", ".visual_processed"))
                 mstream = New MemoryStream(buf)
                 If openXml_stream(mstream, "") Then
@@ -1517,15 +1517,20 @@ no_more:
                 GC.Collect()
                 Return True
             End If
+look_again:
             Dim e As ZipEntry = frmMain.packages(current_tank_package)(filename)
             If e IsNot Nothing Then
                 e.Extract(mstream)
             Else
-                e = frmMain.packages_1(current_tank_package)(filename)
+                e = frmMain.packages(11)(filename)
                 If e IsNot Nothing Then
                     e.Extract(mstream)
                 Else
-                    e = frmMain.packages(11)(filename)
+                    If filename.Contains("Turret_01") Then
+                        filename = filename.Replace("Turret_01", "Turret_02")
+                        GoTo look_again
+                    End If
+                    e = frmMain.packages_1(11)(filename)
                     If e IsNot Nothing Then
                         e.Extract(mstream)
                     End If
@@ -1553,7 +1558,7 @@ get_visual:
             If e IsNot Nothing Then
                 e.Extract(mstream)
             Else
-                e = frmMain.packages_1(current_tank_package)(filename)
+                e = frmMain.packages(11)(filename)
                 If e IsNot Nothing Then
                     e.Extract(mstream)
                 Else

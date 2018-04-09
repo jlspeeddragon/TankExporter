@@ -1460,7 +1460,7 @@ whichone:
     End Function
 
     Public Function packnormalFBX888(ByVal n As FbxVector4) As UInt32
-        'This took an entire night to get working correctly
+        'This took an entier night to get working correctly
         Try
             'n.X = -0.715007 ' debug testing shit
             'n.X = -0.5
@@ -1491,7 +1491,7 @@ whichone:
         Return New Int32
     End Function
     Public Function packnormalFBX888_writePrimitive(ByVal n As FbxVector4) As UInt32
-        'This took an entire night to get working correctly
+        'This took an entier night to get working correctly
         Try
             'n.X = -0.715007 ' debug testing shit
             'n.X = -0.5
