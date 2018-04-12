@@ -1542,6 +1542,13 @@ tryagain:
             start_up_log.AppendLine("Could not find: " + fpath)
             Return
         End If
+        Dim fpath_1 = My.Settings.game_path + "\res\packages\vehicles_level_" + i.ToString("00") + "_hd.pkg"
+        If File.Exists(fpath_1) Then
+            packages_HD(i) = Ionic.Zip.ZipFile.Read(fpath_1)
+            start_up_log.AppendLine("Getting Tank data from: " + fpath_1)
+        Else
+            'todo
+        End If
 
         get_tank_info_by_tier(i.ToString)
         ReDim node_list(i).item(tier_list.Length)
@@ -4522,11 +4529,11 @@ tryagain:
                 End If ' filename match
             Next ' next entry
         Next 'next package
-        ' now check package_1 data
-        For i = 1 To packages_1.Length - 2
-            If packages_1(i) IsNot Nothing Then
+        ' now check package_hd data
+        For i = 1 To packages_HD.Length - 2
+            If packages_HD(i) IsNot Nothing Then
 
-                For Each ent In packages_1(i)
+                For Each ent In packages_HD(i)
                     If ent.FileName.Contains(ar(2)) Then
                         If Not ent.FileName.Contains("collision_client") Then
                             If Not ent.FileName.Contains("crash") Then
