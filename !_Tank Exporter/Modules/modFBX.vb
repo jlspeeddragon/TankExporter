@@ -450,7 +450,7 @@ Module modFBX
                         fbxgrp(i).vertices(v1).v = -uv1_.Y
                         fbxgrp(i).vertices(v1).u2 = uv1_2.X
                         fbxgrp(i).vertices(v1).v2 = -uv1_2.Y
-                        fbxgrp(i).vertices(v1).nx = n1.X
+                        fbxgrp(i).vertices(v1).nx = -n1.X
                         fbxgrp(i).vertices(v1).ny = n1.Y
                         fbxgrp(i).vertices(v1).nz = n1.Z
                         fbxgrp(i).vertices(v1).n = packnormalFBX888(n1)
@@ -469,7 +469,7 @@ Module modFBX
                         fbxgrp(i).vertices(v2).v = -uv2_.Y
                         fbxgrp(i).vertices(v2).u2 = uv2_2.X
                         fbxgrp(i).vertices(v2).v2 = -uv2_2.Y
-                        fbxgrp(i).vertices(v2).nx = n2.X
+                        fbxgrp(i).vertices(v2).nx = -n2.X
                         fbxgrp(i).vertices(v2).ny = n2.Y
                         fbxgrp(i).vertices(v2).nz = n2.Z
                         fbxgrp(i).vertices(v2).n = packnormalFBX888(n2)
@@ -487,7 +487,7 @@ Module modFBX
                         fbxgrp(i).vertices(v3).v = -uv3_.Y
                         fbxgrp(i).vertices(v3).u2 = uv3_2.X
                         fbxgrp(i).vertices(v3).v2 = -uv3_2.Y
-                        fbxgrp(i).vertices(v3).nx = n3.X
+                        fbxgrp(i).vertices(v3).nx = -n3.X
                         fbxgrp(i).vertices(v3).ny = n3.Y
                         fbxgrp(i).vertices(v3).nz = n3.Z
                         fbxgrp(i).vertices(v3).n = packnormalFBX888(n3)
@@ -1065,20 +1065,24 @@ whichone:
             Dim tan, bn As vect3
             Dim v1, v2, v3 As vect3
             Dim u1, u2, u3 As vect3
-            v1.x = fbxgrp(id).vertices(p1).x
+            v1.x = -fbxgrp(id).vertices(p1).x
             v1.y = fbxgrp(id).vertices(p1).y
             v1.z = fbxgrp(id).vertices(p1).z
-            v2.x = fbxgrp(id).vertices(p2).x
+
+            v2.x = -fbxgrp(id).vertices(p2).x
             v2.y = fbxgrp(id).vertices(p2).y
             v2.z = fbxgrp(id).vertices(p2).z
-            v3.x = fbxgrp(id).vertices(p3).x
+
+            v3.x = -fbxgrp(id).vertices(p3).x
             v3.y = fbxgrp(id).vertices(p3).y
             v3.z = fbxgrp(id).vertices(p3).z
             '
             u1.x = fbxgrp(id).vertices(p1).u
             u1.y = fbxgrp(id).vertices(p1).v
+
             u2.x = fbxgrp(id).vertices(p2).u
             u2.y = fbxgrp(id).vertices(p2).v
+
             u3.x = fbxgrp(id).vertices(p3).u
             u3.y = fbxgrp(id).vertices(p3).v
             ComputeTangentBasis(v1, v2, v3, u1, u2, u3, tan, bn) ' calculate tan and biTan
@@ -1472,7 +1476,7 @@ whichone:
             n.Z = Round(n.Z, 4)
             Dim nx, ny, nz As Int32
 
-            nx = s_to_int(-n.X)
+            nx = s_to_int(n.X)
             ny = s_to_int(-n.Y)
             nz = s_to_int(-n.Z)
 

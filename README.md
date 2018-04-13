@@ -3,6 +3,12 @@
 ## A tool to export Tanks from World of Tanks.
 #### This is an ongoing project by me.. Coffee_
 
+### Version 32:
+I Fixed a bug reported by vontamar at GitHub.. Normals were being written with the X flipped! THANK YOU! Reporting bugs makes TE a better tool!
+
+### Version 32:
+I fixed a bug caused by new content pgk names that stop the loading of HD textures.
+
 ### Version 30:
 I reworked how tanks are found in the PKG files.
 As of 4/8/2018 TE is finding 549 tanks.
