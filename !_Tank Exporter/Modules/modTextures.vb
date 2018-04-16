@@ -134,45 +134,43 @@ Module modTextures
                 Return id
             End If
         End If
-        'No HD.. try sd
-        Try
-            ent = frmMain.packages(11)(name.Replace(".dds", "_hd.dds")) ' look in tank package
-
-            log_text.AppendLine("loaded HD from PKG : " + Path.GetFileName(name))
+        'No texture found in res_mods so..... try PKG files
+        Try 'look in HD packages
+            ent = frmMain.packages_HD(current_tank_package)(name.Replace(".dds", "_hd.dds")) ' look in tank package
         Catch ex As Exception
-            log_text.AppendLine("loaded SD from PKG : " + Path.GetFileName(name))
         End Try
+        If ent Is Nothing Then ' look in shared content
+            ent = frmMain.packages(11)(name.Replace(".dds", "_hd.dds")) ' look in tank package
+        End If
         If ent IsNot Nothing Then
+            'it was found as HD abouve
+            log_text.AppendLine("loaded HD from PKG : " + Path.GetFileName(name))
             mStream = New MemoryStream
             ent.Extract(mStream)
-            id = get_texture(mStream, name)
+            id = get_texture(mStream, name) ' get hd texture ID
+            Return id
         Else
+            'look in current pkg for SD texture
             ent = frmMain.packages(current_tank_package)(name) ' look in tank package
-            If ent Is Nothing Then
-                If frmMain.packages_1(current_tank_package) IsNot Nothing Then
-                    ent = frmMain.packages_1(current_tank_package)(name) ' look in 2nd tank package
+            If ent Is Nothing Then 'if not found in current pkg than look in shared
+                If frmMain.packages(11) IsNot Nothing Then
+                    ent = frmMain.packages(11)(name) ' look in 2nd tank package
                 End If
+
             End If
-            If ent Is Nothing Then
-                ent = frmMain.packages(11)(name) ' look in tank combined package
-            End If
-            If ent IsNot Nothing Then
+
+            If ent IsNot Nothing Then ' found SD above
+                log_text.AppendLine("loaded SD from PKG : " + Path.GetFileName(name))
                 mStream = New MemoryStream
                 ent.Extract(mStream)
-                id = get_texture(mStream, name)
+                id = get_texture(mStream, name) ' get SD texture ID
+                Return id
             Else
-                'look in shared_content.pkg
-                ent = frmMain.packages(11)(name)
-                If ent IsNot Nothing Then
-                    mStream = New MemoryStream
-                    ent.Extract(mStream)
-                    id = get_texture(mStream, name)
-                Else
-                    log_text.AppendLine("Cant find:" + name)
-                End If
+                'never found the texture period! Log it!
+                log_text.AppendLine("Cant find:" + name)
             End If
         End If
-        Return id
+        Return 0
     End Function
 
     Public Function get_texture(ByRef ms As MemoryStream, file_path As String) As Integer

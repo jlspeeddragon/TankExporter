@@ -3,6 +3,9 @@
 ## A tool to export Tanks from World of Tanks.
 #### This is an ongoing project by me.. Coffee_
 
+### Version 33:
+I fixed a bug with the HD textures never actually being loaded or exported to the FBX folder. I'm amazed I didn't catch this eariler.
+
 ### Version 32:
 I Fixed a bug reported by vontamar at GitHub.. Normals were being written with the X flipped! THANK YOU! Reporting bugs makes TE a better tool!
 
