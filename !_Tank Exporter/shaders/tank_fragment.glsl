@@ -35,7 +35,7 @@ in vec3 n;
 // rextimmy gets full credit for figuring out how mixing works!
 vec4 applyCamo(vec4 cc,vec4 camoTex){
     vec4 ac = armorcolor;
-    ac.a = 0.50;
+    ac.a = 0.70;
     cc   = ac ;
     cc   = mix(cc, c0 , camoTex.r * c0.a );
     cc   = mix(cc, c1 , camoTex.g * c1.a );

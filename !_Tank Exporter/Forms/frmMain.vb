@@ -183,11 +183,11 @@ Public Class frmMain
         OLD_WINDOW_HEIGHT = pb1.Height
         w_changing = True
     End Sub
+
     Dim w_changing As Boolean = False
 
     Private Sub frmMain_ResizeEnd(sender As Object, e As EventArgs) Handles Me.ResizeEnd
         'gl_stop = False
-
         'If season_Buttons_VISIBLE Then
         WINDOW_HEIGHT_DELTA = pb1.Height - OLD_WINDOW_HEIGHT
         relocate_season_Bottons()
@@ -505,8 +505,8 @@ Public Class frmMain
         SplitContainer1.SplitterDistance = 720
         SplitContainer2.SplitterDistance = SplitContainer2.Height - 160
         Application.DoEvents()
-        Me.Width = 1440
-        Me.Height = 800
+        Me.Width = 1280
+        Me.Height = 720
         pb1.Visible = False
         iconbox.Visible = False
         Application.DoEvents()
@@ -564,6 +564,7 @@ Public Class frmMain
 
         start_up_log.AppendLine("Loading required data..")
 
+        load_type_images() ' get the tank type icons
 
         Application.DoEvents()
         '====================================================================================================
@@ -875,6 +876,35 @@ Public Class frmMain
         Application.DoEvents()
         AddHandler Me.SizeChanged, AddressOf me_size_changed
         window_state = Me.WindowState
+    End Sub
+    Public tank_mini_icons As New ImageList
+    Private Sub load_type_images()
+        tank_mini_icons.ColorDepth = ColorDepth.Depth32Bit
+        tank_mini_icons.ImageSize = New Size(19, 19)
+        Dim sp = Application.StartupPath + "\icons\"
+
+        Dim e = (sp + "heavyTank.png")
+        tank_mini_icons.Images.Add(get_image(e))
+        tank_mini_icons.Images.Add(get_image(e))
+
+        e = (sp + "mediumTank.png")
+        tank_mini_icons.Images.Add(get_image(e))
+        tank_mini_icons.Images.Add(get_image(e))
+
+        e = (sp + "lightTank.png")
+        tank_mini_icons.Images.Add(get_image(e))
+        tank_mini_icons.Images.Add(get_image(e))
+
+        e = (sp + "AT-SPG.png")
+        tank_mini_icons.Images.Add(get_image(e))
+        tank_mini_icons.Images.Add(get_image(e))
+
+        e = (sp + "SPG.png")
+        tank_mini_icons.Images.Add(get_image(e))
+        tank_mini_icons.Images.Add(get_image(e))
+
+
+
     End Sub
 
     Private Sub save_progress(ByVal sender As Object, ByVal e As SaveProgressEventArgs)
@@ -1193,11 +1223,12 @@ tryagain:
         tv.Font = font_holder.Font.Clone
         tv.ContextMenuStrip = conMenu
         tv.DrawMode = TreeViewDrawMode.OwnerDrawText
+        tv.ImageList = tank_mini_icons
         tv.Dock = DockStyle.Fill
         tv.Nodes.Clear()
         tv.BackColor = Color.DimGray
         tv.ForeColor = Color.Black
-        tv.HotTracking = True
+        tv.HotTracking = False
         tv.HideSelection = True
         st.Controls.Add(tv)
         If st_index < 9 Then
@@ -1501,7 +1532,7 @@ tryagain:
                 Application.DoEvents()
                 Application.DoEvents()
                 store_in_treeview(i, treeviews(i))
-                store_in_treeview_1(i, treeviews(i))
+                'store_in_treeview_1(i, treeviews(i))
             Next
             get_tanks_shared()
             'add count to log
@@ -1533,6 +1564,14 @@ tryagain:
         AddHandler tn.NodeMouseClick, AddressOf Me.tv_clicked
         AddHandler tn.NodeMouseHover, AddressOf Me.tv_mouse_enter
         AddHandler tn.MouseLeave, AddressOf Me.tv_mouse_leave
+        tn.BackColor = Color.DimGray
+        tn.CheckBoxes = False
+        tn.ItemHeight = 17
+        tn.HotTracking = True
+        tn.ShowRootLines = False
+        tn.ShowLines = False
+        tn.Margin = New Padding(0)
+        tn.BorderStyle = BorderStyle.None
         Dim cnt As Integer = 0
         Dim fpath = My.Settings.game_path + "/res/packages/vehicles_level_" + i.ToString("00") + ".pkg"
         If File.Exists(fpath) Then
@@ -1556,6 +1595,29 @@ tryagain:
 
         For Each t In tier_list
             Dim n As New TreeNode
+            Select Case t.type ' icon types
+                Case "Heavy"
+                    n.SelectedImageIndex = 0
+                    n.StateImageIndex = 0
+                    n.ImageIndex = 0
+                Case "Medium"
+                    n.SelectedImageIndex = 2
+                    n.StateImageIndex = 2
+                    n.ImageIndex = 2
+                Case "Light"
+                    n.SelectedImageIndex = 4
+                    n.StateImageIndex = 4
+                    n.ImageIndex = 4
+                Case "Destoryer"
+                    n.SelectedImageIndex = 6
+                    n.StateImageIndex = 6
+                    n.ImageIndex = 6
+                Case "Artillary"
+                    n.SelectedImageIndex = 8
+                    n.StateImageIndex = 8
+                    n.ImageIndex = 8
+
+            End Select
             n.Name = t.nation
             n.Text = t.tag
             n.Tag = fpath + ":" + "vehicles/" + get_nation(t.nation) + "/" + t.tag
@@ -1580,6 +1642,7 @@ tryagain:
         tn.Tag = i
 
     End Sub
+
     Private Function get_nation(ByVal n As String) As String
         Select Case n
             Case "usa"
@@ -1609,121 +1672,6 @@ tryagain:
     End Function
 
 
-    Private Sub store_in_treeview_save(ByVal i As Integer, tn As TreeView)
-        AddHandler tn.NodeMouseClick, AddressOf Me.tv_clicked
-        AddHandler tn.NodeMouseHover, AddressOf Me.tv_mouse_enter
-        AddHandler tn.MouseLeave, AddressOf Me.tv_mouse_leave
-        tn.Tag = i
-
-        'make new t_array
-        node_list(i) = New t_array
-
-        Application.DoEvents()
-        Application.DoEvents()
-        tn.FullRowSelect = False
-        Application.DoEvents()
-
-        Dim fpath = My.Settings.game_path + "\res\packages\vehicles_level_" + i.ToString("00") + ".pkg"
-        If File.Exists(fpath) Then
-            packages(i) = Ionic.Zip.ZipFile.Read(fpath)
-            start_up_log.AppendLine("Getting Tank data from: " + fpath)
-        Else
-            start_up_log.AppendLine("Could not find: " + fpath)
-            Return
-        End If
-        Dim fpath_1 = My.Settings.game_path + "\res\packages\vehicles_level_" + i.ToString("00") + "_hd.pkg"
-        If File.Exists(fpath_1) Then
-            packages_HD(i) = Ionic.Zip.ZipFile.Read(fpath_1)
-            start_up_log.AppendLine("Getting Tank data from: " + fpath_1)
-        Else
-            'todo
-        End If
-
-        Dim cnt As Integer = 0
-        ReDim icons(i).img(150)
-        ReDim node_list(i).item(150)
-        alltanks.Append("# Tier " + i.ToString("00") + vbCrLf)
-        'Get tanks fron tier packages
-        For Each entry As ZipEntry In packages(i)
-            If entry.FileName.ToLower.Contains("collision_client/chassis.havok") Then
-                Dim t_name = entry.FileName
-                Dim ta = t_name.Split("/")
-                t_name = ""
-                For j = 0 To 2
-                    t_name += ta(j) + "/"
-                Next
-                Dim n As New TreeNode
-                n.Text = ta(2)
-                n.Tag = fpath + ":" + t_name
-                If (i = 6 And ta(1) = "american") Then
-                    Debug.WriteLine(t_name)
-                End If
-
-                'need this to look up actual tanks game name in the
-                '\res\packages\scripts.pkg\scripts\item_defs\vehicles\***poland***\list.xml
-                Dim s As String = ""
-                Select Case ta(1)
-                    Case "american"
-                        n.Name = "usa"
-                        s = get_user_name(n.Text)
-                    Case "british"
-                        n.Name = "uk"
-                        s = get_user_name(n.Text)
-                    Case "chinese"
-                        n.Name = "china"
-                        s = get_user_name(n.Text)
-                    Case "czech"
-                        n.Name = "czech"
-                        s = get_user_name(n.Text)
-                    Case "french"
-                        n.Name = "france"
-                        s = get_user_name(n.Text)
-                    Case "german"
-                        n.Name = "germany"
-                        s = get_user_name(n.Text)
-                    Case "japan"
-                        n.Name = "japan"
-                        s = get_user_name(n.Text)
-                    Case "poland"
-                        n.Name = "poland"
-                        s = get_user_name(n.Text)
-                    Case "russian"
-                        n.Name = "ussr"
-                        s = get_user_name(n.Text)
-                    Case "sweden"
-                        n.Name = "sweden"
-                        s = get_user_name(n.Text)
-                    Case "italy"
-                        n.Name = "italy"
-                        s = get_user_name(n.Text)
-                End Select
-                If s.Length > 0 Then ' only save what actually exist
-                    TOTAL_TANKS_FOUND += 1
-                    node_list(i).item(cnt) = New t_items_
-                    Dim na = n.Text.Split("_")
-                    If na(0).Length = 3 Then
-                        na(0) += "99"
-                    End If
-                    node_list(i).item(cnt).name = na(0)
-                    node_list(i).item(cnt).node = n
-                    node_list(i).item(cnt).package = packages(i).Name
-                    icons(i).img(cnt) = get_tank_icon(n.Text).Clone
-                    If icons(i).img(cnt) IsNot Nothing Then
-                        node_list(i).item(cnt).icon = icons(i).img(cnt).Clone
-                        node_list(i).item(cnt).icon.Tag = current_png_path
-                        cnt += 1
-                    Else
-                        start_up_log.AppendLine("!!!!! Missing Tank Icon PNG !!!!! :" + current_png_path)
-                    End If
-                End If
-            End If
-        Next
-        ReDim Preserve node_list(i).item(cnt)
-
-        Application.DoEvents()
-        ReDim Preserve icons(i).img(cnt)
-        Application.DoEvents()
-    End Sub
     Private Sub store_in_treeview_1(ByVal i As Integer, tn As TreeView)
 
         Dim fpath = My.Settings.game_path + "\res\packages\vehicles_level_" + i.ToString("00") + "_1.pkg"
@@ -2009,6 +1957,7 @@ tryagain:
                 tier_list(count).username = item.un
                 tier_list(count).nation = item.nation
                 tier_list(count).tier = t
+                tier_list(count).type = item.type
                 count += 1
             Next
             ReDim Preserve tier_list(count - 1)
@@ -2065,6 +2014,7 @@ tryagain:
         log_text.AppendLine("Odd Tank: " + fname)
         Return "0"
     End Function
+
 
     Private Sub tv_clicked(ByVal sender As Object, ByVal e As TreeNodeMouseClickEventArgs)
         Dim tn = DirectCast(sender, TreeView)
@@ -2137,7 +2087,7 @@ tryagain:
 
     Private Function get_tank_icon(ByVal name As String) As Bitmap
         For Each entry In gui_pkg
-            If entry.FileName.Contains(name) _
+            If entry.FileName.Contains(name) And entry.FileName.Contains("/icons/vehicle/") _
             And Not entry.FileName.Contains("small") _
             And Not entry.FileName.Contains("contour") _
             And Not entry.FileName.Contains("unique") _
@@ -3466,6 +3416,17 @@ tryagain:
         object_count = 0
     End Sub
 
+    Private Function validate_path(ByVal name As String)
+        Dim ent = packages(current_tank_package)(name)
+        If ent IsNot Nothing Then
+            Return name
+        End If
+        ent = packages(11)(name)
+        If ent IsNot Nothing Then
+            Return name
+        End If
+        Return ""
+    End Function
     '##################################################################################
     Public Sub process_tank(ByVal save_tank As Boolean)
         'need to set these before loading anyhing
@@ -3555,7 +3516,7 @@ tryagain:
                 Select _
                 g_name = row.Field(Of String)("gun_name"), _
                 model = row.Field(Of String)("model"), _
-                tile = row.Field(Of String)("gun_camouflage")
+                tile = row.Field(Of String)("gun_camouflage") Distinct
         cnt = 0
         '-------------------------------------------------------
         'guns
@@ -3625,8 +3586,7 @@ tryagain:
             cnt = 0
 
         End Try
-
-        '-------------------------------------------------------
+        '-------------------------------------
         '----- turrets
         tbl = t.Tables("turret_model")
         If tbl Is Nothing Then
@@ -3649,6 +3609,55 @@ tryagain:
         End If
         cnt = 0
         '-------------------------------------------------------
+        'setup treeview and its nodes
+        Dim selected_turret, selected_gun As Integer
+        If Not save_tank Then
+            frmComponents.tv_guns.Nodes.Clear()
+            frmComponents.tv_turrets.Nodes.Clear()
+
+            Dim cn As Integer = 0
+            For i = 0 To guns.Length - 2
+                If validate_path(guns(i)) = guns(i) Then
+                    Dim n = New TreeNode
+
+                    n.Text = Path.GetFileNameWithoutExtension(guns(i))
+                    n.Tag = i
+                    'tv_guns.Nodes.Add(n)
+                    frmComponents.tv_guns.Nodes.Add(n)
+                    cn += 1
+                End If
+            Next
+            'frmComponents.tv_guns.Nodes.Add(tv_guns)
+            frmComponents.tv_guns.SelectedNode = frmComponents.tv_guns.Nodes(cn - 1)
+            frmComponents.tv_guns.SelectedNode.Checked = True
+            selected_gun = cn
+            '-------------------------------------------------------
+            cn = 0
+            For i = 0 To turrets.Length - 2
+                If validate_path(turrets(i)) = turrets(i) Then
+                    Dim n = New TreeNode
+                    n.Text = Path.GetFileNameWithoutExtension(turrets(i))
+                    n.Tag = i
+                    frmComponents.tv_turrets.Nodes.Add(n)
+                    cn += 1
+                End If
+            Next
+            frmComponents.tv_turrets.SelectedNode = frmComponents.tv_turrets.Nodes(cn - 1)
+            frmComponents.tv_turrets.SelectedNode.Checked = True
+            selected_turret = cn
+            '-------------------------------------------------------
+            If frmFBX.Visible Then ' if fbx export form is visble, place the components form next to it
+                Dim l = frmFBX.Location
+                l.X -= frmComponents.Width
+                frmComponents.Location = l
+            Else
+                frmComponents.Location = Me.Location + New Point(200, 200)
+            End If
+            frmComponents.ShowDialog(Me)
+            If frmFBX.Visible Then
+                frmFBX.Location = Me.Location
+            End If
+        End If
         '----- chassis
 
         tbl = t.Tables("chassis")
@@ -3923,17 +3932,28 @@ tryagain:
         file_name = hull_name
         build_primitive_data(True) ' -- chassis
 
-        file_name = turret_name
-        build_primitive_data(True) ' -- chassis
+        If save_tank Then
 
-        For gn = guns.Length - 2 To 0 Step -1
-            file_name = guns(gn)
-            gun_name = file_name
-            If build_primitive_data(True) Then ' -- chassis
-                Exit For
-            End If
+            file_name = turret_name
+            build_primitive_data(True) ' -- chassis
 
-        Next
+            For gn = guns.Length - 2 To 0 Step -1
+                file_name = guns(gn)
+                gun_name = file_name
+                If build_primitive_data(True) Then ' -- chassis
+                    Exit For
+                End If
+
+            Next
+        Else
+            file_name = turrets(frmComponents.tv_turrets.SelectedNode.Tag)
+            build_primitive_data(True) ' -- turret
+
+            file_name = guns(frmComponents.tv_guns.SelectedNode.Tag)
+            build_primitive_data(True) ' -- gun
+
+        End If
+
 
         If TESTING Then
             file_name = track_info.left_path1

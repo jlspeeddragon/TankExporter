@@ -618,4 +618,51 @@ Module modTextures
         'GC.Collect()
     End Function
 
+    Public Function get_image(ByVal file As String) As Image
+        'Dim s As String = ""
+        's = Gl.glGetError
+        Dim image_id As Integer = -1
+        'Dim app_local As String = Application.StartupPath.ToString
+
+        Dim texID As UInt32
+        texID = Ilu.iluGenImage() ' /* Generation of one image name */
+        Il.ilBindImage(texID) '; /* Binding of image name */
+        Dim success = Il.ilGetError
+        Il.ilLoadImage(file)
+        success = Il.ilGetError
+        If success = Il.IL_NO_ERROR Then
+            'Ilu.iluFlipImage()
+            'Ilu.iluMirror()
+            Dim width As Integer = Il.ilGetInteger(Il.IL_IMAGE_WIDTH)
+            Dim height As Integer = Il.ilGetInteger(Il.IL_IMAGE_HEIGHT)
+
+            ' Create the bitmap.
+            Dim Bitmapi = New System.Drawing.Bitmap(width, height, PixelFormat.Format32bppArgb)
+            Dim rect As Rectangle = New Rectangle(0, 0, width, height)
+
+            ' Store the DevIL image data into the bitmap.
+            Dim bitmapData As BitmapData = Bitmapi.LockBits(rect, ImageLockMode.WriteOnly, PixelFormat.Format32bppArgb)
+
+            Il.ilConvertImage(Il.IL_BGRA, Il.IL_UNSIGNED_BYTE)
+            Il.ilCopyPixels(0, 0, 0, width, height, 1, Il.IL_BGRA, Il.IL_UNSIGNED_BYTE, bitmapData.Scan0)
+            Bitmapi.UnlockBits(bitmapData)
+
+            'If your image contains alpha channel you can replace IL_RGB with IL_RGBA */
+
+            Gl.glBindTexture(Gl.GL_TEXTURE_2D, 0)
+            Il.ilBindImage(0)
+            Ilu.iluDeleteImage(texID)
+            GC.Collect()
+            Dim istream As New MemoryStream
+            Bitmapi.Save(istream, ImageFormat.Png)
+
+            Return Image.FromStream(istream)
+        Else
+            MsgBox("png load error!", MsgBoxStyle.Exclamation, "Oh No!!")
+            Return Nothing
+        End If
+        Return Nothing
+    End Function
+
+
 End Module

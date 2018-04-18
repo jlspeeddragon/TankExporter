@@ -22,7 +22,7 @@ Module modPrimWriter
     Public Sub write_primitives(ByVal ID As Integer)
         Dim tsa() As Char
         Dim dummy As UInt32 = 0
-        Dim i, j, k, uv2_cnt As UInt32
+        Dim i, j As UInt32
         For i = 1 To object_count
             'create_TBNS(i) ' not sure we need to do this again
         Next

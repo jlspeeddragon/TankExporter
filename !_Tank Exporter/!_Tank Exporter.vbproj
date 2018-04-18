@@ -11,7 +11,7 @@
     <AssemblyName>!_Tank Exporter</AssemblyName>
     <FileAlignment>512</FileAlignment>
     <MyType>WindowsForms</MyType>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <IsWebBootstrapper>false</IsWebBootstrapper>
     <TargetFrameworkProfile />
     <PublishUrl>publish\</PublishUrl>
@@ -24,7 +24,7 @@
     <UpdatePeriodically>false</UpdatePeriodically>
     <UpdateRequired>false</UpdateRequired>
     <MapFileExtensions>true</MapFileExtensions>
-    <ApplicationRevision>33</ApplicationRevision>
+    <ApplicationRevision>34</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
@@ -189,6 +189,12 @@
     <Compile Include="Forms\FrmCamo.vb">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="Forms\frmComponents.Designer.vb">
+      <DependentUpon>frmComponents.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\frmComponents.vb">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="Forms\frmEditVisual.Designer.vb">
       <DependentUpon>frmEditVisual.vb</DependentUpon>
     </Compile>
@@ -291,6 +297,9 @@
       <DependentUpon>FrmCamo.vb</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
+    <EmbeddedResource Include="Forms\frmComponents.resx">
+      <DependentUpon>frmComponents.vb</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Forms\frmEditVisual.resx">
       <DependentUpon>frmEditVisual.vb</DependentUpon>
     </EmbeddedResource>
@@ -351,6 +360,9 @@
     <Content Include="html\imgs\become_a_patron_button.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="html\imgs\components.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="html\imgs\extract_panel.jpg">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -366,6 +378,21 @@
     <None Include="resources\box_solid.png" />
     <None Include="resources\box_wire.png" />
     <Content Include="html\textures.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="icons\AT-SPG.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="icons\heavyTank.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="icons\lightTank.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="icons\mediumTank.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="icons\SPG.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="resources\Cbutt_down.png">

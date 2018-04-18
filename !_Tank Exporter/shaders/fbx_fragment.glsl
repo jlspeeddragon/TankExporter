@@ -1,5 +1,5 @@
-﻿// tank_fragment.glsl
-//Used to light all models
+﻿//fbx_fragment.glsl
+//Used to light all FBX imports
 #version 130
 uniform sampler2D colorMap;
 uniform sampler2D normalMap;
@@ -53,7 +53,7 @@ if (is_GAmap == 0 )
         bump.y *= - 1.0;
     } else {
         a=bumpMap.r;
-        bumpMap.ga = bumpMap.ag *2.0 - 1.0;
+        bumpMap.ag = bumpMap.ag *2.0 - 1.0;
         bump.xy    = bumpMap.ag;
         bump.z     = sqrt(1.0 - dot(bumpMap.ga, bumpMap.ga));
         bump       = normalize(bump);
@@ -88,6 +88,6 @@ if (is_GAmap == 0 )
 
     } //next light
 
-gl_FragColor = (Iamb + sum) * T_level * 0.7;   // write mixed Color:  
+gl_FragColor = (Iamb + sum) * T_level;   // write mixed Color:  
 }
 

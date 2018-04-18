@@ -3,6 +3,12 @@
 ## A tool to export Tanks from World of Tanks.
 #### This is an ongoing project by me.. Coffee_
 
+### Version 34:
+Added type icons to the tank list.
+Added Component load window to select which gun and turret that were found for the tank.
+Fixed a minor bug in the shader for the tanks.
+Updated the help HTML.
+
 ### Version 33:
 I fixed a bug with the HD textures never actually being loaded or exported to the FBX folder. I'm amazed I didn't catch this eariler.
 
