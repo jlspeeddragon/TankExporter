@@ -165,6 +165,12 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_5868D1F6A21A4E3F88AB46FB8D278E91"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_5A1B3D69D31742F09A5F603E7F96F156"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -339,12 +345,6 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_E07BF504C58B4ED48B0C0BDE948EDA5F"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
         "MsmKey" = "8:_F382F0CA02AE4C1EA62F37FCF5CFC7C2"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -478,7 +478,7 @@
         "DisplayName" = "8:Release"
         "IsDebugOnly" = "11:FALSE"
         "IsReleaseOnly" = "11:TRUE"
-        "OutputFilename" = "8:..\\TankExporter_034.msi"
+        "OutputFilename" = "8:..\\TankExporter_035.msi"
         "PackageFilesAs" = "3:2"
         "PackageFileSize" = "3:-2147483648"
         "CabType" = "3:1"
@@ -1068,6 +1068,26 @@
             "TargetName" = "8:tanknames.txt"
             "Tag" = "8:"
             "Folder" = "8:_868A44CB35C24A0A88284122FF9C7813"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_5868D1F6A21A4E3F88AB46FB8D278E91"
+            {
+            "SourcePath" = "8:..\\!_Tank Exporter\\html\\imgs\\extract_panel.png"
+            "TargetName" = "8:extract_panel.png"
+            "Tag" = "8:"
+            "Folder" = "8:_589FDE83079A4FB68CA57637595D2D5A"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -1688,26 +1708,6 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_E07BF504C58B4ED48B0C0BDE948EDA5F"
-            {
-            "SourcePath" = "8:..\\!_Tank Exporter\\html\\imgs\\extract_panel.jpg"
-            "TargetName" = "8:extract_panel.jpg"
-            "Tag" = "8:"
-            "Folder" = "8:_589FDE83079A4FB68CA57637595D2D5A"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_F382F0CA02AE4C1EA62F37FCF5CFC7C2"
             {
             "SourcePath" = "8:..\\!_Tank Exporter\\resources\\tower.png"
@@ -1912,15 +1912,15 @@
         {
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:Tank Exporter"
-        "ProductCode" = "8:{9EE2990A-5A12-421F-ADEE-DF8B6359B684}"
-        "PackageCode" = "8:{4D488CAE-66DF-49BA-A3C3-94AD5CB80524}"
+        "ProductCode" = "8:{CCD940D6-E36A-4A3F-A82A-59E4085F8FD6}"
+        "PackageCode" = "8:{640CBDE8-2697-480D-8630-3CE8B7D0CA1F}"
         "UpgradeCode" = "8:{6ABAF23A-CB3D-4411-B78A-4855B5B5A0CD}"
         "AspNetVersion" = "8:4.0.30319.0"
         "RestartWWWService" = "11:FALSE"
         "RemovePreviousVersions" = "11:TRUE"
         "DetectNewerInstalledVersion" = "11:TRUE"
         "InstallAllUsers" = "11:FALSE"
-        "ProductVersion" = "8:1.0.34"
+        "ProductVersion" = "8:1.0.35"
         "Manufacturer" = "8:Coffee_"
         "ARPHELPTELEPHONE" = "8:"
         "ARPHELPLINK" = "8:"

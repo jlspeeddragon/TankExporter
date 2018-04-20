@@ -50,7 +50,9 @@ Public Class frmTextureViewer
         frmMain.pb2.Dock = DockStyle.Fill
         frmMain.pb2.Location = New Point(0, 0)
         rect_location = New Point((frmMain.pb2.Width - rect_size.X) / 2, (frmMain.pb2.Height - rect_size.Y) / 2)
-        'rect_location = sBox.location
+        drawing_ = False
+        frmMain.found_triangle_tv = 0
+        current_vertex = 0
         draw()
         draw()
 
@@ -92,12 +94,24 @@ Public Class frmTextureViewer
         center.y = 0
 
     End Sub
+    Dim drawing_ As Boolean = False
     Public Sub draw()
-        If Not _Started Then Return
-        If Not (Wgl.wglMakeCurrent(pb2_hDC, pb2_hRC)) Then
-            MessageBox.Show("Unable to make rendering context current")
+        If drawing_ Then Return
+        drawing_ = True
+        If Not _Started Then
+            drawing_ = False
             Return
         End If
+        If Not Me.Visible Then
+            drawing_ = False
+            Return
+        End If
+        If Not (Wgl.wglMakeCurrent(pb2_hDC, pb2_hRC)) Then
+            MessageBox.Show("Unable to make rendering context current")
+            drawing_ = False
+            Return
+        End If
+
         'set ortho mode.
         '#######################################################################################
         check_if_centering_on_selection()
@@ -110,7 +124,9 @@ Public Class frmTextureViewer
         Gl.glTexEnvi(Gl.GL_TEXTURE_ENV, Gl.GL_TEXTURE_ENV_MODE, Gl.GL_REPLACE)
         '#######################################################################################
         'set rendering modals
-
+        If m_show_uvs.Checked Or m_uvs_only.Checked Then
+            get_triangle()
+        End If
         Gl.glActiveTexture(Gl.GL_TEXTURE0)
         Gl.glDisable(Gl.GL_LIGHTING)
         Gl.glPolygonMode(Gl.GL_FRONT_AND_BACK, Gl.GL_FILL)
@@ -124,9 +140,10 @@ Public Class frmTextureViewer
         '#######################################################################################
         'draw checkboard background
         Gl.glBindTexture(Gl.GL_TEXTURE_2D, checkerboard_id)
+
         Gl.glBegin(Gl.GL_QUADS)
+
         Dim v As Point = frmMain.pb2.Size
-        'Dim o = 
         Dim w As Single = v.X / 320.0 ' size of the checker board
         Dim h As Single = v.Y / 320.0 ' size of the checker board
         'h = h / w
@@ -151,10 +168,7 @@ Public Class frmTextureViewer
         Gl.glBindTexture(Gl.GL_TEXTURE_2D, current_image)
 
 
-        'Gl.glEnable(Gl.GL_BLEND)
-
         Gl.glBlendFunc(Gl.GL_SRC_ALPHA, Gl.GL_ONE_MINUS_SRC_ALPHA)
-        Gl.glColor4f(0.5, 0.5, 0.5, 0.0)
         Dim u4() As Single = {0.0, 1.0}
         Dim u3() As Single = {1.0, 1.0}
         Dim u2() As Single = {1.0, 0.0}
@@ -206,6 +220,8 @@ Public Class frmTextureViewer
         '#######################################################################################
         'flip the buffers
         Gdi.SwapBuffers(pb2_hDC)
+        drawing_ = False
+
     End Sub
     Public Sub draw_save()
         If Not _Started Then Return
@@ -304,11 +320,70 @@ Public Class frmTextureViewer
         'Gdi.SwapBuffers(pb2_hDC)
     End Sub
 
+
+    Public Sub get_triangle()
+        If current_tank_part = 0 Then
+            Return
+        End If
+        If Not _Started Then Return
+
+        Gl.glClearColor(0.0!, 0.0!, 0.0!, 0.0!)
+        Gl.glClear(Gl.GL_COLOR_BUFFER_BIT Or Gl.GL_DEPTH_BUFFER_BIT)
+        Gl.glDisable(Gl.GL_BLEND)
+        Gl.glDisable(Gl.GL_DEPTH_TEST)
+        Gl.glDisable(Gl.GL_LIGHTING)
+        Gl.glPolygonMode(Gl.GL_FRONT_AND_BACK, Gl.GL_FILL)
+        Dim r, b, g, a As Byte
+        Dim cnt = _object(current_tank_part).count
+        Gl.glPushMatrix()
+        Gl.glTranslatef(rect_location.X + center.x, -rect_location.Y - center.y, 0.0F)
+        Gl.glScalef(rect_size.X, rect_size.Y, 1.0F)
+
+        Gl.glBegin(Gl.GL_TRIANGLES)
+        For i As UInt32 = 1 To cnt
+            r = i And &HFF
+            g = (i And &HFF00) >> 8
+            b = (i And &HFF0000) >> 16
+            Gl.glColor3ub(r, g, b)
+            Dim u1 As New uv_
+            Dim u2 As New uv_
+            Dim u3 As New uv_
+            u1.u = _object(current_tank_part).tris(i).uv1.u
+            u1.v = _object(current_tank_part).tris(i).uv1.v
+            u2.u = _object(current_tank_part).tris(i).uv2.u
+            u2.v = _object(current_tank_part).tris(i).uv2.v
+            u3.u = _object(current_tank_part).tris(i).uv3.u
+            u3.v = _object(current_tank_part).tris(i).uv3.v
+
+            Gl.glVertex2f(u1.u, -u1.v)
+            Gl.glVertex2f(u2.u, -u2.v)
+            Gl.glVertex2f(u3.u, -u3.v)
+        Next
+        Gl.glEnd()
+        Gl.glPopMatrix()
+        'now figure out if the cursor is on a triangle
+        Dim x, y As Integer
+        x = frmMain.mouse_find_location.X
+        y = frmMain.mouse_find_location.Y
+        Dim viewport(4) As Integer
+        Dim pixel() As Byte = {0, 0, 0, 0}
+        Gl.glGetIntegerv(Gl.GL_VIEWPORT, viewport)
+        Gl.glReadPixels(x, viewport(3) - y, 1, 1, Gl.GL_RGBA, Gl.GL_UNSIGNED_BYTE, pixel)
+        frmMain.found_triangle_tv = pixel(0) + (pixel(1) * 256) + (pixel(2) * 65536)
+        'Gdi.SwapBuffers(pb2_hDC)
+        'frmMain.Text = frmMain.found_triangle_tv.ToString
+    End Sub
+
     Private Sub draw_uvs()
         Dim cnt = _object(current_tank_part).count
         Gl.glPolygonMode(Gl.GL_FRONT_AND_BACK, Gl.GL_LINE)
         Gl.glDisable(Gl.GL_BLEND)
         Gl.glColor3f(0.8, 0.8, 0.0)
+
+        Gl.glPushMatrix()
+        Gl.glTranslatef(rect_location.X + center.x, -rect_location.Y - center.y, 0.0F)
+        Gl.glScalef(rect_size.X, rect_size.Y, 1.0F)
+
         Gl.glBegin(Gl.GL_TRIANGLES)
         For i As UInt32 = 1 To cnt
             Dim u1 As New uv_
@@ -321,19 +396,13 @@ Public Class frmTextureViewer
             u3.u = _object(current_tank_part).tris(i).uv3.u
             u3.v = _object(current_tank_part).tris(i).uv3.v
 
-            u1.u = rect_location.X + (u1.u * rect_size.X) + center.x
-            u2.u = rect_location.X + (u2.u * rect_size.X) + center.x
-            u3.u = rect_location.X + (u3.u * rect_size.X) + center.x
-
-            u1.v = -rect_location.Y + (-u1.v * rect_size.Y) - center.y
-            u2.v = -rect_location.Y + (-u2.v * rect_size.Y) - center.y
-            u3.v = -rect_location.Y + (-u3.v * rect_size.Y) - center.y
-
-            Gl.glVertex2f(u1.u, u1.v)
-            Gl.glVertex2f(u2.u, u2.v)
-            Gl.glVertex2f(u3.u, u3.v)
+            Gl.glVertex2f(u1.u, -u1.v)
+            Gl.glVertex2f(u2.u, -u2.v)
+            Gl.glVertex2f(u3.u, -u3.v)
         Next
         Gl.glEnd()
+        Gl.glPopMatrix()
+
         If current_part > 0 Then
             draw_current_vertex()
         End If
@@ -388,26 +457,29 @@ Public Class frmTextureViewer
     End Sub
 
     Private Sub frmTextureViewer_Load(sender As Object, e As EventArgs) Handles Me.Load
-        Me.KeyPreview = True    'so i catch keyboard before despatching it
+        Me.KeyPreview = True    'so I catch keyboard before despatching it
 
+    End Sub
+
+    Private Sub frmTextureViewer_Resize(sender As Object, e As EventArgs) Handles Me.Resize
+        draw()
+        Application.DoEvents()
+        drawing_ = False
+    End Sub
+
+    Private Sub frmTextureViewer_ResizeBegin(sender As Object, e As EventArgs) Handles Me.ResizeBegin
+        frmMain.found_triangle_tv = 0
+        current_vertex = 0
     End Sub
 
 
 
     Private Sub frmTextureViewer_ResizeEnd(sender As Object, e As EventArgs) Handles Me.ResizeEnd
-        'frmMain.pb2.Width = Me.ClientSize.Width
-        'frmMain.pb2.Height = Me.ClientSize.Height
-        'frmMain.pb2.Location = New Point(0, 0)
-        'rect_location = New Point((frmMain.pb2.Width - rect_size.X) / 2, (frmMain.pb2.Height - rect_size.Y) / 2)
         draw()
+        drawing_ = False
     End Sub
 
     Private Sub frmTextureViewer_SizeChanged(sender As Object, e As EventArgs) Handles Me.SizeChanged
-        'frmMain.pb2.Width = Me.ClientSize.Width
-        'frmMain.pb2.Height = Me.ClientSize.Height
-        'frmMain.pb2.Location = New Point(0, 0)
-        'rect_location = New Point((frmMain.pb2.Width - rect_size.X) / 2, (frmMain.pb2.Height - rect_size.Y) / 2)
-        draw()
     End Sub
 
 
@@ -503,5 +575,18 @@ Public Class frmTextureViewer
             m_uvs_only.ForeColor = Color.Black
         End If
         draw()
+    End Sub
+
+    Private Sub m_show_uvs_Click(sender As Object, e As EventArgs) Handles m_show_uvs.Click
+        If m_show_uvs.Checked Then
+            m_uvs_only.Checked = False
+        End If
+    End Sub
+
+    Private Sub m_uvs_only_Click(sender As Object, e As EventArgs) Handles m_uvs_only.Click
+        If m_uvs_only.Checked Then
+            m_show_uvs.Checked = False
+        End If
+
     End Sub
 End Class

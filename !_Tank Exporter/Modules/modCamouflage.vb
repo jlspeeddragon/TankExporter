@@ -203,8 +203,8 @@ skip:
         If frmTextureViewer.Visible Then
             frmMain.pb2.Visible = True
             frmMain.pb2.Dock = DockStyle.Fill
-            frmTextureViewer.draw()
-            frmTextureViewer.draw()
+            'frmTextureViewer.draw()
+            'frmTextureViewer.draw()
             'frmTextureViewer.draw()
         End If
         '===================================
@@ -291,7 +291,7 @@ skip:
     Private Function make_mixed_texture(id As Integer) As Integer
         frmMain.pb2.Visible = False
         frmMain.pb2.BringToFront()
-        frmMain.gl_stop = True
+        'frmMain.gl_stop = True
         frmMain.update_thread.Suspend()
         'While gl_busy
         '    Application.DoEvents()

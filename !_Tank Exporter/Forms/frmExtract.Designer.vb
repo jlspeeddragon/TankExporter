@@ -25,16 +25,17 @@ Partial Class frmExtract
         Me.components = New System.ComponentModel.Container()
         Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(frmExtract))
         Me.GroupBox1 = New System.Windows.Forms.GroupBox()
+        Me.no_models = New System.Windows.Forms.RadioButton()
         Me.lod_0_only = New System.Windows.Forms.RadioButton()
         Me.all_lods_rb = New System.Windows.Forms.RadioButton()
         Me.TT = New System.Windows.Forms.ToolTip(Me.components)
-        Me.no_models = New System.Windows.Forms.RadioButton()
         Me.ext_chassis = New System.Windows.Forms.CheckBox()
         Me.ext_hull = New System.Windows.Forms.CheckBox()
         Me.ext_turret = New System.Windows.Forms.CheckBox()
         Me.ext_gun = New System.Windows.Forms.CheckBox()
         Me.extract_btn = New System.Windows.Forms.Button()
         Me.cancel_btn = New System.Windows.Forms.Button()
+        Me.create_work_area_cb = New System.Windows.Forms.CheckBox()
         Me.GroupBox1.SuspendLayout()
         Me.SuspendLayout()
         '
@@ -50,6 +51,16 @@ Partial Class frmExtract
         Me.GroupBox1.TabIndex = 0
         Me.GroupBox1.TabStop = False
         Me.GroupBox1.Text = "LODs"
+        '
+        'no_models
+        '
+        Me.no_models.AutoSize = True
+        Me.no_models.Location = New System.Drawing.Point(15, 65)
+        Me.no_models.Name = "no_models"
+        Me.no_models.Size = New System.Drawing.Size(112, 17)
+        Me.no_models.TabIndex = 2
+        Me.no_models.Text = "Extract No Models"
+        Me.no_models.UseVisualStyleBackColor = True
         '
         'lod_0_only
         '
@@ -72,16 +83,6 @@ Partial Class frmExtract
         Me.all_lods_rb.TabIndex = 0
         Me.all_lods_rb.Text = "All available LODs"
         Me.all_lods_rb.UseVisualStyleBackColor = True
-        '
-        'no_models
-        '
-        Me.no_models.AutoSize = True
-        Me.no_models.Location = New System.Drawing.Point(15, 65)
-        Me.no_models.Name = "no_models"
-        Me.no_models.Size = New System.Drawing.Size(112, 17)
-        Me.no_models.TabIndex = 2
-        Me.no_models.Text = "Extract No Models"
-        Me.no_models.UseVisualStyleBackColor = True
         '
         'ext_chassis
         '
@@ -151,12 +152,28 @@ Partial Class frmExtract
         Me.cancel_btn.Text = "Cancel"
         Me.cancel_btn.UseVisualStyleBackColor = True
         '
+        'create_work_area_cb
+        '
+        Me.create_work_area_cb.AutoSize = True
+        Me.create_work_area_cb.Checked = True
+        Me.create_work_area_cb.CheckState = System.Windows.Forms.CheckState.Checked
+        Me.create_work_area_cb.ForeColor = System.Drawing.Color.Red
+        Me.create_work_area_cb.Location = New System.Drawing.Point(27, 209)
+        Me.create_work_area_cb.Name = "create_work_area_cb"
+        Me.create_work_area_cb.Size = New System.Drawing.Size(111, 17)
+        Me.create_work_area_cb.TabIndex = 7
+        Me.create_work_area_cb.Text = "Create Work Area"
+        Me.TT.SetToolTip(Me.create_work_area_cb, "Creates a fold called Work Area in the tanks root folder." & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "It copies the AM map t" & _
+        "o this folder as a PNG for editing.")
+        Me.create_work_area_cb.UseVisualStyleBackColor = True
+        '
         'frmExtract
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.BackColor = System.Drawing.Color.FromArgb(CType(CType(30, Byte), Integer), CType(CType(30, Byte), Integer), CType(CType(30, Byte), Integer))
         Me.ClientSize = New System.Drawing.Size(156, 262)
+        Me.Controls.Add(Me.create_work_area_cb)
         Me.Controls.Add(Me.cancel_btn)
         Me.Controls.Add(Me.extract_btn)
         Me.Controls.Add(Me.ext_gun)
@@ -188,4 +205,5 @@ Partial Class frmExtract
     Friend WithEvents ext_gun As System.Windows.Forms.CheckBox
     Friend WithEvents extract_btn As System.Windows.Forms.Button
     Friend WithEvents cancel_btn As System.Windows.Forms.Button
+    Friend WithEvents create_work_area_cb As System.Windows.Forms.CheckBox
 End Class

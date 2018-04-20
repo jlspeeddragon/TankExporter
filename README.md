@@ -5,6 +5,11 @@
 
 #### This is an ongoing project by me.. Coffee_
 
+### Version 35:
+Exporting to the res_mods folder now has an option to create a Work Area and copy the AM_HD and AO_HD to that folder in PNG format. This saves having to do it maually. You may not need to edit the AO map depending on what your doing but most likely, if you are painting on the AM map, you will need to fix the alpha change in the AO map.
+When using the Texture Viewer and Show UVs is on.. mousing over triangles on the texture now highlights them in the model view window. This will make it easier to figure out where the UVs are located on the tank. The method of mousing over the tank model still works as before and hightlights the UV map where that triangle is mapped.
+
+
 ### Version 34:
 Added type icons to the tank list.
 Added Component load window to select which gun and turret that were found for the tank.

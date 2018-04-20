@@ -29,6 +29,7 @@ Imports System.Globalization
 
 Public Class frmMain
 #Region "variables"
+    Dim pb2_has_focus As Boolean = False
     Dim out_string As New StringBuilder
     Public Background_image_id As Integer
     Private window_state As Integer
@@ -40,9 +41,10 @@ Public Class frmMain
     Dim mouse As vec2
     Public move_cam_z, M_DOWN, move_mod, z_move As Boolean
     Private mouse_down As Boolean = False
-    Private mouse_delta As New Point
+    Public mouse_delta As New Point
     Private mouse_pos As New Point
-
+    Public mouse_find_location As New Point
+    Public found_triangle_tv As Integer
     Private TOTAL_TANKS_FOUND As Integer = 0
 
     Public Shared packages(12) As ZipFile
@@ -2133,8 +2135,8 @@ tryagain:
         Gl.glLineWidth(1)
         Gl.glPointSize(2.0)
         Gl.glClearColor(0.0F, 0.0F, 0.0F, 1.0F)
-
         Gl.glClear(Gl.GL_COLOR_BUFFER_BIT Or Gl.GL_DEPTH_BUFFER_BIT)
+
         Gl.glDisable(Gl.GL_BLEND)
 
         Gl.glEnable(Gl.GL_LIGHTING)
@@ -2478,7 +2480,7 @@ tryagain:
         End If
 
         'Draw Surface Normals?
-        If normal_shader_mode > 0 Then
+        If MODEL_LOADED And normal_shader_mode > 0 Then
             Gl.glUseProgram(shader_list.normal_shader)
             Gl.glUniform1i(normal_shader_mode_id, normal_shader_mode)
             If MODEL_LOADED Then
@@ -2516,7 +2518,7 @@ tryagain:
         Gl.glDisable(Gl.GL_LIGHTING)
         Gl.glActiveTexture(Gl.GL_TEXTURE0)
         Gl.glBindTexture(Gl.GL_TEXTURE_2D, 0)
-        If frmTextureViewer.Visible And (frmTextureViewer.m_show_uvs.Checked Or frmTextureViewer.m_uvs_only.Checked) Then
+        If MODEL_LOADED And frmTextureViewer.Visible And (frmTextureViewer.m_show_uvs.Checked Or frmTextureViewer.m_uvs_only.Checked) Then
             Gl.glEnable(Gl.GL_BLEND)
             Gl.glColor4f(0.8, 0.4, 0.0, 0.8)
 
@@ -2557,7 +2559,11 @@ tryagain:
         End If
 
         Gl.glPopMatrix()
-
+        If MODEL_LOADED Then
+            draw_triangle_mouse_texture_window()
+        Else
+            found_triangle_tv = 0
+        End If
         '######################################################################### ORTHO MODE
         '######################################################################### ORTHO MODE
         '######################################################################### ORTHO MODE
@@ -2596,6 +2602,7 @@ tryagain:
         glutPrint(10, -20, view_status_string, 0.0, 1.0, 0.0, 1.0) ' view status
 
         Gl.glDisable(Gl.GL_BLEND)
+        Gl.glDisable(Gl.GL_DEPTH_TEST)
 
         If show_textures_cb.Checked Then
             draw_texture_screen()
@@ -2632,6 +2639,14 @@ tryagain:
                 End If
             Next
         End If
+        If pb2_has_focus Then
+            frmTextureViewer.draw()
+            If Not (Wgl.wglMakeCurrent(pb1_hDC, pb1_hRC)) Then
+                MessageBox.Show("Unable to make rendering context current")
+                End
+            End If
+            ViewOrtho()
+        End If
         'has to be AFTER the buffer swap
         If Not STOP_BUTTON_SCAN Then
 
@@ -2663,6 +2678,26 @@ tryagain:
         er = Gl.glGetError
         OLD_WINDOW_HEIGHT = pb1.Height
         gl_busy = False
+    End Sub
+    Public Sub draw_triangle_mouse_texture_window()
+        'If Not pb2.Focused Then Return
+
+        If found_triangle_tv > 0 Then
+
+            Gl.glEnable(Gl.GL_DEPTH_TEST)
+            Gl.glEnable(Gl.GL_BLEND)
+            Gl.glFrontFace(Gl.GL_CCW)
+            Gl.glColor4f(1.0, 0.0, 0.0, 0.8)
+
+            Gl.glBegin(Gl.GL_TRIANGLES)
+            Dim v1 = _object(current_tank_part).tris(found_triangle_tv).v1
+            Dim v2 = _object(current_tank_part).tris(found_triangle_tv).v2
+            Dim v3 = _object(current_tank_part).tris(found_triangle_tv).v3
+            Gl.glVertex3f(v2.x, v2.y, v2.z)
+            Gl.glVertex3f(v1.x, v1.y, v1.z)
+            Gl.glVertex3f(v3.x, v3.y, v3.z)
+            Gl.glEnd()
+        End If
     End Sub
     Public Sub track_test()
         'track nurb points
@@ -2879,7 +2914,6 @@ tryagain:
         Next
     End Sub
     Public Sub mouse_pick_tank_vertex(ByVal x As Integer, ByVal y As Integer)
-
         'pick function
         Dim viewport(4) As Integer
         Dim pixel() As Byte = {0, 0, 0, 0}
@@ -3115,9 +3149,15 @@ tryagain:
 
     Private Sub pb2_MouseEnter(sender As Object, e As EventArgs) Handles pb2.MouseEnter
         pb2.Focus()
+        pb2_has_focus = True
+    End Sub
+
+    Private Sub pb2_MouseLeave(sender As Object, e As EventArgs) Handles pb2.MouseLeave
+        pb2_has_focus = False
     End Sub
 
     Private Sub pb2_MouseMove(sender As Object, e As MouseEventArgs) Handles pb2.MouseMove
+        mouse_find_location = e.Location
         If mouse_down Then
             Dim p As New Point
             p = e.Location - mouse_delta
@@ -4452,7 +4492,7 @@ tryagain:
         Else
             all_lods = False
         End If
-
+        Dim p As String = ""
         TC1.Enabled = False
         Dim ar = file_name.Split(":")
         'ar(2) = Path.GetFileNameWithoutExtension(ar(2))
@@ -4619,24 +4659,28 @@ tryagain:
                                             Case True
                                                 If ent.FileName.ToLower.Contains("chassis") Then
                                                     ent.Extract(My.Settings.res_mods_path, ExtractExistingFileAction.DoNotOverwrite)
+                                                    p = ent.FileName
                                                 End If
                                         End Select
                                         Select Case frmExtract.ext_hull.Checked
                                             Case True
                                                 If ent.FileName.ToLower.Contains("hull") Then
                                                     ent.Extract(My.Settings.res_mods_path, ExtractExistingFileAction.DoNotOverwrite)
+                                                    p = ent.FileName
                                                 End If
                                         End Select
                                         Select Case frmExtract.ext_turret.Checked
                                             Case True
                                                 If ent.FileName.ToLower.Contains("turret") Then
                                                     ent.Extract(My.Settings.res_mods_path, ExtractExistingFileAction.DoNotOverwrite)
+                                                    p = ent.FileName
                                                 End If
                                         End Select
                                         Select Case frmExtract.ext_gun.Checked
                                             Case True
                                                 If ent.FileName.ToLower.Contains("gun") Then
                                                     ent.Extract(My.Settings.res_mods_path, ExtractExistingFileAction.DoNotOverwrite)
+                                                    p = ent.FileName
                                                 End If
                                         End Select
                                 End Select
@@ -4646,6 +4690,30 @@ tryagain:
                 Next ' next entry
             End If 'isnot nothing
         Next 'next package
+        If frmExtract.create_work_area_cb.Checked Then
+            p = My.Settings.res_mods_path + "\" + Path.GetDirectoryName(p)
+            Dim wap = p + "\Work Area"
+            Il.ilDisable(Il.IL_FILE_OVERWRITE) ' dont allow devil to overwrite existing PNGS.. Preserver the users work!
+            If Not Directory.Exists(wap) Then
+                Directory.CreateDirectory(wap)
+                Dim di = Directory.GetFiles(p)
+                Dim id As Integer = 0
+                For Each img In di
+                    If img.ToLower.Contains("_am_hd.dds") Or img.ToLower.Contains("_ao_hd.dds") Then
+                        Dim tp = Path.GetDirectoryName(img)
+                        Dim t_tn = Path.GetFileNameWithoutExtension(img)
+                        Dim out_path As String = tp + "\Work Area\" + t_tn + ".png"
+                        id = Il.ilGenImage()
+                        Il.ilBindImage(id)
+                        Ilu.iluLoadImage(img)
+                        Il.ilSave(Il.IL_PNG, out_path)
+                        Il.ilBindImage(0)
+                        Il.ilDeleteImage(id)
+                    End If
+                
+                Next
+            End If
+        End If
         TC1.Enabled = True
     End Sub
 

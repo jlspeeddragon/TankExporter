@@ -447,6 +447,7 @@ Module modGLbuttons
             tankpart_buttons(i).draw_pick_box()
             tankpart_buttons(i).state = 0
         Next
+
     End Sub
     Public Sub mouse_pick_tankparts(ByVal x As Integer, ByVal y As Integer)
         'If CAMO_BUTTON_DOWN Then Return
