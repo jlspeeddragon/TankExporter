@@ -6,7 +6,7 @@
 #### This is an ongoing project by me.. Coffee_
 
 ### Version 36:
-Add a bar graph during the extarction of large game files so TE doesn't look like its crashed.
+Added a bar graph during the extarction of large game files so TE doesn't look like its crashed.
 
 ### Version 35:
 Exporting to the res_mods folder now has an option to create a Work Area and copy the AM_HD and AO_HD to that folder in PNG format. This saves having to do it maually. You may not need to edit the AO map depending on what your doing but most likely, if you are painting on the AM map, you will need to fix the alpha change in the AO map.
