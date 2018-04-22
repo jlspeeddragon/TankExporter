@@ -410,6 +410,12 @@ Public Class frmTextureViewer
 
     Public Sub draw_current_vertex()
         'draw()
+        If current_vertex = 0 Then
+            Return
+        End If
+        If current_vertex > _object(current_part).tris.Count Then
+            Return
+        End If
         Gl.glEnable(Gl.GL_BLEND)
         Gl.glPolygonMode(Gl.GL_FRONT_AND_BACK, Gl.GL_FILL)
         Gl.glColor4f(0.8, 0.4, 0.0, 0.8)
