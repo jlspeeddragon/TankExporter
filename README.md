@@ -5,6 +5,9 @@
 
 #### This is an ongoing project by me.. Coffee_
 
+## Version 37:
+Fixed an excpetion being thrown when mousing out of the Texture View window.
+
 ### Version 36:
 Added a bar graph during the extarction of large game files so TE doesn't look like its crashed.
 
