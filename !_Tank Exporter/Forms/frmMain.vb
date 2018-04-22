@@ -654,22 +654,35 @@ Public Class frmMain
             Dim z_path = Temp_Storage + "\zip"
             '================================================================================
             'part 1
+            PG1.Visible = True
+            PG1.Value = 0
+            Dim cnt = 0
             Dim arc = ZipFile.Read(My.Settings.game_path + "\res\packages\shared_content-part1.pkg")
+            PG1.Maximum = arc.Count
             start_up_log.AppendLine("reading: \res\packages\shared_content-part2.pkg")
 
             For Each entry In arc
+                PG1.Value = cnt
+                cnt += 1
                 If entry.FileName.ToLower.Contains("vehicle") Then
-                    entry.Extract(z_path, True)
+                    entry.Extract(z_path, ExtractExistingFileAction.OverwriteSilently)
+                    Application.DoEvents()
                 End If
             Next
             Try
                 info_Label.Text = "Reading shared_content_hd-part1.pkg"
                 Application.DoEvents()
                 arc = ZipFile.Read(My.Settings.game_path + "\res\packages\shared_content_hd-part1.pkg")
+                PG1.Value = 0
+                PG1.Maximum = arc.Count
+                cnt = 0
                 start_up_log.AppendLine("reading: \res\packages\shared_content_hd-part1.pkg")
                 For Each entry In arc
+                    PG1.Value = cnt
+                    cnt += 1
                     If entry.FileName.ToLower.Contains("vehicle") Then
-                        entry.Extract(z_path, True)
+                        entry.Extract(z_path, ExtractExistingFileAction.OverwriteSilently)
+                        Application.DoEvents()
                     End If
                 Next
             Catch ex As Exception
@@ -680,21 +693,32 @@ Public Class frmMain
             info_Label.Text = "Reading shared_content-part2.pkg"
             Application.DoEvents()
             arc = ZipFile.Read(My.Settings.game_path + "\res\packages\shared_content-part2.pkg")
+            PG1.Value = 0
+            PG1.Maximum = arc.Count
+            cnt = 0
             start_up_log.AppendLine("reading: \res\packages\shared_content-part2.pkg")
-
             For Each entry In arc
+                PG1.Value = cnt
+                cnt += 1
                 If entry.FileName.ToLower.Contains("vehicle") Then
-                    entry.Extract(z_path, True)
+                    entry.Extract(z_path, ExtractExistingFileAction.OverwriteSilently)
+                    Application.DoEvents()
                 End If
             Next
             Try
                 info_Label.Text = "Reading shared_content_hd-part2.pkg"
                 Application.DoEvents()
                 arc = ZipFile.Read(My.Settings.game_path + "\res\packages\shared_content_hd-part2.pkg")
+                PG1.Value = 0
+                PG1.Maximum = arc.Count
+                cnt = 0
                 start_up_log.AppendLine("reading: \res\packages\shared_content_hd-part2.pkg")
                 For Each entry In arc
+                    PG1.Value = cnt
+                    cnt += 1
                     If entry.FileName.ToLower.Contains("vehicle") Then
-                        entry.Extract(z_path, True)
+                        entry.Extract(z_path, ExtractExistingFileAction.OverwriteSilently)
+                        Application.DoEvents()
                     End If
                 Next
             Catch ex As Exception
@@ -705,20 +729,32 @@ Public Class frmMain
             info_Label.Text = "Reading shared_content_sandbox-part1.pkg"
             Application.DoEvents()
             arc = ZipFile.Read(My.Settings.game_path + "\res\packages\shared_content_sandbox-part1.pkg")
+            PG1.Value = 0
+            PG1.Maximum = arc.Count
+            cnt = 0
             start_up_log.AppendLine("reading: \res\packages\shared_content_sandbox-part1.pkg")
             For Each entry In arc
+                PG1.Value = cnt
+                cnt += 1
                 If entry.FileName.ToLower.Contains("vehicle") Then
-                    entry.Extract(z_path, True)
+                    entry.Extract(z_path, ExtractExistingFileAction.OverwriteSilently)
+                    Application.DoEvents()
                 End If
             Next
             Try
                 info_Label.Text = "Reading shared_content_sandbox_hd-part1.pkg"
                 Application.DoEvents()
                 arc = ZipFile.Read(My.Settings.game_path + "\res\packages\shared_content_sandbox_hd-part1.pkg")
+                PG1.Value = 0
+                PG1.Maximum = arc.Count
+                cnt = 0
                 start_up_log.AppendLine("reading: \res\packages\shared_content_sandbox_hd-part1.pkg")
                 For Each entry In arc
+                    PG1.Value = cnt
+                    cnt += 1
                     If entry.FileName.ToLower.Contains("vehicle") Then
-                        entry.Extract(z_path, True)
+                        entry.Extract(z_path, ExtractExistingFileAction.OverwriteSilently)
+                        Application.DoEvents()
                     End If
                 Next
             Catch ex As Exception
@@ -729,20 +765,32 @@ Public Class frmMain
             info_Label.Text = "Reading shared_content_sandbox-part2.pkg"
             Application.DoEvents()
             arc = ZipFile.Read(My.Settings.game_path + "\res\packages\shared_content_sandbox-part2.pkg")
+            PG1.Value = 0
+            PG1.Maximum = arc.Count
+            cnt = 0
             start_up_log.AppendLine("reading: \res\packages\shared_content_sandbox-part2.pkg")
             For Each entry In arc
+                PG1.Value = cnt
+                cnt += 1
                 If entry.FileName.ToLower.Contains("vehicle") Then
-                    entry.Extract(z_path, True)
+                    entry.Extract(z_path, ExtractExistingFileAction.OverwriteSilently)
+                    Application.DoEvents()
                 End If
             Next
             Try
                 info_Label.Text = "Reading shared_content_sandbox_hd-part2.pkg"
                 Application.DoEvents()
                 arc = ZipFile.Read(My.Settings.game_path + "\res\packages\shared_content_sandbox_hd-part2.pkg")
+                PG1.Value = 0
+                PG1.Maximum = arc.Count
+                cnt = 0
                 start_up_log.AppendLine("reading: \res\packages\shared_content_sandbox_hd-part2.pkg")
                 For Each entry In arc
+                    PG1.Value = cnt
+                    cnt += 1
                     If entry.FileName.ToLower.Contains("vehicle") Then
-                        entry.Extract(z_path, True)
+                        entry.Extract(z_path, ExtractExistingFileAction.OverwriteSilently)
+                        Application.DoEvents()
                     End If
                 Next
             Catch ex As Exception
