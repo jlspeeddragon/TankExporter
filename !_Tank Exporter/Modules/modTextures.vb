@@ -23,6 +23,7 @@ Module modTextures
         Public c_id As Integer
         Public n_name As String
         Public n_id As Integer
+        Public colorIdMap As String
         Public gmm_name As String
         Public gmm_id As Integer
         Public ao_name As String
@@ -52,6 +53,7 @@ Module modTextures
         Dim normal As String = _group(id).normal_name
         Dim metal As String = _group(id).metalGMM_name
         Dim ao_name As String = _group(id).ao_name
+        Dim colorIdMap As String = _group(id).colorIDmap
         Dim detail_name As String = _group(id).detail_name
         Dim i As Integer = 0
         For i = 0 To textures.Length - 1
@@ -64,6 +66,7 @@ Module modTextures
                 _group(id).metalGMM_Id = textures(i).gmm_id
                 _group(id).ao_name = textures(i).ao_name
                 _group(id).ao_id = textures(i).ao_id
+                _group(id).colorIDmap = textures(i).colorIdMap
                 _group(id).detail_Id = textures(i).detail_id
 
                 _group(id).texture_id = i
@@ -95,6 +98,7 @@ Module modTextures
         textures(i).ao_name = ao_name
         textures(i).ao_id = ao_id
 
+        textures(i).colorIdMap = colorIdMap
         textures(i).detail_name = detail_name
         textures(i).detail_id = detail_id
 
@@ -647,15 +651,12 @@ Module modTextures
             Il.ilCopyPixels(0, 0, 0, width, height, 1, Il.IL_BGRA, Il.IL_UNSIGNED_BYTE, bitmapData.Scan0)
             Bitmapi.UnlockBits(bitmapData)
 
-            'If your image contains alpha channel you can replace IL_RGB with IL_RGBA */
-
-            Gl.glBindTexture(Gl.GL_TEXTURE_2D, 0)
             Il.ilBindImage(0)
             Ilu.iluDeleteImage(texID)
             GC.Collect()
             Dim istream As New MemoryStream
             Bitmapi.Save(istream, ImageFormat.Png)
-
+            Bitmapi.Dispose()
             Return Image.FromStream(istream)
         Else
             MsgBox("png load error!", MsgBoxStyle.Exclamation, "Oh No!!")

@@ -5,6 +5,9 @@
 
 #### This is an ongoing project by me.. Coffee_
 
+## Version 38:
+I Finally got a working PBR shader. Better lighting!
+
 ## Version 37:
 Fixed an excpetion being thrown when mousing out of the Texture View window.
 

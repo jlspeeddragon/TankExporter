@@ -7,6 +7,7 @@ uniform sampler2D gmmMap;
 uniform sampler2D aoMap;
 uniform sampler2D detailMap;
 uniform sampler2D camoMap;
+
 uniform int is_GAmap;
 uniform int alphaTest;
 uniform vec2 detailTiling;
@@ -31,6 +32,8 @@ in vec3 t;
 in vec3 b;
 in vec3 n;
 
+
+
 // ========================================================
 // rextimmy gets full credit for figuring out how mixing works!
 vec4 applyCamo(vec4 cc,vec4 camoTex){
@@ -45,26 +48,54 @@ vec4 applyCamo(vec4 cc,vec4 camoTex){
 }
 // ========================================================
 
+const float PI = 3.14159265358;
+
+float DistributionGGX(vec3 N, vec3 H, float a)
+{
+    float a2     = a*a;
+    float NdotH  = max(dot(N, H), 0.0);
+    float NdotH2 = NdotH*NdotH;
+    
+    float nom    = a2;
+    float denom  = (NdotH2 * (a2 - 1.0) + 1.0);
+    denom        = PI * denom * denom;
+    
+    return nom / denom;
+}
+float GeometrySchlickGGX(float NdotV, float k)
+{
+    float nom   = NdotV;
+    float denom = NdotV * (1.0 - k) + k;
+    
+    return nom / denom;
+}
+  
+float GeometrySmith(vec3 N, vec3 V, vec3 L, float k)
+{
+    float NdotV = max(dot(N, V), 0.0);
+    float NdotL = max(dot(N, L), 0.0);
+    float ggx1 = GeometrySchlickGGX(NdotV, k);
+    float ggx2 = GeometrySchlickGGX(NdotL, k);
+    
+    return ggx1 * ggx2;
+}
+vec3 fresnelSchlick(float cosTheta, vec3 F0)
+{
+    return F0 + (1.0 - F0) * pow(1.0 - cosTheta, 5.0);
+}
+
 void main(void) {
+
 
 //--------------------------------
 vec4   cc = vec4(0.0);
 vec3   lightDirection;
 vec4   detailBump;
 vec3   bump;
-vec3   bumpD;
-vec3   PN_D;
 float  alpha;
 vec4   color;
 float  a;
-float  specPower = 60.0;
-float  MetalSpec = 5.0;
-vec4   Ispec1 = vec4(0.0);
-vec4   Ispec2 = vec4(0.0);
-vec4   Ispec3 = vec4(0.0);
-vec4   Idiff1 = vec4(0.0);
-vec4   Idiff2 = vec4(0.0);
-vec4   sum = vec4(0.0);
+vec3   sum = vec3(0.0);
 //--------------------------------
 // setup tiling values
     vec2 ctc = TC1 * camo_tiling.xy; // from scripts/vehicle/nation/customiztion.xml file 
@@ -72,7 +103,7 @@ vec4   sum = vec4(0.0);
     ctc.xy += camo_tiling.zw; 
     ctc.xy += tile_vec4.zw;
 //--------------------------------
-
+vec2 center = vec2(1.0 / 1024.0);
 // Load textures
     vec4 camoTexture = texture2D(camoMap,   ctc.st );
     vec4 detail      = texture2D(detailMap, TC1.st * detailTiling);
@@ -80,11 +111,9 @@ vec4   sum = vec4(0.0);
     vec4 base        = texture2D(colorMap,  TC1.st);
     vec4 bumpMap     = texture2D(normalMap, TC1.st);
     vec3 GMM         = texture2D(gmmMap,    TC1.st).rgb;
-    //AO     = vec4(1.0);
-    //GMM = vec2 (1.0);
+
 //--------------------------------
     color = base;
-    float factor = 1.0;
     a = base.a;
     //convert to -1.0 to 1.0    
     detailBump.xyz = detail.xyz * 2.0 - 1.0;
@@ -92,12 +121,6 @@ vec4   sum = vec4(0.0);
 
     if (is_GAmap == 1 && use_CM == 0)
     {
-        detailBump.yz = detailBump.yz *2.0 - 1.0;
-        bumpD.xy - detailBump.yz;
-        bumpD.z = sqrt(1.0 - dot(detailBump.yz, detailBump.yz)); //g,b
-        bumpD   = normalize(bumpD);
-        bumpD.y *= - 1.0;
-        
         bumpMap.ga = bumpMap.ag *2.0 - 1.0;
         bump.xy    = bumpMap.ag;
         bump.z     = sqrt(1.0 - dot(bumpMap.ga, bumpMap.ga));
@@ -105,7 +128,9 @@ vec4   sum = vec4(0.0);
         bump.y *= - 1.0;
         a = texture2D(normalMap, TC1.st).r;
         
-        color.rgb = mix(color.rgb,1.5*(color.rgb * armorcolor.rgb),0.5);
+        color.rgb = mix(color.rgb,1.0*(color.rgb * armorcolor.rgb),0.8);
+       
+
 
       if (exclude_camo == 0)
       {
@@ -119,37 +144,26 @@ vec4   sum = vec4(0.0);
             // add detail noise to mix. Lots a tweaked values here.
             color.rgb = mix(color.rgb,color.rgb*detail.rgb*AO.g,detail.r*.9)*1.5;
             base.rgb  = color.rgb;
-            specPower = 10.0;
-            factor    = 0.9;
-             MetalSpec = 5.0;
       } else {
             if (AO.g == 0.0 ){
             // If we are here, we are on the track treads
             AO = vec4(0.5,0.5,0.5,0.5);
              color.rgb = mix(color.rgb,detail.rgb*color.rgb,GMM.r)*1.0;
-            AO.g      = 0.8;
-            AO.r      = 2.5;
-            specPower = 30.0;
-            MetalSpec = 1.0;
-            factor    = 1.0;
+          
            base = color;
           } else {
             // If we land here, we are on chassis
             color.rgb = mix(color.rgb,color.rgb*detail.rgb*AO.a,detail.r)*1.0;
             base.rgb  = color.rgb;
-            specPower = 2.0;//AO.r*5.0;
-            factor    = clamp((0.6-AO.r)*2.5, 0.0 ,1.0)*3.0;
-            MetalSpec = 30.0;
-            }
-       }// end AO.g
+           
+            }// end AO.g
+       }
 
     } else {
         // If we land here, a SD tank was loaded.
         // If there is no GMM map, there is no detail map
         // Some values have to be hard coded to handle them
         // being misssing.
-        PN_D   = vec3(0.0);
-        detail = vec4(0.0);
         bump   = normalize(bumpMap.rgb*2.0 - 1.0);
         bump.y *= -1.0;
         if (use_camo > 0 && exclude_camo == 0)
@@ -161,55 +175,60 @@ vec4   sum = vec4(0.0);
         AO.g      = 0.5;
         color.rgb *= 0.8;
         base.rgb  = color.rgb;
-        GMM.g     = 1.0;
-        GMM.r     = 1.0;
-        factor    = 0.5;
+        GMM.g     = 0.4;
+        GMM.r     = 0.5;
+      
     } //end is_GAmap
 
     if (alphaTest == int(1)) { if (a < 0.5) {discard;} }
     
-    vec3 E = normalize(-vVertex);    // we are in Eye Coordinates, so EyePos is (0,0,0)  
-    vec3 PN = normalize(TBN * bump); // Get the perturbed normal
-    PN_D = normalize(TBN * bumpD);   // Get the perturbed normal
-
-    vec4 Iamb     = color * 0.5 * 2.0 * A_level ; //calculate Ambient Term:  
+    float roughness = 1.0-GMM.r/0.8;
+    float metallic = GMM.g/0.8;
     
-    // loop thru lights and calc lighting.
+    
+    vec3 V = normalize(-vVertex);    // we are in Eye Coordinates, so EyePos is (0,0,0)  
+    vec3 N = normalize(TBN * bump); // Get the perturbed normal
+
+    color.rgb = mix(color.rgb,vec3(0.04),GMM.g);
+    if (is_GAmap != 1) {GMM.xy = vec2(0.3,0.3); }
+
+
+    vec3 F0 = vec3(0.04,0.04,0.06); 
+    F0 = mix(F0, color.rgb, metallic);
+               
+ 
+   // loop thru lights and calc lighting.
+    vec3 ambient = vec3(2.0) * color.rgb * A_level;
     for (int i = 0 ; i < 3 ; i++)
     {
-        // GMM.g is metel spec level
-        // GMM.r is surface/paint roughness
-
-        vec3 L = normalize(gl_LightSource[i].position.xyz - vVertex);   
-        vec3 R = normalize(reflect(-L,PN));  
-        vec3 R_D = normalize(reflect(-L,PN_D)); 
-        if (is_GAmap != 1) {GMM.xy = vec2(0.3,0.3); AO.a = 0.0;}
-        //calculate Diffuse Terms:  
-        Idiff1 = color * max(dot(PN,L*GMM.g), 0.0) * AO.g * 3.0;//color light level
-        Idiff2 = color *  max(dot(PN_D,L), 0.0)* 0.5 * AO.g * detail.a; // detail color light level
+       // calculate per-light radiance
+        vec3 L = normalize(gl_LightSource[i].position.xyz - vVertex);
+        vec3 H = normalize(V + L);
+        vec3 R = normalize(reflect(-L,N));  
+        float distance    = length(gl_LightSource[i].position.xyz - vVertex);
+        float attenuation = 20.0 / (distance * distance);
+        vec3 radiance     = vec3(0.6) * attenuation * 3.5;        
         
-        Idiff1 = clamp(Idiff1, 0.0, 1.0);     
-        Idiff2 = clamp(Idiff2, 0.0, 1.0);     
-
-        // calculate Specular Terms:
-        Ispec1 = vec4(0.1,0.1,0.15,1.0) * pow(max(dot(R,E*GMM.g),0.0), MetalSpec * max(GMM.g-.5,0.0))
-                * (max(GMM.g-.5,0.0)) * AO.r * 5.0 * factor*0.8; //metel spec
-
-        Ispec2 = vec4(0.3) * pow(max(dot(R,E),0.0),specPower)
-                * (GMM.r-.5) * AO.r * 16.0 * factor; // bump map spec
+        // cook-torrance brdf
+        float NDF = DistributionGGX(N, H, roughness);        
+        float G   = GeometrySmith(N, V, L, roughness);      
+        vec3 F    = fresnelSchlick(max(dot(H, V), 0.0), F0);       
         
-        Ispec3 = vec4(0.9) * pow(max(dot(R_D,E),0.0), detailPower) * GMM.g * 1.0 * factor * AO.a; //detail spec
+        vec3 kS = F;
+        vec3 kD = vec3(1.0) - kS;
+        kD *= 1.0 - metallic;     
         
-        Ispec1 = clamp(Ispec1, 0.0, 1.0); 
-        Ispec2 = clamp(Ispec2, 0.0, 1.0); 
-        Ispec3 = clamp(Ispec3, 0.0, 1.0);
+        vec3 numerator    = NDF * G * F;
+        float denominator = 4.0 * max(dot(N, V), 0.0) * max(dot(N, L), 0.0);
+        vec3 specular     = numerator / max(denominator, 0.001) * S_level;  
+        vec3 Metalspecular = vec3(0.25,0.25,0.3) * pow(max(dot(R,V),0.0),10.0) * (metallic -0.35) * S_level;
 
-        vec4 IspecMix = clamp(mix(Ispec1 + Ispec2, Ispec3,0.33),0.0,1.0) * 2.0 * S_level;
-        sum += clamp(Idiff1 + Idiff2 + IspecMix, 0.0, 1.0);
-
+        // add to outgoing radiance Lo
+        float NdotL = max(dot(N, L), 0.0);  
+              
+        sum += (kD * color.rgb /PI  + specular + Metalspecular) * radiance * NdotL *10.0; 
     } //next light
 
-gl_FragColor = (Iamb + sum) * T_level * 2.0;   // write mixed Color:  
-//gl_FragColor = base;   // write mixed Color:  
+gl_FragColor.rgb = (sum.rgb + ambient) * T_level * 1.75;
 }
 

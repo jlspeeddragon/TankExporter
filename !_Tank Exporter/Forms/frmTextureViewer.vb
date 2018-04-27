@@ -333,7 +333,7 @@ Public Class frmTextureViewer
         Gl.glDisable(Gl.GL_DEPTH_TEST)
         Gl.glDisable(Gl.GL_LIGHTING)
         Gl.glPolygonMode(Gl.GL_FRONT_AND_BACK, Gl.GL_FILL)
-        Dim r, b, g, a As Byte
+        Dim r, b, g As Byte
         Dim cnt = _object(current_tank_part).count
         Gl.glPushMatrix()
         Gl.glTranslatef(rect_location.X + center.x, -rect_location.Y - center.y, 0.0F)

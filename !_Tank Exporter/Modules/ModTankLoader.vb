@@ -294,6 +294,7 @@ Module ModTankLoader
         Public color_name As String
         Public metalGMM_Id As Integer
         Public metalGMM_name As String
+        Public colorIDmap As String
         Public detail_power As Single
         Public ao_name As String
         Public ao_id As Integer
@@ -304,6 +305,7 @@ Module ModTankLoader
         Public detail_name As String
         Public multi_textured As Boolean
         Public metal_textured As Boolean
+        Public hasColorID As Integer
         Public bumped As Boolean
         Public blend_only As Boolean
         Public indicies() As uvect3
@@ -381,7 +383,7 @@ Module ModTankLoader
         Dim na As String = ""
 
         '
-       
+
         xmlget_mode = 0
         ' 1 = Hull
         ' 2 = Chassis
@@ -1851,7 +1853,9 @@ get_visual:
         _group(id).detail_name = Nothing
         _group(id).color_name = Nothing
         _group(id).normal_name = Nothing
+        _group(id).hasColorID = Nothing
         _group(id).alphaTest = 0
+        _group(id).hasColorID = 0
         get_texturesNames_and_State(id, loop_count)
 
         'this creates the matrix opengl uses.
@@ -2108,6 +2112,23 @@ get_visual:
         Else
             'we want to test by default
             _group(id).detail_power = 0
+
+
+        End If
+        diff_pos = InStr(primStart, thestring, "colorIdMap<")
+        If diff_pos > 0 Then
+
+            Dim tex1_pos = InStr(diff_pos, thestring, "<Texture>") + "<texture>".Length
+            Dim tex1_Epos = InStr(tex1_pos, thestring, "</Texture>")
+            Dim newS As String = ""
+            newS = Mid(thestring, tex1_pos, tex1_Epos - tex1_pos).Replace("/", "\")
+            'Dim ar = maplist(map).models(mod_id).componets(currentP).color_name
+            Debug.WriteLine(newS)
+            _group(id).colorIDmap = newS
+            _group(id).hasColorID = 1
+        Else
+            'we want to test by default
+            _group(id).hasColorID = 0
 
 
         End If

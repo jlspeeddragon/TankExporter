@@ -282,4 +282,5 @@ ByVal text As String, ByVal r As Single, ByVal g As Single, ByVal b As Single, B
         frmMain.draw_XZ_grid()
         Gl.glEndList()
     End Sub
+
 End Module

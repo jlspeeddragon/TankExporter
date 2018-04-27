@@ -543,12 +543,20 @@ Public Class frmMain
         ToolStripComboBox1.Text = My.Settings.region_selection
         Application.DoEvents()
 
+        'Check for temp storage folder.. It it exist.. load the API data.. 
+        'other wise make the directory and get the API data.
+        Temp_Storage = Path.GetTempPath ' this gets the user temp storage folder
+        Temp_Storage += "wot_temp"
+        If Not System.IO.Directory.Exists(Temp_Storage) Then
+            System.IO.Directory.CreateDirectory(Temp_Storage)
+        End If
         'fire up OpenGL amd IL
         start_up_log.AppendLine("Starting up OpenGL......")
         Il.ilInit()
         Ilu.iluInit()
         Ilut.ilutInit()
         EnableOpenGL()
+
         Dim glstr As String
         glstr = Gl.glGetString(Gl.GL_VENDOR)
         start_up_log.AppendLine("Vendor: " + glstr)
@@ -566,19 +574,14 @@ Public Class frmMain
 
         start_up_log.AppendLine("Loading required data..")
 
+        File.WriteAllText(Temp_Storage + "Startup_log.txt", start_up_log.ToString)
+
         load_type_images() ' get the tank type icons
 
         Application.DoEvents()
         '====================================================================================================
         _Started = True
         '====================================================================================================
-        'Check for temp storage folder.. It it exist.. load the API data.. 
-        'other wise make the directory and get the API data.
-        Temp_Storage = Path.GetTempPath ' this gets the user temp storage folder
-        Temp_Storage += "wot_temp"
-        If Not System.IO.Directory.Exists(Temp_Storage) Then
-            System.IO.Directory.CreateDirectory(Temp_Storage)
-        End If
         ' Setup loaction for tank data.. sucks to do it this way but UAC wont allow it any other way.
         TankListTempFolder = Temp_Storage + "\tanklist\"
         If Not System.IO.Directory.Exists(TankListTempFolder) Then
@@ -916,6 +919,7 @@ Public Class frmMain
 
         'make table used for repacking 888 normal uint32 in converstion
         make_888_lookup_table()
+        'load skybox model
 
         MM.Enabled = True
         TC1.Enabled = True
@@ -930,32 +934,37 @@ Public Class frmMain
     Public tank_mini_icons As New ImageList
     Private Sub load_type_images()
         tank_mini_icons.ColorDepth = ColorDepth.Depth32Bit
-        tank_mini_icons.ImageSize = New Size(19, 19)
+        tank_mini_icons.ImageSize = New Size(17, 17)
         Dim sp = Application.StartupPath + "\icons\"
 
         Dim e = (sp + "heavyTank.png")
-        tank_mini_icons.Images.Add(get_image(e))
-        tank_mini_icons.Images.Add(get_image(e))
+        tank_mini_icons.Images.Add(load_type_icon(e))
+        tank_mini_icons.Images.Add(load_type_icon(e))
 
         e = (sp + "mediumTank.png")
-        tank_mini_icons.Images.Add(get_image(e))
-        tank_mini_icons.Images.Add(get_image(e))
+        tank_mini_icons.Images.Add(load_type_icon(e))
+        tank_mini_icons.Images.Add(load_type_icon(e))
 
         e = (sp + "lightTank.png")
-        tank_mini_icons.Images.Add(get_image(e))
-        tank_mini_icons.Images.Add(get_image(e))
+        tank_mini_icons.Images.Add(load_type_icon(e))
+        tank_mini_icons.Images.Add(load_type_icon(e))
 
         e = (sp + "AT-SPG.png")
-        tank_mini_icons.Images.Add(get_image(e))
-        tank_mini_icons.Images.Add(get_image(e))
+        tank_mini_icons.Images.Add(load_type_icon(e))
+        tank_mini_icons.Images.Add(load_type_icon(e))
 
         e = (sp + "SPG.png")
-        tank_mini_icons.Images.Add(get_image(e))
-        tank_mini_icons.Images.Add(get_image(e))
+        tank_mini_icons.Images.Add(load_type_icon(e))
+        tank_mini_icons.Images.Add(load_type_icon(e))
 
 
 
     End Sub
+    Private Function load_type_icon(path As String) As Image
+        Dim b = New Bitmap(path)
+        Return b
+
+    End Function
 
     Private Sub save_progress(ByVal sender As Object, ByVal e As SaveProgressEventArgs)
         If e.EventType = Ionic.Zip.ZipProgressEventType.Saving_BeforeWriteEntry Then
@@ -2178,7 +2187,7 @@ tryagain:
         Dim er = Gl.glGetError
         Gl.glDepthFunc(Gl.GL_LEQUAL)
         Gl.glFrontFace(Gl.GL_CW)
-        'Gl.glCullFace(Gl.GL_BACK)
+
         Gl.glPolygonOffset(1.0, 1.0)
         Gl.glLineWidth(1)
         Gl.glPointSize(2.0)
@@ -2248,10 +2257,13 @@ tryagain:
         Gl.glLightfv(Gl.GL_LIGHT0, Gl.GL_POSITION, position0)
         Gl.glLightfv(Gl.GL_LIGHT1, Gl.GL_POSITION, position1)
         Gl.glLightfv(Gl.GL_LIGHT2, Gl.GL_POSITION, position2)
+
+        Gl.glDisable(Gl.GL_CULL_FACE)
+
+        '=============================================================
         Gl.glEnable(Gl.GL_LIGHTING)
 
         Gl.glPushMatrix()
-        Gl.glDisable(Gl.GL_CULL_FACE)
         '-----------------------------------------------------------------------------
         'light positions
         If Show_lights Then
@@ -2400,7 +2412,6 @@ tryagain:
             Gl.glUniform1f(tank_specular, CSng(frmLighting.specular_slider.Value / 100)) ' convert to 0.0 to 1.0
             Gl.glUniform1f(tank_ambient, CSng(frmLighting.ambient_slider.Value / 100))
             Gl.glUniform1f(tank_total, CSng(frmLighting.total_slider.Value / 100))
-
             If Not wire_cb.Checked Then
                 Gl.glEnable(Gl.GL_POLYGON_OFFSET_FILL)
             End If
@@ -2444,6 +2455,7 @@ tryagain:
                     If _object(jj).use_camo > 0 Then
                         Gl.glBindTexture(Gl.GL_TEXTURE_2D, bb_texture_ids(id))
                     End If
+
                     'Gl.glPushMatrix()
                     'Gl.glMultMatrixd(_object(jj).matrix)
                     Gl.glCallList(_object(jj).main_display_list)
@@ -2452,6 +2464,9 @@ tryagain:
             Next
             Gl.glUseProgram(0)
             'clear texture bindings
+
+            Gl.glBindTexture(Gl.GL_TEXTURE_2D, 0) '5
+            Gl.glActiveTexture(Gl.GL_TEXTURE0 + 4)
             Gl.glBindTexture(Gl.GL_TEXTURE_2D, 0) '4
             Gl.glActiveTexture(Gl.GL_TEXTURE0 + 3)
             Gl.glBindTexture(Gl.GL_TEXTURE_2D, 0) '3
@@ -2585,7 +2600,7 @@ tryagain:
             Gl.glCallList(grid)
         End If
 
-
+        'track_test()
 
         If move_mod Or z_move Then    'draw reference lines to eye center
             Gl.glColor3f(1.0, 1.0, 1.0)
@@ -4758,7 +4773,7 @@ tryagain:
                         Il.ilBindImage(0)
                         Il.ilDeleteImage(id)
                     End If
-                
+
                 Next
             End If
         End If
@@ -5422,5 +5437,5 @@ make_this_tank:
 
     End Sub
 
-  
+
 End Class
