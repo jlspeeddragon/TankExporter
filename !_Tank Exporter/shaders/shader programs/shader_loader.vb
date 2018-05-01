@@ -11,6 +11,8 @@ Module shader_loader
         Public mixer_shader As Integer
         Public tank_shader As Integer
         Public fbx_shader As Integer
+        Public gaussian_shader As Integer
+        Public FXAA_shader As Integer
     End Class
 
 #Region "variables"
@@ -292,7 +294,7 @@ Module shader_loader
 
     '==============================================================================================================
     'tank_shader
-    Public tank_colorMap, tank_normalMap, tank_is_GAmap, tank_alphaTest, tank_viewPosition As Integer
+    Public tank_colorMap, tank_normalMap, tank_is_GAmap, tank_alphaRef, tank_viewPosition As Integer
     Public tank_GMM, tank_AO, tank_detailMap, tank_detailTiling, tank_detailPower As Integer
     Public tank_camo, tank_use_camo, tank_tile_vec4 As Integer
     Public tank_c0, tank_c1, tank_c2, tank_c3, tank_armorcolor, tank_camo_tiling, tank_exclude_camo As Integer
@@ -307,7 +309,7 @@ Module shader_loader
         tank_detailMap = Gl.glGetUniformLocation(shader_list.tank_shader, "detailMap")
         tank_camo = Gl.glGetUniformLocation(shader_list.tank_shader, "camoMap")
         tank_is_GAmap = Gl.glGetUniformLocation(shader_list.tank_shader, "is_GAmap")
-        tank_alphaTest = Gl.glGetUniformLocation(shader_list.tank_shader, "alphaTest")
+        tank_alphaRef = Gl.glGetUniformLocation(shader_list.tank_shader, "alphaRef")
         tank_detailTiling = Gl.glGetUniformLocation(shader_list.tank_shader, "detailTiling")
         tank_detailPower = Gl.glGetUniformLocation(shader_list.tank_shader, "detailPower")
         tank_use_camo = Gl.glGetUniformLocation(shader_list.tank_shader, "use_camo")
@@ -327,7 +329,6 @@ Module shader_loader
     End Sub
 
     '==============================================================================================================
-
     Public fbx_ambient, fbx_specular, fbx_level As Integer
     Public fbx_colorMap, fbx_specularMap, fbx_normalMap, fbx_is_GAmap As Integer
     Public fbx_texture_count, fbx_alphatest As Integer
@@ -342,12 +343,14 @@ Module shader_loader
         fbx_is_GAmap = Gl.glGetUniformLocation(shader_list.fbx_shader, "is_GAmap")
         fbx_alphatest = Gl.glGetUniformLocation(shader_list.fbx_shader, "alphaTest")
     End Sub
+
     '==============================================================================================================
     Public normal_shader_mode As Integer
     Public normal_shader_mode_id As Integer
     Private Sub set_normal_shader_variables()
         normal_shader_mode_id = Gl.glGetUniformLocation(shader_list.normal_shader, "mode")
     End Sub
+
     '==============================================================================================================
     Public mix_camoMap, mix_c0, mix_c1, mix_c2, mix_c3, mix_armorColor
     Private Sub set_mixer_shader_variables()
@@ -357,6 +360,20 @@ Module shader_loader
         mix_c2 = Gl.glGetUniformLocation(shader_list.mixer_shader, "c2")
         mix_c3 = Gl.glGetUniformLocation(shader_list.mixer_shader, "c3")
         mix_armorColor = Gl.glGetUniformLocation(shader_list.mixer_shader, "armorColor")
+    End Sub
+
+    '==============================================================================================================
+    Public gaus_image, gaus_switch As Integer
+    Public Sub set_gaussian_variables()
+        gaus_image = Gl.glGetUniformLocation(shader_list.gaussian_shader, "image")
+        gaus_switch = Gl.glGetUniformLocation(shader_list.gaussian_shader, "horizontal")
+    End Sub
+
+    '==============================================================================================================
+    Public FXAA_color, FXAA_screenSize As Integer
+    Public Sub set_FXAA_variables()
+        FXAA_color = Gl.glGetUniformLocation(shader_list.FXAA_shader, "colorMap")
+        FXAA_screenSize = Gl.glGetUniformLocation(shader_list.FXAA_shader, "viewportSize")
 
     End Sub
 
@@ -367,8 +384,9 @@ Module shader_loader
         set_normal_shader_variables()
         set_mixer_shader_variables()
         set_fbx_shader_variables()
+        set_gaussian_variables()
+        set_FXAA_variables()
         Return
-
     End Sub
     '==============================================================================================================
 

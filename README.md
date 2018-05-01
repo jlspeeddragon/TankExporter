@@ -5,6 +5,11 @@
 
 #### This is an ongoing project by me.. Coffee_
 
+## Version 39:
+Added a FBO to use with FXAA.
+Implemented FXAA.
+Improved PBR and lighting in general.
+
 ## Version 38:
 I Finally got a working PBR shader. Better lighting!
 

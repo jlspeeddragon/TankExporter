@@ -30,6 +30,8 @@ Module modTextures
         Public ao_id As Integer
         Public detail_id As Integer
         Public detail_name As String
+        Public doubleSided As Boolean
+        Public alphaRef As Integer
     End Structure
 
     Dim mStream As MemoryStream
@@ -68,6 +70,8 @@ Module modTextures
                 _group(id).ao_id = textures(i).ao_id
                 _group(id).colorIDmap = textures(i).colorIdMap
                 _group(id).detail_Id = textures(i).detail_id
+                _group(id).alphaRef = textures(i).alphaRef
+                _group(id).doubleSided = textures(i).doubleSided
 
                 _group(id).texture_id = i
                 Return
@@ -101,6 +105,9 @@ Module modTextures
         textures(i).colorIdMap = colorIdMap
         textures(i).detail_name = detail_name
         textures(i).detail_id = detail_id
+
+        textures(i).doubleSided = _group(id).doubleSided
+        textures(i).alphaRef = _group(id).alphaRef
 
         _group(id).texture_id = i
 

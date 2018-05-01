@@ -28,6 +28,12 @@ Imports System.Globalization
 #End Region
 
 Public Class frmMain
+    Protected Overrides Sub OnClientSizeChanged(e As EventArgs)
+        If Not _Started Then Return
+        G_Buffer.init()
+        draw_scene()
+        MyBase.OnClientSizeChanged(e)
+    End Sub
 #Region "variables"
     Dim pb2_has_focus As Boolean = False
     Dim out_string As New StringBuilder
@@ -228,6 +234,7 @@ Public Class frmMain
         relocate_tankbuttons()
         relocate_texturebuttons()
         OLD_WINDOW_HEIGHT = pb1.Height
+        G_Buffer.init()
         'End If
         draw_scene()
     End Sub
@@ -929,6 +936,7 @@ Public Class frmMain
         Startup_Timer.Enabled = True
         Application.DoEvents()
         AddHandler Me.SizeChanged, AddressOf me_size_changed
+
         window_state = Me.WindowState
     End Sub
     Public tank_mini_icons As New ImageList
@@ -2175,10 +2183,21 @@ tryagain:
         view_status_string = ""
         gl_busy = True
         'End If
+        If gBufferFBO = 0 Then
+            G_Buffer.init()
+        End If
         If Not (Wgl.wglMakeCurrent(pb1_hDC, pb1_hRC)) Then
             MessageBox.Show("Unable to make rendering context current")
             End
         End If
+        Gl.glBindFramebufferEXT(Gl.GL_FRAMEBUFFER_EXT, gBufferFBO)
+        'Gl.glBindFramebufferEXT(Gl.GL_FRAMEBUFFER_EXT, 0)
+        G_Buffer.attachColorTexture()
+        For jj = 1 To object_count
+            If _group(jj).alphaTest = 0 Then
+                _group(jj).alphaRef = 0
+            End If
+        Next
         Dim color_top() As Byte = {20, 20, 20}
         Dim color_bottom() As Byte = {60, 60, 60}
         Dim position() As Single = {10, 10.0F, 10, 1.0F}
@@ -2353,6 +2372,18 @@ tryagain:
                 Gl.glEnable(Gl.GL_POLYGON_OFFSET_FILL)
             End If
             For jj = 1 To object_count
+                If _group(jj).is_carraige Then
+                    Gl.glFrontFace(Gl.GL_CW)
+                Else
+                    Gl.glFrontFace(Gl.GL_CCW)
+                End If
+                If _group(jj).doubleSided Then
+                    Gl.glDisable(Gl.GL_CULL_FACE)
+                    Gl.glPolygonMode(Gl.GL_FRONT_AND_BACK, Gl.GL_FILL)
+                Else
+                    Gl.glEnable(Gl.GL_CULL_FACE)
+                    Gl.glPolygonMode(Gl.GL_FRONT, Gl.GL_FILL)
+                End If
                 If _object(jj).visible Then
                     Gl.glCallList(_object(jj).main_display_list)
                 End If
@@ -2363,6 +2394,11 @@ tryagain:
                 Gl.glPolygonMode(Gl.GL_FRONT_AND_BACK, Gl.GL_LINE)
                 Gl.glColor3f(0.1, 0.1, 0.1)
                 For jj = 1 To object_count
+                    If _group(jj).is_carraige Then
+                        Gl.glFrontFace(Gl.GL_CW)
+                    Else
+                        Gl.glFrontFace(Gl.GL_CCW)
+                    End If
                     If _object(jj).visible Then
                         Gl.glCallList(_object(jj).main_display_list)
                     End If
@@ -2417,8 +2453,22 @@ tryagain:
             End If
 
             For jj = 1 To object_count - track_info.segment_count
+                If _group(jj).is_carraige Then
+                    Gl.glFrontFace(Gl.GL_CW)
+                Else
+                    Gl.glFrontFace(Gl.GL_CCW)
+                End If
+                If _group(jj).doubleSided Then
+                    'Gl.glCullFace(Gl.GL_NONE)
+                    Gl.glDisable(Gl.GL_CULL_FACE)
+                    Gl.glPolygonMode(Gl.GL_FRONT_AND_BACK, Gl.GL_FILL)
+                Else
+                    'Gl.glCullFace(Gl.GL_BACK)
+                    Gl.glEnable(Gl.GL_CULL_FACE)
+                    Gl.glPolygonMode(Gl.GL_FRONT, Gl.GL_FILL)
+                End If
                 Gl.glUniform1i(tank_is_GAmap, _object(jj).ANM)
-                Gl.glUniform1i(tank_alphaTest, _group(jj).alphaTest)
+                Gl.glUniform1i(tank_alphaRef, _group(jj).alphaRef)
                 Gl.glUniform2f(tank_detailTiling, _group(jj).detail_tile.x, _group(jj).detail_tile.y)
                 Gl.glUniform1f(tank_detailPower, _group(jj).detail_power)
                 Gl.glUniform4f(tank_tile_vec4, _object(jj).camo_tiling.x, _object(jj).camo_tiling.y, _object(jj).camo_tiling.z, _object(jj).camo_tiling.w)
@@ -2483,13 +2533,18 @@ tryagain:
                 Gl.glPolygonMode(Gl.GL_FRONT_AND_BACK, Gl.GL_LINE)
                 Gl.glColor3f(0.0, 0.0, 0.0)
                 For jj = 1 To object_count
+                    If _group(jj).is_carraige Then
+                        Gl.glFrontFace(Gl.GL_CW)
+                    Else
+                        Gl.glFrontFace(Gl.GL_CCW)
+                    End If
                     If _object(jj).visible Then
                         Gl.glCallList(_object(jj).main_display_list)
                     End If
                 Next
             End If
         End If
-        Gl.glPolygonMode(Gl.GL_FRONT_AND_BACK, Gl.GL_FILL)
+        Gl.glEnable(Gl.GL_CULL_FACE)
         'simple lighting
         If MODEL_LOADED And m_load_textures.Checked And Not m_show_fbx.Checked And Not m_show_bsp2.Checked And m_simple_lighting.Checked Then
             view_status_string += "Simple Lighting : "
@@ -2512,10 +2567,16 @@ tryagain:
             'Gl.glMaterialfv(Gl.GL_FRONT, Gl.GL_DIFFUSE, diffuseLight)
             'Gl.glColorMaterial(Gl.GL_FRONT, Gl.GL_SPECULAR Or Gl.GL_AMBIENT_AND_DIFFUSE)
 
+            Gl.glPolygonMode(Gl.GL_FRONT, Gl.GL_FILL)
 
             Gl.glMateriali(Gl.GL_FRONT, Gl.GL_SHININESS, CInt(spec * 128))
 
             For jj = 1 To object_count - track_info.segment_count
+                If _group(jj).is_carraige Then
+                    Gl.glFrontFace(Gl.GL_CW)
+                Else
+                    Gl.glFrontFace(Gl.GL_CCW)
+                End If
                 If Not wire_cb.Checked Then
                     Gl.glEnable(Gl.GL_POLYGON_OFFSET_FILL)
                 End If
@@ -2578,12 +2639,19 @@ tryagain:
 
         End If
         '==========================================
+        'Gl.glDisable(Gl.GL_CULL_FACE)
         Gl.glDisable(Gl.GL_LIGHTING)
         Gl.glActiveTexture(Gl.GL_TEXTURE0)
         Gl.glBindTexture(Gl.GL_TEXTURE_2D, 0)
         If MODEL_LOADED And frmTextureViewer.Visible And (frmTextureViewer.m_show_uvs.Checked Or frmTextureViewer.m_uvs_only.Checked) Then
+            Gl.glFrontFace(Gl.GL_CW)
             Gl.glEnable(Gl.GL_BLEND)
             Gl.glColor4f(0.8, 0.4, 0.0, 0.8)
+            If _group(current_part).is_carraige Then
+                Gl.glFrontFace(Gl.GL_CW)
+            Else
+                Gl.glFrontFace(Gl.GL_CCW)
+            End If
 
             Gl.glBegin(Gl.GL_TRIANGLES)
             Dim v1 = _object(current_part).tris(current_vertex).v1
@@ -2631,10 +2699,97 @@ tryagain:
         '######################################################################### ORTHO MODE
         '######################################################################### ORTHO MODE
         ViewOrtho()
+        Gl.glFrontFace(Gl.GL_CW)
         Gl.glDisable(Gl.GL_DEPTH_TEST)
         Gl.glDisable(Gl.GL_LIGHTING)
+        Gl.glPolygonMode(Gl.GL_FRONT_AND_BACK, Gl.GL_FILL)
+        '===========================================================
+        Dim P As New Point(0, 0)
+        Dim w, h As Integer
+        G_Buffer.getsize(w, h)
+        '===========================================================
+        'pass one FXAA
+        'Gl.glBindFramebufferEXT(Gl.GL_FRAMEBUFFER_EXT, gBufferFBO)
+        G_Buffer.attachFXAAtexture()
+        Gl.glClear(Gl.GL_COLOR_BUFFER_BIT Or Gl.GL_DEPTH_BUFFER_BIT)
+
+        Gl.glUseProgram(shader_list.FXAA_shader)
+        Gl.glUniform1i(FXAA_color, 0)
+        Gl.glUniform2f(FXAA_screenSize, CSng(w), CSng(h))
 
 
+
+        Gl.glEnable(Gl.GL_TEXTURE_2D)
+        Gl.glActiveTexture(Gl.GL_TEXTURE0)
+        Gl.glBindTexture(Gl.GL_TEXTURE_2D, gColor)
+        Gl.glColor3f(1.0, 1.0, 1.0)
+        Gl.glBegin(Gl.GL_QUADS)
+        '  CW...
+        '  1 ------ 2
+        '  |        |
+        '  |        |
+        '  4 ------ 3
+        '
+        Gl.glTexCoord2f(0.0!, 1.0!)
+        Gl.glVertex2f(P.X, P.Y)
+
+        Gl.glTexCoord2f(1.0!, 1.0!)
+        Gl.glVertex2f(P.X + w, P.Y)
+
+        Gl.glTexCoord2f(1.0!, 0.0!)
+        Gl.glVertex2f(P.X + w, P.Y - h)
+
+        Gl.glTexCoord2f(0.0!, 0.0!)
+        Gl.glVertex2f(P.X, P.Y - h)
+        Gl.glEnd()
+
+        '===========================================================
+
+
+        Gl.glBindTexture(Gl.GL_TEXTURE_2D, 0)
+fuckit:
+        Gl.glUseProgram(0)
+        '===========================================================
+        '===========================================================
+        '===========================================================
+        'final render
+        '===========================================================
+        '===========================================================
+        '===========================================================
+        Gl.glBindFramebufferEXT(Gl.GL_FRAMEBUFFER_EXT, 0)
+        Gl.glClear(Gl.GL_COLOR_BUFFER_BIT Or Gl.GL_DEPTH_BUFFER_BIT)
+
+
+
+        'GoTo over
+        Gl.glEnable(Gl.GL_TEXTURE_2D)
+        Gl.glActiveTexture(Gl.GL_TEXTURE0)
+        Gl.glBindTexture(Gl.GL_TEXTURE_2D, gFXAA)
+        'Gl.glBindTexture(Gl.GL_TEXTURE_2D, gColor)
+        Gl.glColor3f(1.0, 1.0, 1.0)
+        Gl.glBegin(Gl.GL_QUADS)
+        'G_Buffer.getsize(w, h)
+        '  CW...
+        '  1 ------ 2
+        '  |        |
+        '  |        |
+        '  4 ------ 3
+        '
+        Gl.glTexCoord2f(0.0!, 1.0!)
+        Gl.glVertex2f(P.X, P.Y)
+
+        Gl.glTexCoord2f(1.0!, 1.0!)
+        Gl.glVertex2f(P.X + w, P.Y)
+
+        Gl.glTexCoord2f(1.0!, 0.0!)
+        Gl.glVertex2f(P.X + w, P.Y - h)
+
+        Gl.glTexCoord2f(0.0!, 0.0!)
+        Gl.glVertex2f(P.X, P.Y - h)
+        Gl.glEnd()
+
+        Gl.glBindTexture(Gl.GL_TEXTURE_2D, 0)
+        Gl.glUseProgram(0)
         'menu
         'draw_menu()
 
@@ -2712,7 +2867,7 @@ tryagain:
         End If
         'has to be AFTER the buffer swap
         If Not STOP_BUTTON_SCAN Then
-
+            Gl.glFrontFace(Gl.GL_CW)
             If season_Buttons_VISIBLE Then
                 draw_season_pick_buttons()
                 mouse_pick_season_button(m_mouse.x, m_mouse.y)
@@ -2749,7 +2904,7 @@ tryagain:
 
             Gl.glEnable(Gl.GL_DEPTH_TEST)
             Gl.glEnable(Gl.GL_BLEND)
-            Gl.glFrontFace(Gl.GL_CCW)
+            Gl.glFrontFace(Gl.GL_CW)
             Gl.glColor4f(1.0, 0.0, 0.0, 0.8)
 
             Gl.glBegin(Gl.GL_TRIANGLES)
@@ -2812,7 +2967,7 @@ tryagain:
                 Gl.glEnable(Gl.GL_TEXTURE_2D)
                 Gl.glBindTexture(Gl.GL_TEXTURE_2D, _group(object_count).color_Id)
                 Gl.glUniform1i(tank_is_GAmap, _object(jj).ANM)
-                Gl.glUniform1i(tank_alphaTest, _group(jj).alphaTest)
+                Gl.glUniform1i(tank_alphaRef, _group(jj).alphaTest)
                 Gl.glUniform2f(tank_detailTiling, _group(jj).detail_tile.x, _group(jj).detail_tile.y)
                 Gl.glUniform1f(tank_detailPower, _group(jj).detail_power)
                 Gl.glUniform4f(tank_tile_vec4, _object(jj).camo_tiling.x, _object(jj).camo_tiling.y, _object(jj).camo_tiling.z, _object(jj).camo_tiling.w)
@@ -4097,6 +4252,12 @@ tryagain:
             _object(i).vertex_pick_list = cpl
             Gl.glNewList(cpl, Gl.GL_COMPILE)
             a = i + 10
+            Gl.glEnable(Gl.GL_CULL_FACE)
+            If _group(i).is_carraige Then
+                Gl.glFrontFace(Gl.GL_CW)
+            Else
+                Gl.glFrontFace(Gl.GL_CCW)
+            End If
             If _object(i).visible Then
                 Gl.glBegin(Gl.GL_TRIANGLES)
                 For k As UInt32 = 1 To _object(i).count

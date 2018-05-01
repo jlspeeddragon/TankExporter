@@ -207,6 +207,10 @@ skip:
             'frmTextureViewer.draw()
             'frmTextureViewer.draw()
         End If
+        If frmTextureViewer.Visible Then
+            frmTextureViewer.draw()
+            frmTextureViewer.draw()
+        End If
         '===================================
         'Debug.WriteLine("test")
     End Sub
@@ -315,7 +319,7 @@ skip:
         Gl.glLoadIdentity() 'Reset The Matrix
         Gl.glReadBuffer(Gl.GL_BACK)
         Gl.glPolygonMode(Gl.GL_FRONT_AND_BACK, Gl.GL_FILL)
-
+        Gl.glDisable(Gl.GL_CULL_FACE)
         Gl.glDisable(Gl.GL_DEPTH_TEST)
         Dim e = Gl.glGetError
         Gl.glUseProgram(shader_list.mixer_shader)

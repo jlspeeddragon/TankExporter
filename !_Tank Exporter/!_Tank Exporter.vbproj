@@ -24,7 +24,7 @@
     <UpdatePeriodically>false</UpdatePeriodically>
     <UpdateRequired>false</UpdateRequired>
     <MapFileExtensions>true</MapFileExtensions>
-    <ApplicationRevision>38</ApplicationRevision>
+    <ApplicationRevision>39</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
@@ -252,6 +252,7 @@
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Modules\modCamouflage.vb" />
+    <Compile Include="Modules\modFBO.vb" />
     <Compile Include="Modules\modFBX.vb" />
     <Compile Include="Modules\modGLbuttons.vb" />
     <Compile Include="Modules\modGlobals.vb" />
@@ -352,6 +353,18 @@
       <Generator>SettingsSingleFileGenerator</Generator>
       <CustomToolNamespace>My</CustomToolNamespace>
       <LastGenOutput>Settings.Designer.vb</LastGenOutput>
+    </None>
+    <None Include="shaders\FXAA_fragment.glsl">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="shaders\FXAA_vertex.glsl">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="shaders\gaussian_fragment.glsl">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="shaders\gaussian_vertex.glsl">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="shaders\tank_vertex.glsl">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>

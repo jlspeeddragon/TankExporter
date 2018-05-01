@@ -296,6 +296,7 @@ Module ModTankLoader
         Public metalGMM_name As String
         Public colorIDmap As String
         Public detail_power As Single
+        Public doubleSided As Boolean
         Public ao_name As String
         Public ao_id As Integer
         Public normal_Id As Integer
@@ -327,6 +328,7 @@ Module ModTankLoader
         Public rotation As Skill.FbxSDK.FbxVector4
         Public translation As Skill.FbxSDK.FbxVector4
         Public scale As Skill.FbxSDK.FbxVector4
+        Public is_carraige As Boolean
 
     End Structure
     Public Structure uvect3
@@ -1119,6 +1121,7 @@ next_m:
                     End If
                     'save the vertex pointers
                     _group(jj).indicies(i) = New uvect3
+                    _group(jj).is_carraige = False
                     If file_name.ToLower.Contains("hull") Or file_name.ToLower.Contains("turret") Then
                         _group(jj).indicies(i).v1 = p2
                         _group(jj).indicies(i).v2 = p1
@@ -1127,6 +1130,12 @@ next_m:
                         _group(jj).indicies(i).v1 = p1
                         _group(jj).indicies(i).v2 = p2
                         _group(jj).indicies(i).v3 = p3
+                    End If
+                    'stupid hack to fix the chassis carraige from being rendered inside out
+                    If file_name.ToLower.Contains("/chassis.") Then
+                        If running > 2 Then
+                            _group(jj).is_carraige = True
+                        End If
                     End If
 
                     _object(jj).tris(i).v1.x = tbuf(p1).x
@@ -1285,6 +1294,7 @@ all_done:
         'frmMain.Text = "File: " + file_name.Replace(".visual", ".primitives")
         Return True
     End Function
+
     Dim verts(0) As b_verts_
     Public Structure b_verts_
         Public v1, v2, v3 As SlimDX.Vector3
@@ -1952,8 +1962,6 @@ get_visual:
             Dim ar = newS.Split(" ")
             _group(id).detail_tile.x = CSng(ar(0))
             _group(id).detail_tile.y = CSng(ar(1))
-            '_group(id).has_uv2 = 0 ' we dont want this.. 
-            'I dont know how to use it!
         Else
             _group(id).detail_tile.x = 1.0
             _group(id).detail_tile.y = 1.0
@@ -1966,7 +1974,6 @@ get_visual:
             Dim newS As String = ""
             newS = Mid(thestring, tex1_pos, tex1_Epos - tex1_pos).Replace("/", "\")
             _group(id).detail_name = newS
-            'Debug.Write(newS & vbCrLf)
             _group(id).detail_Id = -1
         End If
 
@@ -1977,7 +1984,6 @@ get_visual:
             Dim newS As String = ""
             newS = Mid(thestring, tex1_pos, tex1_Epos - tex1_pos).Replace("/", "\")
             _group(id).metalGMM_name = newS.Replace("tga", "dds")
-            'Debug.Write(newS & vbCrLf)
             _group(id).metalGMM_Id = -1
         End If
 
@@ -1995,7 +2001,7 @@ get_visual:
             _group(id).color_Id = -1
         End If
 
-        diff_pos = InStr(primStart, thestring, "difffuseMap2")
+        'diff_pos = InStr(primStart, thestring, "difffuseMap2")
         'If diff_pos > 0 Then
         '    Dim tex1_pos = InStr(diff_pos, thestring, "<Texture>") + "<texture>".Length
         '    Dim tex1_Epos = InStr(tex1_pos, thestring, "</Texture>")
@@ -2012,7 +2018,6 @@ get_visual:
             Dim newS As String = ""
             newS = Mid(thestring, tex1_pos, tex1_Epos - tex1_pos).Replace("/", "\")
             _group(id).ao_name = newS.Replace("tga", "dds")
-            'Debug.Write(newS & vbCrLf)
             _group(id).ao_id = -1
         End If
 
@@ -2029,12 +2034,10 @@ get_visual:
             Else
                 _object(id).ANM = 0
             End If
-            'Debug.Write(newS & vbCrLf)
             _group(id).bumped = True
             _group(id).normal_Id = -1
         Else
             _group(id).bumped = False
-
         End If
 
         diff_pos = InStr(primStart, thestring, "metallicGlossMap")
@@ -2047,8 +2050,8 @@ get_visual:
             _group(id).metalGMM_name = newS
             _group(id).metal_textured = True
             _group(id).metalGMM_Id = -1
-
         End If
+
         diff_pos = InStr(primStart, thestring, "specularMap") 'reusing the metal texture as specMap
         If diff_pos > 0 Then
             HD_TANK = False
@@ -2059,7 +2062,6 @@ get_visual:
             _group(id).metalGMM_name = newS
             _group(id).metal_textured = False
             _group(id).metalGMM_Id = -1
-
         End If
 
 
@@ -2070,13 +2072,11 @@ get_visual:
             Dim tex1_Epos = InStr(tex1_pos, thestring, "</Int>")
             Dim newS As String = ""
             newS = Mid(thestring, tex1_pos, tex1_Epos - tex1_pos).Replace("/", "\")
-            'Dim ar = maplist(map).models(mod_id).componets(currentP).color_name
             Dim ref = Convert.ToInt32(newS)
 
             _group(id).alphaRef = ref
         Else
             _group(id).alphaRef = 0
-
         End If
 
         diff_pos = InStr(primStart, thestring, "alphaTestEnable<")
@@ -2086,16 +2086,14 @@ get_visual:
             Dim tex1_Epos = InStr(tex1_pos, thestring, "</Bool>")
             Dim newS As String = ""
             newS = Mid(thestring, tex1_pos, tex1_Epos - tex1_pos).Replace("/", "\")
-            'Dim ar = maplist(map).models(mod_id).componets(currentP).color_name
             Dim ref As Integer = 0
             If newS = "true" Then
                 ref = 1
             End If
             _group(id).alphaTest = ref
         Else
-            'we want to test by default
             _group(id).alphaTest = 0
-            _group(id).alphaRef = 128 '?
+            _group(id).alphaRef = 0 '?
 
 
         End If
@@ -2106,15 +2104,29 @@ get_visual:
             Dim tex1_Epos = InStr(tex1_pos, thestring, "</Float>")
             Dim newS As String = ""
             newS = Mid(thestring, tex1_pos, tex1_Epos - tex1_pos).Replace("/", "\")
-            'Dim ar = maplist(map).models(mod_id).componets(currentP).color_name
-
             _group(id).detail_power = CSng(newS)
         Else
-            'we want to test by default
             _group(id).detail_power = 0
-
-
         End If
+
+        diff_pos = InStr(primStart, thestring, "doubleSided<")
+        If diff_pos > 0 Then
+
+            Dim tex1_pos = InStr(diff_pos, thestring, "<Bool>") + "<Bool>".Length
+            Dim tex1_Epos = InStr(tex1_pos, thestring, "</Bool>")
+            Dim newS As String = ""
+            newS = Mid(thestring, tex1_pos, tex1_Epos - tex1_pos).Replace("/", "\")
+            Debug.WriteLine(newS)
+            If newS = "true" Then
+                _group(id).doubleSided = True
+            Else
+                _group(id).doubleSided = False
+            End If
+          
+        Else
+            _group(id).doubleSided = 0
+        End If
+
         diff_pos = InStr(primStart, thestring, "colorIdMap<")
         If diff_pos > 0 Then
 
@@ -2122,18 +2134,13 @@ get_visual:
             Dim tex1_Epos = InStr(tex1_pos, thestring, "</Texture>")
             Dim newS As String = ""
             newS = Mid(thestring, tex1_pos, tex1_Epos - tex1_pos).Replace("/", "\")
-            'Dim ar = maplist(map).models(mod_id).componets(currentP).color_name
             Debug.WriteLine(newS)
             _group(id).colorIDmap = newS
             _group(id).hasColorID = 1
         Else
-            'we want to test by default
             _group(id).hasColorID = 0
-
-
         End If
-        Return True 'have a valid texture name.. WhooYooooooo!!!
-
+        Return True
 
     End Function
     Public Function unpackNormal(ByVal packed As UInt32)

@@ -27,6 +27,18 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_0411B3D48C774AC2B68CB3DDB500B69C"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_0DEB65742C6545C68C6E136117C6F247"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_142252C52765435B825E52D7E681A27E"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -243,6 +255,12 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_90F8166651264A079F1C72C1BCB7B5D9"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_94DCCB39CF724C0FB65680B86184C5ED"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -351,6 +369,12 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_F9EF2BC95E63423F9DA86757EF353760"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_FAAC60E044C648B3B4961DFCA06A6AF9"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -370,55 +394,7 @@
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_44E421C5592B1314600BEABC21672932"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_CB3B11DAE9A90D5EB814C84C32997A74"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_D5E1112806E42E3E8C8A1C22F5F3E973"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_FD5A50DC130F08C9FC2EF3FDE44E098D"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_84EFEFD1F114EC376D9ADAC1604312CE"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_5DA0670B56534DF8584271F592161133"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_03B0580BC49F24FEC5FFB4467A5DF97F"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_CB1539A750064D6020C13440437ECC06"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_26343731CDC36D45E62900C0E77D898C"
+        "OwnerKey" = "8:_6652091BBB2A4E1F9690D26A6521D3BE"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -430,7 +406,55 @@
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_6652091BBB2A4E1F9690D26A6521D3BE"
+        "OwnerKey" = "8:_26343731CDC36D45E62900C0E77D898C"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_CB1539A750064D6020C13440437ECC06"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_03B0580BC49F24FEC5FFB4467A5DF97F"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_5DA0670B56534DF8584271F592161133"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_84EFEFD1F114EC376D9ADAC1604312CE"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_FD5A50DC130F08C9FC2EF3FDE44E098D"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_D5E1112806E42E3E8C8A1C22F5F3E973"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_CB3B11DAE9A90D5EB814C84C32997A74"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_44E421C5592B1314600BEABC21672932"
         "MsmSig" = "8:_UNDEFINED"
         }
     }
@@ -478,7 +502,7 @@
         "DisplayName" = "8:Release"
         "IsDebugOnly" = "11:FALSE"
         "IsReleaseOnly" = "11:TRUE"
-        "OutputFilename" = "8:..\\TankExporter_038.msi"
+        "OutputFilename" = "8:..\\TankExporter_039.msi"
         "PackageFilesAs" = "3:2"
         "PackageFileSize" = "3:-2147483648"
         "CabType" = "3:1"
@@ -565,6 +589,11 @@
             "AssemblyAsmDisplayName" = "8:Tao.Platform.Windows, Version=1.0.0.5, Culture=neutral, PublicKeyToken=701104b2da67a104, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
+                    "_03B0580BC49F24FEC5FFB4467A5DF97F"
+                    {
+                    "Name" = "8:Tao.Platform.Windows.dll"
+                    "Attributes" = "3:512"
+                    }
                 }
             "SourcePath" = "8:Tao.Platform.Windows.dll"
             "TargetName" = "8:"
@@ -582,6 +611,46 @@
             "Register" = "3:1"
             "Exclude" = "11:FALSE"
             "IsDependency" = "11:TRUE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_0411B3D48C774AC2B68CB3DDB500B69C"
+            {
+            "SourcePath" = "8:..\\!_Tank Exporter\\shaders\\FXAA_fragment.glsl"
+            "TargetName" = "8:FXAA_fragment.glsl"
+            "Tag" = "8:"
+            "Folder" = "8:_1B07A285BAA74365A2EBEF572AC0A089"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_0DEB65742C6545C68C6E136117C6F247"
+            {
+            "SourcePath" = "8:..\\!_Tank Exporter\\shaders\\FXAA_vertex.glsl"
+            "TargetName" = "8:FXAA_vertex.glsl"
+            "Tag" = "8:"
+            "Folder" = "8:_1B07A285BAA74365A2EBEF572AC0A089"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_142252C52765435B825E52D7E681A27E"
@@ -751,6 +820,11 @@
             "AssemblyAsmDisplayName" = "8:Ionic.Zlib, Version=1.9.1.8, Culture=neutral, PublicKeyToken=edbe51ad942a3f5c, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
+                    "_26343731CDC36D45E62900C0E77D898C"
+                    {
+                    "Name" = "8:Ionic.Zlib.dll"
+                    "Attributes" = "3:512"
+                    }
                 }
             "SourcePath" = "8:Ionic.Zlib.dll"
             "TargetName" = "8:"
@@ -857,6 +931,11 @@
             "AssemblyAsmDisplayName" = "8:FastColoredTextBox, Version=2.16.11.0, Culture=neutral, PublicKeyToken=fb8aa12b994ef61b, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
+                    "_3CD221EFFCF1B0D8CD1899507D23C501"
+                    {
+                    "Name" = "8:FastColoredTextBox.dll"
+                    "Attributes" = "3:512"
+                    }
                 }
             "SourcePath" = "8:FastColoredTextBox.dll"
             "TargetName" = "8:"
@@ -923,6 +1002,11 @@
             "AssemblyAsmDisplayName" = "8:cttools, Version=1.0.4723.22902, Culture=neutral, processorArchitecture=x86"
                 "ScatterAssemblies"
                 {
+                    "_44E421C5592B1314600BEABC21672932"
+                    {
+                    "Name" = "8:cttools.dll"
+                    "Attributes" = "3:512"
+                    }
                 }
             "SourcePath" = "8:cttools.dll"
             "TargetName" = "8:"
@@ -1109,6 +1193,11 @@
             "AssemblyAsmDisplayName" = "8:Tao.OpenGl, Version=2.1.0.12, Culture=neutral, PublicKeyToken=1ca010269a4501ef, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
+                    "_5DA0670B56534DF8584271F592161133"
+                    {
+                    "Name" = "8:Tao.OpenGl.dll"
+                    "Attributes" = "3:512"
+                    }
                 }
             "SourcePath" = "8:Tao.OpenGl.dll"
             "TargetName" = "8:"
@@ -1226,6 +1315,11 @@
             "AssemblyAsmDisplayName" = "8:Tao.FreeGlut, Version=2.4.0.2, Culture=neutral, PublicKeyToken=6e602a6ad6c0d06d, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
+                    "_84EFEFD1F114EC376D9ADAC1604312CE"
+                    {
+                    "Name" = "8:Tao.FreeGlut.dll"
+                    "Attributes" = "3:512"
+                    }
                 }
             "SourcePath" = "8:Tao.FreeGlut.dll"
             "TargetName" = "8:"
@@ -1311,6 +1405,26 @@
             "TargetName" = "8:heavyTank.png"
             "Tag" = "8:"
             "Folder" = "8:_D44C0C35DFB0401DBCF1EAA8ADEE404F"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_90F8166651264A079F1C72C1BCB7B5D9"
+            {
+            "SourcePath" = "8:..\\!_Tank Exporter\\shaders\\gaussian_vertex.glsl"
+            "TargetName" = "8:gaussian_vertex.glsl"
+            "Tag" = "8:"
+            "Folder" = "8:_1B07A285BAA74365A2EBEF572AC0A089"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -1532,6 +1646,11 @@
             "AssemblyAsmDisplayName" = "8:Ionic.Zip, Version=1.9.1.8, Culture=neutral, PublicKeyToken=edbe51ad942a3f5c, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
+                    "_CB1539A750064D6020C13440437ECC06"
+                    {
+                    "Name" = "8:Ionic.Zip.dll"
+                    "Attributes" = "3:512"
+                    }
                 }
             "SourcePath" = "8:Ionic.Zip.dll"
             "TargetName" = "8:"
@@ -1558,6 +1677,11 @@
             "AssemblyAsmDisplayName" = "8:FbxSDK, Version=1.0.4593.24947, Culture=neutral, processorArchitecture=x86"
                 "ScatterAssemblies"
                 {
+                    "_CB3B11DAE9A90D5EB814C84C32997A74"
+                    {
+                    "Name" = "8:FbxSDK.dll"
+                    "Attributes" = "3:512"
+                    }
                 }
             "SourcePath" = "8:FbxSDK.dll"
             "TargetName" = "8:"
@@ -1624,6 +1748,11 @@
             "AssemblyAsmDisplayName" = "8:SlimDX, Version=2.0.13.43, Culture=neutral, PublicKeyToken=b1b0c32fd1ffe4f9, processorArchitecture=x86"
                 "ScatterAssemblies"
                 {
+                    "_D5E1112806E42E3E8C8A1C22F5F3E973"
+                    {
+                    "Name" = "8:SlimDX.dll"
+                    "Attributes" = "3:512"
+                    }
                 }
             "SourcePath" = "8:SlimDX.dll"
             "TargetName" = "8:"
@@ -1683,6 +1812,26 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_F9EF2BC95E63423F9DA86757EF353760"
+            {
+            "SourcePath" = "8:..\\!_Tank Exporter\\shaders\\gaussian_fragment.glsl"
+            "TargetName" = "8:gaussian_fragment.glsl"
+            "Tag" = "8:"
+            "Folder" = "8:_1B07A285BAA74365A2EBEF572AC0A089"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_FAAC60E044C648B3B4961DFCA06A6AF9"
             {
             "SourcePath" = "8:..\\!_Tank Exporter\\resources\\Nbutt_norm.png"
@@ -1710,6 +1859,11 @@
             "AssemblyAsmDisplayName" = "8:Tao.DevIl, Version=1.6.8.3, Culture=neutral, PublicKeyToken=7ec4053013524957, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
+                    "_FD5A50DC130F08C9FC2EF3FDE44E098D"
+                    {
+                    "Name" = "8:Tao.DevIl.dll"
+                    "Attributes" = "3:512"
+                    }
                 }
             "SourcePath" = "8:Tao.DevIl.dll"
             "TargetName" = "8:"
@@ -1862,15 +2016,15 @@
         {
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:Tank Exporter"
-        "ProductCode" = "8:{B7E8D6E2-E851-4510-98C1-75CC6C8B2C57}"
-        "PackageCode" = "8:{65B2821A-EF6C-42B5-8D0A-E61EC9B8AB6D}"
+        "ProductCode" = "8:{61A35B09-2B40-499D-8B73-7267998ACEB3}"
+        "PackageCode" = "8:{B72DCEF8-58A2-45D6-965E-2A82DB645F6F}"
         "UpgradeCode" = "8:{6ABAF23A-CB3D-4411-B78A-4855B5B5A0CD}"
         "AspNetVersion" = "8:4.0.30319.0"
         "RestartWWWService" = "11:FALSE"
         "RemovePreviousVersions" = "11:TRUE"
         "DetectNewerInstalledVersion" = "11:TRUE"
         "InstallAllUsers" = "11:FALSE"
-        "ProductVersion" = "8:1.0.38"
+        "ProductVersion" = "8:1.0.39"
         "Manufacturer" = "8:Coffee_"
         "ARPHELPTELEPHONE" = "8:"
         "ARPHELPLINK" = "8:"

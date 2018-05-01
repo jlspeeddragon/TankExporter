@@ -115,6 +115,9 @@ Public Class frmTextureViewer
         'set ortho mode.
         '#######################################################################################
         check_if_centering_on_selection()
+        Gl.glFrontFace(Gl.GL_CW)
+
+        Gl.glDisable(Gl.GL_CULL_FACE)
         Gl.glViewport(0, 0, frmMain.pb2.Width, frmMain.pb2.Height)
         Gl.glMatrixMode(Gl.GL_PROJECTION) 'Select Projection
         Gl.glLoadIdentity() 'Reset The Matrix

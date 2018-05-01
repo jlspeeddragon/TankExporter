@@ -1,6 +1,8 @@
 ﻿// tank_fragment.glsl
 //Used to light all models
-#version 120
+#version 330 compatibility
+
+layout (location = 0) out vec4 gColor;
 uniform sampler2D colorMap;
 uniform sampler2D normalMap;
 uniform sampler2D gmmMap;
@@ -9,7 +11,7 @@ uniform sampler2D detailMap;
 uniform sampler2D camoMap;
 
 uniform int is_GAmap;
-uniform int alphaTest;
+uniform int alphaRef;
 uniform vec2 detailTiling;
 uniform vec4 tile_vec4;
 uniform float detailPower;
@@ -38,7 +40,6 @@ in vec3 n;
 // rextimmy gets full credit for figuring out how mixing works!
 vec4 applyCamo(vec4 cc,vec4 camoTex){
     vec4 ac = armorcolor;
-    ac.a = 0.70;
     cc   = ac ;
     cc   = mix(cc, c0 , camoTex.r * c0.a );
     cc   = mix(cc, c1 , camoTex.g * c1.a );
@@ -47,6 +48,12 @@ vec4 applyCamo(vec4 cc,vec4 camoTex){
     return cc;
 }
 // ========================================================
+vec3 correct(in vec3 hdrColor, in float exposure){  
+    // Exposure tone mapping
+    vec3 mapped = vec3(1.0) - exp(-hdrColor.rgb * exposure);
+    // Gamma correction 
+    return pow(mapped.rgb, vec3(1.0 / 0.75));    
+}
 
 const float PI = 3.14159265358;
 
@@ -86,6 +93,10 @@ vec3 fresnelSchlick(float cosTheta, vec3 F0)
 
 void main(void) {
 
+vec3 lightColors[3];
+lightColors[0] = vec3(0.7);
+lightColors[1] = vec3(0.7);
+lightColors[2] = vec3(0.6);
 
 //--------------------------------
 vec4   cc = vec4(0.0);
@@ -95,7 +106,7 @@ vec3   bump;
 float  alpha;
 vec4   color;
 float  a;
-vec3   sum = vec3(0.0);
+vec3   sumC = vec3(0.0);
 //--------------------------------
 // setup tiling values
     vec2 ctc = TC1 * camo_tiling.xy; // from scripts/vehicle/nation/customiztion.xml file 
@@ -103,7 +114,7 @@ vec3   sum = vec3(0.0);
     ctc.xy += camo_tiling.zw; 
     ctc.xy += tile_vec4.zw;
 //--------------------------------
-vec2 center = vec2(1.0 / 1024.0);
+
 // Load textures
     vec4 camoTexture = texture2D(camoMap,   ctc.st );
     vec4 detail      = texture2D(detailMap, TC1.st * detailTiling);
@@ -113,7 +124,7 @@ vec2 center = vec2(1.0 / 1024.0);
     vec3 GMM         = texture2D(gmmMap,    TC1.st).rgb;
 
 //--------------------------------
-    color = base;
+    color.rgb  = correct(base.rgb * base.rgb *2.5,0.75);
     a = base.a;
     //convert to -1.0 to 1.0    
     detailBump.xyz = detail.xyz * 2.0 - 1.0;
@@ -121,14 +132,15 @@ vec2 center = vec2(1.0 / 1024.0);
 
     if (is_GAmap == 1 && use_CM == 0)
     {
+        
         bumpMap.ga = bumpMap.ag *2.0 - 1.0;
         bump.xy    = bumpMap.ag;
         bump.z     = sqrt(1.0 - dot(bumpMap.ga, bumpMap.ga));
         bump       = normalize(bump);
-        bump.y *= - 1.0;
+        bump.x *= - 1.0;
         a = texture2D(normalMap, TC1.st).r;
         
-        color.rgb = mix(color.rgb,1.0*(color.rgb * armorcolor.rgb),0.8);
+        //color.rgb = mix(color.rgb,1.0*(color.rgb * armorcolor.rgb),0.75);
        
 
 
@@ -138,22 +150,21 @@ vec2 center = vec2(1.0 / 1024.0);
             if (use_camo > 0 )
             {
                 cc    = applyCamo(cc, camoTexture);
-                color = mix(color, cc*1.5,  AO.a*cc.a);
+                //cc = mix(vec4(0.04),cc,AO.a/0.752)*0.5;
+                color.rgb = mix(color.rgb, cc.rgb * cc.rgb,  AO.a);
+                
             }
             color.rgb *= AO.g;
             // add detail noise to mix. Lots a tweaked values here.
-            color.rgb = mix(color.rgb,color.rgb*detail.rgb*AO.g,detail.r*.9)*1.5;
             base.rgb  = color.rgb;
       } else {
             if (AO.g == 0.0 ){
             // If we are here, we are on the track treads
             AO = vec4(0.5,0.5,0.5,0.5);
-             color.rgb = mix(color.rgb,detail.rgb*color.rgb,GMM.r)*1.0;
           
            base = color;
           } else {
             // If we land here, we are on chassis
-            color.rgb = mix(color.rgb,color.rgb*detail.rgb*AO.a,detail.r)*1.0;
             base.rgb  = color.rgb;
            
             }// end AO.g
@@ -171,21 +182,18 @@ vec2 center = vec2(1.0 / 1024.0);
             cc    = applyCamo(cc, camoTexture);
             color = mix(color, cc, AO.b * cc.a);
         }            
-        AO.r      = 0.5;
-        AO.g      = 0.5;
         color.rgb *= 0.8;
         base.rgb  = color.rgb;
         GMM.g     = 0.4;
         GMM.r     = 0.5;
       
     } //end is_GAmap
-
-    if (alphaTest == int(1)) { if (a < 0.5) {discard;} }
+    float aRef = float(alphaRef)/255.0;
+    if (aRef > a) {discard;}
     
     float roughness = 1.0-GMM.r/0.8;
     float metallic = GMM.g/0.8;
-    
-    
+    float scrach = detail.r-0.5;
     vec3 V = normalize(-vVertex);    // we are in Eye Coordinates, so EyePos is (0,0,0)  
     vec3 N = normalize(TBN * bump); // Get the perturbed normal
 
@@ -207,11 +215,11 @@ vec2 center = vec2(1.0 / 1024.0);
         vec3 R = normalize(reflect(-L,N));  
         float distance    = length(gl_LightSource[i].position.xyz - vVertex);
         float attenuation = 20.0 / (distance * distance);
-        vec3 radiance     = vec3(0.6) * attenuation * 3.5;        
+        vec3 radiance     = lightColors[i] * attenuation * 3.5;        
         
         // cook-torrance brdf
-        float NDF = DistributionGGX(N, H, roughness);        
-        float G   = GeometrySmith(N, V, L, roughness);      
+        float NDF = DistributionGGX(N*1.0, H, roughness);        
+        float G   = pow(GeometrySmith(N*3.0, V, L, roughness),3.0*(1.1-roughness));      
         vec3 F    = fresnelSchlick(max(dot(H, V), 0.0), F0);       
         
         vec3 kS = F;
@@ -220,15 +228,19 @@ vec2 center = vec2(1.0 / 1024.0);
         
         vec3 numerator    = NDF * G * F;
         float denominator = 4.0 * max(dot(N, V), 0.0) * max(dot(N, L), 0.0);
-        vec3 specular     = numerator / max(denominator, 0.001) * S_level;  
-        vec3 Metalspecular = vec3(0.25,0.25,0.3) * pow(max(dot(R,V),0.0),10.0) * (metallic -0.35) * S_level;
-
+        vec3 specular     = numerator / max(denominator, 0.001) * S_level*0.8;
+        float spec_scale = 3.0; // tweak value
+        vec3 Metalspecular = vec3(0.25,0.25,0.3) * max(pow(max(dot(R,V),0.0),10.0) * (metallic -0.35) * S_level*spec_scale,0.0);
+        vec3 MetalDetailspecular = vec3(0.5,0.5,0.7) * pow(max(dot(R,V),0.0),5.0) * (scrach ) * S_level*spec_scale*metallic*0.5;
         // add to outgoing radiance Lo
         float NdotL = max(dot(N, L), 0.0);  
               
-        sum += (kD * color.rgb /PI  + specular + Metalspecular) * radiance * NdotL *10.0; 
+        sumC += (kD * color.rgb /PI + specular + Metalspecular + MetalDetailspecular) * radiance * NdotL *6.0;
+        //sumC += (color.rgb * vec3(0.001)) + kD*0.2;
     } //next light
 
-gl_FragColor.rgb = (sum.rgb + ambient) * T_level * 1.75;
+gColor.rgb = correct((sumC.rgb + ambient) * T_level * 3.25,1.0);
+
+gColor.a = 1.0;
 }
 
