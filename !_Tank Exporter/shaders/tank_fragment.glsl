@@ -137,7 +137,7 @@ vec3   sumC = vec3(0.0);
         bump.xy    = bumpMap.ag;
         bump.z     = sqrt(1.0 - dot(bumpMap.ga, bumpMap.ga));
         bump       = normalize(bump);
-        bump.x *= - 1.0;
+        bump.y *= - 1.0;
         a = texture2D(normalMap, TC1.st).r;
         
         //color.rgb = mix(color.rgb,1.0*(color.rgb * armorcolor.rgb),0.75);
