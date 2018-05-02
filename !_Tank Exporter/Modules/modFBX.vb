@@ -450,7 +450,7 @@ Module modFBX
                         fbxgrp(i).vertices(v1).v = -uv1_.Y
                         fbxgrp(i).vertices(v1).u2 = uv1_2.X
                         fbxgrp(i).vertices(v1).v2 = -uv1_2.Y
-                        fbxgrp(i).vertices(v1).nx = -n1.X
+                        fbxgrp(i).vertices(v1).nx = n1.X
                         fbxgrp(i).vertices(v1).ny = n1.Y
                         fbxgrp(i).vertices(v1).nz = n1.Z
                         fbxgrp(i).vertices(v1).n = packnormalFBX888(n1)
@@ -469,7 +469,7 @@ Module modFBX
                         fbxgrp(i).vertices(v2).v = -uv2_.Y
                         fbxgrp(i).vertices(v2).u2 = uv2_2.X
                         fbxgrp(i).vertices(v2).v2 = -uv2_2.Y
-                        fbxgrp(i).vertices(v2).nx = -n2.X
+                        fbxgrp(i).vertices(v2).nx = n2.X
                         fbxgrp(i).vertices(v2).ny = n2.Y
                         fbxgrp(i).vertices(v2).nz = n2.Z
                         fbxgrp(i).vertices(v2).n = packnormalFBX888(n2)
@@ -487,7 +487,7 @@ Module modFBX
                         fbxgrp(i).vertices(v3).v = -uv3_.Y
                         fbxgrp(i).vertices(v3).u2 = uv3_2.X
                         fbxgrp(i).vertices(v3).v2 = -uv3_2.Y
-                        fbxgrp(i).vertices(v3).nx = -n3.X
+                        fbxgrp(i).vertices(v3).nx = n3.X
                         fbxgrp(i).vertices(v3).ny = n3.Y
                         fbxgrp(i).vertices(v3).nz = n3.Z
                         fbxgrp(i).vertices(v3).n = packnormalFBX888(n3)
@@ -1326,19 +1326,19 @@ whichone:
             Dim v2 = _group(id).indicies(I).v2
             Dim v3 = _group(id).indicies(I).v3
             v = unpackNormal(_group(id).vertices(v1 - off).n, _group(id).BPVT_mode)
-            v4.X = -v.nx
+            v4.X = v.nx
             v4.Y = v.ny
             v4.Z = v.nz
             layerElementNormal.DirectArray.Add(v4)
 
             v = unpackNormal(_group(id).vertices(v2 - off).n, _group(id).BPVT_mode)
-            v4.X = -v.nx
+            v4.X = v.nx
             v4.Y = v.ny
             v4.Z = v.nz
             layerElementNormal.DirectArray.Add(v4)
 
             v = unpackNormal(_group(id).vertices(v3 - off).n, _group(id).BPVT_mode)
-            v4.X = -v.nx
+            v4.X = v.nx
             v4.Y = v.ny
             v4.Z = v.nz
             layerElementNormal.DirectArray.Add(v4)
@@ -1476,7 +1476,7 @@ whichone:
             n.Z = Round(n.Z, 4)
             Dim nx, ny, nz As Int32
 
-            nx = s_to_int(n.X)
+            nx = s_to_int(-n.X)
             ny = s_to_int(-n.Y)
             nz = s_to_int(-n.Z)
 

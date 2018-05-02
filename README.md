@@ -5,6 +5,9 @@
 
 #### This is an ongoing project by me.. Coffee_
 
+## Version 40:
+Fixed a issue with writing the surface normals X flipped
+
 ## Version 39:
 Added a FBO to use with FXAA.
 Implemented FXAA.
