@@ -5,6 +5,10 @@
 
 #### This is an ongoing project by me.. Coffee_
 
+## Version 41:
+Fixed PBR shading.. Added Cube environment map.
+Added menu items related to the new shading.
+
 ## Version 40:
 Fixed a issue with writing the surface normals X flipped
 
