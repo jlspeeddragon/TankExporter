@@ -87,6 +87,12 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_240237C17F6F41EA8841292510DB17C0"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_26343731CDC36D45E62900C0E77D898C"
         "OwnerKey" = "8:_D88F02B810ED4918A9E68229BD46788B"
         "MsmSig" = "8:_UNDEFINED"
@@ -105,7 +111,31 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_2EA5464CD0AF443A8D970F7B7F026E7E"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_2EFA45BF513F44808128A76E9EDBFD5F"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_3486042ED4A549B8B00193803ED981BC"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_355ACD30AA7D4D68A4F71B179CC0C89F"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_38B3AFED149B4D08BE6D697C4F466EE2"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -113,12 +143,6 @@
         {
         "MsmKey" = "8:_3A05C7E08372496BA313732E05A1FB91"
         "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_3CD221EFFCF1B0D8CD1899507D23C501"
-        "OwnerKey" = "8:_D88F02B810ED4918A9E68229BD46788B"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -165,6 +189,18 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_5200023F8076438180F877841B989EA5"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_54ED1CC681004EFBA5547A32B9A23CC1"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_55BFB1CEE8A94F349C850588FC45EE61"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -197,6 +233,12 @@
         {
         "MsmKey" = "8:_5DA0670B56534DF8584271F592161133"
         "OwnerKey" = "8:_03B0580BC49F24FEC5FFB4467A5DF97F"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_63C7F2565E974A39A7EC57BC7A0CF5B3"
+        "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -279,6 +321,12 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_A49EF73D21F2F9B46F61C5FD7A209F62"
+        "OwnerKey" = "8:_D88F02B810ED4918A9E68229BD46788B"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_A5DD40D0854C4442B379D83A33DC35C0"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -309,6 +357,12 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_BC2746D63F744FE2828E7132A7F442A6"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_C444918297BD4CE989D7D801AC5FB556"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -334,6 +388,12 @@
         "Entry"
         {
         "MsmKey" = "8:_CCFF2D88466B4FDBB64FB75D4FC5EC43"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_CFBB342AC71447C485594EB098FF2EB1"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -400,7 +460,7 @@
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_3CD221EFFCF1B0D8CD1899507D23C501"
+        "OwnerKey" = "8:_A49EF73D21F2F9B46F61C5FD7A209F62"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -502,7 +562,7 @@
         "DisplayName" = "8:Release"
         "IsDebugOnly" = "11:FALSE"
         "IsReleaseOnly" = "11:TRUE"
-        "OutputFilename" = "8:..\\TankExporter_040.msi"
+        "OutputFilename" = "8:..\\TankExporter_041.msi"
         "PackageFilesAs" = "3:2"
         "PackageFileSize" = "3:-2147483648"
         "CabType" = "3:1"
@@ -813,6 +873,26 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_240237C17F6F41EA8841292510DB17C0"
+            {
+            "SourcePath" = "8:..\\!_Tank Exporter\\shaders\\cube_vertex.glsl"
+            "TargetName" = "8:cube_vertex.glsl"
+            "Tag" = "8:"
+            "Folder" = "8:_1B07A285BAA74365A2EBEF572AC0A089"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_26343731CDC36D45E62900C0E77D898C"
             {
             "AssemblyRegister" = "3:1"
@@ -884,12 +964,92 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_2EA5464CD0AF443A8D970F7B7F026E7E"
+            {
+            "SourcePath" = "8:..\\!_Tank Exporter\\resources\\cube\\cubemap_m00_c05.png"
+            "TargetName" = "8:cubemap_m00_c05.png"
+            "Tag" = "8:"
+            "Folder" = "8:_B67DA5D591D4466C8A8D9ED4B710BB53"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_2EFA45BF513F44808128A76E9EDBFD5F"
+            {
+            "SourcePath" = "8:..\\!_Tank Exporter\\resources\\cube\\env_brdf_lut.png"
+            "TargetName" = "8:env_brdf_lut.png"
+            "Tag" = "8:"
+            "Folder" = "8:_B67DA5D591D4466C8A8D9ED4B710BB53"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_3486042ED4A549B8B00193803ED981BC"
             {
             "SourcePath" = "8:..\\!_Tank Exporter\\shaders\\tank_fragment.glsl"
             "TargetName" = "8:tank_fragment.glsl"
             "Tag" = "8:"
             "Folder" = "8:_1B07A285BAA74365A2EBEF572AC0A089"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_355ACD30AA7D4D68A4F71B179CC0C89F"
+            {
+            "SourcePath" = "8:..\\!_Tank Exporter\\resources\\cube\\cubemap_m00_c00.png"
+            "TargetName" = "8:cubemap_m00_c00.png"
+            "Tag" = "8:"
+            "Folder" = "8:_B67DA5D591D4466C8A8D9ED4B710BB53"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_38B3AFED149B4D08BE6D697C4F466EE2"
+            {
+            "SourcePath" = "8:..\\!_Tank Exporter\\resources\\cube\\cubemap_m00_c02.png"
+            "TargetName" = "8:cubemap_m00_c02.png"
+            "Tag" = "8:"
+            "Folder" = "8:_B67DA5D591D4466C8A8D9ED4B710BB53"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -922,37 +1082,6 @@
             "Register" = "3:1"
             "Exclude" = "11:FALSE"
             "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
-            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_3CD221EFFCF1B0D8CD1899507D23C501"
-            {
-            "AssemblyRegister" = "3:1"
-            "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:FastColoredTextBox, Version=2.16.11.0, Culture=neutral, PublicKeyToken=fb8aa12b994ef61b, processorArchitecture=MSIL"
-                "ScatterAssemblies"
-                {
-                    "_3CD221EFFCF1B0D8CD1899507D23C501"
-                    {
-                    "Name" = "8:FastColoredTextBox.dll"
-                    "Attributes" = "3:512"
-                    }
-                }
-            "SourcePath" = "8:FastColoredTextBox.dll"
-            "TargetName" = "8:"
-            "Tag" = "8:"
-            "Folder" = "8:_9BBCA850C4D847C495C4D74DD189C10E"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:TRUE"
             "IsolateTo" = "8:"
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_3D910614FA9949558229F32E25873F6C"
@@ -1106,6 +1235,46 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_5200023F8076438180F877841B989EA5"
+            {
+            "SourcePath" = "8:..\\!_Tank Exporter\\resources\\cube\\cubemap_m00_c03.png"
+            "TargetName" = "8:cubemap_m00_c03.png"
+            "Tag" = "8:"
+            "Folder" = "8:_B67DA5D591D4466C8A8D9ED4B710BB53"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_54ED1CC681004EFBA5547A32B9A23CC1"
+            {
+            "SourcePath" = "8:..\\!_Tank Exporter\\resources\\cube\\cubemap_m00_c01.png"
+            "TargetName" = "8:cubemap_m00_c01.png"
+            "Tag" = "8:"
+            "Folder" = "8:_B67DA5D591D4466C8A8D9ED4B710BB53"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_55BFB1CEE8A94F349C850588FC45EE61"
             {
             "SourcePath" = "8:..\\!_Tank Exporter\\icons\\SPG.png"
@@ -1215,6 +1384,26 @@
             "Register" = "3:1"
             "Exclude" = "11:FALSE"
             "IsDependency" = "11:TRUE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_63C7F2565E974A39A7EC57BC7A0CF5B3"
+            {
+            "SourcePath" = "8:..\\!_Tank Exporter\\resources\\cube\\cubemap_m00_c04.png"
+            "TargetName" = "8:cubemap_m00_c04.png"
+            "Tag" = "8:"
+            "Folder" = "8:_B67DA5D591D4466C8A8D9ED4B710BB53"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_655E7EA6E26D4F1B935ABA3273E04020"
@@ -1499,6 +1688,37 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
+            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_A49EF73D21F2F9B46F61C5FD7A209F62"
+            {
+            "AssemblyRegister" = "3:1"
+            "AssemblyIsInGAC" = "11:FALSE"
+            "AssemblyAsmDisplayName" = "8:FastColoredTextBox, Version=2.16.21.0, Culture=neutral, PublicKeyToken=fb8aa12b994ef61b, processorArchitecture=MSIL"
+                "ScatterAssemblies"
+                {
+                    "_A49EF73D21F2F9B46F61C5FD7A209F62"
+                    {
+                    "Name" = "8:FastColoredTextBox.dll"
+                    "Attributes" = "3:512"
+                    }
+                }
+            "SourcePath" = "8:FastColoredTextBox.dll"
+            "TargetName" = "8:"
+            "Tag" = "8:"
+            "Folder" = "8:_9BBCA850C4D847C495C4D74DD189C10E"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:TRUE"
+            "IsolateTo" = "8:"
+            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_A5DD40D0854C4442B379D83A33DC35C0"
             {
             "SourcePath" = "8:..\\!_Tank Exporter\\resources\\gradiant.png"
@@ -1585,6 +1805,26 @@
             "TargetName" = "8:mediumTank.png"
             "Tag" = "8:"
             "Folder" = "8:_D44C0C35DFB0401DBCF1EAA8ADEE404F"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_BC2746D63F744FE2828E7132A7F442A6"
+            {
+            "SourcePath" = "8:..\\!_Tank Exporter\\resources\\cube\\cube.x"
+            "TargetName" = "8:cube.x"
+            "Tag" = "8:"
+            "Folder" = "8:_B67DA5D591D4466C8A8D9ED4B710BB53"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -1707,6 +1947,26 @@
             "TargetName" = "8:templateNormal.txt"
             "Tag" = "8:"
             "Folder" = "8:_B092ABA10A694571B4227B890E697743"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_CFBB342AC71447C485594EB098FF2EB1"
+            {
+            "SourcePath" = "8:..\\!_Tank Exporter\\shaders\\cube_fragment.glsl"
+            "TargetName" = "8:cube_fragment.glsl"
+            "Tag" = "8:"
+            "Folder" = "8:_1B07A285BAA74365A2EBEF572AC0A089"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -1985,6 +2245,17 @@
                     "Property" = "8:_7A7E637CD8894736AEC1A397A866A996"
                         "Folders"
                         {
+                            "{9EF0B969-E518-4E46-987F-47570745A589}:_B67DA5D591D4466C8A8D9ED4B710BB53"
+                            {
+                            "Name" = "8:cube"
+                            "AlwaysCreate" = "11:FALSE"
+                            "Condition" = "8:"
+                            "Transitive" = "11:FALSE"
+                            "Property" = "8:_6E37F6D457A44D1789ABBC576F1AAD58"
+                                "Folders"
+                                {
+                                }
+                            }
                         }
                     }
                 }
@@ -2016,15 +2287,15 @@
         {
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:Tank Exporter"
-        "ProductCode" = "8:{0182C669-82AF-44DB-9897-66F95B498572}"
-        "PackageCode" = "8:{67A7DEC6-D2DB-411F-8989-3819B1D749C3}"
+        "ProductCode" = "8:{CB9392D0-1DCA-4287-BF02-33C0726478F7}"
+        "PackageCode" = "8:{09ED96BA-254D-4B43-BCFE-6B20EBDE7307}"
         "UpgradeCode" = "8:{6ABAF23A-CB3D-4411-B78A-4855B5B5A0CD}"
         "AspNetVersion" = "8:4.0.30319.0"
         "RestartWWWService" = "11:FALSE"
         "RemovePreviousVersions" = "11:TRUE"
         "DetectNewerInstalledVersion" = "11:TRUE"
         "InstallAllUsers" = "11:FALSE"
-        "ProductVersion" = "8:1.0.40"
+        "ProductVersion" = "8:1.0.41"
         "Manufacturer" = "8:Coffee_"
         "ARPHELPTELEPHONE" = "8:"
         "ARPHELPLINK" = "8:"

@@ -13,6 +13,7 @@ Module shader_loader
         Public fbx_shader As Integer
         Public gaussian_shader As Integer
         Public FXAA_shader As Integer
+        Public cube_shader As Integer
     End Class
 
 #Region "variables"
@@ -298,12 +299,16 @@ Module shader_loader
     Public tank_GMM, tank_AO, tank_detailMap, tank_detailTiling, tank_detailPower As Integer
     Public tank_camo, tank_use_camo, tank_tile_vec4 As Integer
     Public tank_c0, tank_c1, tank_c2, tank_c3, tank_armorcolor, tank_camo_tiling, tank_exclude_camo As Integer
-    Public tank_use_CM As Integer
-    Public tank_ambient, tank_specular, tank_total As Integer
-
+    Public tank_use_CM, tank_Camera As Integer
+    Public tank_ambient, tank_specular, tank_total, tank_cubeMap, tank_LUT As Integer
+    Public tank_a_group, tank_b_group As Integer
     Private Sub set_tank_shader_variables()
+        tank_a_group = Gl.glGetUniformLocation(shader_list.tank_shader, "u_ScaleFGDSpec")
+        tank_b_group = Gl.glGetUniformLocation(shader_list.tank_shader, "u_ScaleDiffBaseMR")
         tank_colorMap = Gl.glGetUniformLocation(shader_list.tank_shader, "colorMap")
         tank_normalMap = Gl.glGetUniformLocation(shader_list.tank_shader, "normalMap")
+        tank_cubeMap = Gl.glGetUniformLocation(shader_list.tank_shader, "cubeMap")
+        tank_LUT = Gl.glGetUniformLocation(shader_list.tank_shader, "u_brdfLUT")
         tank_GMM = Gl.glGetUniformLocation(shader_list.tank_shader, "gmmMap")
         tank_AO = Gl.glGetUniformLocation(shader_list.tank_shader, "aoMap")
         tank_detailMap = Gl.glGetUniformLocation(shader_list.tank_shader, "detailMap")
@@ -314,6 +319,7 @@ Module shader_loader
         tank_detailPower = Gl.glGetUniformLocation(shader_list.tank_shader, "detailPower")
         tank_use_camo = Gl.glGetUniformLocation(shader_list.tank_shader, "use_camo")
         tank_tile_vec4 = Gl.glGetUniformLocation(shader_list.tank_shader, "tile_vec4")
+        tank_Camera = Gl.glGetUniformLocation(shader_list.tank_shader, "u_Camera")
         tank_c0 = Gl.glGetUniformLocation(shader_list.tank_shader, "c0")
         tank_c1 = Gl.glGetUniformLocation(shader_list.tank_shader, "c1")
         tank_c2 = Gl.glGetUniformLocation(shader_list.tank_shader, "c2")
@@ -378,6 +384,12 @@ Module shader_loader
     End Sub
 
     '==============================================================================================================
+    Public cube_cubeMap As Integer
+    Public Sub set_cube_variables()
+        cube_cubeMap = Gl.glGetUniformLocation(shader_list.cube_shader, "cubeMap")
+    End Sub
+
+    '==============================================================================================================
 
     Public Sub set_shader_variables()
         set_tank_shader_variables()
@@ -386,6 +398,7 @@ Module shader_loader
         set_fbx_shader_variables()
         set_gaussian_variables()
         set_FXAA_variables()
+        set_cube_variables()
         Return
     End Sub
     '==============================================================================================================

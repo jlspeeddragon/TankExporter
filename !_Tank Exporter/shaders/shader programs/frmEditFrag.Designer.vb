@@ -47,7 +47,7 @@ Partial Class frmEditFrag
         'recompile_bt
         '
         Me.recompile_bt.Anchor = CType((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-        Me.recompile_bt.Location = New System.Drawing.Point(569, 587)
+        Me.recompile_bt.Location = New System.Drawing.Point(577, 415)
         Me.recompile_bt.Name = "recompile_bt"
         Me.recompile_bt.Size = New System.Drawing.Size(75, 23)
         Me.recompile_bt.TabIndex = 0
@@ -66,7 +66,7 @@ Partial Class frmEditFrag
         Me.TabControl1.Name = "TabControl1"
         Me.TabControl1.Padding = New System.Drawing.Point(3, 3)
         Me.TabControl1.SelectedIndex = 0
-        Me.TabControl1.Size = New System.Drawing.Size(655, 585)
+        Me.TabControl1.Size = New System.Drawing.Size(663, 413)
         Me.TabControl1.TabIndex = 2
         '
         'TabPage1
@@ -75,7 +75,7 @@ Partial Class frmEditFrag
         Me.TabPage1.Location = New System.Drawing.Point(4, 22)
         Me.TabPage1.Name = "TabPage1"
         Me.TabPage1.Padding = New System.Windows.Forms.Padding(3)
-        Me.TabPage1.Size = New System.Drawing.Size(647, 559)
+        Me.TabPage1.Size = New System.Drawing.Size(655, 387)
         Me.TabPage1.TabIndex = 0
         Me.TabPage1.Text = "Vertex Program"
         Me.TabPage1.UseVisualStyleBackColor = True
@@ -96,14 +96,16 @@ Partial Class frmEditFrag
         Me.vert_tb.DisabledColor = System.Drawing.Color.FromArgb(CType(CType(100, Byte), Integer), CType(CType(180, Byte), Integer), CType(CType(180, Byte), Integer), CType(CType(180, Byte), Integer))
         Me.vert_tb.Dock = System.Windows.Forms.DockStyle.Fill
         Me.vert_tb.ForeColor = System.Drawing.Color.White
+        Me.vert_tb.IndentBackColor = System.Drawing.Color.FromArgb(CType(CType(64, Byte), Integer), CType(CType(64, Byte), Integer), CType(CType(64, Byte), Integer))
         Me.vert_tb.IsReplaceMode = False
+        Me.vert_tb.LineNumberColor = System.Drawing.Color.Cyan
         Me.vert_tb.Location = New System.Drawing.Point(3, 3)
         Me.vert_tb.Name = "vert_tb"
         Me.vert_tb.Paddings = New System.Windows.Forms.Padding(0)
         Me.vert_tb.SelectionColor = System.Drawing.Color.FromArgb(CType(CType(60, Byte), Integer), CType(CType(0, Byte), Integer), CType(CType(0, Byte), Integer), CType(CType(255, Byte), Integer))
         Me.vert_tb.ServiceColors = CType(resources.GetObject("vert_tb.ServiceColors"), FastColoredTextBoxNS.ServiceColors)
         Me.vert_tb.ShowFoldingLines = True
-        Me.vert_tb.Size = New System.Drawing.Size(641, 553)
+        Me.vert_tb.Size = New System.Drawing.Size(649, 381)
         Me.vert_tb.TabIndex = 0
         Me.vert_tb.Zoom = 100
         '
@@ -113,7 +115,7 @@ Partial Class frmEditFrag
         Me.TabPage2.Location = New System.Drawing.Point(4, 22)
         Me.TabPage2.Name = "TabPage2"
         Me.TabPage2.Padding = New System.Windows.Forms.Padding(3)
-        Me.TabPage2.Size = New System.Drawing.Size(647, 559)
+        Me.TabPage2.Size = New System.Drawing.Size(655, 387)
         Me.TabPage2.TabIndex = 1
         Me.TabPage2.Text = "Fragment Program"
         Me.TabPage2.UseVisualStyleBackColor = True
@@ -124,7 +126,7 @@ Partial Class frmEditFrag
         Me.frag_tb.AutoIndent = False
         Me.frag_tb.AutoIndentChars = False
         Me.frag_tb.AutoIndentExistingLines = False
-        Me.frag_tb.AutoScrollMinSize = New System.Drawing.Size(27, 14)
+        Me.frag_tb.AutoScrollMinSize = New System.Drawing.Size(2, 14)
         Me.frag_tb.BackBrush = Nothing
         Me.frag_tb.BackColor = System.Drawing.Color.Black
         Me.frag_tb.CaretColor = System.Drawing.Color.WhiteSmoke
@@ -134,14 +136,16 @@ Partial Class frmEditFrag
         Me.frag_tb.DisabledColor = System.Drawing.Color.FromArgb(CType(CType(100, Byte), Integer), CType(CType(180, Byte), Integer), CType(CType(180, Byte), Integer), CType(CType(180, Byte), Integer))
         Me.frag_tb.Dock = System.Windows.Forms.DockStyle.Fill
         Me.frag_tb.ForeColor = System.Drawing.Color.White
+        Me.frag_tb.IndentBackColor = System.Drawing.Color.FromArgb(CType(CType(64, Byte), Integer), CType(CType(64, Byte), Integer), CType(CType(64, Byte), Integer))
         Me.frag_tb.IsReplaceMode = False
+        Me.frag_tb.LineNumberColor = System.Drawing.Color.Cyan
         Me.frag_tb.Location = New System.Drawing.Point(3, 3)
         Me.frag_tb.Name = "frag_tb"
         Me.frag_tb.Paddings = New System.Windows.Forms.Padding(0)
         Me.frag_tb.SelectionColor = System.Drawing.Color.FromArgb(CType(CType(60, Byte), Integer), CType(CType(0, Byte), Integer), CType(CType(0, Byte), Integer), CType(CType(255, Byte), Integer))
         Me.frag_tb.ServiceColors = CType(resources.GetObject("frag_tb.ServiceColors"), FastColoredTextBoxNS.ServiceColors)
-        Me.frag_tb.Size = New System.Drawing.Size(641, 553)
-        Me.frag_tb.TabIndex = 1
+        Me.frag_tb.Size = New System.Drawing.Size(649, 381)
+        Me.frag_tb.TabIndex = 0
         Me.frag_tb.Zoom = 100
         '
         'TabPage3
@@ -149,7 +153,8 @@ Partial Class frmEditFrag
         Me.TabPage3.Controls.Add(Me.geo_tb)
         Me.TabPage3.Location = New System.Drawing.Point(4, 22)
         Me.TabPage3.Name = "TabPage3"
-        Me.TabPage3.Size = New System.Drawing.Size(647, 559)
+        Me.TabPage3.Padding = New System.Windows.Forms.Padding(3)
+        Me.TabPage3.Size = New System.Drawing.Size(655, 387)
         Me.TabPage3.TabIndex = 2
         Me.TabPage3.Text = "Geometry Program"
         Me.TabPage3.UseVisualStyleBackColor = True
@@ -158,6 +163,8 @@ Partial Class frmEditFrag
         '
         Me.geo_tb.AutoCompleteBracketsList = New Char() {Global.Microsoft.VisualBasic.ChrW(40), Global.Microsoft.VisualBasic.ChrW(41), Global.Microsoft.VisualBasic.ChrW(123), Global.Microsoft.VisualBasic.ChrW(125), Global.Microsoft.VisualBasic.ChrW(91), Global.Microsoft.VisualBasic.ChrW(93), Global.Microsoft.VisualBasic.ChrW(34), Global.Microsoft.VisualBasic.ChrW(34), Global.Microsoft.VisualBasic.ChrW(39), Global.Microsoft.VisualBasic.ChrW(39)}
         Me.geo_tb.AutoIndent = False
+        Me.geo_tb.AutoIndentChars = False
+        Me.geo_tb.AutoIndentExistingLines = False
         Me.geo_tb.AutoScrollMinSize = New System.Drawing.Size(2, 14)
         Me.geo_tb.BackBrush = Nothing
         Me.geo_tb.BackColor = System.Drawing.Color.Black
@@ -168,21 +175,26 @@ Partial Class frmEditFrag
         Me.geo_tb.DisabledColor = System.Drawing.Color.FromArgb(CType(CType(100, Byte), Integer), CType(CType(180, Byte), Integer), CType(CType(180, Byte), Integer), CType(CType(180, Byte), Integer))
         Me.geo_tb.Dock = System.Windows.Forms.DockStyle.Fill
         Me.geo_tb.ForeColor = System.Drawing.Color.White
+        Me.geo_tb.IndentBackColor = System.Drawing.Color.FromArgb(CType(CType(64, Byte), Integer), CType(CType(64, Byte), Integer), CType(CType(64, Byte), Integer))
         Me.geo_tb.IsReplaceMode = False
-        Me.geo_tb.Location = New System.Drawing.Point(0, 0)
+        Me.geo_tb.LineNumberColor = System.Drawing.Color.Cyan
+        Me.geo_tb.Location = New System.Drawing.Point(3, 3)
         Me.geo_tb.Name = "geo_tb"
         Me.geo_tb.Paddings = New System.Windows.Forms.Padding(0)
         Me.geo_tb.SelectionColor = System.Drawing.Color.FromArgb(CType(CType(60, Byte), Integer), CType(CType(0, Byte), Integer), CType(CType(0, Byte), Integer), CType(CType(255, Byte), Integer))
         Me.geo_tb.ServiceColors = CType(resources.GetObject("geo_tb.ServiceColors"), FastColoredTextBoxNS.ServiceColors)
-        Me.geo_tb.Size = New System.Drawing.Size(647, 559)
-        Me.geo_tb.TabIndex = 1
+        Me.geo_tb.Size = New System.Drawing.Size(649, 381)
+        Me.geo_tb.TabIndex = 0
         Me.geo_tb.Zoom = 100
         '
         'CB1
         '
         Me.CB1.Anchor = CType((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Left), System.Windows.Forms.AnchorStyles)
+        Me.CB1.BackColor = System.Drawing.Color.Black
+        Me.CB1.FlatStyle = System.Windows.Forms.FlatStyle.Flat
+        Me.CB1.ForeColor = System.Drawing.Color.White
         Me.CB1.FormattingEnabled = True
-        Me.CB1.Location = New System.Drawing.Point(96, 589)
+        Me.CB1.Location = New System.Drawing.Point(96, 417)
         Me.CB1.Name = "CB1"
         Me.CB1.Size = New System.Drawing.Size(153, 21)
         Me.CB1.TabIndex = 3
@@ -191,7 +203,8 @@ Partial Class frmEditFrag
         '
         Me.Label1.Anchor = CType((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Left), System.Windows.Forms.AnchorStyles)
         Me.Label1.AutoSize = True
-        Me.Label1.Location = New System.Drawing.Point(13, 592)
+        Me.Label1.ForeColor = System.Drawing.Color.White
+        Me.Label1.Location = New System.Drawing.Point(13, 420)
         Me.Label1.Name = "Label1"
         Me.Label1.Size = New System.Drawing.Size(74, 13)
         Me.Label1.TabIndex = 4
@@ -200,7 +213,7 @@ Partial Class frmEditFrag
         'search_btn
         '
         Me.search_btn.Anchor = CType((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-        Me.search_btn.Location = New System.Drawing.Point(469, 587)
+        Me.search_btn.Location = New System.Drawing.Point(477, 415)
         Me.search_btn.Name = "search_btn"
         Me.search_btn.Size = New System.Drawing.Size(66, 23)
         Me.search_btn.TabIndex = 5
@@ -211,8 +224,8 @@ Partial Class frmEditFrag
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-        Me.BackColor = System.Drawing.Color.Gray
-        Me.ClientSize = New System.Drawing.Size(656, 614)
+        Me.BackColor = System.Drawing.Color.FromArgb(CType(CType(64, Byte), Integer), CType(CType(64, Byte), Integer), CType(CType(64, Byte), Integer))
+        Me.ClientSize = New System.Drawing.Size(664, 442)
         Me.Controls.Add(Me.search_btn)
         Me.Controls.Add(Me.Label1)
         Me.Controls.Add(Me.CB1)
@@ -220,7 +233,7 @@ Partial Class frmEditFrag
         Me.Controls.Add(Me.recompile_bt)
         Me.Icon = CType(resources.GetObject("$this.Icon"), System.Drawing.Icon)
         Me.Name = "frmEditFrag"
-        Me.Text = "-----------------"
+        Me.Text = "Shader Program Editor"
         Me.TopMost = True
         Me.TabControl1.ResumeLayout(False)
         Me.TabPage1.ResumeLayout(False)

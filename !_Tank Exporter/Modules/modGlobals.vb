@@ -4,8 +4,14 @@ Module modGlobals
     '##################################
     Public TESTING As Boolean = False
     '##################################
+    Public section_a, section_b As Integer
+
+    '##################################
     Public TankListTempFolder As String
 
+    Public cube_draw_id As Integer
+    Public cube_texture_id As Integer
+    Public u_brdfLUT As Integer
 
     Public current_vertex As UInt32
     Public current_part As UInt32

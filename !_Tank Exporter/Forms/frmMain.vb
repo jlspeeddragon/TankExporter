@@ -928,6 +928,8 @@ Public Class frmMain
         make_888_lookup_table()
         'load skybox model
 
+        start_up_log.AppendLine("loaded Xfile and created CubeMap...")
+        load_cube_and_cube_map()
         MM.Enabled = True
         TC1.Enabled = True
         start_up_log.AppendLine("----- Startup Complete -----")
@@ -938,6 +940,77 @@ Public Class frmMain
         AddHandler Me.SizeChanged, AddressOf me_size_changed
 
         window_state = Me.WindowState
+    End Sub
+
+    Private Sub load_cube_and_cube_map()
+        Dim iPath As String = Application.StartupPath + "\resources\cube\cubemap_m00_c0"
+        Dim id, iler, w, h As Integer
+
+        Gl.glEnable(Gl.GL_TEXTURE_CUBE_MAP)
+        Gl.glGenTextures(1, cube_texture_id)
+        Gl.glBindTexture(Gl.GL_TEXTURE_CUBE_MAP, cube_texture_id)
+
+        id = Il.ilGenImage
+        Il.ilBindImage(id)
+
+        For i = 0 To 5
+            Dim ok = Il.ilLoad(Il.IL_PNG, iPath + i.ToString + ".png")
+            iler = Il.ilGetError
+            If iler = Il.IL_NO_ERROR Then
+                Il.ilConvertImage(Il.IL_RGB, Il.IL_UNSIGNED_BYTE) ' Convert every colour component into unsigned bytes
+                w = Il.ilGetInteger(Il.IL_IMAGE_WIDTH)
+                h = Il.ilGetInteger(Il.IL_IMAGE_HEIGHT)
+
+                ' Gl.glTexParameteri(Gl.GL_TEXTURE_CUBE_MAP, Gl.GL_GENERATE_MIPMAP, Gl.GL_TRUE)
+
+
+                Gl.glTexImage2D(Gl.GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, Gl.GL_RGB8, w, h, 0, Gl.GL_RGB, Gl.GL_UNSIGNED_BYTE, Il.ilGetData())
+                Glu.gluBuild2DMipmaps(Gl.GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, Gl.GL_RGB8, w, h, Gl.GL_RGB, Gl.GL_UNSIGNED_BYTE, Il.ilGetData())
+            Else
+                MsgBox("Can't load cube textures!", MsgBoxStyle.Exclamation, "Shit!")
+            End If
+
+        Next
+        Il.ilBindImage(0)
+        Il.ilDeleteImage(id)
+        Gl.glTexParameteri(Gl.GL_TEXTURE_CUBE_MAP, Gl.GL_TEXTURE_MAG_FILTER, Gl.GL_LINEAR)
+        Gl.glTexParameteri(Gl.GL_TEXTURE_CUBE_MAP, Gl.GL_TEXTURE_MIN_FILTER, Gl.GL_LINEAR_MIPMAP_LINEAR)
+
+        Gl.glTexParameteri(Gl.GL_TEXTURE_CUBE_MAP, Gl.GL_TEXTURE_WRAP_S, Gl.GL_CLAMP_TO_EDGE)
+        Gl.glTexParameteri(Gl.GL_TEXTURE_CUBE_MAP, Gl.GL_TEXTURE_WRAP_T, Gl.GL_CLAMP_TO_EDGE)
+        Gl.glTexParameteri(Gl.GL_TEXTURE_CUBE_MAP, Gl.GL_TEXTURE_WRAP_R, Gl.GL_CLAMP_TO_EDGE)
+
+        Gl.glBindTexture(Gl.GL_TEXTURE_CUBE_MAP, 0)
+        Gl.glDisable(Gl.GL_TEXTURE_CUBE_MAP)
+
+        Gl.glGenTextures(1, u_brdfLUT)
+        Gl.glBindTexture(Gl.GL_TEXTURE_2D, u_brdfLUT)
+
+        id = Il.ilGenImage
+        Il.ilBindImage(id)
+
+        Il.ilLoad(Il.IL_PNG, Application.StartupPath + "\resources\cube\env_brdf_lut.png")
+        iler = Il.ilGetError
+        If iler = Il.IL_NO_ERROR Then
+            Il.ilConvertImage(Il.IL_RGBA, Il.IL_UNSIGNED_BYTE) ' Convert every colour component into unsigned bytes
+            w = Il.ilGetInteger(Il.IL_IMAGE_WIDTH)
+            h = Il.ilGetInteger(Il.IL_IMAGE_HEIGHT)
+
+            Gl.glTexParameteri(Gl.GL_TEXTURE_2D, Gl.GL_TEXTURE_MAG_FILTER, Gl.GL_LINEAR)
+            Gl.glTexParameteri(Gl.GL_TEXTURE_2D, Gl.GL_TEXTURE_MIN_FILTER, Gl.GL_LINEAR)
+
+            Gl.glTexParameteri(Gl.GL_TEXTURE_2D, Gl.GL_TEXTURE_WRAP_S, Gl.GL_REPEAT)
+            Gl.glTexParameteri(Gl.GL_TEXTURE_2D, Gl.GL_TEXTURE_WRAP_T, Gl.GL_REPEAT)
+            Gl.glTexImage2D(Gl.GL_TEXTURE_2D, 0, Gl.GL_RGBA8, w, h, 0, Gl.GL_RGBA, Gl.GL_UNSIGNED_BYTE, Il.ilGetData())
+        Else
+            MsgBox("Can't load cube textures!", MsgBoxStyle.Exclamation, "Shit!")
+        End If
+        'clean up
+        Gl.glBindTexture(Gl.GL_TEXTURE_2D, 0)
+        id = Il.ilGenImage
+        Il.ilBindImage(id)
+        'get the cube model
+        cube_draw_id = get_X_model(Application.StartupPath + "\resources\cube\cube.x")
     End Sub
     Public tank_mini_icons As New ImageList
     Private Sub load_type_images()
@@ -2306,7 +2379,27 @@ tryagain:
             Gl.glPopMatrix()
         End If
         '-----------------------------------------------------------------------------
+        'cube test
+        If m_show_environment.Checked Then
+            Gl.glEnable(Gl.GL_LIGHTING)
+            Gl.glColor3f(0.75, 0.75, 0.75)
 
+            Gl.glPushMatrix()
+            Gl.glUseProgram(shader_list.cube_shader)
+            Gl.glScalef(25.0, 25.0, 25.0)
+            Gl.glEnable(Gl.GL_TEXTURE_CUBE_MAP)
+            Gl.glBindTexture(Gl.GL_TEXTURE_CUBE_MAP, cube_texture_id)
+            Gl.glCallList(cube_draw_id)
+            Gl.glBindTexture(Gl.GL_TEXTURE_CUBE_MAP, 0)
+            Gl.glDisable(Gl.GL_TEXTURE_CUBE_MAP)
+
+            Gl.glUseProgram(0)
+            Gl.glPopMatrix()
+
+        End If
+        Gl.glColor3f(1.0, 1.0, 1.0)
+
+        '-----------------------------------------------------------------------------
         Gl.glEnable(Gl.GL_DEPTH_TEST)
         Gl.glColor3fv(l_color)
         'Draw Imported FBX if it exists?
@@ -2445,9 +2538,18 @@ tryagain:
             Gl.glUniform1i(tank_AO, 3)
             Gl.glUniform1i(tank_detailMap, 4)
             Gl.glUniform1i(tank_camo, 5)
+            Gl.glUniform1i(tank_cubeMap, 6)
+            Gl.glUniform3f(tank_Camera, eyeX, eyeY, eyeZ)
             Gl.glUniform1f(tank_specular, CSng(frmLighting.specular_slider.Value / 100)) ' convert to 0.0 to 1.0
             Gl.glUniform1f(tank_ambient, CSng(frmLighting.ambient_slider.Value / 100))
             Gl.glUniform1f(tank_total, CSng(frmLighting.total_slider.Value / 100))
+            'set shader debug mask values
+            Dim v1, v2, v3, v4 As Single
+            v1 = CSng(section_a And 1) : v2 = CSng((section_a And 2) >> 1) : v3 = CSng((section_a And 4) >> 2) : v4 = CSng((section_a And 8) >> 3)
+            Gl.glUniform4f(tank_a_group, v1, v2, v3, v4)
+            v1 = CSng(section_b And 1) : v2 = CSng((section_b And 2) >> 1) : v3 = CSng((section_b And 4) >> 2) : v4 = CSng((section_b And 8) >> 3)
+            Gl.glUniform4f(tank_b_group, v1, v2, v3, v4)
+
             If Not wire_cb.Checked Then
                 Gl.glEnable(Gl.GL_POLYGON_OFFSET_FILL)
             End If
@@ -2458,7 +2560,7 @@ tryagain:
                 Else
                     Gl.glFrontFace(Gl.GL_CCW)
                 End If
-                If _group(jj).doubleSided Then
+                If _group(jj).doubleSided Or Not _group(jj).metal_textured Then
                     'Gl.glCullFace(Gl.GL_NONE)
                     Gl.glDisable(Gl.GL_CULL_FACE)
                     Gl.glPolygonMode(Gl.GL_FRONT_AND_BACK, Gl.GL_FILL)
@@ -2505,7 +2607,11 @@ tryagain:
                     If _object(jj).use_camo > 0 Then
                         Gl.glBindTexture(Gl.GL_TEXTURE_2D, bb_texture_ids(id))
                     End If
+                    Gl.glActiveTexture(Gl.GL_TEXTURE0 + 6)
+                    Gl.glBindTexture(Gl.GL_TEXTURE_CUBE_MAP, cube_texture_id)
 
+                    Gl.glActiveTexture(Gl.GL_TEXTURE0 + 7)
+                    Gl.glBindTexture(Gl.GL_TEXTURE_2D, u_brdfLUT)
                     'Gl.glPushMatrix()
                     'Gl.glMultMatrixd(_object(jj).matrix)
                     Gl.glCallList(_object(jj).main_display_list)
@@ -2513,8 +2619,12 @@ tryagain:
                 End If
             Next
             Gl.glUseProgram(0)
-            'clear texture bindings
 
+            'clear texture bindings
+            Gl.glBindTexture(Gl.GL_TEXTURE_2D, 0) '6
+            Gl.glActiveTexture(Gl.GL_TEXTURE0 + 6)
+            Gl.glBindTexture(Gl.GL_TEXTURE_CUBE_MAP, 0) '6
+            Gl.glActiveTexture(Gl.GL_TEXTURE0 + 5)
             Gl.glBindTexture(Gl.GL_TEXTURE_2D, 0) '5
             Gl.glActiveTexture(Gl.GL_TEXTURE0 + 4)
             Gl.glBindTexture(Gl.GL_TEXTURE_2D, 0) '4
@@ -3518,8 +3628,8 @@ fuckit:
     End Function
     Public Sub update_mouse()
         Dim l_rot As Single
-        Dim sun_angle As Single = 0
-        Dim sun_radius As Single = 5
+        Dim sun_angle As Single = 0.0
+        Dim sun_radius As Single = 5.0
         'This will run for the duration that Terra! is open.
         'Its in a closed loop
         screen_totaled_draw_time = 10.0
@@ -5598,5 +5708,10 @@ make_this_tank:
 
     End Sub
 
+
+    Private Sub m_Shader_Debug_Click(sender As Object, e As EventArgs) Handles m_Shader_Debug.Click
+        frmShaderDebugSettings.Show()
+
+    End Sub
 
 End Class

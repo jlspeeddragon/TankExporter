@@ -26,7 +26,7 @@ Module modXmodelLoader
     End Structure
 
 
-    Public Function read_directX_model(file_ As String) As Integer
+    Public Function get_X_model(file_ As String) As Integer
         'reads single object directX ASCII file.
         ' IN: path and name of file to load
         ' OUT: Display List ID.
@@ -101,7 +101,7 @@ Module modXmodelLoader
             uvs(i).x = CSng(brk(0))
             uvs(i).y = CSng(brk(1))
         Next
-        ' at this point, we have all the data to make the mesh
+        'At this point, we have all the data to make the mesh
         'Gen Display List ID.
         Dim list_ID = Gl.glGenLists(1)
         Gl.glNewList(list_ID, Gl.GL_COMPILE)

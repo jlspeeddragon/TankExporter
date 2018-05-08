@@ -1,13 +1,13 @@
 ﻿#version 130
 //tank_vertex.glsl
 //Used to light all models
-out vec3 vVertex;
+out vec3 v_Position;
 out vec2 TC1;
 out mat3 TBN;
 
 out vec3 t;
 out vec3 b;
-out vec3 n;
+out vec3 v_Normal;
 void main(void) {
 
     TC1 = gl_MultiTexCoord0.xy;
@@ -15,12 +15,11 @@ void main(void) {
     vec3 n = normalize(gl_NormalMatrix * gl_Normal);
     vec3 t = normalize(gl_NormalMatrix * gl_MultiTexCoord1.xyz);
     vec3 b = normalize(gl_NormalMatrix * gl_MultiTexCoord2.xyz);
-
+	v_Normal = n;
     float invmax = inversesqrt(max(dot(t, t), dot(b, b)));
     TBN = mat3(t * invmax, b * invmax, n * invmax);
 
-    vVertex = vec3(gl_ModelViewMatrix * gl_Vertex);
-
+    v_Position = vec3(gl_ModelViewMatrix * gl_Vertex);
     gl_Position    = ftransform();
 
 }

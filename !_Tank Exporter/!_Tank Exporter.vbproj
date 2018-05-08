@@ -11,7 +11,7 @@
     <AssemblyName>!_Tank Exporter</AssemblyName>
     <FileAlignment>512</FileAlignment>
     <MyType>WindowsForms</MyType>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <IsWebBootstrapper>false</IsWebBootstrapper>
     <TargetFrameworkProfile />
     <PublishUrl>publish\</PublishUrl>
@@ -24,7 +24,7 @@
     <UpdatePeriodically>false</UpdatePeriodically>
     <UpdateRequired>false</UpdateRequired>
     <MapFileExtensions>true</MapFileExtensions>
-    <ApplicationRevision>40</ApplicationRevision>
+    <ApplicationRevision>41</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
@@ -121,8 +121,8 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>.\cttools.dll</HintPath>
     </Reference>
-    <Reference Include="FastColoredTextBox, Version=2.16.11.0, Culture=neutral, PublicKeyToken=fb8aa12b994ef61b, processorArchitecture=MSIL">
-      <HintPath>..\packages\FCTB.2.16.11.0\lib\FastColoredTextBox.dll</HintPath>
+    <Reference Include="FastColoredTextBox, Version=2.16.21.0, Culture=neutral, PublicKeyToken=fb8aa12b994ef61b, processorArchitecture=MSIL">
+      <HintPath>..\packages\FCTB.2.16.21.0\lib\FastColoredTextBox.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="FbxSDK, Version=1.0.4593.24947, Culture=neutral, processorArchitecture=x86">
@@ -220,6 +220,12 @@
       <DependentUpon>frmModelInfo.vb</DependentUpon>
     </Compile>
     <Compile Include="Forms\frmModelInfo.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\frmShaderDebugSettings.Designer.vb">
+      <DependentUpon>frmShaderDebugSettings.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\frmShaderDebugSettings.vb">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Forms\frmTextureViewer.Designer.vb">
@@ -323,6 +329,9 @@
     <EmbeddedResource Include="Forms\frmModelInfo.resx">
       <DependentUpon>frmModelInfo.vb</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Forms\frmShaderDebugSettings.resx">
+      <DependentUpon>frmShaderDebugSettings.vb</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Forms\frmTextureViewer.resx">
       <DependentUpon>frmTextureViewer.vb</DependentUpon>
     </EmbeddedResource>
@@ -353,6 +362,16 @@
       <Generator>SettingsSingleFileGenerator</Generator>
       <CustomToolNamespace>My</CustomToolNamespace>
       <LastGenOutput>Settings.Designer.vb</LastGenOutput>
+    </None>
+    <None Include="packages.config" />
+    <None Include="resources\cube\cube.x">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="shaders\cube_fragment.glsl">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="shaders\cube_vertex.glsl">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="shaders\FXAA_fragment.glsl">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
@@ -449,6 +468,27 @@
     <None Include="resources\Copy_6524.png" />
     <None Include="resources\control_090.png" />
     <None Include="resources\control_270.png" />
+    <Content Include="resources\cube\cubemap_m00_c00.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="resources\cube\cubemap_m00_c01.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="resources\cube\cubemap_m00_c02.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="resources\cube\cubemap_m00_c03.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="resources\cube\cubemap_m00_c04.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="resources\cube\cubemap_m00_c05.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="resources\cube\env_brdf_lut.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="resources\Nbutt_down.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -474,6 +514,7 @@
     <None Include="shaders\fbx_fragment.glsl">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <Content Include="shaders\pbr example.txt" />
     <Content Include="tank.ico">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -486,7 +527,6 @@
     <Content Include="FbxSDK.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <None Include="packages.config" />
     <None Include="shaders\mixer_fragment.glsl">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

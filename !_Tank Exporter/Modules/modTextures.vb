@@ -49,6 +49,7 @@ Module modTextures
         End If
         Return id
     End Function
+
     Public Sub build_textures(ByVal id As Integer)
 
         Dim diffuse As String = _group(id).color_name

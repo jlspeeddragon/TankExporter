@@ -47,9 +47,11 @@ Public Class frmEditFrag
         recompile_bt.Location = New Point(recompile_bt.Location.X, TabControl1.Height + 3)
         search_btn.Location = New Point(search_btn.Location.X, TabControl1.Height + 3)
 
+
         vert_tb.AcceptsTab = True
         geo_tb.AcceptsTab = True
         frag_tb.AcceptsTab = True
+
         For i = 0 To shaders.shader.Length - 1
             CB1.Items.Add(shaders.shader(i).shader_name)
         Next
@@ -57,9 +59,7 @@ Public Class frmEditFrag
         recompile_bt.Enabled = False
         Me.Text = "Shader Editor:"
     End Sub
-    Sub TextBoxSetTabStopDistance(tb As TextBox, ByVal distance As Long)
-        '	SendMessage(tb.Handle, EM_SETTABSTOPS, 1, 4)
-    End Sub
+
     Private Sub recompile_bt_Click(sender As Object, e As EventArgs) Handles recompile_bt.Click
         recompile_bt.Enabled = False
         File.WriteAllText(v_app_path, vert_tb.Text)

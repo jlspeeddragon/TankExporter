@@ -26,7 +26,7 @@ Module modOpenGL
     Public pb1_hRC As System.IntPtr
     Public pb2_hDC As System.IntPtr
     Public pb2_hRC As System.IntPtr
-    Public position0() As Single = {3.535534F, 5.0F, 3.535534F, 1.0F}
+    Public position0() As Single = {3.535534F, 2.5F, -3.535534F, 1.0F}
     Public position1() As Single = {-5.0F, 6.0F, 5.0F, 1.0F}
     Public position2() As Single = {0.0F, 10.0F, 0.0F, 1.0F}
     Public Sub EnableOpenGL()
