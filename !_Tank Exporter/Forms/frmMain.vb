@@ -169,6 +169,8 @@ Public Class frmMain
         '    frmEditFrag.TopMost = True
         'End If
         e.Handled = True
+        If stop_updating Then draw_scene()
+
     End Sub
 
     Private Sub frmMain_KeyUp(sender As Object, e As KeyEventArgs) Handles Me.KeyUp
@@ -178,6 +180,8 @@ Public Class frmMain
         If z_move Then
             z_move = False
         End If
+        If stop_updating Then draw_scene()
+
     End Sub
 
     Private Sub frmMain_ResizeBegin(sender As Object, e As EventArgs) Handles Me.ResizeBegin
@@ -192,7 +196,6 @@ Public Class frmMain
         w_changing = True
     End Sub
 
-    Dim w_changing As Boolean = False
 
     Private Sub frmMain_ResizeEnd(sender As Object, e As EventArgs) Handles Me.ResizeEnd
         'gl_stop = False
@@ -204,6 +207,7 @@ Public Class frmMain
         relocate_texturebuttons()
         'End If
         If Not _Started Then Return
+        If stop_updating Then draw_scene()
         w_changing = False
     End Sub
 
@@ -221,6 +225,7 @@ Public Class frmMain
                 'End If
                 w_changing = False
                 window_state = Me.WindowState
+                If stop_updating Then draw_scene()
                 Return
                 gl_stop = False
             End If
@@ -510,6 +515,16 @@ Public Class frmMain
         Cam_X_angle = PI * 0.25
         Cam_Y_angle = -PI * 0.25
         view_radius = -10.0
+        l_rot = PI * 0.25 + PI * 2
+
+        Dim x, z As Single
+        x = Cos(l_rot) * (5 * 2)
+        z = Sin(l_rot) * (5 * 2)
+
+        position0(0) = x
+        position0(1) = 10.0
+        position0(2) = z
+
         tank_label.Text = ""
         SplitContainer1.SplitterDistance = 720
         SplitContainer2.SplitterDistance = SplitContainer2.Height - 160
@@ -521,7 +536,6 @@ Public Class frmMain
         Application.DoEvents()
         pb1.Visible = True
         frmState = Me.WindowState
-
         '---------------------------
         info_Label.BringToFront()
         info_Label.Parent = Me
@@ -546,6 +560,9 @@ Public Class frmMain
         tanklist.Font = TreeView1.Font
         tanklist.SendToBack()
         Me.Show()
+        PB3.Parent = Me
+        PB3.SendToBack()
+        PB3.Visible = False
         ToolStripComboBox1.Visible = False
         ToolStripComboBox1.Text = My.Settings.region_selection
         Application.DoEvents()
@@ -563,7 +580,7 @@ Public Class frmMain
         Ilu.iluInit()
         Ilut.ilutInit()
         EnableOpenGL()
-
+        make_shadow_fbo()
         Dim glstr As String
         glstr = Gl.glGetString(Gl.GL_VENDOR)
         start_up_log.AppendLine("Vendor: " + glstr)
@@ -834,10 +851,10 @@ Public Class frmMain
         tank_label.Parent = iconbox
         tank_label.Text = ""
         tank_label.Location = New Point(5, 10)
-        '====================================================================================================
+        '===================================================================================
         info_Label.Text = "Getting Camo Textures..."
         'load_camo()
-        '====================================================================================================
+        '===================================================================================
         load_customization_files()
         'MsgBox("Past load_customization_files", MsgBoxStyle.Exclamation, "Debug")
         load_season_icons()
@@ -845,14 +862,7 @@ Public Class frmMain
         start_up_log.AppendLine("Done Creating OpenGL based Buttons.")
 
         Gl.glFinish()
-        'removed this load of background image.. 
-        'load_back_ground()
-        'Gl.glFinish()
-        'draw_background()
-        'draw_background()
-        'draw_background()
-        'test_buttons()
-        '====================================================================================================
+        '===================================================================================
 
         make_xy_grid()
         start_up_log.AppendLine("Done Creating XY Grid Display List.")
@@ -909,12 +919,11 @@ Public Class frmMain
         '-----------------------------
         Application.DoEvents()
 
-        '====================================================================================================
+        '===================================================================================
         TC1.SelectedIndex = 0
         Application.DoEvents()
         load_tabs()
         Application.DoEvents()
-        info_Label.Visible = False
         make_shaders() 'compile the shaders
         set_shader_variables() ' update uniform addresses
         TC1.SelectedIndex = 0
@@ -928,20 +937,48 @@ Public Class frmMain
         make_888_lookup_table()
         'load skybox model
 
-        start_up_log.AppendLine("loaded Xfile and created CubeMap...")
-        load_cube_and_cube_map()
+        grid_cb.Checked = False
         MM.Enabled = True
         TC1.Enabled = True
         start_up_log.AppendLine("----- Startup Complete -----")
         File.WriteAllText(Temp_Storage + "Startup_log.txt", start_up_log.ToString)
+        '===================================================================================
+        info_Label.Text = "loading terrain, textures, creating shadow texture, ect..."
+        Application.DoEvents()
+        load_resources()
+        info_Label.Visible = False
+        '###################################
+        'show and hide to assign setting
+        FrmShadowSettings.Show() ' set the buttns and shadow quality
+        FrmShadowSettings.Hide()
+        frmLighting.Show()
+        frmLighting.Hide()
+        frmLightSelection.Show()
+        frmLightSelection.Hide()
+        '###################################
+
 
         Startup_Timer.Enabled = True
         Application.DoEvents()
         AddHandler Me.SizeChanged, AddressOf me_size_changed
-
         window_state = Me.WindowState
     End Sub
-
+    Private Sub load_resources()
+        Dim iPath As String = Application.StartupPath + "\resources\"
+        start_up_log.AppendLine("loaded Xfile and created CubeMap...")
+        load_cube_and_cube_map()
+        start_up_log.AppendLine("loaded Terrain....")
+        load_terrain()
+        gradient_lookup_id = load_png_file(iPath + "borderGradient.png")
+        dome_textureId = load_png_file(iPath + "dome.png")
+        dome_modelId = get_X_model(iPath + "dome.x")
+    End Sub
+    Private Sub load_terrain()
+        Dim iPath As String = Application.StartupPath + "\resources\"
+        terrain_modelId = get_X_model(iPath + "terrain.x")
+        terrain_textureId = load_png_file(iPath + "surface.png")
+        terrain_textureNormalId = load_png_file(iPath + "surface_NORM.png")
+    End Sub
     Private Sub load_cube_and_cube_map()
         Dim iPath As String = Application.StartupPath + "\resources\cube\cubemap_m00_c0"
         Dim id, iler, w, h As Integer
@@ -2250,6 +2287,76 @@ tryagain:
     Dim delay As Integer = 0
     Dim stepper As Integer = 0
     '###########################################################################################################################################
+    Private Sub draw_environment()
+        '############################################
+        'Dome
+        Dim s As Single = 2.8
+        Gl.glFrontFace(Gl.GL_CCW)
+        'Gl.glDisable(Gl.GL_DEPTH_TEST)
+        Gl.glDisable(Gl.GL_CULL_FACE)
+        Gl.glDisable(Gl.GL_BLEND)
+        Gl.glPushMatrix()
+        Gl.glScalef(s, s, s)
+        Gl.glTranslatef(0.7, -4.0, 0.12)
+        Gl.glColor3f(1.0, 1.0, 1.0)
+        Gl.glEnable(Gl.GL_TEXTURE_2D)
+        Gl.glBindTexture(Gl.GL_TEXTURE_2D, dome_textureId)
+        Gl.glCallList(dome_modelId)
+        Gl.glPopMatrix()
+        Gl.glEnable(Gl.GL_DEPTH_TEST)
+        '############################################
+        'Terrain
+        Gl.glPushMatrix()
+        Gl.glTranslatef(0.0, -0.06, 0.0)
+        Gl.glRotatef(0.25, -1.0, 0.0, 1.0)
+        Gl.glDisable(Gl.GL_CULL_FACE)
+        Gl.glFrontFace(Gl.GL_CCW)
+        Gl.glEnable(Gl.GL_BLEND)
+        Gl.glUseProgram(shader_list.terrainShader_shader)
+        Gl.glUniform1i(terrain_textureMap, 0)
+        Gl.glUniform1i(terrain_depthMap, 1)
+        Gl.glUniform1i(terrain_normalMap, 2)
+        Gl.glUniform1i(terrain_gradient, 3)
+        Gl.glUniform1i(terrain_noise, 4)
+
+        Gl.glUniformMatrix4fv(terrain_shadowProjection, 1, 0, lightProjection)
+        If m_shadows.Checked Then
+            Gl.glUniform1i(terrain_use_shadow, 1)
+        Else
+            Gl.glUniform1i(terrain_use_shadow, 0)
+        End If
+        Gl.glColor4f(1.0, 1.0, 1.0, 1.0)
+        Gl.glEnable(Gl.GL_TEXTURE_2D)
+        Gl.glActiveTexture(Gl.GL_TEXTURE0 + 0)
+        Gl.glBindTexture(Gl.GL_TEXTURE_2D, terrain_textureId)
+        Gl.glActiveTexture(Gl.GL_TEXTURE0 + 1)
+        Gl.glBindTexture(Gl.GL_TEXTURE_2D, depthBuffer)
+        Gl.glActiveTexture(Gl.GL_TEXTURE0 + 2)
+        Gl.glBindTexture(Gl.GL_TEXTURE_2D, terrain_textureNormalId)
+        Gl.glActiveTexture(Gl.GL_TEXTURE0 + 3)
+        Gl.glBindTexture(Gl.GL_TEXTURE_2D, gradient_lookup_id)
+        Gl.glActiveTexture(Gl.GL_TEXTURE0 + 4)
+        Gl.glBindTexture(Gl.GL_TEXTURE_2D, terrain_noise_id)
+
+        Gl.glCallList(terrain_modelId)
+        Gl.glBindTexture(Gl.GL_TEXTURE_2D, 0)
+        Gl.glDisable(Gl.GL_TEXTURE_2D)
+
+        Gl.glBindTexture(Gl.GL_TEXTURE_2D, 0) '4
+        Gl.glActiveTexture(Gl.GL_TEXTURE0 + 3)
+        Gl.glBindTexture(Gl.GL_TEXTURE_2D, 0) '3
+        Gl.glActiveTexture(Gl.GL_TEXTURE0 + 2)
+        Gl.glBindTexture(Gl.GL_TEXTURE_2D, 0) '2
+        Gl.glActiveTexture(Gl.GL_TEXTURE0 + 1)
+        Gl.glBindTexture(Gl.GL_TEXTURE_2D, 0) '1
+        Gl.glActiveTexture(Gl.GL_TEXTURE0 + 0)
+        Gl.glBindTexture(Gl.GL_TEXTURE_2D, 0) '0
+        Gl.glUseProgram(0)
+        Gl.glPopMatrix()
+        Gl.glDisable(Gl.GL_BLEND)
+
+    End Sub
+    '###########################################################################################################################################
     Public Sub draw_scene()
         Application.DoEvents()
         If gl_stop Then Return
@@ -2259,10 +2366,17 @@ tryagain:
         If gBufferFBO = 0 Then
             G_Buffer.init()
         End If
+        If m_shadows.Checked And Not frmComponents.Visible Then
+            render_depth_to_depth_texture(0)
+        End If
+
+
         If Not (Wgl.wglMakeCurrent(pb1_hDC, pb1_hRC)) Then
             MessageBox.Show("Unable to make rendering context current")
             End
         End If
+        'gl_busy = False
+        'Return
         Gl.glBindFramebufferEXT(Gl.GL_FRAMEBUFFER_EXT, gBufferFBO)
         'Gl.glBindFramebufferEXT(Gl.GL_FRAMEBUFFER_EXT, 0)
         G_Buffer.attachColorTexture()
@@ -2274,7 +2388,9 @@ tryagain:
         Dim color_top() As Byte = {20, 20, 20}
         Dim color_bottom() As Byte = {60, 60, 60}
         Dim position() As Single = {10, 10.0F, 10, 1.0F}
+
         Gl.glPolygonMode(Gl.GL_FRONT_AND_BACK, Gl.GL_FILL)
+
         Gl.glTexEnvf(Gl.GL_TEXTURE_ENV, Gl.GL_TEXTURE_ENV_MODE, Gl.GL_MODULATE)
         Dim er = Gl.glGetError
         Gl.glDepthFunc(Gl.GL_LEQUAL)
@@ -2343,19 +2459,21 @@ tryagain:
         Else
             view_status_string += ": Facets : "
         End If
-
         ViewPerspective()
         set_eyes()
+        'adjust light2
+        position2(0) = -10.0 : position2(1) = 7.5 : position2(2) = -2.4
         Gl.glLightfv(Gl.GL_LIGHT0, Gl.GL_POSITION, position0)
         Gl.glLightfv(Gl.GL_LIGHT1, Gl.GL_POSITION, position1)
         Gl.glLightfv(Gl.GL_LIGHT2, Gl.GL_POSITION, position2)
 
-        Gl.glDisable(Gl.GL_CULL_FACE)
-
+        '=============================================================
+        If Not grid_cb.Checked Then
+            draw_environment()
+        End If
         '=============================================================
         Gl.glEnable(Gl.GL_LIGHTING)
 
-        Gl.glPushMatrix()
         '-----------------------------------------------------------------------------
         'light positions
         If Show_lights Then
@@ -2386,7 +2504,7 @@ tryagain:
 
             Gl.glPushMatrix()
             Gl.glUseProgram(shader_list.cube_shader)
-            Gl.glScalef(25.0, 25.0, 25.0)
+            Gl.glScalef(45.0, 45.0, 45.0)
             Gl.glEnable(Gl.GL_TEXTURE_CUBE_MAP)
             Gl.glBindTexture(Gl.GL_TEXTURE_CUBE_MAP, cube_texture_id)
             Gl.glCallList(cube_draw_id)
@@ -2413,9 +2531,9 @@ tryagain:
                 Gl.glUniform1i(fbx_colorMap, 0)
                 Gl.glUniform1i(fbx_normalMap, 1)
                 Gl.glUniform1i(fbx_specularMap, 2)
-                Gl.glUniform1f(fbx_specular, CSng(frmLighting.specular_slider.Value / 100)) ' convert to 0.0 to 1.0
-                Gl.glUniform1f(fbx_ambient, CSng(frmLighting.ambient_slider.Value / 100))
-                Gl.glUniform1f(fbx_level, CSng(frmLighting.total_slider.Value / 100))
+                Gl.glUniform1f(fbx_specular, S_level) ' convert to 0.0 to 1.0
+                Gl.glUniform1f(fbx_ambient, A_level)
+                Gl.glUniform1f(fbx_level, T_level)
                 For jj = 1 To fbxgrp.Length - 1
                     Gl.glUniform1i(fbx_texture_count, fbxgrp(jj).texture_count)
                     Gl.glUniform1i(fbx_is_GAmap, fbxgrp(jj).is_GAmap)
@@ -2539,10 +2657,20 @@ tryagain:
             Gl.glUniform1i(tank_detailMap, 4)
             Gl.glUniform1i(tank_camo, 5)
             Gl.glUniform1i(tank_cubeMap, 6)
+            Gl.glUniform1i(tank_LUT, 7)
+            Gl.glUniform1i(tank_shadowMap, 8)
+
+            Gl.glUniformMatrix4fv(tank_lightMatrix, 1, 0, lightProjection)
+
             Gl.glUniform3f(tank_Camera, eyeX, eyeY, eyeZ)
-            Gl.glUniform1f(tank_specular, CSng(frmLighting.specular_slider.Value / 100)) ' convert to 0.0 to 1.0
-            Gl.glUniform1f(tank_ambient, CSng(frmLighting.ambient_slider.Value / 100))
-            Gl.glUniform1f(tank_total, CSng(frmLighting.total_slider.Value / 100))
+            Gl.glUniform1f(tank_specular, S_level) ' convert to 0.0 to 1.0
+            Gl.glUniform1f(tank_ambient, A_level)
+            Gl.glUniform1f(tank_total, T_level)
+            If m_shadows.Checked Then
+                Gl.glUniform1i(tank_use_shadow, 1)
+            Else
+                Gl.glUniform1i(tank_use_shadow, 0)
+            End If
             'set shader debug mask values
             Dim v1, v2, v3, v4 As Single
             v1 = CSng(section_a And 1) : v2 = CSng((section_a And 2) >> 1) : v3 = CSng((section_a And 4) >> 2) : v4 = CSng((section_a And 8) >> 3)
@@ -2553,6 +2681,9 @@ tryagain:
             If Not wire_cb.Checked Then
                 Gl.glEnable(Gl.GL_POLYGON_OFFSET_FILL)
             End If
+
+            Gl.glActiveTexture(Gl.GL_TEXTURE0 + 8)
+            Gl.glBindTexture(Gl.GL_TEXTURE_2D, depthBuffer)
 
             For jj = 1 To object_count - track_info.segment_count
                 If _group(jj).is_carraige Then
@@ -2612,6 +2743,7 @@ tryagain:
 
                     Gl.glActiveTexture(Gl.GL_TEXTURE0 + 7)
                     Gl.glBindTexture(Gl.GL_TEXTURE_2D, u_brdfLUT)
+
                     'Gl.glPushMatrix()
                     'Gl.glMultMatrixd(_object(jj).matrix)
                     Gl.glCallList(_object(jj).main_display_list)
@@ -2621,7 +2753,11 @@ tryagain:
             Gl.glUseProgram(0)
 
             'clear texture bindings
-            Gl.glBindTexture(Gl.GL_TEXTURE_2D, 0) '6
+
+            Gl.glActiveTexture(Gl.GL_TEXTURE0 + 8)
+            Gl.glBindTexture(Gl.GL_TEXTURE_2D, 0) '8
+            Gl.glActiveTexture(Gl.GL_TEXTURE0 + 7)
+            Gl.glBindTexture(Gl.GL_TEXTURE_2D, 0) '7
             Gl.glActiveTexture(Gl.GL_TEXTURE0 + 6)
             Gl.glBindTexture(Gl.GL_TEXTURE_CUBE_MAP, 0) '6
             Gl.glActiveTexture(Gl.GL_TEXTURE0 + 5)
@@ -2662,16 +2798,13 @@ tryagain:
             Gl.glEnable(Gl.GL_LIGHTING)
 
             'set lighting
-            Dim spec As Single = CSng(frmLighting.specular_slider.Value / 100)
-            Dim mc As Single = CSng(frmLighting.ambient_slider.Value / 100) * 0.75
-            Dim brightness As Single = CSng(frmLighting.total_slider.Value / 100)
             Dim mcolor(4) As Single
             Dim specReflection(4) As Single
             Dim diffuseLight(4) As Single
-            mcolor(0) = mc : mcolor(1) = mc : mcolor(2) = mc : mcolor(3) = 0.0
-            specReflection(0) = spec : specReflection(1) = spec : specReflection(2) = spec : specReflection(3) = 1.0
-            diffuseLight(0) = brightness : diffuseLight(1) = brightness : diffuseLight(2) = brightness : diffuseLight(3) = 1.0
-            Gl.glColor3f(mc, mc, mc)
+            mcolor(0) = A_level : mcolor(1) = A_level : mcolor(2) = A_level : mcolor(3) = 1.0
+            specReflection(0) = S_level : specReflection(1) = S_level : specReflection(2) = S_level : specReflection(3) = 1.0
+            diffuseLight(0) = T_level : diffuseLight(1) = T_level : diffuseLight(2) = T_level : diffuseLight(3) = 1.0
+            Gl.glColor3f(A_level, A_level, A_level)
             Gl.glMaterialfv(Gl.GL_FRONT, Gl.GL_AMBIENT, mcolor)
             Gl.glMaterialfv(Gl.GL_FRONT, Gl.GL_SPECULAR, specReflection)
             'Gl.glMaterialfv(Gl.GL_FRONT, Gl.GL_DIFFUSE, diffuseLight)
@@ -2679,7 +2812,7 @@ tryagain:
 
             Gl.glPolygonMode(Gl.GL_FRONT, Gl.GL_FILL)
 
-            Gl.glMateriali(Gl.GL_FRONT, Gl.GL_SHININESS, CInt(spec * 128))
+            Gl.glMateriali(Gl.GL_FRONT, Gl.GL_SHININESS, CInt(S_level * 128))
 
             For jj = 1 To object_count - track_info.segment_count
                 If _group(jj).is_carraige Then
@@ -2921,8 +3054,11 @@ fuckit:
         Gl.glVertex3f(pb1.Width, -pb1.Height, 0.0)
         Gl.glVertex3f(0.0, -pb1.Height, 0.0)
         Gl.glEnd()
-
-
+        '######################################################################
+        If m_shadow_preview.Checked Then
+            show_depth_texture()
+        End If
+        '######################################################################
         Dim fps As Integer = 1.0 / (screen_totaled_draw_time * 0.001)
         Dim str = " FPS: ( " + fps.ToString + " )"
         'swat.Stop()
@@ -2951,6 +3087,7 @@ fuckit:
                 camo_Buttons(i).draw()
             Next
         End If
+        '====================================
         Gdi.SwapBuffers(pb1_hDC)
         '====================================
         If frmTextureViewer.Visible Then
@@ -3421,6 +3558,9 @@ fuckit:
                 If e.Y - mouse.y > 100 Then t = (10)
             Else : t = CSng(Sin((e.Y - mouse.y) / 100)) * 12
                 view_radius += (t * (view_radius * 0.2))    ' zoom is factored in to Cam radius
+                If view_radius < -80.0 Then
+                    view_radius = -80.0
+                End If
                 mouse.y = e.Y
             End If
             If e.Y < (mouse.y - dead) Then
@@ -3623,69 +3763,60 @@ fuckit:
             u_View_Radius = view_radius
             update = True
         End If
+        If stop_updating And update Then update_screen()
 
         Return update
     End Function
+    Dim l_rot As Single
     Public Sub update_mouse()
-        Dim l_rot As Single
         Dim sun_angle As Single = 0.0
         Dim sun_radius As Single = 5.0
-        'This will run for the duration that Terra! is open.
+        'This will run for the duration that Tank Exporter is open.
         'Its in a closed loop
         screen_totaled_draw_time = 10.0
         Dim swat As New Stopwatch
+        Dim x, z As Single
+        Dim s As Single = 2.0
         While _Started
             need_update()
             angle_offset = 0
 
-            '	Application.DoEvents()
+            Application.DoEvents()
             If Not gl_busy And Not Me.WindowState = FormWindowState.Minimized Then
 
                 If spin_light Then
-                    Dim x, z As Single
                     l_rot += 0.01
                     If l_rot > 2 * PI Then
                         l_rot -= (2 * PI)
                     End If
-                    If sun_radius > 0 Then
-                        'sun_radius *= -1.0
-                    End If
-                    Dim s As Single = 2.0
                     sun_angle = l_rot
                     x = Cos(l_rot) * (sun_radius * s)
                     z = Sin(l_rot) * (sun_radius * s)
-                    position0(0) = x
-                    ' position0(1) = sun_radius * s * 0.75
-                    position0(1) = 2.5
 
+                    position0(0) = x
+                    position0(1) = 10.0
                     position0(2) = z
 
                 End If
 
 
-                If Not w_changing Then
+                If Not w_changing And Not stop_updating Then
                     update_screen()
                 End If
-                screen_draw_time = CInt(swat.ElapsedMilliseconds)
-                Dim freq = Stopwatch.Frequency
-                'screen_draw_time = screen_draw_time / freq
-                'screen_draw_time *= 0.001
+                screen_draw_time = CDbl(swat.ElapsedMilliseconds)
                 swat.Reset()
                 swat.Start()
-                If screen_avg_counter > 15 Then
+                If screen_avg_counter > 10 Then
                     screen_totaled_draw_time = screen_avg_draw_time / screen_avg_counter
-                    screen_avg_counter = 0
-                    screen_avg_draw_time = 0
+                    screen_avg_counter = 0.0
+                    screen_avg_draw_time = 0.0
                 Else
-                    If screen_draw_time < 1 Then
-                        'screen_draw_time = 5
-                    End If
-                    screen_avg_counter += 1
+                    screen_avg_counter += 1.0
                     screen_avg_draw_time += screen_draw_time
                 End If
             End If
 
-            Thread.Sleep(10)
+            Thread.Sleep(14)
         End While
         'Thread.CurrentThread.Abort()
     End Sub
@@ -3705,7 +3836,7 @@ fuckit:
         Startup_Timer.Enabled = False
         update_thread.IsBackground = True
         update_thread.Name = "mouse updater"
-        update_thread.Priority = ThreadPriority.Normal
+        update_thread.Priority = ThreadPriority.Lowest
         update_thread.Start()
     End Sub
 #End Region
@@ -3795,6 +3926,7 @@ fuckit:
         End If
         Return ""
     End Function
+
     '##################################################################################
     Public Sub process_tank(ByVal save_tank As Boolean)
         'need to set these before loading anyhing
@@ -4296,9 +4428,11 @@ fuckit:
         '================================= end testing
         file_name = chassis_name
         build_primitive_data(False) ' -- chassis
+        If stop_updating Then draw_scene()
 
         file_name = hull_name
         build_primitive_data(True) ' -- chassis
+        If stop_updating Then draw_scene()
 
         If save_tank Then
 
@@ -4309,6 +4443,7 @@ fuckit:
                 file_name = guns(gn)
                 gun_name = file_name
                 If build_primitive_data(True) Then ' -- chassis
+                    If stop_updating Then draw_scene()
                     Exit For
                 End If
 
@@ -4316,9 +4451,11 @@ fuckit:
         Else
             file_name = turrets(frmComponents.tv_turrets.SelectedNode.Tag)
             build_primitive_data(True) ' -- turret
+            If stop_updating Then draw_scene()
 
             file_name = guns(frmComponents.tv_guns.SelectedNode.Tag)
             build_primitive_data(True) ' -- gun
+            If stop_updating Then draw_scene()
 
         End If
 
@@ -4326,10 +4463,12 @@ fuckit:
         If TESTING Then
             file_name = track_info.left_path1
             build_primitive_data(True) ' -- chassis
+            If stop_updating Then draw_scene()
 
             If track_info.segment_count = 2 Then
                 file_name = track_info.left_path2
                 build_primitive_data(True) ' -- chassis
+                If stop_updating Then draw_scene()
             End If
 
         End If
@@ -5544,7 +5683,7 @@ make_this_tank:
     End Sub
 
     Private Sub m_edit_shaders_Click(sender As Object, e As EventArgs) Handles m_edit_shaders.Click
-        frmEditFrag.Show()
+        frmShaderEditor.Show()
     End Sub
 
     Private Sub M_Exit_Click(sender As Object, e As EventArgs) Handles M_Exit.Click
@@ -5585,11 +5724,14 @@ make_this_tank:
         Else
             m_show_fbx.Text = "Show FBX"
         End If
+        If stop_updating Then draw_scene()
     End Sub
 
     Private Sub m_remove_fbx_Click(sender As Object, e As EventArgs) Handles m_remove_fbx.Click
         clean_house()
         remove_loaded_fbx()
+        If stop_updating Then draw_scene()
+
     End Sub
 
     Private Sub chassis_cb_CheckedChanged(sender As Object, e As EventArgs) Handles chassis_cb.CheckedChanged
@@ -5599,6 +5741,7 @@ make_this_tank:
                 _object(i).visible = chassis_cb.Checked
             End If
         Next
+        If stop_updating Then draw_scene()
     End Sub
 
     Private Sub hull_cb_CheckedChanged(sender As Object, e As EventArgs) Handles hull_cb.CheckedChanged
@@ -5608,6 +5751,7 @@ make_this_tank:
                 _object(i).visible = hull_cb.Checked
             End If
         Next
+        If stop_updating Then draw_scene()
     End Sub
 
     Private Sub turret_cb_CheckedChanged(sender As Object, e As EventArgs) Handles turret_cb.CheckedChanged
@@ -5617,7 +5761,7 @@ make_this_tank:
                 _object(i).visible = turret_cb.Checked
             End If
         Next
-
+        If stop_updating Then draw_scene()
     End Sub
 
     Private Sub gun_cb_CheckedChanged(sender As Object, e As EventArgs) Handles gun_cb.CheckedChanged
@@ -5627,6 +5771,7 @@ make_this_tank:
                 _object(i).visible = gun_cb.Checked
             End If
         Next
+        If stop_updating Then draw_scene()
 
     End Sub
 
@@ -5636,6 +5781,7 @@ make_this_tank:
         Else
             grid_cb.BackgroundImage = My.Resources.grid_dark
         End If
+        If stop_updating Then draw_scene()
     End Sub
 
     Private Sub wire_cb_CheckedChanged(sender As Object, e As EventArgs) Handles wire_cb.CheckedChanged
@@ -5644,6 +5790,7 @@ make_this_tank:
         Else
             wire_cb.BackgroundImage = My.Resources.box_wire
         End If
+        If stop_updating Then draw_scene()
     End Sub
 
     Private Sub m_show_bsp2_tree_CheckedChanged(sender As Object, e As EventArgs) Handles m_show_bsp2_tree.CheckedChanged
@@ -5673,6 +5820,9 @@ make_this_tank:
             TANK_TEXTURE_ID = 0
             TANK_TEXTURES_VISIBLE = False
         End If
+
+        If stop_updating Then draw_scene()
+
     End Sub
 #End Region
 
@@ -5714,4 +5864,32 @@ make_this_tank:
 
     End Sub
 
+    Private Sub frmMain_Paint(sender As Object, e As PaintEventArgs) Handles Me.Paint
+        If stop_updating Then draw_scene()
+    End Sub
+
+    Private Sub m_show_environment_CheckedChanged(sender As Object, e As EventArgs) Handles m_show_environment.CheckedChanged
+        If stop_updating Then draw_scene()
+    End Sub
+
+    Private Sub m_shadow_preview_Click(sender As Object, e As EventArgs) Handles m_shadow_preview.Click
+        If stop_updating Then draw_scene()
+
+    End Sub
+
+    Private Sub m_terrain_Click(sender As Object, e As EventArgs)
+        If stop_updating Then draw_scene()
+    End Sub
+
+    Private Sub m_shadows_Click(sender As Object, e As EventArgs) Handles m_shadows.Click
+        If stop_updating Then draw_scene()
+    End Sub
+
+    Private Sub m_shadowQuality_Click(sender As Object, e As EventArgs) Handles m_shadowQuality.Click
+        FrmShadowSettings.Show()
+    End Sub
+
+    Private Sub m_select_light_Click(sender As Object, e As EventArgs) Handles m_select_light.Click
+        frmLightSelection.Show()
+    End Sub
 End Class

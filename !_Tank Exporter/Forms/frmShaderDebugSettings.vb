@@ -67,23 +67,28 @@ Public Class frmShaderDebugSettings
         Dim mask = CInt(sender.Tag)
         section_a = 0
         section_a = mask
+        If stop_updating Then frmMain.draw_scene()
     End Sub
     Private Sub b_group(sender As RadioButton, e As EventArgs)
         If Not sender.Checked Then Return
         Dim mask = CInt(sender.Tag)
         section_b = 0
         section_b = mask
+        If stop_updating Then frmMain.draw_scene()
     End Sub
 
     Private Sub a_normal_CheckedChanged(sender As RadioButton, e As EventArgs) Handles a_normal.CheckedChanged
         If a_normal.Checked Then
             section_a = 0
         End If
+        If stop_updating Then frmMain.draw_scene()
     End Sub
 
     Private Sub b_normal_CheckedChanged(sender As RadioButton, e As EventArgs) Handles b_normal.CheckedChanged
         If b_normal.Checked Then
             section_b = 0
         End If
+        If stop_updating Then frmMain.draw_scene()
+
     End Sub
 End Class

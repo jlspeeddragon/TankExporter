@@ -26,8 +26,10 @@ Module modOpenGL
     Public pb1_hRC As System.IntPtr
     Public pb2_hDC As System.IntPtr
     Public pb2_hRC As System.IntPtr
+    Public pb3_hDC As System.IntPtr
+    Public pb3_hRC As System.IntPtr
     Public position0() As Single = {3.535534F, 2.5F, -3.535534F, 1.0F}
-    Public position1() As Single = {-5.0F, 6.0F, 5.0F, 1.0F}
+    Public position1() As Single = {5.0F, 4.0F, -5.0F, 1.0F}
     Public position2() As Single = {0.0F, 10.0F, 0.0F, 1.0F}
     Public Sub EnableOpenGL()
         frmMain.pb2.Visible = False
@@ -36,13 +38,14 @@ Module modOpenGL
         Application.DoEvents()
         pb1_hDC = User.GetDC(frmMain.pb1.Handle)
         pb2_hDC = User.GetDC(frmMain.pb2.Handle)
+        pb3_hDC = User.GetDC(frmMain.PB3.Handle)
         frmMain.Controls.Add(frmMain.pb2)
         Application.DoEvents()
         Application.DoEvents()
         Application.DoEvents()
         frmMain.pb2.Location = frmMain.pb1.Location
         Dim pfd As Gdi.PIXELFORMATDESCRIPTOR
-        Dim PixelFormat, PixelFormat2 As Integer
+        Dim PixelFormat As Integer
 
         'ZeroMemory(pfd, Len(pfd))
         pfd.nSize = Len(pfd)
@@ -56,12 +59,13 @@ Module modOpenGL
         pfd.iLayerType = Gdi.PFD_MAIN_PLANE
 
         PixelFormat = Gdi.ChoosePixelFormat(pb1_hDC, pfd)
-        PixelFormat2 = Gdi.ChoosePixelFormat(pb2_hDC, pfd)
+        PixelFormat = Gdi.ChoosePixelFormat(pb2_hDC, pfd)
+        PixelFormat = Gdi.ChoosePixelFormat(pb3_hDC, pfd)
         If PixelFormat = 0 Then
             MessageBox.Show("Unable to retrieve pixel format")
             End
         End If
-        '---------------1
+        '================================================================1
         If Not (Gdi.SetPixelFormat(pb1_hDC, PixelFormat, pfd)) Then
             MessageBox.Show("Unable to set pixel format")
             End
@@ -71,8 +75,12 @@ Module modOpenGL
             MessageBox.Show("Unable to get rendering context")
             End
         End If
-        '---------------2
-        If Not (Gdi.SetPixelFormat(pb2_hDC, PixelFormat2, pfd)) Then
+        If Not (Wgl.wglMakeCurrent(pb1_hDC, pb1_hRC)) Then
+            MessageBox.Show("Unable to make rendering context current 1")
+            End
+        End If
+        '================================================================2
+        If Not (Gdi.SetPixelFormat(pb2_hDC, PixelFormat, pfd)) Then
             MessageBox.Show("Unable to set pixel format 2")
             End
         End If
@@ -81,8 +89,28 @@ Module modOpenGL
             MessageBox.Show("Unable to get rendering context 2")
             End
         End If
+        If Not (Wgl.wglMakeCurrent(pb2_hDC, pb2_hRC)) Then
+            MessageBox.Show("Unable to make rendering context current 2")
+            End
+        End If
+        '================================================================3
+        If Not (Gdi.SetPixelFormat(pb3_hDC, PixelFormat, pfd)) Then
+            MessageBox.Show("Unable to set pixel format 3")
+            End
+        End If
+        pb3_hRC = Wgl.wglCreateContext(pb3_hDC)
+        If pb3_hRC.ToInt32 = 0 Then
+            MessageBox.Show("Unable to get rendering context 3")
+            End
+        End If
+        If Not (Wgl.wglMakeCurrent(pb3_hDC, pb3_hRC)) Then
+            MessageBox.Show("Unable to make rendering context current 3 ")
+            End
+        End If
+        '================================================================
+        'go back to context 1
         If Not (Wgl.wglMakeCurrent(pb1_hDC, pb1_hRC)) Then
-            MessageBox.Show("Unable to make rendering context current")
+            MessageBox.Show("Unable to make rendering context current 1")
             End
         End If
 
@@ -98,6 +126,7 @@ Module modOpenGL
         Gl.glEnable(Gl.GL_LIGHT0)
         Gl.glEnable(Gl.GL_LIGHTING)
         Wgl.wglShareLists(pb1_hRC, pb2_hRC)
+        Wgl.wglShareLists(pb1_hRC, pb3_hRC)
 
         gl_set_lights()
         'build_shaders()

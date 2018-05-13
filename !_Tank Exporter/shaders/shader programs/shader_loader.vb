@@ -14,6 +14,11 @@ Module shader_loader
         Public gaussian_shader As Integer
         Public FXAA_shader As Integer
         Public cube_shader As Integer
+        Public depth_shader As Integer
+        Public toLinear_shader As Integer
+        Public shadowTest_shader As Integer
+        Public terrainShader_shader As Integer
+        Public basic_shader As Integer
     End Class
 
 #Region "variables"
@@ -300,13 +305,14 @@ Module shader_loader
     Public tank_camo, tank_use_camo, tank_tile_vec4 As Integer
     Public tank_c0, tank_c1, tank_c2, tank_c3, tank_armorcolor, tank_camo_tiling, tank_exclude_camo As Integer
     Public tank_use_CM, tank_Camera As Integer
-    Public tank_ambient, tank_specular, tank_total, tank_cubeMap, tank_LUT As Integer
-    Public tank_a_group, tank_b_group As Integer
+    Public tank_ambient, tank_specular, tank_total, tank_cubeMap, tank_LUT, tank_shadowMap As Integer
+    Public tank_a_group, tank_b_group, tank_lightMatrix, tank_use_shadow As Integer
     Private Sub set_tank_shader_variables()
         tank_a_group = Gl.glGetUniformLocation(shader_list.tank_shader, "u_ScaleFGDSpec")
         tank_b_group = Gl.glGetUniformLocation(shader_list.tank_shader, "u_ScaleDiffBaseMR")
         tank_colorMap = Gl.glGetUniformLocation(shader_list.tank_shader, "colorMap")
         tank_normalMap = Gl.glGetUniformLocation(shader_list.tank_shader, "normalMap")
+        tank_shadowMap = Gl.glGetUniformLocation(shader_list.tank_shader, "shadowMap")
         tank_cubeMap = Gl.glGetUniformLocation(shader_list.tank_shader, "cubeMap")
         tank_LUT = Gl.glGetUniformLocation(shader_list.tank_shader, "u_brdfLUT")
         tank_GMM = Gl.glGetUniformLocation(shader_list.tank_shader, "gmmMap")
@@ -331,6 +337,8 @@ Module shader_loader
         tank_ambient = Gl.glGetUniformLocation(shader_list.tank_shader, "A_level")
         tank_specular = Gl.glGetUniformLocation(shader_list.tank_shader, "S_level")
         tank_total = Gl.glGetUniformLocation(shader_list.tank_shader, "T_level")
+        tank_lightMatrix = Gl.glGetUniformLocation(shader_list.tank_shader, "shadowProjection")
+        tank_use_shadow = Gl.glGetUniformLocation(shader_list.tank_shader, "use_shadow")
 
     End Sub
 
@@ -391,6 +399,52 @@ Module shader_loader
 
     '==============================================================================================================
 
+    Public toLinear_depthMap As Integer
+    '==============================================================================================================
+    Public Sub set_toLinear_variables()
+        toLinear_depthMap = Gl.glGetUniformLocation(shader_list.toLinear_shader, "depthMap")
+
+    End Sub
+
+    Public shadowTest_depthMap As Integer
+    Public shadowTest_shadowProjection As Integer
+    Public shadowTest_textureMap As Integer
+    '==============================================================================================================
+    Public Sub set_shadowTest_variables()
+        shadowTest_textureMap = Gl.glGetUniformLocation(shader_list.shadowTest_shader, "colorMap")
+        shadowTest_depthMap = Gl.glGetUniformLocation(shader_list.shadowTest_shader, "shadowMap")
+        shadowTest_shadowProjection = Gl.glGetUniformLocation(shader_list.shadowTest_shader, "shadowProjection")
+    End Sub
+
+    Public terrain_depthMap, terrain_shadowProjection, terrain_textureMap, _
+        terrain_normalMap, terrain_use_shadow, terrain_gradient, terrain_noise As Integer
+    '==============================================================================================================
+    Public Sub set_terrain_variables()
+        terrain_textureMap = Gl.glGetUniformLocation(shader_list.terrainShader_shader, "colorMap")
+        terrain_normalMap = Gl.glGetUniformLocation(shader_list.terrainShader_shader, "normalMap")
+        terrain_depthMap = Gl.glGetUniformLocation(shader_list.terrainShader_shader, "shadowMap")
+        terrain_shadowProjection = Gl.glGetUniformLocation(shader_list.terrainShader_shader, "shadowProjection")
+        terrain_use_shadow = Gl.glGetUniformLocation(shader_list.terrainShader_shader, "use_shadow")
+        terrain_gradient = Gl.glGetUniformLocation(shader_list.terrainShader_shader, "gradientLU")
+        terrain_noise = Gl.glGetUniformLocation(shader_list.terrainShader_shader, "noise")
+    End Sub
+
+    Public depth_alphaTest, depth_alphaRef, depth_normalMap As Integer
+    '==============================================================================================================
+    Public Sub set_depth_variables()
+        depth_alphaRef = Gl.glGetUniformLocation(shader_list.depth_shader, "alphaRef")
+        depth_alphaTest = Gl.glGetUniformLocation(shader_list.depth_shader, "alphaTest")
+        depth_normalMap = Gl.glGetUniformLocation(shader_list.depth_shader, "normalMap")
+    End Sub
+
+    Public basic_alphaTest, basic_alphaRef, basic_normalMap As Integer
+    '==============================================================================================================
+    Public Sub set_basic_variables()
+        basic_alphaRef = Gl.glGetUniformLocation(shader_list.depth_shader, "alphaRef")
+        basic_alphaTest = Gl.glGetUniformLocation(shader_list.depth_shader, "alphaTest")
+        basic_normalMap = Gl.glGetUniformLocation(shader_list.depth_shader, "normalMap")
+
+    End Sub
     Public Sub set_shader_variables()
         set_tank_shader_variables()
         set_normal_shader_variables()
@@ -399,6 +453,11 @@ Module shader_loader
         set_gaussian_variables()
         set_FXAA_variables()
         set_cube_variables()
+        set_toLinear_variables()
+        set_shadowTest_variables()
+        set_terrain_variables()
+        set_depth_variables()
+        set_basic_variables()
         Return
     End Sub
     '==============================================================================================================

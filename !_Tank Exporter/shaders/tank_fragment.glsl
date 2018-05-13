@@ -13,6 +13,7 @@ uniform sampler2D gmmMap;
 uniform sampler2D aoMap;
 uniform sampler2D detailMap;
 uniform sampler2D camoMap;
+uniform sampler2D shadowMap;
 uniform samplerCube cubeMap;
 uniform sampler2D u_brdfLUT;
 uniform int is_GAmap;
@@ -24,6 +25,7 @@ uniform int use_camo;
         // used for debuging
 uniform vec4 u_ScaleFGDSpec;
 uniform vec4 u_ScaleDiffBaseMR;
+uniform int use_shadow;
 
 // if camo is active  1 = yes 0 = no
 uniform int use_CM;
@@ -47,6 +49,31 @@ in vec3 t;
 in vec3 b;
 in vec3 v_Normal;
 in vec3 cubeTC;
+in vec4 ShadowCoord;
+vec4 ShadowCoordPostW;
+vec2 moments ;
+
+float chebyshevUpperBound( float distance)
+{
+    moments = texture2D(shadowMap,ShadowCoordPostW.xy).rg;
+
+    // Surface is fully lit. as the current fragment is before the light occluder
+    if (distance <= moments.x)
+        return 1.0 ;
+
+    // The fragment is either in shadow or penumbra.
+    // We now use chebyshev's upperBound to check
+    // How likely this pixel is to be lit (p_max)
+    float variance = moments.y - (moments.x*moments.x);
+    variance = max(variance,0.5);
+
+    float d = distance - moments.x;
+    float p_max =  smoothstep(0.1, 0.18, variance / (variance + d*d));
+    //float p_max =   variance / (variance + d*d);
+    p_max = max(p_max,0.15);
+    return p_max ;
+}
+
 // ========================================================
 // rextimmy gets full credit for figuring out how mixing works!
 vec4 applyCamo(vec4 cc,vec4 camoTex){
@@ -232,8 +259,8 @@ void main(void) {
     vec3 lightColors[3];
     // orbiting light
     lightColors[0] = vec3(1.0);
-    // front right light
-    lightColors[1] = vec3(1.0);
+    // Sun direction light
+    lightColors[1] = vec3(1.0, 1.0, 0.5);
     //top light
     lightColors[2] = vec3(1.0);
 
@@ -257,12 +284,21 @@ vec4   cc = vec4(0.0);
     //--------------------------------
 
 // Load textures
+    vec2 flipTC = TC1;
+    flipTC.y *= -1.0;;
     vec4 camoTexture = texture2D(camoMap,   ctc.st );
     vec4 detail      = texture2D(detailMap, TC1.st * detailTiling);
     vec4 AO          = texture2D(aoMap,     TC1.st);
     vec4 base        = texture2D(colorMap,  TC1.st);
     vec4 bumpMap     = texture2D(normalMap, TC1.st);
     vec3 GMM         = texture2D(gmmMap,    TC1.st).rgb;
+    float shadow = 1.0;
+    if (use_shadow == 1){
+    ShadowCoordPostW = ShadowCoord / ShadowCoord.w;
+    // Depth was scaled up in the depth writer so we scale it up here too.
+    // This fixes precision issues.
+    shadow = chebyshevUpperBound(ShadowCoordPostW.z*5000.0);
+    }
     //--------------------------------
     color.rgb  = base.rgb;
     a = base.a;
@@ -402,16 +438,16 @@ for (int i = 0; i < 3; i++){
     vec3 specContrib = F * G * D / (4.0 * NdotL * NdotV);
     vec3 sSpec = vec3(1.0) * pow(max(dot(reflection,l),0.0),10.0) * S_level * scrach* 2.0;
         // Obtain final intensity as reflectance (BRDF) scaled by the energy of the light (cosine law)
-    vec3 colorMix = NdotL * u_LightColor *  ((sSpec + diffuseContrib) + (specContrib*S_level*mrSample.g*6.0))*5.0;
+    vec3 colorMix =  NdotL * u_LightColor *  ((sSpec + diffuseContrib) + (specContrib*S_level*mrSample.g*6.0))*5.0;
+    colorMix += NdotV * getIBLContribution(pbrInputs, n, R)
+                *perceptualRoughness * float(is_GAmap);
     vec3 ambient = diffuseContrib.rgb * A_level*0.25;
+    colorMix *= vec3(shadow);
     colorMix += (ambient + (ambient*NdotL));
         // Calculate lighting contribution from image based lighting source (IBL)
     #define USE_IBL;
     #ifdef USE_IBL
-    colorMix += NdotV * getIBLContribution(pbrInputs, n, R)
-                *perceptualRoughness * float(is_GAmap);
     #endif
-
 
     // This section uses mix to override final color for reference app visualization
     // of various parameters in the lighting equation. Great for Debuging!
@@ -426,7 +462,7 @@ for (int i = 0; i < 3; i++){
     colorMix = mix(colorMix, vec3(perceptualRoughness), u_ScaleDiffBaseMR.w);
 
     gColor += vec4(pow(colorMix,vec3(1.0/2.2)), 1.0) * T_level;
-    //gColor.rgb = (gColor.rgb*vec3(0.001)) + vec3(F * G * D ) * T_level * 2.0;
+    //gColor.rgb = (gColor.rgb*vec3(0.001)) + vec3(shadow) * T_level * 2.0;
     
 }// i loop
 }

@@ -32,5 +32,11 @@
     <Setting Name="region_selection" Type="System.String" Scope="User">
       <Value Profile="(Default)">NA</Value>
     </Setting>
+    <Setting Name="shadow_quality" Type="System.String" Scope="User">
+      <Value Profile="(Default)">4096</Value>
+    </Setting>
+    <Setting Name="selected_light" Type="System.String" Scope="User">
+      <Value Profile="(Default)">0</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

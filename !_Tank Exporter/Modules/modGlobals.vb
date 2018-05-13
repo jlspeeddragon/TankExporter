@@ -3,9 +3,21 @@ Imports System.IO
 Module modGlobals
     '##################################
     Public TESTING As Boolean = False
+    Public jogg As Boolean = False
     '##################################
     Public section_a, section_b As Integer
 
+    '##################################
+    Public S_level, A_level, T_level As Single
+    Public selected_light As Integer = 0
+    '##################################
+    Public terrain_modelId As Integer
+    Public terrain_textureId As Integer
+    Public terrain_textureNormalId As Integer
+    Public gradient_lookup_id As Integer
+    Public terrain_noise_id As Integer
+    Public dome_modelId As Integer
+    Public dome_textureId As Integer
     '##################################
     Public TankListTempFolder As String
 
@@ -37,6 +49,9 @@ Module modGlobals
     Public path_data2(0) As path_data_
     Public XML_Strings(5) As String
     Public m_position As Point
+    Public w_changing As Boolean = False
+    Public stop_updating As Boolean = False
+
     Public Structure path_data_
         Dim dist As Single
         Dim pos1 As SlimDX.Vector3

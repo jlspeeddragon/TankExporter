@@ -9,6 +9,7 @@ Module modDeferred
     Public gBufferFBO As Integer
     Public gColor, gFXAA As Integer
     Public gDepth As Integer
+    Public rendered_shadow_texture As Integer
     Public Class GBuffer_
         Private attacments() As Integer = {Gl.GL_COLOR_ATTACHMENT0_EXT}
         Public Sub shut_down()
@@ -16,6 +17,10 @@ Module modDeferred
         End Sub
         Private Sub delete_textures_and_fob_objects()
             Dim e As Integer
+            If rendered_shadow_texture > 0 Then
+                Gl.glDeleteTextures(1, rendered_shadow_texture)
+                e = Gl.glGetError
+            End If
             If gColor > 0 Then
                 Gl.glDeleteTextures(1, gColor)
                 e = Gl.glGetError
@@ -33,8 +38,8 @@ Module modDeferred
             Dim w1, h1 As Integer
             w1 = frmMain.pb1.Width
             h1 = frmMain.pb1.Height
-            w = w1 + (w1 Mod 1)
-            h = h1 + (h1 Mod 1)
+            w = w1 + (w1 Mod 2)
+            h = h1 + (h1 Mod 2)
         End Sub
         Private Sub create_textures()
             Dim SCR_WIDTH, SCR_HEIGHT As Integer
@@ -42,6 +47,15 @@ Module modDeferred
             'depth buffer
             Dim e1 = Gl.glGetError
 
+            ' - rendered shadow texture
+            Gl.glGenTextures(1, rendered_shadow_texture)
+            Gl.glBindTexture(Gl.GL_TEXTURE_2D, rendered_shadow_texture)
+            Gl.glTexImage2D(Gl.GL_TEXTURE_2D, 0, Gl.GL_RGBA8, SCR_WIDTH, SCR_HEIGHT, 0, Gl.GL_RGBA, Gl.GL_UNSIGNED_BYTE, Nothing)
+            Gl.glTexParameteri(Gl.GL_TEXTURE_2D, Gl.GL_GENERATE_MIPMAP, Gl.GL_FALSE)
+            Gl.glTexParameteri(Gl.GL_TEXTURE_2D, Gl.GL_TEXTURE_MIN_FILTER, Gl.GL_NEAREST)
+            Gl.glTexParameteri(Gl.GL_TEXTURE_2D, Gl.GL_TEXTURE_MAG_FILTER, Gl.GL_NEAREST)
+            Gl.glTexParameterf(Gl.GL_TEXTURE_2D, Gl.GL_TEXTURE_WRAP_S, Gl.GL_REPEAT)
+            Gl.glTexParameterf(Gl.GL_TEXTURE_2D, Gl.GL_TEXTURE_WRAP_T, Gl.GL_REPEAT)
             ' - Color color buffer
             Gl.glGenTextures(1, gColor)
             Gl.glBindTexture(Gl.GL_TEXTURE_2D, gColor)

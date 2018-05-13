@@ -173,6 +173,30 @@ Namespace My
                 Me("region_selection") = value
             End Set
         End Property
+        
+        <Global.System.Configuration.UserScopedSettingAttribute(),  _
+         Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.Configuration.DefaultSettingValueAttribute("4096")>  _
+        Public Property shadow_quality() As String
+            Get
+                Return CType(Me("shadow_quality"),String)
+            End Get
+            Set
+                Me("shadow_quality") = value
+            End Set
+        End Property
+        
+        <Global.System.Configuration.UserScopedSettingAttribute(),  _
+         Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.Configuration.DefaultSettingValueAttribute("0")>  _
+        Public Property selected_light() As String
+            Get
+                Return CType(Me("selected_light"),String)
+            End Get
+            Set
+                Me("selected_light") = value
+            End Set
+        End Property
     End Class
 End Namespace
 
