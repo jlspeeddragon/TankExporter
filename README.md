@@ -8,7 +8,7 @@
 ## Version 42:
 Added Shadows and controls for it. You can set 1 of the 3 lights as the shadow light source. Added terrain and skydome. The shader editor now stops the rendering while active. Rendering can be turned back on, on the editors form.
 The hide show grid lines now toggels between terrain and grid.
-Added a preview of for the shadow mapping. This is a debug tool only.
+Added a preview of the shadow mapping texture and result. This is a debug tool only.
 
 ## Version 41:
 Fixed PBR shading.. Added Cube environment map.
