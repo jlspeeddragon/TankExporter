@@ -290,6 +290,20 @@ Module modShadow
             Gl.glCallList(terrain_modelId)
             Gl.glPopMatrix()
             '==========================================================
+            '=================================================================================
+            If frmMain.m_decal.Checked Then
+                Gl.glEnable(Gl.GL_LIGHTING)
+                Gl.glDisable(Gl.GL_CULL_FACE)
+                Gl.glPolygonMode(Gl.GL_FRONT_AND_BACK, Gl.GL_FILL)
+                'Gl.glDisable(Gl.GL_DEPTH_TEST)
+                Gl.glColor3f(0.5, 0.5, 0.5)
+                Gl.glPushMatrix()
+                decal_matrix_list(0).transform()
+                Gl.glMultMatrixf(decal_matrix_list(0).display_matrix)
+                Gl.glCallList(decal_matrix_list(0).display_id)
+                Gl.glPopMatrix()
+            End If
+            '=================================================================================
             Gl.glFrontFace(Gl.GL_CW)
             For jj = object_count To 1 Step -1
                 If Not _group(jj).is_carraige And Not _group(jj).doubleSided Then

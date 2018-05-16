@@ -9,7 +9,7 @@ uniform sampler2D normalMap;
 uniform sampler2D gradientLU; // non-linear value look up
 uniform sampler2D noise; // clouds
 uniform int use_shadow;
-
+uniform float shift;// fog animation
 in vec3 v_Position;
 in vec3 v_Normal;
 in vec2 TC1;
@@ -40,7 +40,7 @@ float chebyshevUpperBound( float distance)
     // We now use chebyshev's upperBound to check
     // How likely this pixel is to be lit (p_max)
     float variance = moments.y - (moments.x*moments.x);
-    variance = max(variance,0.0004);
+    variance = max(variance,0.5);
 
     float d = distance - moments.x;
     float p_max =  smoothstep(0.1, 0.18, variance / (variance + d*d));
@@ -74,6 +74,7 @@ vec3 getNormal()
 
 //===========================================================
 void main(void){
+vec2 time = vec2(float(shift));
     vec3 ambient;
     float falloff = 1.0;
     float shadow = 1.0;
@@ -81,23 +82,27 @@ void main(void){
     float z_start = 60.0;
     float curve = 0.0;
 
+    //=========================================================
     float dist = length(vertex.xz);
     if (dist > z_start){
         float d = (dist - z_start) / zone;
         curve = texture2D(gradientLU,vec2(1.0-d-0.01,0.5)).r;
         if (zone + z_start < dist+1.0)  curve = 1.0-texture2D(gradientLU,vec2(0.0,0.5)).r;
         }
-
-    float y_blend = 1.0;
-    float bl = 4;
-    float y_off = vertex.y/3.0;
-    if (y_off > bl){
-    float up = max(bl/y_off,0.0);
-    y_blend = up;
-   //if (up > vertex.y/3.0) y_blend = 0.0;
+    //=========================================================
+    float y_fog = 0.0;
+    float y_fog2 = 0.0;
+    float range = 8.5;
+    float y = vertex.y;
+    if (y < 0.0){
+    if (y > -range) y_fog = abs(y/range);
+    y_fog2 = y_fog*.5;
+    //y_fog *= texture2D(noise,vec2(TC1.x,TC1.y)*uv_Scale/4.0).r*3.0*(y_fog);
     }
-    vec3 map = texture2D(noise,vec2(TC1.x,TC1.y)*uv_Scale).rgb;
-
+    y_fog *= texture2D(noise,(TC1*15)+time).r*1.5;
+    y_fog = clamp(y_fog+y_fog2,0.0 , 1.0)*0.9;
+    
+    //=========================================================
 
    if (use_shadow == 1){
     ShadowCoordPostW = ShadowCoord / ShadowCoord.w;
@@ -108,27 +113,27 @@ void main(void){
     vec3 color = texture2D(colorMap,TC1*uv_Scale).rgb;
     vec3 n = getNormal();// normal at surface point
     vec3 v = normalize(-v_Position);// Vector from surface point to camera
-     vec3 r = normalize(reflect(-v,n));
+    vec3 r = normalize(reflect(-v,n));
 
-   vec3 sum = vec3(0.0);
+    vec3 sum = vec3(0.0);
+    float NdotL;
+
     for (int i = 0; i<1; i++){
-
-
-    vec3 u_LightDirection = gl_LightSource[i].position.xyz;
-    vec3 l = normalize(u_LightDirection - v_Position);// Vector from surface point to light
-    
-    vec3 spec = vec3(1.0) * pow(max(dot(r,l),0.0),1.0) * falloff * 0.15;
-    float len = length(v_Position - u_LightDirection);
-    float d = 220;
-    if (len < d) { falloff = 1.0-(len/d); }
-    float NdotL = clamp(dot(n, l), 0.0, 1.0);
-    ambient = (color.rgb - (color.rgb * vec3(NdotL))) * falloff * 0.45;//adjust ambient with distance
-    sum +=  color.rgb * NdotL * shadow * 1.25;
-    sum += spec;
+        vec3 u_LightDirection = gl_LightSource[i].position.xyz;
+        vec3 l = normalize(u_LightDirection - v_Position);// Vector from surface point to light
+        
+        vec3 spec = vec3(1.0) * pow(max(dot(r,l),0.0),1.0) * falloff * 0.15;
+        float len = length(v_Position - u_LightDirection);
+        float d = 220;
+        if (len < d) { falloff = 1.0-(len/d); }
+        NdotL = clamp(dot(n, l), 0.0, 1.0);
+        ambient = (color.rgb - (color.rgb * vec3(NdotL))) * falloff * 0.45;//adjust ambient with distance
+        sum +=  (color.rgb* shadow) * NdotL * 1.25;
+        sum += spec;
     }
     ;//sum *= vec3(shadow);
-    gColor.rgb = sum + ambient;
+    gColor.rgb = sum + ambient + ( vec3(y_fog) * vec3(0.5,0.5,0.45) );
+   
     gColor.rgb *= (vec3(1.0-curve));
-    //gColor.rgb = vec3(ShadowCoordPostW.z - moments.x)/1.0;
-    gColor.a =  max(y_blend,0.0);
-}
+    gColor.a = 1.0;
+    }

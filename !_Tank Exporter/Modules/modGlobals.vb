@@ -6,6 +6,10 @@ Module modGlobals
     Public jogg As Boolean = False
     '##################################
     Public section_a, section_b As Integer
+    '##################################
+    Public g_decal_scale As New vect3
+    Public g_decal_rotate As vect3
+    Public g_decal_translate As vect3
 
     '##################################
     Public S_level, A_level, T_level As Single
@@ -19,6 +23,9 @@ Module modGlobals
     Public dome_modelId As Integer
     Public dome_textureId As Integer
     '##################################
+    Public move_cam_z, M_DOWN, move_mod, z_move As Boolean
+    '##################################
+
     Public TankListTempFolder As String
 
     Public cube_draw_id As Integer

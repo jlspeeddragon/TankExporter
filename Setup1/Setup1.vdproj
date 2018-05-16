@@ -33,6 +33,18 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_061A9A47139C498E80BE1ADA1476A9F9"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_099863FCDB98417092970C1E29B12F0B"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_0DEB65742C6545C68C6E136117C6F247"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -141,6 +153,12 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_376850848EE94104B57FAD9F3F399D7A"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_38B3AFED149B4D08BE6D697C4F466EE2"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -148,6 +166,12 @@
         "Entry"
         {
         "MsmKey" = "8:_3A05C7E08372496BA313732E05A1FB91"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_3D45BFBBEFC448FB9336E7CDFDBFAFE9"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -183,13 +207,7 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_475FF18DC2A24089A62D0725A73FDE0E"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_49F7E9AB0D4849BB8387DB0553730C08"
+        "MsmKey" = "8:_493C943B278D4F14AACE0AD8345620DE"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -249,6 +267,12 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_5B1AE910DF954CF5AFE26099B09CC8CC"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_5DA0670B56534DF8584271F592161133"
         "OwnerKey" = "8:_D88F02B810ED4918A9E68229BD46788B"
         "MsmSig" = "8:_UNDEFINED"
@@ -285,7 +309,25 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_69EB37D9E23747A7A8612050FCAD1EA4"
+        "MsmKey" = "8:_69967615C30341939647E25E28595A09"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_6B56441291C840458094CD5C2BAA36B4"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_6B70BF5FD5054777934A281FA84E82C4"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_6D3C0B8368C74646B439731E057C3E00"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -303,13 +345,25 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_736E6C8F00F649F18A949233EB618F0A"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_73DF85C321B448FE8B573313FDFFD326"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
-        "MsmKey" = "8:_79B5B2144B0C46D5A1DEED5D66409507"
+        "MsmKey" = "8:_7FA831801C724B8F986FA4E60D0BA341"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_831BEAE2B9944904AD1A92467C069D05"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -328,6 +382,12 @@
         "Entry"
         {
         "MsmKey" = "8:_85C4B357D61240DD9C02ED24DE7E3507"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_85F7310F5EBE4D549F6027993B814687"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -357,6 +417,12 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_93CA99901EB34A1985251CA316D7E126"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_948553CFD6BA42719034C21E5634E182"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -364,12 +430,6 @@
         "Entry"
         {
         "MsmKey" = "8:_94DCCB39CF724C0FB65680B86184C5ED"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_988B5DC95CA74C3BA631AE91345F7237"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -423,12 +483,6 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_BC2746D63F744FE2828E7132A7F442A6"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
         "MsmKey" = "8:_C444918297BD4CE989D7D801AC5FB556"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -459,13 +513,19 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_CE50B0FB1E894A5C9E880778DEF6E3F7"
+        "MsmKey" = "8:_CDB050FA8DD34FB492B0F5BA0A8A3B08"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
         "MsmKey" = "8:_CFBB342AC71447C485594EB098FF2EB1"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_CFE27852A9C246469A368F3FFDC0281C"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -501,7 +561,19 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_F2AA6D2B2BDE4FE280839D73CE76CCDD"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_F382F0CA02AE4C1EA62F37FCF5CFC7C2"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_F7F188A186EF477D97D961D8E72BA83B"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -767,6 +839,46 @@
             "TargetName" = "8:FXAA_fragment.glsl"
             "Tag" = "8:"
             "Folder" = "8:_1B07A285BAA74365A2EBEF572AC0A089"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_061A9A47139C498E80BE1ADA1476A9F9"
+            {
+            "SourcePath" = "8:..\\!_Tank Exporter\\resources\\models\\noise.png"
+            "TargetName" = "8:noise.png"
+            "Tag" = "8:"
+            "Folder" = "8:_64B5D03AD3E646EAA6D5295F8EE7B238"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_099863FCDB98417092970C1E29B12F0B"
+            {
+            "SourcePath" = "8:..\\!_Tank Exporter\\resources\\models\\terrain.te"
+            "TargetName" = "8:terrain.te"
+            "Tag" = "8:"
+            "Folder" = "8:_64B5D03AD3E646EAA6D5295F8EE7B238"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -1141,6 +1253,26 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_376850848EE94104B57FAD9F3F399D7A"
+            {
+            "SourcePath" = "8:..\\!_Tank Exporter\\resources\\upton\\upton_0.png"
+            "TargetName" = "8:upton_0.png"
+            "Tag" = "8:"
+            "Folder" = "8:_203D666B48B448E69796139E47E94238"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_38B3AFED149B4D08BE6D697C4F466EE2"
             {
             "SourcePath" = "8:..\\!_Tank Exporter\\resources\\cube\\cubemap_m00_c02.png"
@@ -1167,6 +1299,26 @@
             "TargetName" = "8:AT-SPG.png"
             "Tag" = "8:"
             "Folder" = "8:_D44C0C35DFB0401DBCF1EAA8ADEE404F"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_3D45BFBBEFC448FB9336E7CDFDBFAFE9"
+            {
+            "SourcePath" = "8:..\\!_Tank Exporter\\resources\\upton\\upton_2.png"
+            "TargetName" = "8:upton_2.png"
+            "Tag" = "8:"
+            "Folder" = "8:_203D666B48B448E69796139E47E94238"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -1292,32 +1444,12 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_475FF18DC2A24089A62D0725A73FDE0E"
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_493C943B278D4F14AACE0AD8345620DE"
             {
-            "SourcePath" = "8:..\\!_Tank Exporter\\resources\\surface_NORM.png"
-            "TargetName" = "8:surface_NORM.png"
+            "SourcePath" = "8:..\\!_Tank Exporter\\resources\\models\\surface.png"
+            "TargetName" = "8:surface.png"
             "Tag" = "8:"
-            "Folder" = "8:_EACEE00013F249E6B9932BC37E30FDF4"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_49F7E9AB0D4849BB8387DB0553730C08"
-            {
-            "SourcePath" = "8:..\\!_Tank Exporter\\resources\\dome.png"
-            "TargetName" = "8:dome.png"
-            "Tag" = "8:"
-            "Folder" = "8:_EACEE00013F249E6B9932BC37E30FDF4"
+            "Folder" = "8:_64B5D03AD3E646EAA6D5295F8EE7B238"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -1512,6 +1644,26 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_5B1AE910DF954CF5AFE26099B09CC8CC"
+            {
+            "SourcePath" = "8:..\\!_Tank Exporter\\resources\\upton\\upton_7.png"
+            "TargetName" = "8:upton_7.png"
+            "Tag" = "8:"
+            "Folder" = "8:_203D666B48B448E69796139E47E94238"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_5DA0670B56534DF8584271F592161133"
             {
             "AssemblyRegister" = "3:1"
@@ -1634,12 +1786,72 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_69EB37D9E23747A7A8612050FCAD1EA4"
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_69967615C30341939647E25E28595A09"
             {
-            "SourcePath" = "8:..\\!_Tank Exporter\\resources\\terrain.x"
-            "TargetName" = "8:terrain.x"
+            "SourcePath" = "8:..\\!_Tank Exporter\\resources\\models\\dome.te"
+            "TargetName" = "8:dome.te"
             "Tag" = "8:"
-            "Folder" = "8:_EACEE00013F249E6B9932BC37E30FDF4"
+            "Folder" = "8:_64B5D03AD3E646EAA6D5295F8EE7B238"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_6B56441291C840458094CD5C2BAA36B4"
+            {
+            "SourcePath" = "8:..\\!_Tank Exporter\\resources\\upton\\user_view.png"
+            "TargetName" = "8:user_view.png"
+            "Tag" = "8:"
+            "Folder" = "8:_203D666B48B448E69796139E47E94238"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_6B70BF5FD5054777934A281FA84E82C4"
+            {
+            "SourcePath" = "8:..\\!_Tank Exporter\\resources\\upton\\pick_image.png"
+            "TargetName" = "8:pick_image.png"
+            "Tag" = "8:"
+            "Folder" = "8:_203D666B48B448E69796139E47E94238"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_6D3C0B8368C74646B439731E057C3E00"
+            {
+            "SourcePath" = "8:..\\!_Tank Exporter\\resources\\upton\\upton_8.png"
+            "TargetName" = "8:upton_8.png"
+            "Tag" = "8:"
+            "Folder" = "8:_203D666B48B448E69796139E47E94238"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -1694,6 +1906,26 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_736E6C8F00F649F18A949233EB618F0A"
+            {
+            "SourcePath" = "8:..\\!_Tank Exporter\\resources\\models\\cube.te"
+            "TargetName" = "8:cube.te"
+            "Tag" = "8:"
+            "Folder" = "8:_64B5D03AD3E646EAA6D5295F8EE7B238"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_73DF85C321B448FE8B573313FDFFD326"
             {
             "SourcePath" = "8:..\\!_Tank Exporter\\shaders\\shadowTest_vertex.glsl"
@@ -1714,12 +1946,32 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_79B5B2144B0C46D5A1DEED5D66409507"
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_7FA831801C724B8F986FA4E60D0BA341"
             {
-            "SourcePath" = "8:..\\!_Tank Exporter\\resources\\surface.png"
-            "TargetName" = "8:surface.png"
+            "SourcePath" = "8:..\\!_Tank Exporter\\resources\\upton\\upton_3.png"
+            "TargetName" = "8:upton_3.png"
             "Tag" = "8:"
-            "Folder" = "8:_EACEE00013F249E6B9932BC37E30FDF4"
+            "Folder" = "8:_203D666B48B448E69796139E47E94238"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_831BEAE2B9944904AD1A92467C069D05"
+            {
+            "SourcePath" = "8:..\\!_Tank Exporter\\resources\\upton\\upton_4.png"
+            "TargetName" = "8:upton_4.png"
+            "Tag" = "8:"
+            "Folder" = "8:_203D666B48B448E69796139E47E94238"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -1791,6 +2043,26 @@
             "TargetName" = "8:Nbutt_over.png"
             "Tag" = "8:"
             "Folder" = "8:_EACEE00013F249E6B9932BC37E30FDF4"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_85F7310F5EBE4D549F6027993B814687"
+            {
+            "SourcePath" = "8:..\\!_Tank Exporter\\resources\\upton\\upton_6.png"
+            "TargetName" = "8:upton_6.png"
+            "Tag" = "8:"
+            "Folder" = "8:_203D666B48B448E69796139E47E94238"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -1885,6 +2157,26 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_93CA99901EB34A1985251CA316D7E126"
+            {
+            "SourcePath" = "8:..\\!_Tank Exporter\\resources\\models\\surface_NORM.png"
+            "TargetName" = "8:surface_NORM.png"
+            "Tag" = "8:"
+            "Folder" = "8:_64B5D03AD3E646EAA6D5295F8EE7B238"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_948553CFD6BA42719034C21E5634E182"
             {
             "SourcePath" = "8:..\\!_Tank Exporter\\shaders\\basic_vertex.glsl"
@@ -1911,26 +2203,6 @@
             "TargetName" = "8:components.png"
             "Tag" = "8:"
             "Folder" = "8:_589FDE83079A4FB68CA57637595D2D5A"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_988B5DC95CA74C3BA631AE91345F7237"
-            {
-            "SourcePath" = "8:..\\!_Tank Exporter\\resources\\borderGradient.png"
-            "TargetName" = "8:borderGradient.png"
-            "Tag" = "8:"
-            "Folder" = "8:_EACEE00013F249E6B9932BC37E30FDF4"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -2116,26 +2388,6 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_BC2746D63F744FE2828E7132A7F442A6"
-            {
-            "SourcePath" = "8:..\\!_Tank Exporter\\resources\\cube\\cube.x"
-            "TargetName" = "8:cube.x"
-            "Tag" = "8:"
-            "Folder" = "8:_B67DA5D591D4466C8A8D9ED4B710BB53"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_C444918297BD4CE989D7D801AC5FB556"
             {
             "SourcePath" = "8:..\\!_Tank Exporter\\ILUT.dll"
@@ -2258,12 +2510,12 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_CE50B0FB1E894A5C9E880778DEF6E3F7"
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_CDB050FA8DD34FB492B0F5BA0A8A3B08"
             {
-            "SourcePath" = "8:..\\!_Tank Exporter\\resources\\dome.x"
-            "TargetName" = "8:dome.x"
+            "SourcePath" = "8:..\\!_Tank Exporter\\resources\\models\\dome.png"
+            "TargetName" = "8:dome.png"
             "Tag" = "8:"
-            "Folder" = "8:_EACEE00013F249E6B9932BC37E30FDF4"
+            "Folder" = "8:_64B5D03AD3E646EAA6D5295F8EE7B238"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -2284,6 +2536,26 @@
             "TargetName" = "8:cube_fragment.glsl"
             "Tag" = "8:"
             "Folder" = "8:_1B07A285BAA74365A2EBEF572AC0A089"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_CFE27852A9C246469A368F3FFDC0281C"
+            {
+            "SourcePath" = "8:..\\!_Tank Exporter\\resources\\models\\borderGradient.png"
+            "TargetName" = "8:borderGradient.png"
+            "Tag" = "8:"
+            "Folder" = "8:_64B5D03AD3E646EAA6D5295F8EE7B238"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -2389,12 +2661,52 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_F2AA6D2B2BDE4FE280839D73CE76CCDD"
+            {
+            "SourcePath" = "8:..\\!_Tank Exporter\\resources\\upton\\upton_1.png"
+            "TargetName" = "8:upton_1.png"
+            "Tag" = "8:"
+            "Folder" = "8:_203D666B48B448E69796139E47E94238"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_F382F0CA02AE4C1EA62F37FCF5CFC7C2"
             {
             "SourcePath" = "8:..\\!_Tank Exporter\\resources\\tower.png"
             "TargetName" = "8:tower.png"
             "Tag" = "8:"
             "Folder" = "8:_EACEE00013F249E6B9932BC37E30FDF4"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_F7F188A186EF477D97D961D8E72BA83B"
+            {
+            "SourcePath" = "8:..\\!_Tank Exporter\\resources\\upton\\upton_5.png"
+            "TargetName" = "8:upton_5.png"
+            "Tag" = "8:"
+            "Folder" = "8:_203D666B48B448E69796139E47E94238"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -2602,6 +2914,28 @@
                     "Property" = "8:_7A7E637CD8894736AEC1A397A866A996"
                         "Folders"
                         {
+                            "{9EF0B969-E518-4E46-987F-47570745A589}:_203D666B48B448E69796139E47E94238"
+                            {
+                            "Name" = "8:upton"
+                            "AlwaysCreate" = "11:FALSE"
+                            "Condition" = "8:"
+                            "Transitive" = "11:FALSE"
+                            "Property" = "8:_62503FC5DB5F4343933877B5019D9CF6"
+                                "Folders"
+                                {
+                                }
+                            }
+                            "{9EF0B969-E518-4E46-987F-47570745A589}:_64B5D03AD3E646EAA6D5295F8EE7B238"
+                            {
+                            "Name" = "8:models"
+                            "AlwaysCreate" = "11:FALSE"
+                            "Condition" = "8:"
+                            "Transitive" = "11:FALSE"
+                            "Property" = "8:_4C83425E925C4FE8AEF8527997BB06CD"
+                                "Folders"
+                                {
+                                }
+                            }
                             "{9EF0B969-E518-4E46-987F-47570745A589}:_B67DA5D591D4466C8A8D9ED4B710BB53"
                             {
                             "Name" = "8:cube"
@@ -3204,7 +3538,7 @@
         {
             "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_D88F02B810ED4918A9E68229BD46788B"
             {
-            "SourcePath" = "8:..\\!_Tank Exporter\\obj\\x86\\Release\\!_Tank Exporter.exe"
+            "SourcePath" = "8:..\\!_Tank Exporter\\obj\\x86\\Debug\\!_Tank Exporter.exe"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_9BBCA850C4D847C495C4D74DD189C10E"

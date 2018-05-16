@@ -45,13 +45,15 @@ Public Class frmMain
     Public path_set As Boolean = False
     Public res_mods_path_set As Boolean = False
     Dim mouse As vec2
-    Public move_cam_z, M_DOWN, move_mod, z_move As Boolean
     Private mouse_down As Boolean = False
     Public mouse_delta As New Point
     Private mouse_pos As New Point
     Public mouse_find_location As New Point
     Public found_triangle_tv As Integer
     Private TOTAL_TANKS_FOUND As Integer = 0
+
+    Dim delay As Integer = 0
+    Dim stepper As Integer = 0
 
     Public Shared packages(12) As ZipFile
     Public Shared packages_1(12) As ZipFile
@@ -65,6 +67,9 @@ Public Class frmMain
     Dim treeviews(10) As TreeView
     Public icons(10) As pngs
     Public view_status_string As String
+
+    Dim time As New Stopwatch
+    Dim pick_timer As New Stopwatch
     Structure pngs
         Public img() As System.Drawing.Bitmap
     End Structure
@@ -536,7 +541,6 @@ Public Class frmMain
         Application.DoEvents()
         pb1.Visible = True
         frmState = Me.WindowState
-        '---------------------------
         info_Label.BringToFront()
         info_Label.Parent = Me
         info_Label.Size = MM.Size
@@ -581,6 +585,10 @@ Public Class frmMain
         Ilut.ilutInit()
         EnableOpenGL()
         make_shadow_fbo()
+        '---------------------------
+        'just to convert to .te binary models;
+        load_and_save()
+
         Dim glstr As String
         glstr = Gl.glGetString(Gl.GL_VENDOR)
         start_up_log.AppendLine("Vendor: " + glstr)
@@ -956,31 +964,37 @@ Public Class frmMain
         frmLightSelection.Show()
         frmLightSelection.Hide()
         '###################################
-
+        pick_timer.Start()
 
         Startup_Timer.Enabled = True
         Application.DoEvents()
         AddHandler Me.SizeChanged, AddressOf me_size_changed
         window_state = Me.WindowState
     End Sub
+
     Private Sub load_resources()
-        Dim iPath As String = Application.StartupPath + "\resources\"
+        load_models()
+        Dim iPath As String = Application.StartupPath + "\resources\models\"
         start_up_log.AppendLine("loaded Xfile and created CubeMap...")
         load_cube_and_cube_map()
         start_up_log.AppendLine("loaded Terrain....")
         load_terrain()
         gradient_lookup_id = load_png_file(iPath + "borderGradient.png")
         dome_textureId = load_png_file(iPath + "dome.png")
-        dome_modelId = get_X_model(iPath + "dome.x")
+        'dome_modelId = get_X_model(iPath + "dome.x") '===========================
+        upton.load_upton()
     End Sub
     Private Sub load_terrain()
-        Dim iPath As String = Application.StartupPath + "\resources\"
-        terrain_modelId = get_X_model(iPath + "terrain.x")
+        Dim iPath As String = Application.StartupPath + "\resources\models\"
+        'terrain_modelId = get_X_model(iPath + "terrain.x") '===========================
         terrain_textureId = load_png_file(iPath + "surface.png")
         terrain_textureNormalId = load_png_file(iPath + "surface_NORM.png")
+        terrain_noise_id = load_png_file(iPath + "noise.png")
     End Sub
     Private Sub load_cube_and_cube_map()
         Dim iPath As String = Application.StartupPath + "\resources\cube\cubemap_m00_c0"
+        'cube_draw_id = get_X_model(Application.StartupPath + "\resources\models\cube.x") '===========================
+
         Dim id, iler, w, h As Integer
 
         Gl.glEnable(Gl.GL_TEXTURE_CUBE_MAP)
@@ -1047,7 +1061,12 @@ Public Class frmMain
         id = Il.ilGenImage
         Il.ilBindImage(id)
         'get the cube model
-        cube_draw_id = get_X_model(Application.StartupPath + "\resources\cube\cube.x")
+    End Sub
+    Private Sub load_models()
+        Dim iPath As String = Application.StartupPath + "\resources\models\"
+        dome_modelId = load_binary_model(iPath + "dome.te")
+        terrain_modelId = load_binary_model(iPath + "terrain.te")
+        cube_draw_id = load_binary_model(iPath + "cube.te")
     End Sub
     Public tank_mini_icons As New ImageList
     Private Sub load_type_images()
@@ -2284,11 +2303,18 @@ tryagain:
         Return Nothing
     End Function
 
-    Dim delay As Integer = 0
-    Dim stepper As Integer = 0
     '###########################################################################################################################################
     Private Sub draw_environment()
         '############################################
+        Dim t = time.ElapsedMilliseconds
+        Dim tv As Single
+        If CSng(t) > 5000 Then
+            t = 0.0!
+        End If
+        If t = 0.0! Then
+            time.Restart()
+        End If
+        tv = CSng(t) / 5000.0!
         'Dome
         Dim s As Single = 2.8
         Gl.glFrontFace(Gl.GL_CCW)
@@ -2318,6 +2344,7 @@ tryagain:
         Gl.glUniform1i(terrain_normalMap, 2)
         Gl.glUniform1i(terrain_gradient, 3)
         Gl.glUniform1i(terrain_noise, 4)
+        Gl.glUniform1f(terain_animation, tv)
 
         Gl.glUniformMatrix4fv(terrain_shadowProjection, 1, 0, lightProjection)
         If m_shadows.Checked Then
@@ -2912,6 +2939,21 @@ tryagain:
         End If
 
         'track_test()
+        '=================================================================================
+        If m_decal.Checked Then
+            Gl.glEnable(Gl.GL_LIGHTING)
+            Gl.glDisable(Gl.GL_CULL_FACE)
+            Gl.glPolygonMode(Gl.GL_FRONT_AND_BACK, Gl.GL_FILL)
+            'Gl.glDisable(Gl.GL_DEPTH_TEST)
+            Gl.glColor3f(0.5, 0.5, 0.5)
+            Gl.glPushMatrix()
+            decal_matrix_list(0).transform()
+            Gl.glMultMatrixf(decal_matrix_list(0).display_matrix)
+            Gl.glCallList(decal_matrix_list(0).display_id)
+            Gl.glPopMatrix()
+        End If
+        '=================================================================================
+
 
         If move_mod Or z_move Then    'draw reference lines to eye center
             Gl.glColor3f(1.0, 1.0, 1.0)
@@ -3059,6 +3101,11 @@ fuckit:
             show_depth_texture()
         End If
         '######################################################################
+        'handle upton if needed
+        If m_decal.Checked Then
+            upton.draw_upton()
+        End If
+        '######################################################################
         Dim fps As Integer = 1.0 / (screen_totaled_draw_time * 0.001)
         Dim str = " FPS: ( " + fps.ToString + " )"
         'swat.Stop()
@@ -3112,38 +3159,48 @@ fuckit:
             End If
             ViewOrtho()
         End If
-        'has to be AFTER the buffer swap
-        If Not STOP_BUTTON_SCAN Then
-            Gl.glFrontFace(Gl.GL_CW)
-            If season_Buttons_VISIBLE Then
-                draw_season_pick_buttons()
-                mouse_pick_season_button(m_mouse.x, m_mouse.y)
+        '==============================================================================
+        Dim et = pick_timer.ElapsedMilliseconds
+        If et > 166 Then 'only do picking so often.. NOT every frame.. its to expensive in render time!
+            pick_timer.Restart()
+            'has to be AFTER the buffer swap
+            If Not STOP_BUTTON_SCAN Then
+                Gl.glFrontFace(Gl.GL_CW)
+                If season_Buttons_VISIBLE Then
+                    draw_season_pick_buttons()
+                    mouse_pick_season_button(m_mouse.x, m_mouse.y)
+                    'Gdi.SwapBuffers(pb1_hDC)
+                End If
+                If CAMO_BUTTONS_VISIBLE Then
+                    draw_pick_camo_buttons()
+                    mouse_pick_camo_button(m_mouse.x, m_mouse.y)
+                End If
+                If TANKPARTS_VISIBLE Then
+                    draw_tankpart_pick()
+                    mouse_pick_tankparts(m_mouse.x, m_mouse.y)
+                End If
+                If TANK_TEXTURES_VISIBLE Then
+                    draw_textures_pick()
+                    mouse_pick_textures(m_mouse.x, m_mouse.y)
+                End If
+            End If
+            If TANK_TEXTURES_VISIBLE And frmTextureViewer.Visible Then
+                draw_tank_pick()
+                mouse_pick_tank_vertex(m_mouse.x, m_mouse.y)
                 'Gdi.SwapBuffers(pb1_hDC)
             End If
-            If CAMO_BUTTONS_VISIBLE Then
-                draw_pick_camo_buttons()
-                mouse_pick_camo_button(m_mouse.x, m_mouse.y)
+            '====================================
+            If m_decal.Checked Then
+                upton.pick_upton()
             End If
-            If TANKPARTS_VISIBLE Then
-                draw_tankpart_pick()
-                mouse_pick_tankparts(m_mouse.x, m_mouse.y)
-            End If
-            If TANK_TEXTURES_VISIBLE Then
-                draw_textures_pick()
-                mouse_pick_textures(m_mouse.x, m_mouse.y)
-            End If
+            '====================================
         End If
-        If TANK_TEXTURES_VISIBLE And frmTextureViewer.Visible Then
-            draw_tank_pick()
-            mouse_pick_tank_vertex(m_mouse.x, m_mouse.y)
-            'Gdi.SwapBuffers(pb1_hDC)
-        End If
-        '====================================
         Gl.glFlush()
         er = Gl.glGetError
         OLD_WINDOW_HEIGHT = pb1.Height
         gl_busy = False
     End Sub
+    '###########################################################################################################################################
     Public Sub draw_triangle_mouse_texture_window()
         'If Not pb2.Focused Then Return
 
@@ -3427,6 +3484,8 @@ fuckit:
 
     End Sub
 
+#Region "PB1 Mouse"
+
     Private Sub pb1_MouseDown(sender As Object, e As MouseEventArgs) Handles pb1.MouseDown
         'If M_SELECT_COLOR > 0 Then
         '    For i = 0 To button_list.Length - 2
@@ -3435,46 +3494,127 @@ fuckit:
         '        End If
         '    Next
         'End If
+        mouse.x = e.X
+        mouse.y = e.Y
         If e.Button = Forms.MouseButtons.Right Then
-            'Timer1.Enabled = False
             move_cam_z = True
-            mouse.x = e.X
-            mouse.y = e.Y
+        End If
+        If e.Button = Forms.MouseButtons.Middle Then
+            move_mod = True
+            M_DOWN = True
         End If
         If e.Button = Forms.MouseButtons.Left Then
-            mouse.x = e.X
-            mouse.y = e.Y
-            'If BUTTON_ID > 0 Then
-            '    If CAMO_BUTTON_DOWN Then Return
-            '    gl_stop = True
-            '    If BUTTON_TYPE = 1 Then
-            '        'season_Buttons(BUTTON_ID - 100).state = 2
-            '        season_Buttons(BUTTON_ID - 100).click()
-            '        gl_stop = False
-            '        Return
-            '    End If
-            '    If BUTTON_TYPE = 2 Then
-            '        'camo_Buttons(BUTTON_ID - 100).state = 2
-            '        camo_Buttons(BUTTON_ID - 100).click()
-            '        gl_stop = False
-            '        Return
 
-            '    End If
-            'End If
             CAMO_BUTTON_DOWN = True
             M_DOWN = True
         End If
     End Sub
-#Region "PB1 Mouse"
 
     Private Sub pb1_MouseEnter(sender As Object, e As EventArgs) Handles pb1.MouseEnter
         pb1.Focus()
     End Sub
+    Private tempX, tempZ As Single
+    Private Sub move_xyz()
+        Dim x, z As Single
+        Dim ms As Double = view_radius / 80 ' distance away changes speed. THIS WORKS WELL!
+        Dim speed As Single = 0.1
 
+        If upton.state = 5 Or upton.state = 7 Then
+            x = (mouse.x - m_mouse.x) * ms * speed
+            z = (mouse.y - m_mouse.y) * ms * speed
 
+            g_decal_translate.x += (x * -Cos(Cam_X_angle)) + (z * -Sin(Cam_X_angle))
+
+            g_decal_translate.z += (z * -Cos(Cam_X_angle)) + (x * Sin(Cam_X_angle))
+
+        End If
+
+        If upton.state = 6 Then
+            g_decal_translate.y += -(mouse.y - m_mouse.y) * ms * speed
+        End If
+        decal_matrix_list(0).set_translate_matrix(0, g_decal_translate)
+        mouse.x = m_mouse.x
+        mouse.y = m_mouse.y
+
+    End Sub
+    Private Sub rotate_decal_xy()
+        Dim x, z As Single
+        If upton.state = 8 Then
+            x = -(mouse.y - m_mouse.y) * 0.01
+            g_decal_rotate.y += x
+            decal_matrix_list(0).set_y_rotation_matrix(g_decal_rotate.y)
+        End If
+        If upton.state = 9 Then
+            z = -(mouse.y - m_mouse.y) * 0.01
+            g_decal_rotate.x += z
+            decal_matrix_list(0).set_x_rotation_matrix(g_decal_rotate.x)
+        End If
+        'Debug.WriteLine("x " + x.ToString("0.0000") + " :z " + z.ToString("0.00000"))
+        mouse.x = m_mouse.x
+        mouse.y = m_mouse.y
+    End Sub
+    Private Sub scale_decal_xyz()
+        Dim v As New vect3
+        Dim x, z As Single
+        Dim ms As Double = view_radius / 80 ' distance away changes speed. THIS WORKS WELL!
+        Dim speed As Single = 0.25
+
+        z = -(mouse.y - m_mouse.y) * ms * speed
+        If upton.state = 1 Then
+            g_decal_scale.x += z
+            If g_decal_scale.x < 0.1 Then g_decal_scale.x = 0.1
+            decal_matrix_list(0).set_scale_matrix(g_decal_scale)
+        End If
+        If upton.state = 2 Then
+            g_decal_scale.y += z
+            If g_decal_scale.y < 0.1 Then g_decal_scale.y = 0.1
+            decal_matrix_list(0).set_scale_matrix(g_decal_scale)
+
+        End If
+        If upton.state = 3 Then
+            g_decal_scale.z += z
+            If g_decal_scale.z < 0.1 Then g_decal_scale.z = 0.1
+            decal_matrix_list(0).set_scale_matrix(g_decal_scale)
+        End If
+        If upton.state = 4 Then
+            g_decal_scale.x += z
+            g_decal_scale.y += z
+            g_decal_scale.z += z
+            If g_decal_scale.x < 0.1 Then g_decal_scale.x = 0.1
+            If g_decal_scale.y < 0.1 Then g_decal_scale.y = 0.1
+            If g_decal_scale.z < 0.1 Then g_decal_scale.z = 0.1
+            decal_matrix_list(0).set_scale_matrix(g_decal_scale)
+        End If
+
+        mouse.x = m_mouse.x
+        mouse.y = m_mouse.y
+
+    End Sub
     Private Sub pb1_MouseMove(sender As Object, e As MouseEventArgs) Handles pb1.MouseMove
         m_mouse.x = e.X
         m_mouse.y = e.Y
+        If M_DOWN And upton.state > 0 And upton.state < 5 Then
+            scale_decal_xyz()
+            Return
+        End If
+        If M_DOWN And upton.state > 4 And upton.state < 8 Then
+            move_xyz()
+            Return
+        End If
+        If M_DOWN And upton.state > 7 And upton.state < 10 Then
+            rotate_decal_xy()
+            Return
+        End If
+        If upton.state = 102 And M_DOWN Then
+            Dim delta As New Point
+            delta.X = mouse.x - m_mouse.x
+            delta.Y = mouse.y - m_mouse.y
+            upton.position.X -= delta.X
+            upton.position.Y += delta.Y
+            mouse.x = m_mouse.x
+            mouse.y = m_mouse.y
+            Return
+        End If
 
         If BUTTON_ID > 0 Then
             Return
@@ -3584,6 +3724,7 @@ fuckit:
         M_DOWN = False
         CAMO_BUTTON_DOWN = False
         move_cam_z = False
+        move_mod = False
     End Sub
 
     Private Sub pb1_MouseWheel(sender As Object, e As MouseEventArgs) Handles pb1.MouseWheel
@@ -5891,5 +6032,16 @@ make_this_tank:
 
     Private Sub m_select_light_Click(sender As Object, e As EventArgs) Handles m_select_light.Click
         frmLightSelection.Show()
+    End Sub
+
+    Private Sub m_decal_Click(sender As Object, e As EventArgs) Handles m_decal.Click
+        If m_decal.Checked Then
+            m_decal.ForeColor = Color.Red
+            upton.position = New Point(pb1.Width / 2 - 70, -pb1.Height / 2 + 100)
+            upton.state = 0
+            make_test_decal(0)
+        Else
+            m_decal.ForeColor = Color.Black
+        End If
     End Sub
 End Class

@@ -117,7 +117,7 @@ Module modCamouflage
             MsgBox("This tank can not have camouflage appied to it!", MsgBoxStyle.Information, "Not Going to happen...")
             CAMO_BUTTONS_VISIBLE = False
             season_Buttons_VISIBLE = False
-            frmMain.M_DOWN = False
+            M_DOWN = False
             BUTTON_ID = 0
             Return
         End Try

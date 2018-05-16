@@ -106,6 +106,7 @@ Module shader_loader
 
     End Sub
     Public Function assemble_shader(v As String, g As String, f As String, ByRef shader As Integer, ByRef name As String, ByRef has_geo As Boolean) As Integer
+        frmShaderEditor.TopMost = False
         Dim vs(1) As String
         Dim gs(1) As String
         Dim fs(1) As String
@@ -163,7 +164,7 @@ Module shader_loader
         If Not status_code = Gl.GL_TRUE Then
             Gl.glDeleteShader(vertexObject)
             gl_error(name + "_vertex didn't compile!" + vbCrLf + info.ToString)
-            'Return
+
         End If
 
         e = Gl.glGetError
@@ -183,7 +184,7 @@ Module shader_loader
             If Not status_code = Gl.GL_TRUE Then
                 Gl.glDeleteShader(geoObject)
                 gl_error(name + "_geo didn't compile!" + vbCrLf + info.ToString)
-                'Return
+
             End If
             e = Gl.glGetError
             If e <> 0 Then
@@ -222,7 +223,7 @@ Module shader_loader
         If Not status_code = Gl.GL_TRUE Then
             Gl.glDeleteShader(fragmentObject)
             gl_error(name + "_fragment didn't compile!" + vbCrLf + info.ToString)
-            'Return
+
         End If
         e = Gl.glGetError
         If e <> 0 Then
@@ -260,7 +261,7 @@ Module shader_loader
         If Not status_code = Gl.GL_TRUE Then
             Gl.glDeleteProgram(shader)
             gl_error(name + " did not link!" + vbCrLf + info.ToString)
-            'Return
+
         End If
 
         'delete shader objects
@@ -286,6 +287,8 @@ Module shader_loader
         End If
         GC.Collect()
         GC.WaitForFullGCComplete()
+
+        frmShaderEditor.TopMost = True
 
         Return shader
     End Function
@@ -417,7 +420,7 @@ Module shader_loader
     End Sub
 
     Public terrain_depthMap, terrain_shadowProjection, terrain_textureMap, _
-        terrain_normalMap, terrain_use_shadow, terrain_gradient, terrain_noise As Integer
+        terrain_normalMap, terrain_use_shadow, terrain_gradient, terrain_noise, terain_animation As Integer
     '==============================================================================================================
     Public Sub set_terrain_variables()
         terrain_textureMap = Gl.glGetUniformLocation(shader_list.terrainShader_shader, "colorMap")
@@ -427,6 +430,7 @@ Module shader_loader
         terrain_use_shadow = Gl.glGetUniformLocation(shader_list.terrainShader_shader, "use_shadow")
         terrain_gradient = Gl.glGetUniformLocation(shader_list.terrainShader_shader, "gradientLU")
         terrain_noise = Gl.glGetUniformLocation(shader_list.terrainShader_shader, "noise")
+        terain_animation = Gl.glGetUniformLocation(shader_list.terrainShader_shader, "shift")
     End Sub
 
     Public depth_alphaTest, depth_alphaRef, depth_normalMap As Integer

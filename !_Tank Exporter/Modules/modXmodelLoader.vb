@@ -1,6 +1,43 @@
 ﻿Imports System.IO
 
 Module modXmodelLoader
+    Public Sub load_and_save()
+        cube_draw_id = get_X_model(Application.StartupPath + "\resources\models\cube.x")
+        terrain_modelId = get_X_model(Application.StartupPath + "\resources\models\terrain.x")
+        dome_modelId = get_X_model(Application.StartupPath + "\resources\models\dome.x")
+    End Sub
+    Public Function load_binary_model(file_ As String)
+        Dim f = File.Open(file_, FileMode.Open, FileAccess.Read, FileShare.Read)
+        Dim br As New BinaryReader(f)
+
+        Dim v_cnt = br.ReadInt32 * 3 ' 3 per poly
+        Dim id = Gl.glGenLists(1)
+        Gl.glNewList(id, Gl.GL_COMPILE)
+
+        Gl.glBegin(Gl.GL_TRIANGLES)
+        Dim v As vect3
+        For i = 0 To v_cnt
+            v.x = br.ReadSingle
+            v.y = br.ReadSingle
+            v.z = br.ReadSingle
+            Gl.glNormal3f(v.x, v.y, v.z)
+            v.x = br.ReadSingle
+            v.y = br.ReadSingle
+            Gl.glMultiTexCoord2f(0, v.x, v.y)
+            v.x = br.ReadSingle
+            v.y = br.ReadSingle
+            v.z = br.ReadSingle
+            Gl.glVertex3f(v.x, v.y, v.z)
+        Next
+        Gl.glEnd()
+        Gl.glEndList()
+        Gl.glFinish()
+        f.Close()
+        f.Dispose()
+        br.Dispose()
+        Return id
+    End Function
+
 
     Public vertices() As vec3
     Public normals() As vec3
@@ -31,8 +68,14 @@ Module modXmodelLoader
         ' IN: path and name of file to load
         ' OUT: Display List ID.
         'At some point this will load multi model files.
+        '##################################################
+        'there is code in here to save as a binary file!!!!
+        'use it to compress the x-files to much smaller sizes.. 1/6th as big and much faster loading
         Dim start_locations(1) As UInteger
         Dim obj_count As Integer = get_start_locations(start_locations, file_)
+
+        Dim foutname = Path.GetFileNameWithoutExtension(file_)
+
         Dim s As New StreamReader(file_)
         Dim txt As String = ""
         While Not txt.ToLower.Contains("mesh")
@@ -103,15 +146,43 @@ Module modXmodelLoader
         Next
         'At this point, we have all the data to make the mesh
         'Gen Display List ID.
+        Dim a, b, c As Integer
+        If True Then
+
+            Dim f = File.Open("c:\" + foutname + ".te", FileMode.OpenOrCreate, FileAccess.Write)
+            Dim br As New BinaryWriter(f)
+            br.Write(indice_count)
+            For i = 0 To indice_count
+                a = indices(i).a
+                b = indices(i).b
+                c = indices(i).c
+                br.Write(normals(a).x) : br.Write(normals(a).y) : br.Write(normals(a).z)
+                br.Write(uvs(a).x) : br.Write(uvs(a).y)
+                br.Write(normals(a).x) : br.Write(normals(a).y) : br.Write(normals(a).z)
+
+                br.Write(normals(b).x) : br.Write(normals(b).y) : br.Write(normals(b).z)
+                br.Write(uvs(b).x) : br.Write(uvs(b).y)
+                br.Write(normals(b).x) : br.Write(normals(b).y) : br.Write(normals(b).z)
+
+                br.Write(normals(c).x) : br.Write(normals(c).y) : br.Write(normals(c).z)
+                br.Write(uvs(c).x) : br.Write(uvs(c).y)
+                br.Write(normals(c).x) : br.Write(normals(c).y) : br.Write(normals(c).z)
+            Next
+            f.Dispose()
+            br.Dispose()
+
+        End If
+
         Dim list_ID = Gl.glGenLists(1)
         Gl.glNewList(list_ID, Gl.GL_COMPILE)
         Gl.glBegin(Gl.GL_TRIANGLES)
-        Dim a, b, c As Integer
+
         'create all the triangles.
         For i = 0 To indice_count
             a = indices(i).a
             b = indices(i).b
             c = indices(i).c
+
             Gl.glNormal3f(normals(a).x, normals(a).y, normals(a).z)
             Gl.glTexCoord2f(uvs(a).x, uvs(a).y)
             Gl.glVertex3f(vertices(a).x, vertices(a).y, vertices(a).z)

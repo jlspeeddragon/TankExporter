@@ -235,7 +235,9 @@
     <Compile Include="Forms\FrmShadowSettings.vb">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="Modules\modDecals.vb" />
     <Compile Include="Modules\modShadow.vb" />
+    <Compile Include="Modules\modUpton.vb" />
     <Compile Include="shaders\shader programs\frmShaderEditor.Designer.vb">
       <DependentUpon>frmShaderEditor.vb</DependentUpon>
     </Compile>
@@ -378,13 +380,22 @@
       <LastGenOutput>Settings.Designer.vb</LastGenOutput>
     </None>
     <None Include="packages.config" />
-    <None Include="resources\cube\cube.x">
+    <None Include="resources\models\cube.te">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="resources\dome.x">
+    <None Include="resources\models\cube.x">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="resources\terrain.x">
+    <None Include="resources\models\dome.te">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="resources\models\dome.x">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="resources\models\terrain.te">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="resources\models\terrain.x">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="shaders\cube_fragment.glsl">
@@ -478,9 +489,6 @@
     <Content Include="icons\SPG.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="resources\borderGradient.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
     <Content Include="resources\Cbutt_down.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -535,6 +543,21 @@
     <Content Include="resources\cube\env_brdf_lut.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="resources\models\borderGradient.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="resources\models\dome.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="resources\models\noise.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="resources\models\surface.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="resources\models\surface_NORM.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="resources\Nbutt_down.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -549,15 +572,6 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="resources\Paste_6520.png" />
-    <Content Include="resources\dome.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="resources\surface.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="resources\surface_NORM.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
     <Content Include="resources\t_footer.txt" />
     <Content Include="resources\t_header.txt" />
     <None Include="resources\upton.jpg" />
@@ -573,6 +587,39 @@
     <None Include="shaders\fbx_fragment.glsl">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <Content Include="resources\upton\pick_image.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="resources\upton\upton_0.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="resources\upton\upton_1.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="resources\upton\upton_2.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="resources\upton\upton_3.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="resources\upton\upton_4.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="resources\upton\upton_5.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="resources\upton\upton_6.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="resources\upton\upton_7.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="resources\upton\upton_8.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="resources\upton\user_view.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="shaders\pbr example.txt" />
     <Content Include="tank.ico">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
