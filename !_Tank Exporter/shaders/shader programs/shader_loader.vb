@@ -19,6 +19,9 @@ Module shader_loader
         Public shadowTest_shader As Integer
         Public terrainShader_shader As Integer
         Public basic_shader As Integer
+        Public r2mono_shader As Integer
+        Public decalsCpass_shader As Integer
+        Public dome_shader As Integer
     End Class
 
 #Region "variables"
@@ -420,7 +423,7 @@ Module shader_loader
     End Sub
 
     Public terrain_depthMap, terrain_shadowProjection, terrain_textureMap, _
-        terrain_normalMap, terrain_use_shadow, terrain_gradient, terrain_noise, terain_animation As Integer
+        terrain_normalMap, terrain_use_shadow, terrain_gradient, terrain_noise, terain_animation, terrain_camPosition As Integer
     '==============================================================================================================
     Public Sub set_terrain_variables()
         terrain_textureMap = Gl.glGetUniformLocation(shader_list.terrainShader_shader, "colorMap")
@@ -431,6 +434,7 @@ Module shader_loader
         terrain_gradient = Gl.glGetUniformLocation(shader_list.terrainShader_shader, "gradientLU")
         terrain_noise = Gl.glGetUniformLocation(shader_list.terrainShader_shader, "noise")
         terain_animation = Gl.glGetUniformLocation(shader_list.terrainShader_shader, "shift")
+        terrain_camPosition = Gl.glGetUniformLocation(shader_list.terrainShader_shader, "camPosition")
     End Sub
 
     Public depth_alphaTest, depth_alphaRef, depth_normalMap As Integer
@@ -447,8 +451,52 @@ Module shader_loader
         basic_alphaRef = Gl.glGetUniformLocation(shader_list.depth_shader, "alphaRef")
         basic_alphaTest = Gl.glGetUniformLocation(shader_list.depth_shader, "alphaTest")
         basic_normalMap = Gl.glGetUniformLocation(shader_list.depth_shader, "normalMap")
-
     End Sub
+
+    Public r2mono_shadow As Integer
+    '==============================================================================================================
+    Public Sub set_r2mono_variables()
+        r2mono_shadow = Gl.glGetUniformLocation(shader_list.r2mono_shader, "shadow")
+    End Sub
+
+    Public decalC_colorMap, decalC_normalMap, decalC_shadowMap, decalC_decal_matrix As Integer
+    Public decalC_depthMap, decalC_alpha, decalC_level, decalC_UVwrap, decalC_uv_rotate As Integer
+    Public decalC_shadowProj, decalC_use_shadow, decalC_fog, decalC_gNormalMap As Integer
+    Public decalC_camLocation, decalC_lightPosition, decalC_GMM, decalC_cube, decalC_brdf As Integer
+    Public decalC_a_group, decalC_b_group As Integer
+    '==============================================================================================================
+    Public Sub set_decalsNpass_variables()
+        decalC_depthMap = Gl.glGetUniformLocation(shader_list.decalsCpass_shader, "depthMap")
+        decalC_colorMap = Gl.glGetUniformLocation(shader_list.decalsCpass_shader, "colorMap")
+        decalC_shadowMap = Gl.glGetUniformLocation(shader_list.decalsCpass_shader, "shadowMap")
+        decalC_normalMap = Gl.glGetUniformLocation(shader_list.decalsCpass_shader, "normalMap")
+        decalC_gNormalMap = Gl.glGetUniformLocation(shader_list.decalsCpass_shader, "gNormalMap")
+        decalC_GMM = Gl.glGetUniformLocation(shader_list.decalsCpass_shader, "gmmMap")
+        decalC_cube = Gl.glGetUniformLocation(shader_list.decalsCpass_shader, "cubeMap")
+        decalC_brdf = Gl.glGetUniformLocation(shader_list.decalsCpass_shader, "u_brdfLUT")
+        decalC_a_group = Gl.glGetUniformLocation(shader_list.decalsCpass_shader, "u_ScaleFGDSpec")
+        decalC_b_group = Gl.glGetUniformLocation(shader_list.decalsCpass_shader, "u_ScaleDiffBaseMR")
+
+        decalC_fog = Gl.glGetUniformLocation(shader_list.decalsCpass_shader, "fogMap")
+        decalC_uv_rotate = Gl.glGetUniformLocation(shader_list.decalsCpass_shader, "uv_rotate")
+
+        decalC_decal_matrix = Gl.glGetUniformLocation(shader_list.decalsCpass_shader, "decal_matrix")
+        decalC_shadowProj = Gl.glGetUniformLocation(shader_list.decalsCpass_shader, "shadowProjection")
+        decalC_alpha = Gl.glGetUniformLocation(shader_list.decalsCpass_shader, "alpha_value")
+        decalC_level = Gl.glGetUniformLocation(shader_list.decalsCpass_shader, "color_level")
+        decalC_UVwrap = Gl.glGetUniformLocation(shader_list.decalsCpass_shader, "uv_wrap")
+        decalC_use_shadow = Gl.glGetUniformLocation(shader_list.decalsCpass_shader, "use_shadow")
+        decalC_camLocation = Gl.glGetUniformLocation(shader_list.decalsCpass_shader, "viewPos")
+        decalC_lightPosition = Gl.glGetUniformLocation(shader_list.decalsCpass_shader, "LightPos")
+    End Sub
+
+    Public dome_colorMap, dome_noise, dome_LU, dome_shift, dome_camPosition As Integer
+
+    '==============================================================================================================
+    Public Sub set_dome_variables()
+        dome_colorMap = Gl.glGetUniformLocation(shader_list.dome_shader, "colorMap")
+    End Sub
+
     Public Sub set_shader_variables()
         set_tank_shader_variables()
         set_normal_shader_variables()
@@ -462,6 +510,9 @@ Module shader_loader
         set_terrain_variables()
         set_depth_variables()
         set_basic_variables()
+        set_r2mono_variables()
+        set_decalsNpass_variables()
+        set_dome_variables()
         Return
     End Sub
     '==============================================================================================================

@@ -39,13 +39,13 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_099863FCDB98417092970C1E29B12F0B"
+        "MsmKey" = "8:_0DEB65742C6545C68C6E136117C6F247"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
-        "MsmKey" = "8:_0DEB65742C6545C68C6E136117C6F247"
+        "MsmKey" = "8:_13A8A601C8874A33B00EFE8A112CEC18"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -189,6 +189,12 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_3FDCED8867D24DBD846DD1F041552912"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_44E421C5592B1314600BEABC21672932"
         "OwnerKey" = "8:_D88F02B810ED4918A9E68229BD46788B"
         "MsmSig" = "8:_UNDEFINED"
@@ -207,6 +213,12 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_46C614A1CA4C4941BF100E8E7B669DE2"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_493C943B278D4F14AACE0AD8345620DE"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -214,6 +226,12 @@
         "Entry"
         {
         "MsmKey" = "8:_4EFFEE8EA2F64B199FDD7EE8872E16D1"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_4F472D36F7C74D75BF18B28249F2AB50"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -309,12 +327,6 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_69967615C30341939647E25E28595A09"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
         "MsmKey" = "8:_6B56441291C840458094CD5C2BAA36B4"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -340,12 +352,6 @@
         "Entry"
         {
         "MsmKey" = "8:_72799B0CB1764D97A39AEC8F0E66C932"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_736E6C8F00F649F18A949233EB618F0A"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -411,6 +417,12 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_90F57AA2B1074B378229B93EAE73F2C9"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_90F8166651264A079F1C72C1BCB7B5D9"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -465,6 +477,12 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_AE981ABA2FF0463B87F0C6A58E198174"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_AFC05B934A1E4EFC9F8FC184D5A48871"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -478,6 +496,30 @@
         "Entry"
         {
         "MsmKey" = "8:_B351C6A8DE5345AD909E01396FADEC99"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_BCE2C0DE92A847E9BB186A545E42D146"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_BE81AFAD13A249A5A90DC3B96059276E"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_BFE510A44FD94DB09E9F06DFFC00E365"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_C3CAD36BD59C47079F0DB3F083BC8294"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -712,7 +754,7 @@
         "DisplayName" = "8:Release"
         "IsDebugOnly" = "11:FALSE"
         "IsReleaseOnly" = "11:TRUE"
-        "OutputFilename" = "8:..\\TankExporter_042.msi"
+        "OutputFilename" = "8:..\\TankExporter_043.msi"
         "PackageFilesAs" = "3:2"
         "PackageFileSize" = "3:-2147483648"
         "CabType" = "3:1"
@@ -873,12 +915,12 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_099863FCDB98417092970C1E29B12F0B"
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_0DEB65742C6545C68C6E136117C6F247"
             {
-            "SourcePath" = "8:..\\!_Tank Exporter\\resources\\models\\terrain.te"
-            "TargetName" = "8:terrain.te"
+            "SourcePath" = "8:..\\!_Tank Exporter\\shaders\\FXAA_vertex.glsl"
+            "TargetName" = "8:FXAA_vertex.glsl"
             "Tag" = "8:"
-            "Folder" = "8:_64B5D03AD3E646EAA6D5295F8EE7B238"
+            "Folder" = "8:_1B07A285BAA74365A2EBEF572AC0A089"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -893,10 +935,10 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_0DEB65742C6545C68C6E136117C6F247"
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_13A8A601C8874A33B00EFE8A112CEC18"
             {
-            "SourcePath" = "8:..\\!_Tank Exporter\\shaders\\FXAA_vertex.glsl"
-            "TargetName" = "8:FXAA_vertex.glsl"
+            "SourcePath" = "8:..\\!_Tank Exporter\\shaders\\dome_fragment.glsl"
+            "TargetName" = "8:dome_fragment.glsl"
             "Tag" = "8:"
             "Folder" = "8:_1B07A285BAA74365A2EBEF572AC0A089"
             "Condition" = "8:"
@@ -1373,6 +1415,26 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_3FDCED8867D24DBD846DD1F041552912"
+            {
+            "SourcePath" = "8:..\\!_Tank Exporter\\resources\\models\\dome.te"
+            "TargetName" = "8:dome.te"
+            "Tag" = "8:"
+            "Folder" = "8:_64B5D03AD3E646EAA6D5295F8EE7B238"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_44E421C5592B1314600BEABC21672932"
             {
             "AssemblyRegister" = "3:1"
@@ -1444,6 +1506,26 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_46C614A1CA4C4941BF100E8E7B669DE2"
+            {
+            "SourcePath" = "8:..\\!_Tank Exporter\\resources\\models\\terrain.te"
+            "TargetName" = "8:terrain.te"
+            "Tag" = "8:"
+            "Folder" = "8:_64B5D03AD3E646EAA6D5295F8EE7B238"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_493C943B278D4F14AACE0AD8345620DE"
             {
             "SourcePath" = "8:..\\!_Tank Exporter\\resources\\models\\surface.png"
@@ -1470,6 +1552,26 @@
             "TargetName" = "8:textures.html"
             "Tag" = "8:"
             "Folder" = "8:_87C614F83BA1480492E90F368FEAFD06"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_4F472D36F7C74D75BF18B28249F2AB50"
+            {
+            "SourcePath" = "8:..\\!_Tank Exporter\\resources\\decal_layout\\decal_layout"
+            "TargetName" = "8:decal_layout"
+            "Tag" = "8:"
+            "Folder" = "8:_C705DAF01C6E4D13916DB3DCF3521462"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -1786,26 +1888,6 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_69967615C30341939647E25E28595A09"
-            {
-            "SourcePath" = "8:..\\!_Tank Exporter\\resources\\models\\dome.te"
-            "TargetName" = "8:dome.te"
-            "Tag" = "8:"
-            "Folder" = "8:_64B5D03AD3E646EAA6D5295F8EE7B238"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_6B56441291C840458094CD5C2BAA36B4"
             {
             "SourcePath" = "8:..\\!_Tank Exporter\\resources\\upton\\user_view.png"
@@ -1892,26 +1974,6 @@
             "TargetName" = "8:lightTank.png"
             "Tag" = "8:"
             "Folder" = "8:_D44C0C35DFB0401DBCF1EAA8ADEE404F"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_736E6C8F00F649F18A949233EB618F0A"
-            {
-            "SourcePath" = "8:..\\!_Tank Exporter\\resources\\models\\cube.te"
-            "TargetName" = "8:cube.te"
-            "Tag" = "8:"
-            "Folder" = "8:_64B5D03AD3E646EAA6D5295F8EE7B238"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -2137,6 +2199,26 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_90F57AA2B1074B378229B93EAE73F2C9"
+            {
+            "SourcePath" = "8:..\\!_Tank Exporter\\shaders\\r2mono_vertex.glsl"
+            "TargetName" = "8:r2mono_vertex.glsl"
+            "Tag" = "8:"
+            "Folder" = "8:_1B07A285BAA74365A2EBEF572AC0A089"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_90F8166651264A079F1C72C1BCB7B5D9"
             {
             "SourcePath" = "8:..\\!_Tank Exporter\\shaders\\gaussian_vertex.glsl"
@@ -2328,6 +2410,26 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_AE981ABA2FF0463B87F0C6A58E198174"
+            {
+            "SourcePath" = "8:..\\!_Tank Exporter\\shaders\\decalsCpass_fragment.glsl"
+            "TargetName" = "8:decalsCpass_fragment.glsl"
+            "Tag" = "8:"
+            "Folder" = "8:_1B07A285BAA74365A2EBEF572AC0A089"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_AFC05B934A1E4EFC9F8FC184D5A48871"
             {
             "SourcePath" = "8:..\\!_Tank Exporter\\resources\\chassis.png"
@@ -2374,6 +2476,86 @@
             "TargetName" = "8:mediumTank.png"
             "Tag" = "8:"
             "Folder" = "8:_D44C0C35DFB0401DBCF1EAA8ADEE404F"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_BCE2C0DE92A847E9BB186A545E42D146"
+            {
+            "SourcePath" = "8:..\\!_Tank Exporter\\shaders\\r2mono_fragment.glsl"
+            "TargetName" = "8:r2mono_fragment.glsl"
+            "Tag" = "8:"
+            "Folder" = "8:_1B07A285BAA74365A2EBEF572AC0A089"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_BE81AFAD13A249A5A90DC3B96059276E"
+            {
+            "SourcePath" = "8:..\\!_Tank Exporter\\shaders\\decalsCpass_vertex.glsl"
+            "TargetName" = "8:decalsCpass_vertex.glsl"
+            "Tag" = "8:"
+            "Folder" = "8:_1B07A285BAA74365A2EBEF572AC0A089"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_BFE510A44FD94DB09E9F06DFFC00E365"
+            {
+            "SourcePath" = "8:..\\!_Tank Exporter\\resources\\models\\cube.te"
+            "TargetName" = "8:cube.te"
+            "Tag" = "8:"
+            "Folder" = "8:_64B5D03AD3E646EAA6D5295F8EE7B238"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_C3CAD36BD59C47079F0DB3F083BC8294"
+            {
+            "SourcePath" = "8:..\\!_Tank Exporter\\shaders\\dome_vertex.glsl"
+            "TargetName" = "8:dome_vertex.glsl"
+            "Tag" = "8:"
+            "Folder" = "8:_1B07A285BAA74365A2EBEF572AC0A089"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -2947,6 +3129,17 @@
                                 {
                                 }
                             }
+                            "{9EF0B969-E518-4E46-987F-47570745A589}:_C705DAF01C6E4D13916DB3DCF3521462"
+                            {
+                            "Name" = "8:decal_layout"
+                            "AlwaysCreate" = "11:FALSE"
+                            "Condition" = "8:"
+                            "Transitive" = "11:FALSE"
+                            "Property" = "8:_535FD21AEDF44F58B51FB33C52AF81E3"
+                                "Folders"
+                                {
+                                }
+                            }
                         }
                     }
                 }
@@ -2978,15 +3171,15 @@
         {
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:Tank Exporter"
-        "ProductCode" = "8:{5604FD12-3DED-45AC-83E2-9037B11A3203}"
-        "PackageCode" = "8:{591B2642-8CE4-4330-86AB-A10DA5534EF6}"
+        "ProductCode" = "8:{67CF1739-959D-419D-9726-4DB02BA12C45}"
+        "PackageCode" = "8:{D026D578-BB84-4D36-B564-F39E69FD8F44}"
         "UpgradeCode" = "8:{6ABAF23A-CB3D-4411-B78A-4855B5B5A0CD}"
         "AspNetVersion" = "8:4.0.30319.0"
         "RestartWWWService" = "11:FALSE"
         "RemovePreviousVersions" = "11:TRUE"
         "DetectNewerInstalledVersion" = "11:TRUE"
         "InstallAllUsers" = "11:FALSE"
-        "ProductVersion" = "8:1.0.42"
+        "ProductVersion" = "8:1.0.43"
         "Manufacturer" = "8:Coffee_"
         "ARPHELPTELEPHONE" = "8:"
         "ARPHELPLINK" = "8:"
@@ -3538,7 +3731,7 @@
         {
             "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_D88F02B810ED4918A9E68229BD46788B"
             {
-            "SourcePath" = "8:..\\!_Tank Exporter\\obj\\x86\\Debug\\!_Tank Exporter.exe"
+            "SourcePath" = "8:..\\!_Tank Exporter\\obj\\x86\\Release\\!_Tank Exporter.exe"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_9BBCA850C4D847C495C4D74DD189C10E"

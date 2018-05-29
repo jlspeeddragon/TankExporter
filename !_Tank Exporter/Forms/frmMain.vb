@@ -1,5 +1,4 @@
-﻿
-#Region "imports"
+﻿#Region "imports"
 Imports System.Windows
 Imports System.Windows.Forms
 Imports System.Drawing
@@ -67,6 +66,7 @@ Public Class frmMain
     Dim treeviews(10) As TreeView
     Public icons(10) As pngs
     Public view_status_string As String
+    Public tank_mini_icons As New ImageList
 
     Dim time As New Stopwatch
     Dim pick_timer As New Stopwatch
@@ -96,6 +96,7 @@ Public Class frmMain
     Dim TreeView10 As New TreeView
     Dim spin_light As Boolean = False
 #End Region
+
 
 
     Private Sub frmMain_FormClosing(sender As Object, e As FormClosingEventArgs) Handles Me.FormClosing
@@ -132,9 +133,14 @@ Public Class frmMain
     Private Sub frmMain_KeyDown(sender As Object, e As KeyEventArgs) Handles Me.KeyDown
         Dim tab = TC1.SelectedTab
         Dim c = tab.Controls
-        Dim t = DirectCast(c(0), TreeView)
-        t.SelectedNode = Nothing
-        t.Parent.Focus()
+        Try
+
+            Dim t = DirectCast(c(0), TreeView)
+            t.SelectedNode = Nothing
+            t.Parent.Focus()
+        Catch ex As Exception
+
+        End Try
         If e.KeyCode = Keys.C Then
             If CENTER_SELECTION Then
                 CENTER_SELECTION = False
@@ -514,13 +520,6 @@ Public Class frmMain
         Dim nonInvariantCulture As CultureInfo = New CultureInfo("en-US")
         nonInvariantCulture.NumberFormat.NumberDecimalSeparator = "."
         Thread.CurrentThread.CurrentCulture = nonInvariantCulture
-        cam_x = 0
-        cam_y = 0
-        cam_z = 10
-        Cam_X_angle = PI * 0.25
-        Cam_Y_angle = -PI * 0.25
-        view_radius = -10.0
-        l_rot = PI * 0.25 + PI * 2
 
         Dim x, z As Single
         x = Cos(l_rot) * (5 * 2)
@@ -569,6 +568,8 @@ Public Class frmMain
         PB3.Visible = False
         ToolStripComboBox1.Visible = False
         ToolStripComboBox1.Text = My.Settings.region_selection
+        decal_panel.Parent = SplitContainer2.Panel1
+        decal_panel.Visible = False
         Application.DoEvents()
 
         'Check for temp storage folder.. It it exist.. load the API data.. 
@@ -587,7 +588,7 @@ Public Class frmMain
         make_shadow_fbo()
         '---------------------------
         'just to convert to .te binary models;
-        load_and_save()
+        'load_and_save()
 
         Dim glstr As String
         glstr = Gl.glGetString(Gl.GL_VENDOR)
@@ -616,6 +617,8 @@ Public Class frmMain
         '====================================================================================================
         ' Setup loaction for tank data.. sucks to do it this way but UAC wont allow it any other way.
         TankListTempFolder = Temp_Storage + "\tanklist\"
+        decal_path = Temp_Storage + "\decals"
+
         If Not System.IO.Directory.Exists(TankListTempFolder) Then
             System.IO.Directory.CreateDirectory(TankListTempFolder)
         End If
@@ -642,76 +645,70 @@ Public Class frmMain
             End If
         End If
         '====================================================================================================
-        info_Label.Text = "Loading Data from Packages..."
-        Application.DoEvents()
-        MM.Enabled = False ' Dont let the user click anything while we are loading data!
-        TC1.Enabled = False
-        Try
+        Dim testing_controls As Boolean = False
+        If Not testing_controls Then
 
-            gui_pkg = New Ionic.Zip.ZipFile(My.Settings.game_path + "\res\packages\gui.pkg")
-            start_up_log.AppendLine("Loaded: " + My.Settings.game_path + "\res\packages\gui.pkg")
-
-            scripts_pkg = New Ionic.Zip.ZipFile(My.Settings.game_path + "\res\packages\scripts.pkg")
-            start_up_log.AppendLine("Loaded: " + My.Settings.game_path + "\res\packages\scripts.pkg")
-            'packages(11) = ZipFile.Read(My.Settings.game_path + "\res\packages\shared_content.pkg")
-            'packages(12) = ZipFile.Read(My.Settings.game_path + "\res\packages\shared_content_sandbox.pkg")
-            'packages(11) = shared_pkg
-            'packages(12) = shared_sandbox_pkg
-
-        Catch ex As Exception
-            MsgBox("I was unable to load required pkg files! Path Issue?", MsgBoxStyle.Exclamation, "Error!")
-            My.Settings.game_path = ""
-            My.Settings.res_mods_path = ""
-            My.Settings.Save()
-            End
-        End Try
-        '====================================================================================================
-        'MsgBox("I LOADED required pkg files!", MsgBoxStyle.Exclamation, "Error!")
-        'Try
-        If File.Exists(Temp_Storage + "\shared_contents_build.pkg") Then
-            packages(11) = ZipFile.Read(Temp_Storage + "\shared_contents_build.pkg")
-            start_up_log.AppendLine("Loaded: " + Temp_Storage + "\shared_contents_build.pkg")
-
-        Else
-            shared_contents_build = New ZipFile(Temp_Storage + "\shared_contents_build.pkg")
-            start_up_log.AppendLine("shared_contents_build.pkg does not exist. Building shared_contents_build.pkg")
-            start_up_log.AppendLine("Only Entries that contain Vehicle will be read.")
-            'add handler for progression call back to display progressbar value
-            AddHandler (shared_contents_build.SaveProgress), New EventHandler(Of SaveProgressEventArgs)(AddressOf save_progress)
-
-            info_Label.Text = "Reading all shared content packages. This only needs to be done once."
+            info_Label.Text = "Loading Data from Packages..."
             Application.DoEvents()
-            Application.DoEvents()
-
-            IO.Directory.CreateDirectory(Temp_Storage + "\zip")
-            info_Label.Text = "Reading shared_content-part1.pkg"
-            Application.DoEvents()
-            Dim z_path = Temp_Storage + "\zip"
-            '================================================================================
-            'part 1
-            PG1.Visible = True
-            PG1.Value = 0
-            Dim cnt = 0
-            Dim arc = ZipFile.Read(My.Settings.game_path + "\res\packages\shared_content-part1.pkg")
-            PG1.Maximum = arc.Count
-            start_up_log.AppendLine("reading: \res\packages\shared_content-part2.pkg")
-
-            For Each entry In arc
-                PG1.Value = cnt
-                cnt += 1
-                If entry.FileName.ToLower.Contains("vehicle") Then
-                    entry.Extract(z_path, ExtractExistingFileAction.OverwriteSilently)
-                    Application.DoEvents()
-                End If
-            Next
+            MM.Enabled = False ' Dont let the user click anything while we are loading data!
+            TC1.Enabled = False
             Try
-                info_Label.Text = "Reading shared_content_hd-part1.pkg"
+
+                gui_pkg = New Ionic.Zip.ZipFile(My.Settings.game_path + "\res\packages\gui.pkg")
+                start_up_log.AppendLine("Loaded: " + My.Settings.game_path + "\res\packages\gui.pkg")
+
+                scripts_pkg = New Ionic.Zip.ZipFile(My.Settings.game_path + "\res\packages\scripts.pkg")
+                start_up_log.AppendLine("Loaded: " + My.Settings.game_path + "\res\packages\scripts.pkg")
+                'packages(11) = ZipFile.Read(My.Settings.game_path + "\res\packages\shared_content.pkg")
+                'packages(12) = ZipFile.Read(My.Settings.game_path + "\res\packages\shared_content_sandbox.pkg")
+                'packages(11) = shared_pkg
+                'packages(12) = shared_sandbox_pkg
+
+            Catch ex As Exception
+                MsgBox("I was unable to load required pkg files! Path Issue?", MsgBoxStyle.Exclamation, "Error!")
+                My.Settings.game_path = ""
+                My.Settings.res_mods_path = ""
+                My.Settings.Save()
+                End
+            End Try
+            '====================================================================================================
+            'MsgBox("I LOADED required pkg files!", MsgBoxStyle.Exclamation, "Error!")
+            'Try
+            If File.Exists(Temp_Storage + "\shared_contents_build.pkg") Then
+                packages(11) = ZipFile.Read(Temp_Storage + "\shared_contents_build.pkg")
+                start_up_log.AppendLine("Loaded: " + Temp_Storage + "\shared_contents_build.pkg")
+            Else
+                '===================================================================================
+                start_up_log.AppendLine("Finding all PBS decals in map pak files...")
+                info_Label.Text = "finding Decals. This only happens once after install."
+                find_pbs_decals()
+                start_up_log.AppendLine("Done Finding all PBS decals in map packages.")
+                '===================================================================================
+
+                shared_contents_build = New ZipFile(Temp_Storage + "\shared_contents_build.pkg")
+                start_up_log.AppendLine("shared_contents_build.pkg does not exist. Building shared_contents_build.pkg")
+                start_up_log.AppendLine("Only Entries that contain Vehicle will be read.")
+                'add handler for progression call back to display progressbar value
+                AddHandler (shared_contents_build.SaveProgress), New EventHandler(Of SaveProgressEventArgs)(AddressOf save_progress)
+
+                info_Label.Text = "Reading all shared content packages. This only needs to be done once."
                 Application.DoEvents()
-                arc = ZipFile.Read(My.Settings.game_path + "\res\packages\shared_content_hd-part1.pkg")
+                Application.DoEvents()
+
+                Dim z_path = Temp_Storage + "\zip"
+                IO.Directory.CreateDirectory(z_path)
+                info_Label.Text = "Reading shared_content-part1.pkg"
+                Application.DoEvents()
+                IO.Directory.CreateDirectory(decal_path)
+                '================================================================================
+                'part 1
+                PG1.Visible = True
                 PG1.Value = 0
+                Dim cnt = 0
+                Dim arc = ZipFile.Read(My.Settings.game_path + "\res\packages\shared_content-part1.pkg")
                 PG1.Maximum = arc.Count
-                cnt = 0
-                start_up_log.AppendLine("reading: \res\packages\shared_content_hd-part1.pkg")
+                start_up_log.AppendLine("reading: \res\packages\shared_content-part2.pkg")
+
                 For Each entry In arc
                     PG1.Value = cnt
                     cnt += 1
@@ -720,34 +717,47 @@ Public Class frmMain
                         Application.DoEvents()
                     End If
                 Next
-            Catch ex As Exception
-                start_up_log.AppendLine("Could not find: \res\packages\shared_content-part1.pkg")
-            End Try
-            '================================================================================
-            'part 2
-            info_Label.Text = "Reading shared_content-part2.pkg"
-            Application.DoEvents()
-            arc = ZipFile.Read(My.Settings.game_path + "\res\packages\shared_content-part2.pkg")
-            PG1.Value = 0
-            PG1.Maximum = arc.Count
-            cnt = 0
-            start_up_log.AppendLine("reading: \res\packages\shared_content-part2.pkg")
-            For Each entry In arc
-                PG1.Value = cnt
-                cnt += 1
-                If entry.FileName.ToLower.Contains("vehicle") Then
-                    entry.Extract(z_path, ExtractExistingFileAction.OverwriteSilently)
+                cnt = 0
+                Try
+                    info_Label.Text = "getting decals from shared_content-part1.pkg"
+                    For Each entry In arc
+                        PG1.Value = cnt
+                        cnt += 1
+                        If entry.FileName.ToLower.Contains("decals_pbs") Then
+                            entry.Extract(decal_path, ExtractExistingFileAction.OverwriteSilently)
+                            Application.DoEvents()
+                        End If
+                    Next
+                Catch ex As Exception
+                End Try
+                Try
+                    info_Label.Text = "Reading shared_content_hd-part1.pkg"
                     Application.DoEvents()
-                End If
-            Next
-            Try
-                info_Label.Text = "Reading shared_content_hd-part2.pkg"
+                    arc = ZipFile.Read(My.Settings.game_path + "\res\packages\shared_content_hd-part1.pkg")
+                    PG1.Value = 0
+                    PG1.Maximum = arc.Count
+                    cnt = 0
+                    start_up_log.AppendLine("reading: \res\packages\shared_content_hd-part1.pkg")
+                    For Each entry In arc
+                        PG1.Value = cnt
+                        cnt += 1
+                        If entry.FileName.ToLower.Contains("vehicle") Then
+                            entry.Extract(z_path, ExtractExistingFileAction.OverwriteSilently)
+                            Application.DoEvents()
+                        End If
+                    Next
+                Catch ex As Exception
+                    start_up_log.AppendLine("Could not find: \res\packages\shared_content-part1.pkg")
+                End Try
+                '================================================================================
+                'part 2
+                info_Label.Text = "Reading shared_content-part2.pkg"
                 Application.DoEvents()
-                arc = ZipFile.Read(My.Settings.game_path + "\res\packages\shared_content_hd-part2.pkg")
+                arc = ZipFile.Read(My.Settings.game_path + "\res\packages\shared_content-part2.pkg")
                 PG1.Value = 0
                 PG1.Maximum = arc.Count
                 cnt = 0
-                start_up_log.AppendLine("reading: \res\packages\shared_content_hd-part2.pkg")
+                start_up_log.AppendLine("reading: \res\packages\shared_content-part2.pkg")
                 For Each entry In arc
                     PG1.Value = cnt
                     cnt += 1
@@ -756,34 +766,47 @@ Public Class frmMain
                         Application.DoEvents()
                     End If
                 Next
-            Catch ex As Exception
-                start_up_log.AppendLine("Could not find: \res\packages\shared_content-part2.pkg")
-            End Try
-            '================================================================================
-            'part 1
-            info_Label.Text = "Reading shared_content_sandbox-part1.pkg"
-            Application.DoEvents()
-            arc = ZipFile.Read(My.Settings.game_path + "\res\packages\shared_content_sandbox-part1.pkg")
-            PG1.Value = 0
-            PG1.Maximum = arc.Count
-            cnt = 0
-            start_up_log.AppendLine("reading: \res\packages\shared_content_sandbox-part1.pkg")
-            For Each entry In arc
-                PG1.Value = cnt
-                cnt += 1
-                If entry.FileName.ToLower.Contains("vehicle") Then
-                    entry.Extract(z_path, ExtractExistingFileAction.OverwriteSilently)
+                cnt = 0
+                Try
+                    info_Label.Text = "getting decals from shared_content_hd-part2.pkg"
+                    For Each entry In arc
+                        PG1.Value = cnt
+                        cnt += 1
+                        If entry.FileName.ToLower.Contains("decals_pbs") Then
+                            entry.Extract(decal_path, ExtractExistingFileAction.OverwriteSilently)
+                            Application.DoEvents()
+                        End If
+                    Next
+                Catch ex As Exception
+                End Try
+                Try
+                    info_Label.Text = "Reading shared_content_hd-part2.pkg"
                     Application.DoEvents()
-                End If
-            Next
-            Try
-                info_Label.Text = "Reading shared_content_sandbox_hd-part1.pkg"
+                    arc = ZipFile.Read(My.Settings.game_path + "\res\packages\shared_content_hd-part2.pkg")
+                    PG1.Value = 0
+                    PG1.Maximum = arc.Count
+                    cnt = 0
+                    start_up_log.AppendLine("reading: \res\packages\shared_content_hd-part2.pkg")
+                    For Each entry In arc
+                        PG1.Value = cnt
+                        cnt += 1
+                        If entry.FileName.ToLower.Contains("vehicle") Then
+                            entry.Extract(z_path, ExtractExistingFileAction.OverwriteSilently)
+                            Application.DoEvents()
+                        End If
+                    Next
+                Catch ex As Exception
+                    start_up_log.AppendLine("Could not find: \res\packages\shared_content-part2.pkg")
+                End Try
+                '================================================================================
+                'part 1
+                info_Label.Text = "Reading shared_content_sandbox-part1.pkg"
                 Application.DoEvents()
-                arc = ZipFile.Read(My.Settings.game_path + "\res\packages\shared_content_sandbox_hd-part1.pkg")
+                arc = ZipFile.Read(My.Settings.game_path + "\res\packages\shared_content_sandbox-part1.pkg")
                 PG1.Value = 0
                 PG1.Maximum = arc.Count
                 cnt = 0
-                start_up_log.AppendLine("reading: \res\packages\shared_content_sandbox_hd-part1.pkg")
+                start_up_log.AppendLine("reading: \res\packages\shared_content_sandbox-part1.pkg")
                 For Each entry In arc
                     PG1.Value = cnt
                     cnt += 1
@@ -792,34 +815,34 @@ Public Class frmMain
                         Application.DoEvents()
                     End If
                 Next
-            Catch ex As Exception
-                start_up_log.AppendLine("Could not find: \res\packages\shared_content_sandbox_hd-part1.pkg")
-            End Try
-            '================================================================================
-            'part 2
-            info_Label.Text = "Reading shared_content_sandbox-part2.pkg"
-            Application.DoEvents()
-            arc = ZipFile.Read(My.Settings.game_path + "\res\packages\shared_content_sandbox-part2.pkg")
-            PG1.Value = 0
-            PG1.Maximum = arc.Count
-            cnt = 0
-            start_up_log.AppendLine("reading: \res\packages\shared_content_sandbox-part2.pkg")
-            For Each entry In arc
-                PG1.Value = cnt
-                cnt += 1
-                If entry.FileName.ToLower.Contains("vehicle") Then
-                    entry.Extract(z_path, ExtractExistingFileAction.OverwriteSilently)
+                Try
+                    info_Label.Text = "Reading shared_content_sandbox_hd-part1.pkg"
                     Application.DoEvents()
-                End If
-            Next
-            Try
-                info_Label.Text = "Reading shared_content_sandbox_hd-part2.pkg"
+                    arc = ZipFile.Read(My.Settings.game_path + "\res\packages\shared_content_sandbox_hd-part1.pkg")
+                    PG1.Value = 0
+                    PG1.Maximum = arc.Count
+                    cnt = 0
+                    start_up_log.AppendLine("reading: \res\packages\shared_content_sandbox_hd-part1.pkg")
+                    For Each entry In arc
+                        PG1.Value = cnt
+                        cnt += 1
+                        If entry.FileName.ToLower.Contains("vehicle") Then
+                            entry.Extract(z_path, ExtractExistingFileAction.OverwriteSilently)
+                            Application.DoEvents()
+                        End If
+                    Next
+                Catch ex As Exception
+                    start_up_log.AppendLine("Could not find: \res\packages\shared_content_sandbox_hd-part1.pkg")
+                End Try
+                '================================================================================
+                'part 2
+                info_Label.Text = "Reading shared_content_sandbox-part2.pkg"
                 Application.DoEvents()
-                arc = ZipFile.Read(My.Settings.game_path + "\res\packages\shared_content_sandbox_hd-part2.pkg")
+                arc = ZipFile.Read(My.Settings.game_path + "\res\packages\shared_content_sandbox-part2.pkg")
                 PG1.Value = 0
                 PG1.Maximum = arc.Count
                 cnt = 0
-                start_up_log.AppendLine("reading: \res\packages\shared_content_sandbox_hd-part2.pkg")
+                start_up_log.AppendLine("reading: \res\packages\shared_content_sandbox-part2.pkg")
                 For Each entry In arc
                     PG1.Value = cnt
                     cnt += 1
@@ -828,109 +851,123 @@ Public Class frmMain
                         Application.DoEvents()
                     End If
                 Next
-            Catch ex As Exception
-                start_up_log.AppendLine("Could not find: \res\packages\shared_content_sandbox_hd-part2.pkg")
-            End Try
-            '================================================================================
+                Try
+                    info_Label.Text = "Reading shared_content_sandbox_hd-part2.pkg"
+                    Application.DoEvents()
+                    arc = ZipFile.Read(My.Settings.game_path + "\res\packages\shared_content_sandbox_hd-part2.pkg")
+                    PG1.Value = 0
+                    PG1.Maximum = arc.Count
+                    cnt = 0
+                    start_up_log.AppendLine("reading: \res\packages\shared_content_sandbox_hd-part2.pkg")
+                    For Each entry In arc
+                        PG1.Value = cnt
+                        cnt += 1
+                        If entry.FileName.ToLower.Contains("vehicle") Then
+                            entry.Extract(z_path, ExtractExistingFileAction.OverwriteSilently)
+                            Application.DoEvents()
+                        End If
+                    Next
+                Catch ex As Exception
+                    start_up_log.AppendLine("Could not find: \res\packages\shared_content_sandbox_hd-part2.pkg")
+                End Try
+                '================================================================================
 
-            shared_contents_build.AddDirectory(z_path)
+                shared_contents_build.AddDirectory(z_path)
 
-            GC.Collect()
-            GC.WaitForFullGCComplete()
-            shared_contents_build.CompressionLevel = 0 ' no compression
-            shared_contents_build.ParallelDeflateThreshold = 0
-            info_Label.Text = "Saving " + shared_contents_build.Entries.Count.ToString + " files to shared_contents_build.pkg.. This will take a long time!"
-            start_up_log.AppendLine("Saving: " + Temp_Storage + "\shared_contents_build.pkg")
+                GC.Collect()
+                GC.WaitForFullGCComplete()
+                shared_contents_build.CompressionLevel = 0 ' no compression
+                shared_contents_build.ParallelDeflateThreshold = 0
+                info_Label.Text = "Saving " + shared_contents_build.Entries.Count.ToString + " files to shared_contents_build.pkg.. This will take a long time!"
+                start_up_log.AppendLine("Saving: " + Temp_Storage + "\shared_contents_build.pkg")
+                Application.DoEvents()
+                shared_contents_build.Save()
+                packages(11) = New ZipFile
+                packages(11) = shared_contents_build ' save this in to 11th position
+            End If
+            'Catch ex As Exception
+            '    start_up_log.AppendLine("Something went very wrong creating the shared_contents_build.pkg!")
+            'End Try
+            screen_totaled_draw_time = 1 ' to stop divide by zero exception
+            If Directory.Exists(Temp_Storage + "\zip") Then
+                System.IO.Directory.Delete(Temp_Storage + "\zip", True)
+            End If
             Application.DoEvents()
-            shared_contents_build.Save()
-            packages(11) = New ZipFile
-            packages(11) = shared_contents_build ' save this in to 11th position
+            '====================================================================================================
+            '====================================================================================================
+            tank_label.Parent = iconbox
+            tank_label.Text = ""
+            tank_label.Location = New Point(5, 10)
+            '===================================================================================
+            info_Label.Text = "Getting Camo Textures..."
+            'load_camo()
+            '===================================================================================
+            load_customization_files()
+            'MsgBox("Past load_customization_files", MsgBoxStyle.Exclamation, "Debug")
+            load_season_icons()
+            load_tank_buttons()
+            start_up_log.AppendLine("Done Creating OpenGL based Buttons.")
+
+            Gl.glFinish()
+            '===================================================================================
+
+            If Not File.Exists(Temp_Storage + "\in_shortnames.txt") Then
+                start_up_log.AppendLine("Getting DEV API data.")
+                get_tank_names()
+            Else
+                get_tank_info_from_temp_folder()
+                start_up_log.AppendLine("Data already read from DEV API.. Loaded it..")
+            End If
+
+            Application.DoEvents()
+            set_treeview(TreeView1)
+            Application.DoEvents()
+            set_treeview(TreeView2)
+            Application.DoEvents()
+            set_treeview(TreeView3)
+            Application.DoEvents()
+            set_treeview(TreeView4)
+            Application.DoEvents()
+            set_treeview(TreeView5)
+            Application.DoEvents()
+            set_treeview(TreeView6)
+            Application.DoEvents()
+            set_treeview(TreeView7)
+            Application.DoEvents()
+            set_treeview(TreeView8)
+            Application.DoEvents()
+            set_treeview(TreeView9)
+            Application.DoEvents()
+            set_treeview(TreeView10)
+            '-----------------------------
+            Application.DoEvents()
+            treeviews(1) = TreeView1
+            Application.DoEvents()
+            treeviews(2) = TreeView2
+            Application.DoEvents()
+            treeviews(3) = TreeView3
+            Application.DoEvents()
+            treeviews(4) = TreeView4
+            Application.DoEvents()
+            treeviews(5) = TreeView5
+            Application.DoEvents()
+            treeviews(6) = TreeView6
+            Application.DoEvents()
+            treeviews(7) = TreeView7
+            Application.DoEvents()
+            treeviews(8) = TreeView8
+            Application.DoEvents()
+            treeviews(9) = TreeView9
+            Application.DoEvents()
+            treeviews(10) = TreeView10
+            '-----------------------------
+            Application.DoEvents()
+            load_tabs()
+            Application.DoEvents()
         End If
-        'Catch ex As Exception
-        '    start_up_log.AppendLine("Something went very wrong creating the shared_contents_build.pkg!")
-        'End Try
-        screen_totaled_draw_time = 1 ' to stop divide by zero exception
-        If Directory.Exists(Temp_Storage + "\zip") Then
-            System.IO.Directory.Delete(Temp_Storage + "\zip", True)
-        End If
-        Application.DoEvents()
-        '====================================================================================================
-        '====================================================================================================
-        tank_label.Parent = iconbox
-        tank_label.Text = ""
-        tank_label.Location = New Point(5, 10)
-        '===================================================================================
-        info_Label.Text = "Getting Camo Textures..."
-        'load_camo()
-        '===================================================================================
-        load_customization_files()
-        'MsgBox("Past load_customization_files", MsgBoxStyle.Exclamation, "Debug")
-        load_season_icons()
-        load_tank_buttons()
-        start_up_log.AppendLine("Done Creating OpenGL based Buttons.")
 
-        Gl.glFinish()
-        '===================================================================================
 
-        make_xy_grid()
-        start_up_log.AppendLine("Done Creating XY Grid Display List.")
-
-        If Not File.Exists(Temp_Storage + "\in_shortnames.txt") Then
-            start_up_log.AppendLine("Getting DEV API data.")
-            get_tank_names()
-        Else
-            get_tank_info_from_temp_folder()
-            start_up_log.AppendLine("Data already read from DEV API.. Loaded it..")
-        End If
-
-        Application.DoEvents()
-        set_treeview(TreeView1)
-        Application.DoEvents()
-        set_treeview(TreeView2)
-        Application.DoEvents()
-        set_treeview(TreeView3)
-        Application.DoEvents()
-        set_treeview(TreeView4)
-        Application.DoEvents()
-        set_treeview(TreeView5)
-        Application.DoEvents()
-        set_treeview(TreeView6)
-        Application.DoEvents()
-        set_treeview(TreeView7)
-        Application.DoEvents()
-        set_treeview(TreeView8)
-        Application.DoEvents()
-        set_treeview(TreeView9)
-        Application.DoEvents()
-        set_treeview(TreeView10)
-        '-----------------------------
-        Application.DoEvents()
-        treeviews(1) = TreeView1
-        Application.DoEvents()
-        treeviews(2) = TreeView2
-        Application.DoEvents()
-        treeviews(3) = TreeView3
-        Application.DoEvents()
-        treeviews(4) = TreeView4
-        Application.DoEvents()
-        treeviews(5) = TreeView5
-        Application.DoEvents()
-        treeviews(6) = TreeView6
-        Application.DoEvents()
-        treeviews(7) = TreeView7
-        Application.DoEvents()
-        treeviews(8) = TreeView8
-        Application.DoEvents()
-        treeviews(9) = TreeView9
-        Application.DoEvents()
-        treeviews(10) = TreeView10
-        '-----------------------------
-        Application.DoEvents()
-
-        '===================================================================================
         TC1.SelectedIndex = 0
-        Application.DoEvents()
-        load_tabs()
         Application.DoEvents()
         make_shaders() 'compile the shaders
         set_shader_variables() ' update uniform addresses
@@ -945,17 +982,18 @@ Public Class frmMain
         make_888_lookup_table()
         'load skybox model
 
+        make_xy_grid()
+        start_up_log.AppendLine("Done Creating XY Grid Display List.")
+
         grid_cb.Checked = False
-        MM.Enabled = True
-        TC1.Enabled = True
-        start_up_log.AppendLine("----- Startup Complete -----")
-        File.WriteAllText(Temp_Storage + "Startup_log.txt", start_up_log.ToString)
         '===================================================================================
         info_Label.Text = "loading terrain, textures, creating shadow texture, ect..."
         Application.DoEvents()
         load_resources()
         info_Label.Visible = False
         '###################################
+        start_up_log.AppendLine("----- Startup Complete -----")
+        File.WriteAllText(Temp_Storage + "Startup_log.txt", start_up_log.ToString)
         'show and hide to assign setting
         FrmShadowSettings.Show() ' set the buttns and shadow quality
         FrmShadowSettings.Hide()
@@ -964,25 +1002,114 @@ Public Class frmMain
         frmLightSelection.Show()
         frmLightSelection.Hide()
         '###################################
+        MM.Enabled = True
+        TC1.Enabled = True
+        '###################################
         pick_timer.Start()
+
+
+        cam_x = 0
+        cam_y = 0
+        cam_z = 10
+        look_point_x = 0
+        look_point_y = 0
+        look_point_z = 0
+        Cam_X_angle = PI * 0.25
+        Cam_Y_angle = -PI * 0.25
+        view_radius = -10.0
+        l_rot = PI * 0.25 + PI * 2
+
 
         Startup_Timer.Enabled = True
         Application.DoEvents()
         AddHandler Me.SizeChanged, AddressOf me_size_changed
         window_state = Me.WindowState
+
+
+    End Sub
+    '############################################################################ form load
+
+    Private Sub find_pbs_decals()
+        Dim iPath = My.Settings.game_path + "\res\packages\"
+        Dim f_info = Directory.GetFiles(iPath)
+        Dim maps(100) As String
+        Dim cnt As Integer = 0
+        'first, lets get a list of all the map files.
+        For Each m In f_info
+            If Not m.Contains("_hd") And Not m.Contains("vehicles_") Then
+                Dim s = Path.GetFileNameWithoutExtension(m)
+                Dim ta = s.Split("_")
+                If IsNumeric(ta(0)) Then 'If the file name as a number at the start, it's a map file!
+                    maps(cnt) = m
+                    cnt += 1
+                End If
+            End If
+        Next
+        ReDim Preserve maps(cnt - 1)
+        'now lets search each map file for decals_pbs
+        Dim oPath = Temp_Storage + "\decals\"
+        For i = 0 To cnt - 1
+            Using z As New ZipFile(maps(i))
+                For Each item In z
+                    If item.FileName.Contains("decals_pbs") Then
+                        item.Extract(oPath, ExtractExistingFileAction.OverwriteSilently)
+                    End If
+                Next
+            End Using
+            GC.Collect() 'clean up trash to free memory!
+        Next
+        load_decal_textures()
+
+
     End Sub
 
     Private Sub load_resources()
+        Dim t As New Stopwatch
+        info_Label.Text = "loading Environment models"
+        start_up_log.AppendLine("loading models..")
+        Application.DoEvents()
         load_models()
+        Dim tt = t.ElapsedMilliseconds.ToString
+        start_up_log.AppendLine("T = " + tt + "ms")
+        t.Restart()
         Dim iPath As String = Application.StartupPath + "\resources\models\"
-        start_up_log.AppendLine("loaded Xfile and created CubeMap...")
+        '==========
+        info_Label.Text = "loading Environment textures"
+        start_up_log.AppendLine("loading Env textures...")
+        Application.DoEvents()
         load_cube_and_cube_map()
-        start_up_log.AppendLine("loaded Terrain....")
-        load_terrain()
+        '==========
         gradient_lookup_id = load_png_file(iPath + "borderGradient.png")
         dome_textureId = load_png_file(iPath + "dome.png")
-        'dome_modelId = get_X_model(iPath + "dome.x") '===========================
+        load_terrain()
+        tt = t.ElapsedMilliseconds.ToString
+        start_up_log.AppendLine("T = " + tt + "ms")
+        t.Restart()
+        '==========
+        info_Label.Text = "loading Upton control"
+        start_up_log.AppendLine("loading Upton....")
+        Application.DoEvents()
         upton.load_upton()
+        tt = t.ElapsedMilliseconds.ToString
+        start_up_log.AppendLine("T = " + tt + "ms")
+        t.Restart()
+        '==========
+        info_Label.Text = "loading Decal textures"
+        start_up_log.AppendLine("loading Decal Textures")
+        Application.DoEvents()
+        load_decal_textures()
+        tt = t.ElapsedMilliseconds.ToString
+        start_up_log.AppendLine("T = " + tt + "ms")
+        t.Restart()
+        '==========
+        info_Label.Text = "loading Decal layout"
+        start_up_log.AppendLine("loading Decal Layout")
+        Application.DoEvents()
+        load_decal_data()
+        tt = t.ElapsedMilliseconds.ToString
+        start_up_log.AppendLine("T = " + tt + "ms")
+        '==========
+        t.Stop()
     End Sub
     Private Sub load_terrain()
         Dim iPath As String = Application.StartupPath + "\resources\models\"
@@ -993,8 +1120,6 @@ Public Class frmMain
     End Sub
     Private Sub load_cube_and_cube_map()
         Dim iPath As String = Application.StartupPath + "\resources\cube\cubemap_m00_c0"
-        'cube_draw_id = get_X_model(Application.StartupPath + "\resources\models\cube.x") '===========================
-
         Dim id, iler, w, h As Integer
 
         Gl.glEnable(Gl.GL_TEXTURE_CUBE_MAP)
@@ -1063,12 +1188,10 @@ Public Class frmMain
         'get the cube model
     End Sub
     Private Sub load_models()
-        Dim iPath As String = Application.StartupPath + "\resources\models\"
-        dome_modelId = load_binary_model(iPath + "dome.te")
-        terrain_modelId = load_binary_model(iPath + "terrain.te")
-        cube_draw_id = load_binary_model(iPath + "cube.te")
+        load_binary_models()
     End Sub
-    Public tank_mini_icons As New ImageList
+
+
     Private Sub load_type_images()
         tank_mini_icons.ColorDepth = ColorDepth.Depth32Bit
         tank_mini_icons.ImageSize = New Size(17, 17)
@@ -1327,8 +1450,10 @@ Public Class frmMain
             MessageBox.Show("Unable to make rendering context current")
             End
         End If
-        ResizeGL()
-        ViewPerspective()
+        Dim w, h As Integer
+        G_Buffer.getsize(w, h)
+        ResizeGL(w, h)
+        ViewPerspective(w, h)
         ViewOrtho()
         Dim e = Gl.glGetError
         Dim sw! = pb1.Width
@@ -1339,7 +1464,6 @@ Public Class frmMain
 
         Gl.glActiveTexture(Gl.GL_TEXTURE0)
         Gl.glBindTexture(Gl.GL_TEXTURE_2D, Background_image_id)
-        Dim w, h As Integer
         Gl.glGetTexLevelParameteriv(Gl.GL_TEXTURE_2D, 0, Gl.GL_TEXTURE_WIDTH, w)
         Gl.glGetTexLevelParameteriv(Gl.GL_TEXTURE_2D, 0, Gl.GL_TEXTURE_HEIGHT, h)
         p.X = -((w / 2) - (sw / 2))
@@ -2304,10 +2428,11 @@ tryagain:
     End Function
 
     '###########################################################################################################################################
+    Dim tv As Single
     Private Sub draw_environment()
         '############################################
+        G_Buffer.attachColor_And_NormalTexture()
         Dim t = time.ElapsedMilliseconds
-        Dim tv As Single
         If CSng(t) > 5000 Then
             t = 0.0!
         End If
@@ -2316,25 +2441,38 @@ tryagain:
         End If
         tv = CSng(t) / 5000.0!
         'Dome
-        Dim s As Single = 2.8
+        '############################################
+        'dome
+        Dim s As Single = 1.0
         Gl.glFrontFace(Gl.GL_CCW)
         'Gl.glDisable(Gl.GL_DEPTH_TEST)
         Gl.glDisable(Gl.GL_CULL_FACE)
         Gl.glDisable(Gl.GL_BLEND)
+
+        Gl.glUseProgram(shader_list.dome_shader)
+        Gl.glUniform1i(dome_colorMap, 0)
+
+        Gl.glActiveTexture(Gl.GL_TEXTURE0 + 0)
+        Gl.glBindTexture(Gl.GL_TEXTURE_2D, dome_textureId)
+
         Gl.glPushMatrix()
         Gl.glScalef(s, s, s)
-        Gl.glTranslatef(0.7, -4.0, 0.12)
+        'Gl.glTranslatef(0.0, -4.0, 0.0)
         Gl.glColor3f(1.0, 1.0, 1.0)
-        Gl.glEnable(Gl.GL_TEXTURE_2D)
+        Gl.glDisable(Gl.GL_TEXTURE_2D)
         Gl.glBindTexture(Gl.GL_TEXTURE_2D, dome_textureId)
         Gl.glCallList(dome_modelId)
         Gl.glPopMatrix()
         Gl.glEnable(Gl.GL_DEPTH_TEST)
+        Gl.glUseProgram(0)
+
+        Gl.glBindTexture(Gl.GL_TEXTURE_2D, 0) '0
         '############################################
         'Terrain
+        G_Buffer.attachColor_And_Normal_FOG_Texture()
         Gl.glPushMatrix()
-        Gl.glTranslatef(0.0, -0.06, 0.0)
-        Gl.glRotatef(0.25, -1.0, 0.0, 1.0)
+        'Gl.glTranslatef(0.0, -0.06, 0.0)
+        'Gl.glRotatef(0.25, -1.0, 0.0, 1.0)
         Gl.glDisable(Gl.GL_CULL_FACE)
         Gl.glFrontFace(Gl.GL_CCW)
         Gl.glEnable(Gl.GL_BLEND)
@@ -2345,6 +2483,7 @@ tryagain:
         Gl.glUniform1i(terrain_gradient, 3)
         Gl.glUniform1i(terrain_noise, 4)
         Gl.glUniform1f(terain_animation, tv)
+        Gl.glUniform3f(terrain_camPosition, eyeX, eyeY, eyeZ)
 
         Gl.glUniformMatrix4fv(terrain_shadowProjection, 1, 0, lightProjection)
         If m_shadows.Checked Then
@@ -2356,6 +2495,7 @@ tryagain:
         Gl.glEnable(Gl.GL_TEXTURE_2D)
         Gl.glActiveTexture(Gl.GL_TEXTURE0 + 0)
         Gl.glBindTexture(Gl.GL_TEXTURE_2D, terrain_textureId)
+        'Gl.glBindTexture(Gl.GL_TEXTURE_2D, decal_textures(5).colorMap_Id)
         Gl.glActiveTexture(Gl.GL_TEXTURE0 + 1)
         Gl.glBindTexture(Gl.GL_TEXTURE_2D, depthBuffer)
         Gl.glActiveTexture(Gl.GL_TEXTURE0 + 2)
@@ -2367,7 +2507,7 @@ tryagain:
 
         Gl.glCallList(terrain_modelId)
         Gl.glBindTexture(Gl.GL_TEXTURE_2D, 0)
-        Gl.glDisable(Gl.GL_TEXTURE_2D)
+        'Gl.glDisable(Gl.GL_TEXTURE_2D)
 
         Gl.glBindTexture(Gl.GL_TEXTURE_2D, 0) '4
         Gl.glActiveTexture(Gl.GL_TEXTURE0 + 3)
@@ -2381,6 +2521,138 @@ tryagain:
         Gl.glUseProgram(0)
         Gl.glPopMatrix()
         Gl.glDisable(Gl.GL_BLEND)
+        G_Buffer.attachColorTexture()
+
+    End Sub
+    '###########################################################################################################################################
+    'decals
+    Private Sub draw_decals()
+        Dim w, h As Integer
+        Dim l_array(8) As Single
+
+        l_array(0) = position0(0)
+        l_array(1) = position0(1)
+        l_array(2) = position0(2)
+
+        l_array(3) = position1(0)
+        l_array(4) = position1(1)
+        l_array(5) = position1(2)
+
+        l_array(6) = position2(0)
+        l_array(7) = position2(1)
+        l_array(8) = position2(2)
+
+
+        G_Buffer.getsize(w, h)
+        If current_decal > -1 Then
+            G_Buffer.get_depth_buffer(w, h) ' get depth in to gDepth
+
+            Gl.glFrontFace(Gl.GL_CW)
+            Gl.glEnable(Gl.GL_CULL_FACE)
+            Gl.glDisable(Gl.GL_DEPTH_TEST)
+            'Gl.glDisable(Gl.GL_LIGHTING)
+
+            Gl.glPolygonMode(Gl.GL_FRONT, Gl.GL_FILL)
+
+            'Gl.glTexEnvf(Gl.GL_TEXTURE_ENV, Gl.GL_TEXTURE_ENV_MODE, Gl.GL_REPLACE)
+            Gl.glDisable(Gl.GL_CULL_FACE)
+            Gl.glDisable(Gl.GL_TEXTURE_2D)
+
+            Gl.glEnable(Gl.GL_BLEND)
+            Gl.glBlendEquationSeparate(Gl.GL_FUNC_ADD, Gl.GL_FUNC_ADD)
+            Gl.glBlendFuncSeparate(Gl.GL_SRC_ALPHA, Gl.GL_ONE_MINUS_SRC_ALPHA, Gl.GL_ONE, Gl.GL_ONE_MINUS_SRC_ALPHA)
+            Gl.glBlendFunc(Gl.GL_SRC_ALPHA, Gl.GL_ONE_MINUS_SRC_ALPHA)
+
+
+            Gl.glDepthMask(Gl.GL_FALSE)
+
+            Gl.glUseProgram(shader_list.decalsCpass_shader)
+            If m_shadows.Checked Then
+                Gl.glUniform1i(decalC_use_shadow, 1)
+            Else
+                Gl.glUniform1i(decalC_use_shadow, 0)
+            End If
+
+            Gl.glUniform1i(decalC_depthMap, 0)
+            Gl.glUniform1i(decalC_shadowMap, 1)
+            Gl.glUniform1i(decalC_gNormalMap, 2)
+            Gl.glUniform1i(decalC_fog, 3)
+            Gl.glUniform1i(decalC_cube, 4)
+            Gl.glUniform1i(decalC_brdf, 5)
+
+            Gl.glUniform1i(decalC_colorMap, 6)
+            Gl.glUniform1i(decalC_normalMap, 7)
+            Gl.glUniform1i(decalC_GMM, 8)
+
+            Gl.glUniform3f(decalC_camLocation, eyeX, eyeY, eyeZ)
+            Gl.glUniform3fv(decalC_lightPosition, 3, l_array)
+            Gl.glUniformMatrix4fv(decalC_shadowProj, 1, Gl.GL_FALSE, lightProjection)
+            'set up debug values
+            Dim v1, v2, v3, v4 As Single
+            v1 = CSng(section_a And 1) : v2 = CSng((section_a And 2) >> 1) : v3 = CSng((section_a And 4) >> 2) : v4 = CSng((section_a And 8) >> 3)
+            Gl.glUniform4f(decalC_a_group, v1, v2, v3, v4)
+            v1 = CSng(section_b And 1) : v2 = CSng((section_b And 2) >> 1) : v3 = CSng((section_b And 4) >> 2) : v4 = CSng((section_b And 8) >> 3)
+            Gl.glUniform4f(decalC_b_group, v1, v2, v3, v4)
+
+
+            Gl.glActiveTexture(Gl.GL_TEXTURE0)
+            Gl.glBindTexture(Gl.GL_TEXTURE_2D, gDepth)
+            Gl.glActiveTexture(Gl.GL_TEXTURE0 + 1)
+            Gl.glBindTexture(Gl.GL_TEXTURE_2D, depthBuffer) 'shadow depth map
+            Gl.glActiveTexture(Gl.GL_TEXTURE0 + 2)
+            Gl.glBindTexture(Gl.GL_TEXTURE_2D, gNormal)
+            Gl.glActiveTexture(Gl.GL_TEXTURE0 + 3)
+            Gl.glBindTexture(Gl.GL_TEXTURE_2D, gFXAA) 'animated ground fog from terrain shader
+            Gl.glActiveTexture(Gl.GL_TEXTURE0 + 4)
+            Gl.glBindTexture(Gl.GL_TEXTURE_CUBE_MAP, cube_texture_id)
+            Gl.glBindTexture(Gl.GL_TEXTURE_2D, 0)
+            Gl.glActiveTexture(Gl.GL_TEXTURE0 + 5)
+            Gl.glBindTexture(Gl.GL_TEXTURE_2D, u_brdfLUT)
+
+
+            For i = 0 To decal_matrix_list.Length - 2
+                Dim j = decal_order(i)
+                With decal_matrix_list(j)
+                    .transform()
+                    Gl.glUniformMatrix4fv(decalC_decal_matrix, 1, Gl.GL_FALSE, .display_matrix)
+                    Gl.glUniform2f(decalC_UVwrap, .u_wrap, .v_wrap)
+                    Gl.glUniform1f(decalC_uv_rotate, .uv_rot)
+                    Gl.glUniform1f(decalC_alpha, .alpha)
+                    Gl.glUniform1f(decalC_level, .level)
+                    Gl.glActiveTexture(Gl.GL_TEXTURE0 + 6)
+                    Gl.glBindTexture(Gl.GL_TEXTURE_2D, decal_matrix_list(j).texture_id)
+                    Gl.glActiveTexture(Gl.GL_TEXTURE0 + 7)
+                    Gl.glBindTexture(Gl.GL_TEXTURE_2D, decal_matrix_list(j).normal_id)
+                    Gl.glActiveTexture(Gl.GL_TEXTURE0 + 8)
+                    Gl.glBindTexture(Gl.GL_TEXTURE_2D, decal_matrix_list(j).gmm_id)
+
+                    Gl.glCallList(decal_draw_box)
+                End With
+            Next
+            Gl.glUseProgram(0)
+            Gl.glBindTexture(Gl.GL_TEXTURE_2D, 0) '8
+            Gl.glActiveTexture(Gl.GL_TEXTURE0 + 7)
+            Gl.glBindTexture(Gl.GL_TEXTURE_2D, 0) '7
+            Gl.glActiveTexture(Gl.GL_TEXTURE0 + 6)
+            Gl.glBindTexture(Gl.GL_TEXTURE_2D, 0) '6
+            Gl.glActiveTexture(Gl.GL_TEXTURE0 + 6)
+            Gl.glBindTexture(Gl.GL_TEXTURE_2D, 0) '5
+            Gl.glActiveTexture(Gl.GL_TEXTURE0 + 4)
+            Gl.glBindTexture(Gl.GL_TEXTURE_CUBE_MAP, 0) '4
+            Gl.glBindTexture(Gl.GL_TEXTURE_2D, 0) '4
+            Gl.glActiveTexture(Gl.GL_TEXTURE0 + 3)
+            Gl.glBindTexture(Gl.GL_TEXTURE_2D, 0) '3
+            Gl.glActiveTexture(Gl.GL_TEXTURE0 + 2)
+            Gl.glBindTexture(Gl.GL_TEXTURE_2D, 0) '2
+            Gl.glActiveTexture(Gl.GL_TEXTURE0 + 1)
+            Gl.glBindTexture(Gl.GL_TEXTURE_2D, 0) '1
+            Gl.glActiveTexture(Gl.GL_TEXTURE0)
+            Gl.glBindTexture(Gl.GL_TEXTURE_2D, 0) '0
+            Gl.glDisable(Gl.GL_BLEND)
+            Gl.glDepthMask(Gl.GL_TRUE)
+            Gl.glEnable(Gl.GL_DEPTH_TEST)
+
+        End If
 
     End Sub
     '###########################################################################################################################################
@@ -2388,7 +2660,6 @@ tryagain:
         Application.DoEvents()
         If gl_stop Then Return
         view_status_string = ""
-        gl_busy = True
         'End If
         If gBufferFBO = 0 Then
             G_Buffer.init()
@@ -2437,8 +2708,9 @@ tryagain:
         Gl.glEnable(Gl.GL_SMOOTH)
         Gl.glEnable(Gl.GL_NORMALIZE)
 
-
-        ResizeGL()
+        Dim h, w As Integer
+        G_Buffer.getsize(w, h)
+        ResizeGL(w, h)
         Dim v As Point = pb1.Size
         Gl.glDisable(Gl.GL_DEPTH_TEST)
         Gl.glClearColor(0.0F, 0.0F, 0.2353F, 1.0F)
@@ -2486,10 +2758,10 @@ tryagain:
         Else
             view_status_string += ": Facets : "
         End If
-        ViewPerspective()
-        set_eyes()
+        ViewPerspective(w, h)
         'adjust light2
         position2(0) = -10.0 : position2(1) = 7.5 : position2(2) = -2.4
+        set_eyes()
         Gl.glLightfv(Gl.GL_LIGHT0, Gl.GL_POSITION, position0)
         Gl.glLightfv(Gl.GL_LIGHT1, Gl.GL_POSITION, position1)
         Gl.glLightfv(Gl.GL_LIGHT2, Gl.GL_POSITION, position2)
@@ -2497,6 +2769,9 @@ tryagain:
         '=============================================================
         If Not grid_cb.Checked Then
             draw_environment()
+            draw_decals()
+        Else
+            Gl.glFrontFace(Gl.GL_CW)
         End If
         '=============================================================
         Gl.glEnable(Gl.GL_LIGHTING)
@@ -2940,17 +3215,28 @@ tryagain:
 
         'track_test()
         '=================================================================================
-        If m_decal.Checked Then
-            Gl.glEnable(Gl.GL_LIGHTING)
-            Gl.glDisable(Gl.GL_CULL_FACE)
-            Gl.glPolygonMode(Gl.GL_FRONT_AND_BACK, Gl.GL_FILL)
-            'Gl.glDisable(Gl.GL_DEPTH_TEST)
-            Gl.glColor3f(0.5, 0.5, 0.5)
-            Gl.glPushMatrix()
-            decal_matrix_list(0).transform()
-            Gl.glMultMatrixf(decal_matrix_list(0).display_matrix)
-            Gl.glCallList(decal_matrix_list(0).display_id)
-            Gl.glPopMatrix()
+        If m_decal.Checked And Not hide_BB_cb.Checked Then
+            If current_decal > -1 Then
+                Gl.glLineWidth(2.0)
+                Gl.glEnable(Gl.GL_LIGHTING)
+                Gl.glDisable(Gl.GL_CULL_FACE)
+                Gl.glPolygonMode(Gl.GL_FRONT_AND_BACK, Gl.GL_LINE)
+                'Gl.glDisable(Gl.GL_DEPTH_TEST)
+                For j = 0 To decal_matrix_list.Length - 2
+                    If j = current_decal Then
+                        Gl.glColor3f(1.0, 0.0, 0.0)
+                    Else
+                        Gl.glColor3f(1.0, 1.0, 1.0)
+                    End If
+                    Gl.glPushMatrix()
+                    decal_matrix_list(j).transform()
+                    Gl.glMultMatrixf(decal_matrix_list(j).display_matrix)
+                    Gl.glCallList(decal_draw_box)
+                    Gl.glPopMatrix()
+                Next
+                Gl.glLineWidth(1.0)
+
+            End If
         End If
         '=================================================================================
 
@@ -2980,21 +3266,23 @@ tryagain:
         Else
             found_triangle_tv = 0
         End If
+        Gl.glFrontFace(Gl.GL_CCW)
+        Gl.glEnable(Gl.GL_CULL_FACE)
+        Gl.glDisable(Gl.GL_DEPTH_TEST)
+        Gl.glDisable(Gl.GL_LIGHTING)
+        Gl.glPolygonMode(Gl.GL_BACK, Gl.GL_FILL)
+        '===========================================================
+        Dim P As New Point(0, 0)
+        Gl.glDisable(Gl.GL_CULL_FACE)
+        '===========================================================
         '######################################################################### ORTHO MODE
         '######################################################################### ORTHO MODE
         '######################################################################### ORTHO MODE
         ViewOrtho()
-        Gl.glFrontFace(Gl.GL_CW)
-        Gl.glDisable(Gl.GL_DEPTH_TEST)
-        Gl.glDisable(Gl.GL_LIGHTING)
-        Gl.glPolygonMode(Gl.GL_FRONT_AND_BACK, Gl.GL_FILL)
-        '===========================================================
-        Dim P As New Point(0, 0)
-        Dim w, h As Integer
-        G_Buffer.getsize(w, h)
-        '===========================================================
+        'GoTo fuckit
+
         'pass one FXAA
-        'Gl.glBindFramebufferEXT(Gl.GL_FRAMEBUFFER_EXT, gBufferFBO)
+        'Gl.glBindFramebufferEXT(Gl.GL_FRAMEBUFFER_EXT, 0)
         G_Buffer.attachFXAAtexture()
         Gl.glClear(Gl.GL_COLOR_BUFFER_BIT Or Gl.GL_DEPTH_BUFFER_BIT)
 
@@ -3008,31 +3296,13 @@ tryagain:
         Gl.glActiveTexture(Gl.GL_TEXTURE0)
         Gl.glBindTexture(Gl.GL_TEXTURE_2D, gColor)
         Gl.glColor3f(1.0, 1.0, 1.0)
-        Gl.glBegin(Gl.GL_QUADS)
-        '  CW...
-        '  1 ------ 2
-        '  |        |
-        '  |        |
-        '  4 ------ 3
-        '
-        Gl.glTexCoord2f(0.0!, 1.0!)
-        Gl.glVertex2f(P.X, P.Y)
 
-        Gl.glTexCoord2f(1.0!, 1.0!)
-        Gl.glVertex2f(P.X + w, P.Y)
-
-        Gl.glTexCoord2f(1.0!, 0.0!)
-        Gl.glVertex2f(P.X + w, P.Y - h)
-
-        Gl.glTexCoord2f(0.0!, 0.0!)
-        Gl.glVertex2f(P.X, P.Y - h)
-        Gl.glEnd()
+        draw_main_rec(P, w, h)
 
         '===========================================================
 
 
         Gl.glBindTexture(Gl.GL_TEXTURE_2D, 0)
-fuckit:
         Gl.glUseProgram(0)
         '===========================================================
         '===========================================================
@@ -3041,6 +3311,7 @@ fuckit:
         '===========================================================
         '===========================================================
         '===========================================================
+fuckit:
         Gl.glBindFramebufferEXT(Gl.GL_FRAMEBUFFER_EXT, 0)
         Gl.glClear(Gl.GL_COLOR_BUFFER_BIT Or Gl.GL_DEPTH_BUFFER_BIT)
 
@@ -3050,34 +3321,16 @@ fuckit:
         Gl.glEnable(Gl.GL_TEXTURE_2D)
         Gl.glActiveTexture(Gl.GL_TEXTURE0)
         Gl.glBindTexture(Gl.GL_TEXTURE_2D, gFXAA)
-        'Gl.glBindTexture(Gl.GL_TEXTURE_2D, gColor)
+        Gl.glBindTexture(Gl.GL_TEXTURE_2D, gColor)
         Gl.glColor3f(1.0, 1.0, 1.0)
-        Gl.glBegin(Gl.GL_QUADS)
-        'G_Buffer.getsize(w, h)
-        '  CW...
-        '  1 ------ 2
-        '  |        |
-        '  |        |
-        '  4 ------ 3
-        '
-        Gl.glTexCoord2f(0.0!, 1.0!)
-        Gl.glVertex2f(P.X, P.Y)
-
-        Gl.glTexCoord2f(1.0!, 1.0!)
-        Gl.glVertex2f(P.X + w, P.Y)
-
-        Gl.glTexCoord2f(1.0!, 0.0!)
-        Gl.glVertex2f(P.X + w, P.Y - h)
-
-        Gl.glTexCoord2f(0.0!, 0.0!)
-        Gl.glVertex2f(P.X, P.Y - h)
-        Gl.glEnd()
-
+        draw_main_rec(P, w, h)
         Gl.glBindTexture(Gl.GL_TEXTURE_2D, 0)
         Gl.glUseProgram(0)
         'menu
         'draw_menu()
 
+        '######################################################################
+        'draw bottom hightlighted area
         Dim top As Integer = 20
         If season_Buttons_VISIBLE Then
             top = 177
@@ -3194,11 +3447,39 @@ fuckit:
                 upton.pick_upton()
             End If
             '====================================
+            'this put the view in perspective!
+            If mouse_pick_cb.Checked Then
+                mouse_pick_decal()
+            End If
+            '====================================
         End If
         Gl.glFlush()
         er = Gl.glGetError
         OLD_WINDOW_HEIGHT = pb1.Height
-        gl_busy = False
+    End Sub
+    Private Sub draw_main_rec(ByVal p As Point, ByVal w As Integer, ByVal h As Integer)
+        Gl.glBegin(Gl.GL_QUADS)
+        'G_Buffer.getsize(w, h)
+        '  CW...
+        '  1 ------ 2
+        '  |        |
+        '  |        |
+        '  4 ------ 3
+        '
+        Gl.glTexCoord2f(0.0!, 1.0!)
+        Gl.glVertex2f(p.X, p.Y)
+
+        Gl.glTexCoord2f(1.0!, 1.0!)
+        Gl.glVertex2f(p.X + w, p.Y)
+
+        Gl.glTexCoord2f(1.0!, 0.0!)
+        Gl.glVertex2f(p.X + w, p.Y - h)
+
+        Gl.glTexCoord2f(0.0!, 0.0!)
+        Gl.glVertex2f(p.X, p.Y - h)
+        Gl.glEnd()
+
+
     End Sub
     '###########################################################################################################################################
     Public Sub draw_triangle_mouse_texture_window()
@@ -3421,7 +3702,9 @@ fuckit:
 
     End Sub
     Private Sub draw_tank_pick()
-        ViewPerspective()
+        Dim w, h As Integer
+        G_Buffer.getsize(w, h)
+        ViewPerspective(w, h)
         set_eyes()
         Gl.glClearColor(0.0!, 0.0!, 0.0!, 0.0!)
         Gl.glClear(Gl.GL_COLOR_BUFFER_BIT Or Gl.GL_DEPTH_BUFFER_BIT)
@@ -3484,6 +3767,99 @@ fuckit:
 
     End Sub
 
+#Region "decal transform"
+
+    Private tempX, tempZ As Single
+    Private Sub move_xyz()
+        If current_decal = -1 Then Return
+        Dim x, z As Single
+        Dim ms As Single = Sin((view_radius / 80.0!) * (PI / 2.0)) ' distance away changes speed. THIS WORKS WELL!
+        Dim speed As Single = 0.2
+
+        If upton.state = 5 Or upton.state = 7 Then
+            x = (mouse.x - m_mouse.x) * ms * speed
+            z = (mouse.y - m_mouse.y) * ms * speed
+
+            g_decal_translate.x += (x * -Cos(Cam_X_angle)) + (z * -Sin(Cam_X_angle))
+
+            g_decal_translate.z += (z * -Cos(Cam_X_angle)) + (x * Sin(Cam_X_angle))
+
+        End If
+
+        If upton.state = 6 Then
+            g_decal_translate.y += -(mouse.y - m_mouse.y) * ms * speed
+        End If
+        decal_matrix_list(current_decal).set_translate_matrix(0, g_decal_translate)
+        mouse.x = m_mouse.x
+        mouse.y = m_mouse.y
+        If track_decal_cb.Checked Then
+            look_point_x = decal_matrix_list(current_decal).translate.x
+            look_point_y = decal_matrix_list(current_decal).translate.y
+            look_point_z = decal_matrix_list(current_decal).translate.z
+        End If
+    End Sub
+    Private Sub rotate_decal_xy()
+        If current_decal = -1 Then Return
+        Dim x, z As Single
+        If upton.state = 8 Then
+            x = -(mouse.y - m_mouse.y) * 0.01
+            g_decal_rotate.y += x
+            decal_matrix_list(current_decal).set_y_rotation_matrix(x)
+        End If
+        If upton.state = 9 Then
+            z = -(mouse.y - m_mouse.y) * 0.01
+            g_decal_rotate.x += z
+            decal_matrix_list(current_decal).set_x_rotation_matrix(z)
+        End If
+        If upton.state = 10 Then
+            z = -(mouse.y - m_mouse.y) * 0.01
+            g_decal_rotate.z += z
+            decal_matrix_list(current_decal).set_z_rotation_matrix(z)
+        End If
+        'Debug.WriteLine("x " + x.ToString("0.0000") + " :z " + z.ToString("0.00000"))
+        mouse.x = m_mouse.x
+        mouse.y = m_mouse.y
+    End Sub
+    Private Sub scale_decal_xyz()
+        If current_decal = -1 Then Return
+        Dim v As New vect3
+        Dim z As Single
+        Dim ms As Double = view_radius / 80 ' distance away changes speed. THIS WORKS WELL!
+        Dim speed As Single = 0.25
+
+        z = -(mouse.y - m_mouse.y) * ms * speed
+        If upton.state = 1 Then
+            g_decal_scale.x += z
+            If g_decal_scale.x < 0.1 Then g_decal_scale.x = 0.1
+            decal_matrix_list(current_decal).set_scale_matrix(g_decal_scale)
+        End If
+        If upton.state = 2 Then
+            g_decal_scale.z += z
+            If g_decal_scale.z < 0.1 Then g_decal_scale.z = 0.1
+            decal_matrix_list(current_decal).set_scale_matrix(g_decal_scale)
+        End If
+        If upton.state = 3 Then
+            g_decal_scale.y += z
+            If g_decal_scale.y < 0.1 Then g_decal_scale.y = 0.1
+            decal_matrix_list(current_decal).set_scale_matrix(g_decal_scale)
+
+        End If
+        If upton.state = 4 Then
+            g_decal_scale.x += z
+            g_decal_scale.y += z
+            g_decal_scale.z += z
+            If g_decal_scale.x < 0.1 Then g_decal_scale.x = 0.1
+            If g_decal_scale.y < 0.1 Then g_decal_scale.y = 0.1
+            If g_decal_scale.z < 0.1 Then g_decal_scale.z = 0.1
+            decal_matrix_list(current_decal).set_scale_matrix(g_decal_scale)
+        End If
+
+        mouse.x = m_mouse.x
+        mouse.y = m_mouse.y
+
+    End Sub
+
+#End Region
 #Region "PB1 Mouse"
 
     Private Sub pb1_MouseDown(sender As Object, e As MouseEventArgs) Handles pb1.MouseDown
@@ -3496,6 +3872,28 @@ fuckit:
         'End If
         mouse.x = e.X
         mouse.y = e.Y
+        If mouse_pick_cb.Checked Then
+            If picked_decal > -1 Then
+                current_decal = picked_decal
+                picked_decal = -1
+                decal_matrix_list(current_decal).get_decals_transform_info()
+                mouse_pick_cb.Checked = False
+                update_decal_order()
+                Dim tc As Integer = 0
+                For k = 0 To decal_order.Length - 1
+                    If decal_order(k) = current_decal Then
+                        tc = k
+                    End If
+                Next
+                d_current_line = tc
+
+                Dim sp = d_list_tb.GetFirstCharIndexFromLine(tc) ' get prev line
+                d_list_tb.SelectionStart = sp
+                d_list_tb.Select(d_list_tb.GetFirstCharIndexOfCurrentLine(), _
+                                 d_list_tb.Lines(tc).Length) ' select prev line
+
+            End If
+        End If
         If e.Button = Forms.MouseButtons.Right Then
             move_cam_z = True
         End If
@@ -3513,83 +3911,6 @@ fuckit:
     Private Sub pb1_MouseEnter(sender As Object, e As EventArgs) Handles pb1.MouseEnter
         pb1.Focus()
     End Sub
-    Private tempX, tempZ As Single
-    Private Sub move_xyz()
-        Dim x, z As Single
-        Dim ms As Double = view_radius / 80 ' distance away changes speed. THIS WORKS WELL!
-        Dim speed As Single = 0.1
-
-        If upton.state = 5 Or upton.state = 7 Then
-            x = (mouse.x - m_mouse.x) * ms * speed
-            z = (mouse.y - m_mouse.y) * ms * speed
-
-            g_decal_translate.x += (x * -Cos(Cam_X_angle)) + (z * -Sin(Cam_X_angle))
-
-            g_decal_translate.z += (z * -Cos(Cam_X_angle)) + (x * Sin(Cam_X_angle))
-
-        End If
-
-        If upton.state = 6 Then
-            g_decal_translate.y += -(mouse.y - m_mouse.y) * ms * speed
-        End If
-        decal_matrix_list(0).set_translate_matrix(0, g_decal_translate)
-        mouse.x = m_mouse.x
-        mouse.y = m_mouse.y
-
-    End Sub
-    Private Sub rotate_decal_xy()
-        Dim x, z As Single
-        If upton.state = 8 Then
-            x = -(mouse.y - m_mouse.y) * 0.01
-            g_decal_rotate.y += x
-            decal_matrix_list(0).set_y_rotation_matrix(g_decal_rotate.y)
-        End If
-        If upton.state = 9 Then
-            z = -(mouse.y - m_mouse.y) * 0.01
-            g_decal_rotate.x += z
-            decal_matrix_list(0).set_x_rotation_matrix(g_decal_rotate.x)
-        End If
-        'Debug.WriteLine("x " + x.ToString("0.0000") + " :z " + z.ToString("0.00000"))
-        mouse.x = m_mouse.x
-        mouse.y = m_mouse.y
-    End Sub
-    Private Sub scale_decal_xyz()
-        Dim v As New vect3
-        Dim x, z As Single
-        Dim ms As Double = view_radius / 80 ' distance away changes speed. THIS WORKS WELL!
-        Dim speed As Single = 0.25
-
-        z = -(mouse.y - m_mouse.y) * ms * speed
-        If upton.state = 1 Then
-            g_decal_scale.x += z
-            If g_decal_scale.x < 0.1 Then g_decal_scale.x = 0.1
-            decal_matrix_list(0).set_scale_matrix(g_decal_scale)
-        End If
-        If upton.state = 2 Then
-            g_decal_scale.y += z
-            If g_decal_scale.y < 0.1 Then g_decal_scale.y = 0.1
-            decal_matrix_list(0).set_scale_matrix(g_decal_scale)
-
-        End If
-        If upton.state = 3 Then
-            g_decal_scale.z += z
-            If g_decal_scale.z < 0.1 Then g_decal_scale.z = 0.1
-            decal_matrix_list(0).set_scale_matrix(g_decal_scale)
-        End If
-        If upton.state = 4 Then
-            g_decal_scale.x += z
-            g_decal_scale.y += z
-            g_decal_scale.z += z
-            If g_decal_scale.x < 0.1 Then g_decal_scale.x = 0.1
-            If g_decal_scale.y < 0.1 Then g_decal_scale.y = 0.1
-            If g_decal_scale.z < 0.1 Then g_decal_scale.z = 0.1
-            decal_matrix_list(0).set_scale_matrix(g_decal_scale)
-        End If
-
-        mouse.x = m_mouse.x
-        mouse.y = m_mouse.y
-
-    End Sub
     Private Sub pb1_MouseMove(sender As Object, e As MouseEventArgs) Handles pb1.MouseMove
         m_mouse.x = e.X
         m_mouse.y = e.Y
@@ -3601,7 +3922,7 @@ fuckit:
             move_xyz()
             Return
         End If
-        If M_DOWN And upton.state > 7 And upton.state < 10 Then
+        If M_DOWN And upton.state > 7 And upton.state < 11 Then
             rotate_decal_xy()
             Return
         End If
@@ -3669,7 +3990,7 @@ fuckit:
                     Else
                         Cam_Y_angle -= t
                     End If
-                    If Cam_Y_angle < -PI Then Cam_Y_angle = -PI
+                    If Cam_Y_angle < -PI / 2.0 Then Cam_Y_angle = -PI / 2.0 + 0.001
                 End If
                 mouse.y = e.Y
             End If
@@ -3909,6 +4230,7 @@ fuckit:
         Return update
     End Function
     Dim l_rot As Single
+    Dim l_timer As New Stopwatch
     Public Sub update_mouse()
         Dim sun_angle As Single = 0.0
         Dim sun_radius As Single = 5.0
@@ -3918,6 +4240,7 @@ fuckit:
         Dim swat As New Stopwatch
         Dim x, z As Single
         Dim s As Single = 2.0
+        l_timer.Restart()
         While _Started
             need_update()
             angle_offset = 0
@@ -3925,8 +4248,9 @@ fuckit:
             Application.DoEvents()
             If Not gl_busy And Not Me.WindowState = FormWindowState.Minimized Then
 
-                If spin_light Then
-                    l_rot += 0.01
+                If spin_light And l_timer.ElapsedMilliseconds > 32 Then
+                    l_timer.Restart()
+                    l_rot += 0.015
                     If l_rot > 2 * PI Then
                         l_rot -= (2 * PI)
                     End If
@@ -3963,6 +4287,7 @@ fuckit:
     End Sub
     Private Delegate Sub update_screen_delegate()
     Private Sub update_screen()
+        gl_busy = True
         Try
             If Me.InvokeRequired Then
                 Me.Invoke(New update_screen_delegate(AddressOf update_screen))
@@ -3972,6 +4297,7 @@ fuckit:
         Catch ex As Exception
 
         End Try
+        gl_busy = False
     End Sub
     Private Sub Startup_Timer_Tick(sender As Object, e As EventArgs) Handles Startup_Timer.Tick
         Startup_Timer.Enabled = False
@@ -6037,11 +6363,292 @@ make_this_tank:
     Private Sub m_decal_Click(sender As Object, e As EventArgs) Handles m_decal.Click
         If m_decal.Checked Then
             m_decal.ForeColor = Color.Red
-            upton.position = New Point(pb1.Width / 2 - 70, -pb1.Height / 2 + 100)
+            upton.position = New Point(pb1.Width - 150, -210)
             upton.state = 0
-            make_test_decal(0)
+            decal_panel.Dock = DockStyle.Fill
+            decal_panel.Visible = True
+            decal_panel.BringToFront()
+            TC1.Visible = False
+            'make_test_decal(0)
         Else
             m_decal.ForeColor = Color.Black
+            decal_panel.Visible = False
+            TC1.Visible = True
         End If
+        gl_busy = False
+    End Sub
+
+    Private Sub m_new_Click(sender As Object, e As EventArgs) Handles m_new.Click
+        add_decal()
+    End Sub
+
+    Public d_sel_Len As Integer
+    Public d_current_line As Integer
+    Dim d_line_count As Integer
+    Private Sub d_list_tb_Click(sender As Object, e As EventArgs) Handles d_list_tb.Click
+        d_list_tb.SelectionLength = 0
+        Dim t = d_list_tb.Text.Split(":")
+        d_line_count = t.Length - 2
+        If d_line_count = -1 Then Return
+        Dim a = d_list_tb.GetLineFromCharIndex(d_list_tb.GetFirstCharIndexOfCurrentLine())
+        d_list_tb.Select(d_list_tb.GetFirstCharIndexOfCurrentLine(), d_list_tb.Lines(a).Length)
+        If d_list_tb.SelectedText.Length < 4 Then
+            Return
+            d_sel_Len = 0
+            d_current_line = 0
+        Else
+            Dim d = d_list_tb.SelectedText.Split(":")
+            current_decal = CInt(d(1))
+            decal_matrix_list(current_decal).get_decals_transform_info()
+            d_sel_Len = d_list_tb.Lines(a).Length
+            d_current_line = a
+            decal_matrix_list(current_decal).get_decals_transform_info()
+        End If
+
+    End Sub
+
+    Private Sub d_move_up_Click(sender As Object, e As EventArgs) Handles d_move_up.Click
+        If d_current_line = 0 Then
+            Return
+        End If
+        If d_sel_Len > 0 Then
+            Dim prev_line = d_current_line - 1
+            Dim sel_tex_current = d_list_tb.SelectedText ' save current text
+            If sel_tex_current = "" Then Return
+            Dim sp = d_list_tb.GetFirstCharIndexFromLine(prev_line) ' get prev line
+            Application.DoEvents()
+            d_list_tb.SelectionStart = sp
+            d_list_tb.Select(d_list_tb.GetFirstCharIndexOfCurrentLine(), _
+                             d_list_tb.Lines(prev_line).Length) ' select prev line
+            Application.DoEvents()
+            Dim pre_text = d_list_tb.SelectedText ' save prev line text
+            If pre_text = "" Then Return
+            Application.DoEvents()
+            d_list_tb.SelectedText = sel_tex_current ' replace current line text
+            Application.DoEvents()
+
+            d_list_tb.SelectionStart = sp + sel_tex_current.Length + 2
+            d_current_line = d_list_tb.GetLineFromCharIndex(d_list_tb.GetFirstCharIndexOfCurrentLine())
+
+            d_list_tb.Select(d_list_tb.GetFirstCharIndexOfCurrentLine(), _
+                             d_list_tb.Lines(d_current_line).Length) ' reselect current line
+            Application.DoEvents()
+            d_list_tb.SelectedText = pre_text ' replace it with prev lines text
+            d_list_tb.Select(d_list_tb.GetFirstCharIndexOfCurrentLine(), _
+                     d_list_tb.Lines(d_current_line).Length) ' reselect current line
+            Application.DoEvents()
+            update_decal_order()
+            d_list_tb.SelectionStart = sp
+            d_list_tb.Select(d_list_tb.GetFirstCharIndexOfCurrentLine(), _
+                       d_list_tb.Lines(prev_line).Length) ' select prev line
+            d_current_line = prev_line
+            decal_matrix_list(current_decal).get_decals_transform_info()
+        End If
+    End Sub
+
+    Private Sub d_move_down_Click(sender As Object, e As EventArgs) Handles d_move_down.Click
+        If d_current_line = d_line_count Then
+            Return
+        End If
+        If d_sel_Len > 0 Then
+            Dim next_line = d_current_line + 1
+            Dim sel_tex_current = d_list_tb.SelectedText ' save current text
+            If sel_tex_current = "" Then Return
+            Dim sp = d_list_tb.GetFirstCharIndexFromLine(next_line) ' get prev line
+            Application.DoEvents()
+            d_list_tb.SelectionStart = sp
+            d_list_tb.Select(d_list_tb.GetFirstCharIndexOfCurrentLine(), _
+                             d_list_tb.Lines(next_line).Length) ' select prev line
+            Application.DoEvents()
+            Dim next_text = d_list_tb.SelectedText ' save prev line text
+            If next_text = "" Then Return
+            Application.DoEvents()
+            d_list_tb.SelectedText = sel_tex_current ' replace current line text
+            Application.DoEvents()
+
+            d_list_tb.SelectionStart = sp - 2
+            d_current_line = d_list_tb.GetLineFromCharIndex(d_list_tb.GetFirstCharIndexOfCurrentLine())
+
+            d_list_tb.Select(d_list_tb.GetFirstCharIndexOfCurrentLine(), _
+                             d_list_tb.Lines(d_current_line).Length) ' reselect current line
+            Application.DoEvents()
+            d_list_tb.SelectedText = next_text ' replace it with prev lines text
+            d_list_tb.Select(d_list_tb.GetFirstCharIndexOfCurrentLine(), _
+                     d_list_tb.Lines(d_current_line).Length) ' reselect current line
+            Application.DoEvents()
+            update_decal_order()
+            d_list_tb.SelectionStart = sp
+            d_list_tb.Select(d_list_tb.GetFirstCharIndexOfCurrentLine(), _
+                             d_list_tb.Lines(next_line).Length) ' select prev line
+            d_current_line = next_line
+            decal_matrix_list(current_decal).get_decals_transform_info()
+        End If
+    End Sub
+
+    Private Sub d_list_tb_KeyPress(sender As Object, e As KeyPressEventArgs) Handles d_list_tb.KeyPress
+        e.Handled = True
+    End Sub
+
+    Private Sub decal_alpha_slider_Scroll(sender As Object, e As EventArgs) Handles decal_alpha_slider.Scroll
+        If current_decal = -1 Then Return
+        decal_matrix_list(current_decal).alpha = CSng(decal_alpha_slider.Value / 100)
+    End Sub
+    Private Sub decal_level_slider_Scroll(sender As Object, e As EventArgs) Handles decal_level_slider.Scroll
+        If current_decal = -1 Then Return
+        decal_matrix_list(current_decal).level = CSng(decal_level_slider.Value / 100)
+
+    End Sub
+    Dim t_list As TextBox
+
+    Private Sub m_sel_texture_Click(sender As Object, e As EventArgs) Handles m_sel_texture.Click
+        If current_decal < 0 Then Return
+        If t_list Is Nothing Then
+            t_list = New TextBox
+            t_list.Multiline = True
+            t_list.Parent = decal_panel
+            t_list.Width = d_list_tb.Width
+            t_list.Height = d_list_tb.Height
+            t_list.Location = d_list_tb.Location
+            t_list.Anchor = AnchorStyles.Bottom Or AnchorStyles.Top Or AnchorStyles.Left Or AnchorStyles.Right
+            t_list.ForeColor = d_list_tb.ForeColor
+            t_list.BackColor = d_list_tb.BackColor
+            t_list.Font = d_list_tb.Font
+            t_list.ScrollBars = ScrollBars.Vertical
+            For j = 0 To decal_textures.Length - 1
+                t_list.Text += decal_textures(j).colorMap_name + " :" + j.ToString + vbCrLf
+
+            Next
+            AddHandler t_list.Click, AddressOf handle_t_click
+        End If
+        t_list.BringToFront()
+        d_list_tb.SendToBack()
+        current_decal_lable.Text = current_decal.ToString
+    End Sub
+    Private Sub handle_t_click(sender As TextBox, e As EventArgs)
+        If current_decal < 0 Then Return
+        t_list.SelectionLength = 0
+        Dim t = t_list.Text.Split(":")
+        d_line_count = t.Length - 2
+        Dim a = t_list.GetLineFromCharIndex(t_list.GetFirstCharIndexOfCurrentLine())
+        t_list.Select(t_list.GetFirstCharIndexOfCurrentLine(), t_list.Lines(a).Length)
+        If t_list.SelectedText.Length < 4 Then
+            Return
+            d_sel_Len = 0
+            d_current_line = 0
+        Else
+            Dim d = t_list.SelectedText.Split(":")
+            Dim id = CInt(d(1))
+            decal_matrix_list(current_decal).decal_texture = decal_textures(id).colorMap_name
+            decal_matrix_list(current_decal).texture_id = decal_textures(id).colorMap_Id
+            decal_matrix_list(current_decal).normal_id = decal_textures(id).normalMap_Id
+            decal_matrix_list(current_decal).gmm_id = decal_textures(id).gmmMap_id
+            d_texture_name.Text = decal_matrix_list(current_decal).decal_texture
+            t_list.SendToBack()
+            d_list_tb.BringToFront()
+            d_move_up.BringToFront()
+            d_move_down.BringToFront()
+        End If
+    End Sub
+
+    Private Sub m_delete_Click(sender As Object, e As EventArgs) Handles m_delete.Click
+        If decal_matrix_list.Length < 2 Then Return
+        Dim t_l(decal_matrix_list.Length - 2) As decal_matrix_list_
+        Dim ta = d_list_tb.Text.Split(vbLf)
+        Dim ts As String = ""
+        For Each s In ta
+            Dim ti = s.Split(":")
+            If ti.Length > 1 Then ' dont mess with empty lines
+                Dim tii = ti(1).Split(vbCr)
+                Dim rv = CInt(tii(0))
+                If rv <> current_decal Then
+                    If rv > current_decal Then ' If this ones larger it needs decremented.
+                        rv -= 1
+                    End If
+                    ts += ti(0) + ":" + rv.ToString + vbCrLf 're-assemble the line.
+                End If
+            End If
+        Next
+        d_list_tb.Text = ts
+        Application.DoEvents()
+        Dim cnt As Integer = 0
+        For i = 0 To decal_matrix_list.Length - 2
+            If i <> current_decal Then
+                t_l(cnt) = decal_matrix_list(i)
+                cnt += 1
+            End If
+        Next
+        ReDim Preserve decal_matrix_list(decal_matrix_list.Length - 2)
+        For i = 0 To decal_matrix_list.Length - 2
+            decal_matrix_list(i) = t_l(i)
+            'd_list_tb.Text += "Decal ID :" + i.ToString + vbCrLf
+        Next
+        'current_decal -= 1
+        'If current_decal = -1 And decal_matrix_list.Length > 1 Then
+        '    current_decal = 0
+        'End If
+        If current_decal > -1 Then
+            update_decal_order()
+            Dim new_line As Integer = 0
+            For i = 0 To decal_order.Length - 1
+                If decal_order(i) = current_decal Then
+                    new_line = i
+                    Exit For
+                End If
+            Next
+            Dim sp = d_list_tb.GetFirstCharIndexFromLine(new_line) ' get line
+            d_list_tb.SelectionStart = sp
+            Try
+                d_list_tb.Select(d_list_tb.GetFirstCharIndexOfCurrentLine(), _
+                                     d_list_tb.Lines(new_line).Length) ' select prev line
+                decal_matrix_list(new_line).get_decals_transform_info()
+
+            Catch ex As Exception
+                Return
+            End Try
+            d_current_line = new_line
+            d_sel_Len = d_list_tb.Lines(new_line).Length
+        End If
+    End Sub
+
+
+    Private Sub Uwrap_SelectedItemChanged(sender As Object, e As EventArgs) Handles Uwrap.SelectedItemChanged
+        If current_decal = -1 Then Return
+        decal_matrix_list(current_decal).u_wrap = CSng(Uwrap.SelectedItem)
+        decal_matrix_list(current_decal).u_wrap_index = Uwrap.SelectedIndex
+    End Sub
+
+    Private Sub Vwrap_SelectedItemChanged(sender As Object, e As EventArgs) Handles Vwrap.SelectedItemChanged
+        If current_decal = -1 Then Return
+        decal_matrix_list(current_decal).v_wrap = CSng(Vwrap.SelectedItem)
+        decal_matrix_list(current_decal).v_wrap_index = Vwrap.SelectedIndex
+
+    End Sub
+
+ 
+    Private Sub save_decal_btn_Click(sender As Object, e As EventArgs) Handles save_decal_btn.Click
+        If current_decal = -1 Then Return
+        If MsgBox("Are you sure?", MsgBoxStyle.YesNo, "For real?") = MsgBoxResult.Yes Then
+            save_decal_data()
+        End If
+    End Sub
+
+    Private Sub load_decal_btn_Click(sender As Object, e As EventArgs) Handles load_decal_btn.Click
+        If MsgBox("Are you sure?", MsgBoxStyle.YesNo, "For real?") = MsgBoxResult.Yes Then
+            load_decal_data()
+        End If
+    End Sub
+
+    Private Sub uv_rotate_direction(sender As Object, e As EventArgs) Handles uv_rotate.SelectedItemChanged
+        If current_decal = -1 Then Return
+        decal_matrix_list(current_decal).uv_rot = CSng(uv_rotate.SelectedItem) * 0.017453293
+        decal_matrix_list(current_decal).uv_rot_index = uv_rotate.SelectedIndex
+
+    End Sub
+
+    Private Sub copy_Decal_btn_Click(sender As Object, e As EventArgs) Handles copy_Decal_btn.Click
+        If decal_order.Length < 1 Then
+            Return
+        End If
+        copy_decal()
     End Sub
 End Class

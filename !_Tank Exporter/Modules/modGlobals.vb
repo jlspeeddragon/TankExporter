@@ -15,6 +15,7 @@ Module modGlobals
     Public S_level, A_level, T_level As Single
     Public selected_light As Integer = 0
     '##################################
+    Public decal_path As String
     Public terrain_modelId As Integer
     Public terrain_textureId As Integer
     Public terrain_textureNormalId As Integer

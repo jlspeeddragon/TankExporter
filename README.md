@@ -5,6 +5,9 @@
 
 #### This is an ongoing project by me.. Coffee_
 
+## Version 43:
+Decals are now on the terrain. You can edit and save changes to them. The decals come from the game's pkg files and use PBR to shade them. I am leaving version 42 GitHub incase this version is unusable by anyone.
+
 ## Version 42:
 Added Shadows and controls for it. You can set 1 of the 3 lights as the shadow light source. Added terrain and skydome. The shader editor now stops the rendering while active. Rendering can be turned back on, on the editors form.
 The hide show grid lines now toggels between terrain and grid.

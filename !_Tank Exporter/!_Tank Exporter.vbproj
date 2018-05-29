@@ -24,7 +24,7 @@
     <UpdatePeriodically>false</UpdatePeriodically>
     <UpdateRequired>false</UpdateRequired>
     <MapFileExtensions>true</MapFileExtensions>
-    <ApplicationRevision>42</ApplicationRevision>
+    <ApplicationRevision>43</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
@@ -380,22 +380,16 @@
       <LastGenOutput>Settings.Designer.vb</LastGenOutput>
     </None>
     <None Include="packages.config" />
-    <None Include="resources\models\cube.te">
+    <None Include="resources\decal_layout\decal_layout">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="resources\models\cube.x">
+    <None Include="resources\models\cube.te">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="resources\models\dome.te">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="resources\models\dome.x">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
     <None Include="resources\models\terrain.te">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="resources\models\terrain.x">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="shaders\cube_fragment.glsl">
@@ -404,10 +398,22 @@
     <None Include="shaders\cube_vertex.glsl">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Include="shaders\decalsCpass_vertex.glsl">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="shaders\decalsCpass_fragment.glsl">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="shaders\depth_fragment.glsl">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="shaders\depth_vertex.glsl">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="shaders\dome_fragment.glsl">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="shaders\dome_vertex.glsl">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="shaders\FXAA_fragment.glsl">
@@ -420,6 +426,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="shaders\gaussian_vertex.glsl">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="shaders\r2mono_fragment.glsl">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="shaders\shadowTest_fragment.glsl">
@@ -617,10 +626,15 @@
     <Content Include="resources\upton\upton_8.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="resources\upton\upton_9.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="resources\upton\user_view.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="shaders\pbr example.txt" />
+    <None Include="shaders\r2mono_vertex.glsl">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <Content Include="tank.ico">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

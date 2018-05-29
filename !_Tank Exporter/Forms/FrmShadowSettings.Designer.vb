@@ -53,7 +53,7 @@ Partial Class FrmShadowSettings
         Me.RadioButton4.Size = New System.Drawing.Size(77, 17)
         Me.RadioButton4.TabIndex = 3
         Me.RadioButton4.TabStop = True
-        Me.RadioButton4.Tag = "512"
+        Me.RadioButton4.Tag = "256"
         Me.RadioButton4.Text = "GARBAGE"
         Me.RadioButton4.UseVisualStyleBackColor = True
         '
@@ -65,7 +65,7 @@ Partial Class FrmShadowSettings
         Me.RadioButton3.Size = New System.Drawing.Size(47, 17)
         Me.RadioButton3.TabIndex = 2
         Me.RadioButton3.TabStop = True
-        Me.RadioButton3.Tag = "1024"
+        Me.RadioButton3.Tag = "512"
         Me.RadioButton3.Text = "BAD"
         Me.RadioButton3.UseVisualStyleBackColor = True
         '
@@ -77,7 +77,7 @@ Partial Class FrmShadowSettings
         Me.RadioButton2.Size = New System.Drawing.Size(40, 17)
         Me.RadioButton2.TabIndex = 1
         Me.RadioButton2.TabStop = True
-        Me.RadioButton2.Tag = "2048"
+        Me.RadioButton2.Tag = "1024"
         Me.RadioButton2.Text = "OK"
         Me.RadioButton2.UseVisualStyleBackColor = True
         '
@@ -89,7 +89,7 @@ Partial Class FrmShadowSettings
         Me.RadioButton1.Size = New System.Drawing.Size(53, 17)
         Me.RadioButton1.TabIndex = 0
         Me.RadioButton1.TabStop = True
-        Me.RadioButton1.Tag = "4096"
+        Me.RadioButton1.Tag = "2048"
         Me.RadioButton1.Text = "BEST"
         Me.RadioButton1.UseVisualStyleBackColor = True
         '

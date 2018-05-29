@@ -46,9 +46,11 @@ Partial Class frmLightSelection
         'RadioButton3
         '
         Me.RadioButton3.AutoSize = True
+        Me.RadioButton3.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.RadioButton3.ForeColor = System.Drawing.Color.Green
         Me.RadioButton3.Location = New System.Drawing.Point(11, 47)
         Me.RadioButton3.Name = "RadioButton3"
-        Me.RadioButton3.Size = New System.Drawing.Size(57, 17)
+        Me.RadioButton3.Size = New System.Drawing.Size(64, 17)
         Me.RadioButton3.TabIndex = 2
         Me.RadioButton3.TabStop = True
         Me.RadioButton3.Tag = "1"
@@ -58,9 +60,11 @@ Partial Class frmLightSelection
         'RadioButton2
         '
         Me.RadioButton2.AutoSize = True
+        Me.RadioButton2.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.RadioButton2.ForeColor = System.Drawing.Color.Blue
         Me.RadioButton2.Location = New System.Drawing.Point(11, 70)
         Me.RadioButton2.Name = "RadioButton2"
-        Me.RadioButton2.Size = New System.Drawing.Size(57, 17)
+        Me.RadioButton2.Size = New System.Drawing.Size(64, 17)
         Me.RadioButton2.TabIndex = 1
         Me.RadioButton2.TabStop = True
         Me.RadioButton2.Tag = "2"
@@ -70,9 +74,11 @@ Partial Class frmLightSelection
         'RadioButton1
         '
         Me.RadioButton1.AutoSize = True
+        Me.RadioButton1.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.RadioButton1.ForeColor = System.Drawing.Color.Red
         Me.RadioButton1.Location = New System.Drawing.Point(11, 24)
         Me.RadioButton1.Name = "RadioButton1"
-        Me.RadioButton1.Size = New System.Drawing.Size(57, 17)
+        Me.RadioButton1.Size = New System.Drawing.Size(64, 17)
         Me.RadioButton1.TabIndex = 0
         Me.RadioButton1.TabStop = True
         Me.RadioButton1.Tag = "0"
@@ -83,7 +89,7 @@ Partial Class frmLightSelection
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-        Me.BackColor = System.Drawing.SystemColors.ControlDarkDark
+        Me.BackColor = System.Drawing.Color.FromArgb(CType(CType(33, Byte), Integer), CType(CType(33, Byte), Integer), CType(CType(33, Byte), Integer))
         Me.ClientSize = New System.Drawing.Size(117, 133)
         Me.Controls.Add(Me.GroupBox1)
         Me.ForeColor = System.Drawing.Color.White

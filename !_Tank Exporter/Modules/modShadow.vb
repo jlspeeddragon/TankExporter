@@ -28,7 +28,7 @@ Imports System.Globalization
 
 
 Module modShadow
-    Public shadowMapSize As Integer = 4096
+    Public shadowMapSize As Integer = 2048
     Public depthId As Integer
     Public depthBuffer, tempDepth As Integer
     Public shadowFramebuffer As Integer
@@ -43,17 +43,22 @@ Module modShadow
     Public Sub reset_shadowFbo()
         If depthBuffer > 0 Then
             Gl.glDeleteTextures(1, depthBuffer)
+            Gl.glFinish()
         End If
         If depthBuffer > 0 Then
             Gl.glDeleteTextures(1, tempDepth)
+            Gl.glFinish()
         End If
         If depthId > 0 Then
             Gl.glDeleteRenderbuffersEXT(1, depthId)
+            Gl.glFinish()
         End If
         If shadowFramebuffer > 0 Then
             Gl.glDeleteFramebuffersEXT(1, shadowFramebuffer)
+            Gl.glFinish()
         End If
         make_shadow_fbo()
+        Gl.glFinish()
     End Sub
     Public Sub make_shadow_fbo()
         Gl.glGenTextures(1, depthBuffer)
@@ -66,7 +71,7 @@ Module modShadow
         Gl.glTexParameterf(Gl.GL_TEXTURE_2D, Gl.GL_TEXTURE_WRAP_S, Gl.GL_CLAMP_TO_EDGE)
         Gl.glTexParameterf(Gl.GL_TEXTURE_2D, Gl.GL_TEXTURE_WRAP_T, Gl.GL_CLAMP_TO_EDGE)
 
-        Gl.glTexImage2D(Gl.GL_TEXTURE_2D, 0, Gl.GL_RGB32F_ARB, CInt(shadowMapSize), CInt(shadowMapSize), 0, Gl.GL_RGBA, Gl.GL_FLOAT, Nothing)
+        Gl.glTexImage2D(Gl.GL_TEXTURE_2D, 0, Gl.GL_RGb32F_ARB, CInt(shadowMapSize), CInt(shadowMapSize), 0, Gl.GL_RGBA, Gl.GL_FLOAT, Nothing)
         Gl.glBindTexture(Gl.GL_TEXTURE_2D, 0)
         er = Gl.glGetError
 
@@ -127,12 +132,12 @@ Module modShadow
         Gl.glBindTexture(Gl.GL_TEXTURE_2D, 0)
         Gl.glDrawBuffers(1, attach_tempDepth)
 
-        Dim Status = Gl.glCheckFramebufferStatusEXT(Gl.GL_FRAMEBUFFER_EXT)
+        'Dim Status = Gl.glCheckFramebufferStatusEXT(Gl.GL_FRAMEBUFFER_EXT)
 
-        If Status <> Gl.GL_FRAMEBUFFER_COMPLETE_EXT Then
-            MsgBox("Failed to create Deferred FBO", MsgBoxStyle.Critical, "Not good!")
-            Return
-        End If
+        'If Status <> Gl.GL_FRAMEBUFFER_COMPLETE_EXT Then
+        'MsgBox("Failed to create Deferred FBO", MsgBoxStyle.Critical, "Not good!")
+        'Return
+        'End If
 
     End Sub
     Private Sub detach_textures()
@@ -290,20 +295,6 @@ Module modShadow
             Gl.glCallList(terrain_modelId)
             Gl.glPopMatrix()
             '==========================================================
-            '=================================================================================
-            If frmMain.m_decal.Checked Then
-                Gl.glEnable(Gl.GL_LIGHTING)
-                Gl.glDisable(Gl.GL_CULL_FACE)
-                Gl.glPolygonMode(Gl.GL_FRONT_AND_BACK, Gl.GL_FILL)
-                'Gl.glDisable(Gl.GL_DEPTH_TEST)
-                Gl.glColor3f(0.5, 0.5, 0.5)
-                Gl.glPushMatrix()
-                decal_matrix_list(0).transform()
-                Gl.glMultMatrixf(decal_matrix_list(0).display_matrix)
-                Gl.glCallList(decal_matrix_list(0).display_id)
-                Gl.glPopMatrix()
-            End If
-            '=================================================================================
             Gl.glFrontFace(Gl.GL_CW)
             For jj = object_count To 1 Step -1
                 If Not _group(jj).is_carraige And Not _group(jj).doubleSided Then
@@ -381,14 +372,16 @@ nope:
             Return
         End If
         '###############################################################################################
+        Dim w, h As Integer
+        G_Buffer.getsize(w, h)
+        ResizeGL(w, h)
+
         Gl.glEnable(Gl.GL_DEPTH_TEST)
 
         If Not (Wgl.wglMakeCurrent(pb1_hDC, pb1_hRC)) Then
             MessageBox.Show("Unable to make rendering context current 3 ")
         End If
         Gl.glBindFramebufferEXT(Gl.GL_DRAW_FRAMEBUFFER_EXT, 0)
-
-        ResizeGL()
         Gl.glMatrixMode(Gl.GL_PROJECTION) 'Select Projection
         Gl.glLoadIdentity()
 
@@ -415,7 +408,6 @@ nope:
             Gl.glActiveTexture(Gl.GL_TEXTURE0)
             Gl.glBindTexture(Gl.GL_TEXTURE_2D, depthBuffer)
             Gl.glFrontFace(Gl.GL_CW)
-
             For jj = 1 To object_count - track_info.segment_count
                 Gl.glActiveTexture(Gl.GL_TEXTURE0 + 1)
                 Gl.glBindTexture(Gl.GL_TEXTURE_2D, _group(jj).color_Id)
@@ -440,16 +432,15 @@ nope:
 
 
             Next
-            Gl.glUseProgram(0)
+            Gl.glCallList(terrain_modelId)
             Gl.glBindTexture(Gl.GL_TEXTURE_2D, 0) '1
             Gl.glActiveTexture(Gl.GL_TEXTURE0)
             Gl.glBindTexture(Gl.GL_TEXTURE_2D, 0)
+            Gl.glUseProgram(0)
 
         End If
-        Dim w, h As Integer
-        G_Buffer.getsize(w, h)
         Gl.glBindTexture(Gl.GL_TEXTURE_2D, rendered_shadow_texture)
-        Gl.glCopyTexImage2D(Gl.GL_TEXTURE_2D, 0, Gl.GL_RGBA8, 0, 0, w, h, 0)
+        Gl.glCopyTexImage2D(Gl.GL_TEXTURE_2D, 0, Gl.GL_RGBA, 0, 0, w, h, 0)
         Gl.glBindTexture(Gl.GL_TEXTURE_2D, 0)
 
 
@@ -517,6 +508,7 @@ nope:
         Gl.glUseProgram(shader_list.toLinear_shader) '<<<<======================================t oLinear shader
         Gl.glTexEnvf(Gl.GL_TEXTURE_ENV, Gl.GL_TEXTURE_ENV_MODE, Gl.GL_REPLACE)
         Gl.glDisable(Gl.GL_BLEND)
+
         Gl.glUniform1i(toLinear_depthMap, 0)
         Gl.glPolygonMode(Gl.GL_FRONT_AND_BACK, Gl.GL_FILL)
         Gl.glDisable(Gl.GL_TEXTURE_2D)
@@ -538,21 +530,17 @@ nope:
         '-----------------------------------------------------------------------
         p.Y -= w
         Gl.glTexEnvf(Gl.GL_TEXTURE_ENV, Gl.GL_TEXTURE_ENV_MODE, Gl.GL_REPLACE)
+        Gl.glPolygonMode(Gl.GL_FRONT_AND_BACK, Gl.GL_FILL)
         Dim x, y As Integer
         G_Buffer.getsize(x, y)
         Dim aspect As Single = CSng(y / x)
 
         h *= aspect
-        Gl.glDisable(Gl.GL_BLEND)
-        Gl.glUniform1i(toLinear_depthMap, 0)
-        Gl.glPolygonMode(Gl.GL_FRONT_AND_BACK, Gl.GL_FILL)
-        Gl.glEnable(Gl.GL_TEXTURE_2D)
-        'Gl.glDisable(Gl.GL_TEXTURE_2D)
-        Gl.glActiveTexture(Gl.GL_TEXTURE0)
+        Gl.glUseProgram(shader_list.r2mono_shader)
+        Gl.glUniform1i(r2mono_shadow, 0)
+
         Gl.glBindTexture(Gl.GL_TEXTURE_2D, rendered_shadow_texture)
-        'Gl.glBindTexture(Gl.GL_TEXTURE_2D, 14)
-        Gl.glFrontFace(Gl.GL_CCW)
-        Gl.glDisable(Gl.GL_CULL_FACE)
+
         draw_rect_preview(p, w, h)
         Gl.glUseProgram(0)
 

@@ -29,7 +29,7 @@ Module modOpenGL
     Public pb3_hDC As System.IntPtr
     Public pb3_hRC As System.IntPtr
     Public position0() As Single = {3.535534F, 2.5F, -3.535534F, 1.0F}
-    Public position1() As Single = {5.0F, 4.0F, -5.0F, 1.0F}
+    Public position1() As Single = {5.0F, 8.0F, -5.0F, 1.0F}
     Public position2() As Single = {0.0F, 10.0F, 0.0F, 1.0F}
     Public Sub EnableOpenGL()
         frmMain.pb2.Visible = False
@@ -53,8 +53,8 @@ Module modOpenGL
         pfd.dwFlags = Gdi.PFD_DRAW_TO_WINDOW Or Gdi.PFD_SUPPORT_OPENGL Or Gdi.PFD_DOUBLEBUFFER Or Gdi.PFD_GENERIC_ACCELERATED
         pfd.iPixelType = Gdi.PFD_TYPE_RGBA
         pfd.cColorBits = 32
-        pfd.cDepthBits = 32
-        pfd.cStencilBits = 32
+        pfd.cDepthBits = 24
+        pfd.cStencilBits = 8
         pfd.cAlphaBits = 8
         pfd.iLayerType = Gdi.PFD_MAIN_PLANE
 
@@ -138,8 +138,8 @@ Module modOpenGL
 
     End Sub
     Private far_Clip As Single = 1000.0
-    Public Sub ResizeGL()
-        Gl.glViewport(0, 0, frmMain.pb1.Width, frmMain.pb1.Height)
+    Public Sub ResizeGL(ByRef w As Integer, ByRef h As Integer)
+        Gl.glViewport(0, 0, w, h)
 
     End Sub
     Public Sub glutPrint(ByVal x As Single, ByVal y As Single, _
@@ -199,13 +199,13 @@ ByVal text As String, ByVal r As Single, ByVal g As Single, ByVal b As Single, B
         Gl.glMatrixMode(Gl.GL_MODELVIEW)    'Select Modelview Matrix
         Gl.glLoadIdentity() 'Reset The Matrix
     End Sub
-    Public Sub ViewPerspective()
+    Public Sub ViewPerspective(w, h)
         ' Set Up A Perspective View
 
         Gl.glMatrixMode(Gl.GL_PROJECTION) 'Select Projection
         Gl.glLoadIdentity()
 
-        Glu.gluPerspective(60.0F, CSng((frmMain.pb1.Width) / (frmMain.pb1.Height)), 0.1F, far_Clip)
+        Glu.gluPerspective(60.0F, CSng(w / h), 0.1F, far_Clip)
         Gl.glEnable(Gl.GL_DEPTH_TEST)
         Gl.glDepthMask(Gl.GL_TRUE)
         Gl.glDepthRange(0.0, 1.0)

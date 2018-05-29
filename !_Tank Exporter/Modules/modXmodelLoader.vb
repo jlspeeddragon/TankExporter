@@ -1,13 +1,21 @@
 ﻿Imports System.IO
 
 Module modXmodelLoader
-    Public Sub load_and_save()
+    Public Sub load_x_models()
         cube_draw_id = get_X_model(Application.StartupPath + "\resources\models\cube.x")
         terrain_modelId = get_X_model(Application.StartupPath + "\resources\models\terrain.x")
         dome_modelId = get_X_model(Application.StartupPath + "\resources\models\dome.x")
     End Sub
-    Public Function load_binary_model(file_ As String)
-        Dim f = File.Open(file_, FileMode.Open, FileAccess.Read, FileShare.Read)
+    Public Function load_binary_models()
+        cube_draw_id = load_binary_model(Application.StartupPath + "\resources\models\cube.te")
+        terrain_modelId = load_binary_model(Application.StartupPath + "\resources\models\terrain.te")
+        dome_modelId = load_binary_model(Application.StartupPath + "\resources\models\dome.te")
+
+    End Function
+
+    Public Function load_binary_model(m As String)
+        Dim f As New FileStream(m, FileMode.Open, FileAccess.Read)
+        'tried everything.. stupid app is loading the wrong files over and over!!!
         Dim br As New BinaryReader(f)
 
         Dim v_cnt = br.ReadInt32 * 3 ' 3 per poly
@@ -158,15 +166,15 @@ Module modXmodelLoader
                 c = indices(i).c
                 br.Write(normals(a).x) : br.Write(normals(a).y) : br.Write(normals(a).z)
                 br.Write(uvs(a).x) : br.Write(uvs(a).y)
-                br.Write(normals(a).x) : br.Write(normals(a).y) : br.Write(normals(a).z)
+                br.Write(vertices(a).x) : br.Write(vertices(a).y) : br.Write(vertices(a).z)
 
                 br.Write(normals(b).x) : br.Write(normals(b).y) : br.Write(normals(b).z)
                 br.Write(uvs(b).x) : br.Write(uvs(b).y)
-                br.Write(normals(b).x) : br.Write(normals(b).y) : br.Write(normals(b).z)
+                br.Write(vertices(b).x) : br.Write(vertices(b).y) : br.Write(vertices(b).z)
 
                 br.Write(normals(c).x) : br.Write(normals(c).y) : br.Write(normals(c).z)
                 br.Write(uvs(c).x) : br.Write(uvs(c).y)
-                br.Write(normals(c).x) : br.Write(normals(c).y) : br.Write(normals(c).z)
+                br.Write(vertices(c).x) : br.Write(vertices(c).y) : br.Write(vertices(c).z)
             Next
             f.Dispose()
             br.Dispose()

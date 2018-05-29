@@ -169,7 +169,7 @@ vec3 getNormal()
     if (is_GAmap == 1 && use_CM == 0)
     {
         tn.xy = tn.ga*2.0-1.0;
-        tn.z = sqrt(1.0 - dot(tn.xy, tn.xy));
+        tn.z =  sqrt(1.0 - clamp( ((tn.x*tn.x) + (tn.y*tn.y)) ,-1.0,1.0) );
         tn.x *= -1.0;
         n = tn.rgb;
     }
@@ -198,7 +198,7 @@ vec3 getIBLContribution(PBRInfo pbrInputs, vec3 n, vec3 reflection)
     // retrieve a scale and bias to F0. See [1], Figure 3
     vec3 brdf = SRGBtoLINEAR(texture2D(u_brdfLUT, vec2(pbrInputs.NdotV*0.1, (1.0 - pbrInputs.perceptualRoughness)*0.1))).rgb;
     vec3 diffuseLight = SRGBtoLINEAR(textureCubeLod(cubeMap, n, 7)).rgb;
-     reflection.yz *= -1.0;// like so many other things, DirectX to OpenDL causes axis issues.
+     reflection.xyz *= -1.0;// like so many other things, DirectX to OpenDL causes axis issues.
     vec3 specularLight = SRGBtoLINEAR(textureCubeLod(cubeMap, reflection, lod)).rgb;
 
     vec3 diffuse = diffuseLight * pbrInputs.diffuseColor;

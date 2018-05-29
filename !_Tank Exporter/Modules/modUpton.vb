@@ -37,14 +37,14 @@ Module modUpton
         Private w As Integer = 140
         Private h As Integer = 200
 
-        Public upton_img_index(9) As Integer ' stores our 9 button down images
+        Public upton_img_index(10) As Integer ' stores our 10 button down images
         Public upton_user_view As Integer
         Public upton_pick_image As Integer
 
         Public Sub pick_upton()
             Dim er = Gl.glGetError
 
-            If M_DOWN And state > 0 Then
+            If M_DOWN Then
                 Return
             End If
             Gl.glReadBuffer(Gl.GL_BACK)
@@ -139,7 +139,7 @@ Module modUpton
             Dim iPath = Application.StartupPath + "\resources\upton\"
             upton_user_view = load_png_file(iPath + "user_view.png")
             upton_pick_image = load_png_file(iPath + "pick_image.png")
-            For i = 0 To 8
+            For i = 0 To 9
                 upton_img_index(i) = load_png_no_mips(iPath + "upton_" + i.ToString + ".png")
             Next
         End Sub

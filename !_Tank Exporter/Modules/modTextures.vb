@@ -476,12 +476,12 @@ Module modTextures
             If largestAnsio > 0 Then
                 Gl.glTexParameteri(Gl.GL_TEXTURE_2D, Gl.GL_TEXTURE_MAX_ANISOTROPY_EXT, largestAnsio)
             End If
-            Gl.glTexParameteri(Gl.GL_TEXTURE_2D, Gl.GL_TEXTURE_MAG_FILTER, Gl.GL_LINEAR_MIPMAP_LINEAR)
+            Gl.glTexParameteri(Gl.GL_TEXTURE_2D, Gl.GL_TEXTURE_MAG_FILTER, Gl.GL_LINEAR)
             Gl.glTexParameteri(Gl.GL_TEXTURE_2D, Gl.GL_TEXTURE_MIN_FILTER, Gl.GL_LINEAR_MIPMAP_LINEAR)
+            Gl.glTexParameteri(Gl.GL_TEXTURE_2D, Gl.GL_GENERATE_MIPMAP, Gl.GL_TRUE)
 
             Gl.glTexParameteri(Gl.GL_TEXTURE_2D, Gl.GL_TEXTURE_WRAP_S, Gl.GL_REPEAT)
             Gl.glTexParameteri(Gl.GL_TEXTURE_2D, Gl.GL_TEXTURE_WRAP_T, Gl.GL_REPEAT)
-            Gl.glTexParameteri(Gl.GL_TEXTURE_2D, Gl.GL_GENERATE_MIPMAP, Gl.GL_TRUE)
 
             Gl.glTexImage2D(Gl.GL_TEXTURE_2D, 0, Il.ilGetInteger(Il.IL_IMAGE_BPP), Il.ilGetInteger(Il.IL_IMAGE_WIDTH), _
             Il.ilGetInteger(Il.IL_IMAGE_HEIGHT), 0, Il.ilGetInteger(Il.IL_IMAGE_FORMAT), Gl.GL_UNSIGNED_BYTE, _
@@ -506,31 +506,37 @@ Module modTextures
         success = Il.ilGetError
         If success = Il.IL_NO_ERROR Then
             'Ilu.iluFlipImage()
-            Ilu.iluMirror()
+            ' Ilu.iluMirror()
             Dim width As Integer = Il.ilGetInteger(Il.IL_IMAGE_WIDTH)
             Dim height As Integer = Il.ilGetInteger(Il.IL_IMAGE_HEIGHT)
+            'Dim dds_format = Il.ilGetInteger(Il.IL_DXTC_DATA_FORMAT)
+            'Debug.WriteLine(dds_format.ToString)
 
+            'Il.ilConvertImage(Il.IL_BGRA, Il.IL_UNSIGNED_BYTE)
 
-            Il.ilConvertImage(Il.IL_BGRA, Il.IL_UNSIGNED_BYTE)
+            'success = Il.ilConvertImage(Il.IL_RGBA, Il.IL_UNSIGNED_BYTE)
 
-            success = Il.ilConvertImage(Il.IL_RGBA, Il.IL_UNSIGNED_BYTE) ' Convert every colour component into unsigned bytes
-            'If your image contains alpha channel you can replace IL_RGB with IL_RGBA */
             Gl.glGenTextures(1, image_id)
             Gl.glEnable(Gl.GL_TEXTURE_2D)
             Gl.glBindTexture(Gl.GL_TEXTURE_2D, image_id)
-            Gl.glTexParameteri(Gl.GL_TEXTURE_2D, Gl.GL_TEXTURE_MAG_FILTER, Gl.GL_NEAREST)
+            If largestAnsio > 0 Then
+                Gl.glTexParameteri(Gl.GL_TEXTURE_2D, Gl.GL_TEXTURE_MAX_ANISOTROPY_EXT, largestAnsio)
+            End If
+            Gl.glTexParameteri(Gl.GL_TEXTURE_2D, Gl.GL_TEXTURE_MAG_FILTER, Gl.GL_LINEAR)
             Gl.glTexParameteri(Gl.GL_TEXTURE_2D, Gl.GL_TEXTURE_MIN_FILTER, Gl.GL_LINEAR_MIPMAP_LINEAR)
+            Gl.glTexParameteri(Gl.GL_TEXTURE_2D, Gl.GL_GENERATE_MIPMAP, Gl.GL_TRUE)
 
             Gl.glTexParameteri(Gl.GL_TEXTURE_2D, Gl.GL_TEXTURE_WRAP_S, Gl.GL_REPEAT)
             Gl.glTexParameteri(Gl.GL_TEXTURE_2D, Gl.GL_TEXTURE_WRAP_T, Gl.GL_REPEAT)
 
-            Gl.glTexImage2D(Gl.GL_TEXTURE_2D, 0, Il.ilGetInteger(Il.IL_IMAGE_BPP), Il.ilGetInteger(Il.IL_IMAGE_WIDTH), _
-            Il.ilGetInteger(Il.IL_IMAGE_HEIGHT), 0, Il.ilGetInteger(Il.IL_IMAGE_FORMAT), Gl.GL_UNSIGNED_BYTE, _
+            Gl.glTexImage2D(Gl.GL_TEXTURE_2D, 0, Gl.GL_RGBA8, width, height, 0, Gl.GL_RGBA, Gl.GL_UNSIGNED_BYTE, _
             Il.ilGetData()) '  Texture specification 
-            Gl.glGenerateMipmapEXT(Gl.GL_TEXTURE_2D)
+
+
             Gl.glBindTexture(Gl.GL_TEXTURE_2D, 0)
             Il.ilBindImage(0)
             Ilu.iluDeleteImage(texID)
+            Gl.glFinish()
             Return image_id
         Else
             log_text.AppendLine("File Missing: " + fs)

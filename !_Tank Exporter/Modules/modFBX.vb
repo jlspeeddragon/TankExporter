@@ -862,9 +862,22 @@ outahere:
         '---------------------------------------------------------------------------------------------------
         'now we will load the model from the package files
         For i = 1 To 4
-            file_name = m_groups(i).f_name(0).Replace(".primitives_processed", ".model") 'assuming (0) has the correct name.
+            Dim kk As Integer = 0
+            For j = 0 To m_groups(i).f_name.Length
+                file_name = ""
+                If m_groups(i).f_name(j).Contains("vehicles") Then
+                    file_name = m_groups(i).f_name(j).Replace(".primitives_processed", ".model") 'assuming (0) has the correct name.
+                    kk = j
+                    Exit For
+                End If
+            Next
+            If file_name = "" Then
+                MsgBox("it looks like you change the name of one of the tank models. Don't do that!", MsgBoxStyle.Exclamation, "Opps!")
+                MODEL_LOADED = False
+                Return
+            End If
             file_name = file_name.Replace(".primitives", ".model")
-            current_tank_package = m_groups(i).package_id(0)
+            current_tank_package = m_groups(i).package_id(kk)
             Dim success = build_primitive_data(True)
         Next
         '---------------------------------------------------------------------------------------------------

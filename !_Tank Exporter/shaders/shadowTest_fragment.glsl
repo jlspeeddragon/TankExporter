@@ -23,7 +23,7 @@ float chebyshevUpperBound( float distance)
     float d = distance - moments.x;
     float p_max =  smoothstep(0.1, 0.18, variance / (variance + d*d));
     //float p_max =   variance / (variance + d*d);
-    p_max = max(p_max,0.0);
+    p_max = max(p_max,0.15);
     return p_max ;
 }
 
@@ -36,7 +36,6 @@ void main()
     float shadow = chebyshevUpperBound(ShadowCoordPostW.z*5000.0);
 
     
-    gl_FragColor.rgb  =  vec3(shadow);
-    
-    gl_FragColor.a = 1.0;
+    gl_FragColor.r  =  shadow;
+  
 }

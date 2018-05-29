@@ -2,10 +2,10 @@
 
     Private Sub FrmShadowSettings_Load(sender As Object, e As EventArgs) Handles MyBase.Load
 
-        AddHandler RadioButton1.CheckedChanged, AddressOf CheckedChanged
-        AddHandler RadioButton2.CheckedChanged, AddressOf CheckedChanged
-        AddHandler RadioButton3.CheckedChanged, AddressOf CheckedChanged
-        AddHandler RadioButton4.CheckedChanged, AddressOf CheckedChanged
+        AddHandler RadioButton1.Click, AddressOf CheckedChanged
+        AddHandler RadioButton2.Click, AddressOf CheckedChanged
+        AddHandler RadioButton3.Click, AddressOf CheckedChanged
+        AddHandler RadioButton4.Click, AddressOf CheckedChanged
         set_buttons()
     End Sub
     Public Sub set_buttons()
@@ -15,13 +15,13 @@
         RadioButton3.Checked = False
         RadioButton4.Checked = False
         Select Case val
-            Case 4096
-                RadioButton1.Checked = True
             Case 2048
-                RadioButton2.Checked = True
+                RadioButton1.Checked = True
             Case 1024
-                RadioButton3.Checked = True
+                RadioButton2.Checked = True
             Case 512
+                RadioButton3.Checked = True
+            Case 256
                 RadioButton4.Checked = True
         End Select
     End Sub
@@ -30,14 +30,14 @@
         If sender.Checked = False Then Return
         Dim val = CInt(sender.Tag)
         Select Case val
-            Case 4096
-                shadowMapSize = 4096
             Case 2048
                 shadowMapSize = 2048
             Case 1024
                 shadowMapSize = 1024
             Case 512
                 shadowMapSize = 512
+            Case 256
+                shadowMapSize = 256
         End Select
         My.Settings.shadow_quality = shadowMapSize.ToString
         reset_shadowFbo()
