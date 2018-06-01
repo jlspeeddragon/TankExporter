@@ -38,6 +38,7 @@ Module modDecals
 
     Public decal_textures() As decal_texture_
     Public Structure decal_texture_
+        Public full_path As String
         Public colorMap_name As String
         Public colorMap_Id As Integer
         Public normalMap_Id As Integer
@@ -428,8 +429,19 @@ Module modDecals
 
         End With
     End Sub
+    Public Sub load_this_Decal(ByVal j As Integer)
+        If decal_textures(j).colorMap_Id = 0 Then
+            Dim name As String = decal_textures(j).full_path
+            decal_textures(j).colorMap_Id = load_dds_file(name)
+            Dim ts = name.Replace("_AM.dds", "_NM.dds")
+            decal_textures(j).normalMap_Id = load_dds_file(ts)
+            ts = name.Replace("_AM.dds", "_GMM.dds")
+            decal_textures(j).gmmMap_id = load_dds_file(ts)
+        End If
 
 
+
+    End Sub
     Public Sub load_decal_textures()
         Dim dPath As String = decal_path + "\maps\decals_pbs\"
         Dim dir_info = Directory.GetFiles(dPath)
@@ -448,12 +460,13 @@ Module modDecals
         For j = 0 To c_c - 1
             If File.Exists(c_names(j).Replace("_AM.dds", "_GMM.dds")) Then
                 decal_textures(j) = New decal_texture_
+                decal_textures(j).full_path = c_names(j)
                 decal_textures(j).colorMap_name = Path.GetFileNameWithoutExtension(c_names(j))
-                decal_textures(j).colorMap_Id = load_dds_file(c_names(j))
-                ts = c_names(j).Replace("_AM.dds", "_NM.dds")
-                decal_textures(j).normalMap_Id = load_dds_file(ts)
-                ts = c_names(j).Replace("_AM.dds", "_GMM.dds")
-                decal_textures(j).gmmMap_id = load_dds_file(ts)
+                'decal_textures(j).colorMap_Id = load_dds_file(c_names(j))
+                'ts = c_names(j).Replace("_AM.dds", "_NM.dds")
+                ' decal_textures(j).normalMap_Id = load_dds_file(ts)
+                'ts = c_names(j).Replace("_AM.dds", "_GMM.dds")
+                'decal_textures(j).gmmMap_id = load_dds_file(ts)
             Else
                 Try
                     File.Delete(c_names(j))
@@ -681,7 +694,7 @@ Module modDecals
         Dim p = Temp_Storage + "\decal_layout"
         'Return
         If Not File.Exists(p) Then
-            'File.Copy(Application.StartupPath + "\resources\decal_layout\decal_layout", p)
+            File.Copy(Application.StartupPath + "\resources\decal_layout\decal_layout", p)
         End If
         Dim f = File.Open(p, FileMode.Open, FileAccess.Read)
         Dim b As New BinaryReader(f)
@@ -731,6 +744,7 @@ Module modDecals
 
                 For i = 0 To decal_textures.Length - 1
                     If decal_matrix_list(j).decal_texture = decal_textures(i).colorMap_name Then
+                        load_this_Decal(i)
                         decal_matrix_list(j).texture_id = decal_textures(i).colorMap_Id
                         decal_matrix_list(j).normal_id = decal_textures(i).normalMap_Id
                         decal_matrix_list(j).gmm_id = decal_textures(i).gmmMap_id

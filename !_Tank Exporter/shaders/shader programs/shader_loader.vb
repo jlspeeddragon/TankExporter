@@ -139,17 +139,20 @@ Module shader_loader
             vs(0) = vs_s.ReadToEnd
             vs_s.Close()
             vs_s.Dispose()
+            vs(0) = clean_shader(vs(0)) ' remove non_ascii characters
         End Using
         Using fs_s As New StreamReader(f)
             fs(0) = fs_s.ReadToEnd
             fs_s.Close()
             fs_s.Dispose()
+            fs(0) = clean_shader(fs(0))
         End Using
         If has_geo Then
             Using gs_s As New StreamReader(g)
                 gs(0) = gs_s.ReadToEnd
                 gs_s.Close()
                 gs_s.Dispose()
+                gs(0) = clean_shader(gs(0))
             End Using
         End If
 
@@ -296,7 +299,13 @@ Module shader_loader
         Return shader
     End Function
 
-
+    Private Function clean_shader(ByRef s As String) As String
+        'removes any non-ascii characters
+        Dim encoder = Encoding.UTF8
+        Dim ar = encoder.GetBytes(s)
+        s = encoder.GetString(ar)
+        Return s
+    End Function
     Public Sub gl_error(s As String)
         s = s.Replace(vbLf, vbCrLf)
         s.Replace("0(", vbCrLf + "(")

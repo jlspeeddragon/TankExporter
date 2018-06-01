@@ -1051,7 +1051,8 @@ Public Class frmMain
         For i = 0 To cnt - 1
             Using z As New ZipFile(maps(i))
                 For Each item In z
-                    If item.FileName.Contains("decals_pbs") Then
+                    If item.FileName.Contains("decals_pbs") _
+                And Not item.FileName.ToLower.Contains("snow") Then
                         item.Extract(oPath, ExtractExistingFileAction.OverwriteSilently)
                     End If
                 Next
@@ -6538,6 +6539,7 @@ make_this_tank:
         Else
             Dim d = t_list.SelectedText.Split(":")
             Dim id = CInt(d(1))
+            load_this_Decal(id)
             decal_matrix_list(current_decal).decal_texture = decal_textures(id).colorMap_name
             decal_matrix_list(current_decal).texture_id = decal_textures(id).colorMap_Id
             decal_matrix_list(current_decal).normal_id = decal_textures(id).normalMap_Id

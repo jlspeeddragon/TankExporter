@@ -5,6 +5,14 @@
 
 #### This is an ongoing project by me.. Coffee_
 
+## Version 45:
+I added code to clean the shader files of any non-ascii characters. Hopefully, this will help AMD cards load the shaders with no issues.
+
+## Version 44:
+I changed how decals are loaded. They are only loaded if they are used. This is dynamic so adding a new decal with an unused texture will cause a slight delay while the decal is being loaded.
+This version might cause problems so I am leaving version 42 on GitHub and it should be used if this one fails.
+Cleaning out the wot_temp folder might help if the app crashes at startup. Cleaning this folder should be done every time WoT adds or changes tank models!
+
 ## Version 43:
 Decals are now on the terrain. You can edit and save changes to them. The decals come from the game's pkg files and use PBR to shade them. I am leaving version 42 GitHub incase this version is unusable by anyone.
 
