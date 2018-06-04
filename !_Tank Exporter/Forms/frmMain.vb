@@ -3391,33 +3391,33 @@ fuckit:
         '====================================
         Gdi.SwapBuffers(pb1_hDC)
         '====================================
-        If frmTextureViewer.Visible Then
-            For i = 0 To texture_buttons.Length - 2
-                If current_part = texture_buttons(i).part_ID Then
-                    If texture_buttons(i).selected Then
-                        frmTextureViewer.draw()
-                        If Not (Wgl.wglMakeCurrent(pb1_hDC, pb1_hRC)) Then
-                            MessageBox.Show("Unable to make rendering context current")
-                            End
-                        End If
-                        Exit For
-                    End If
-                End If
-            Next
-        End If
-        If pb2_has_focus Then
-            frmTextureViewer.draw()
-            If Not (Wgl.wglMakeCurrent(pb1_hDC, pb1_hRC)) Then
-                MessageBox.Show("Unable to make rendering context current")
-                End
-            End If
-            ViewOrtho()
-        End If
-        '==============================================================================
+        'has to be AFTER the buffer swap
         Dim et = pick_timer.ElapsedMilliseconds
-        If et > 166 Then 'only do picking so often.. NOT every frame.. its to expensive in render time!
+        If et > 100 Then 'only do picking so often.. NOT every frame.. its to expensive in render time!
             pick_timer.Restart()
-            'has to be AFTER the buffer swap
+            If frmTextureViewer.Visible Then
+                For i = 0 To texture_buttons.Length - 2
+                    If current_part = texture_buttons(i).part_ID Then
+                        If texture_buttons(i).selected Then
+                            frmTextureViewer.draw()
+                            If Not (Wgl.wglMakeCurrent(pb1_hDC, pb1_hRC)) Then
+                                MessageBox.Show("Unable to make rendering context current")
+                                End
+                            End If
+                            Exit For
+                        End If
+                    End If
+                Next
+                If pb2_has_focus Then
+                    frmTextureViewer.draw()
+                    If Not (Wgl.wglMakeCurrent(pb1_hDC, pb1_hRC)) Then
+                        MessageBox.Show("Unable to make rendering context current")
+                        End
+                    End If
+                    ViewOrtho()
+                End If
+            End If
+            '==============================================================================
             If Not STOP_BUTTON_SCAN Then
                 Gl.glFrontFace(Gl.GL_CW)
                 If season_Buttons_VISIBLE Then
@@ -3501,6 +3501,7 @@ fuckit:
             Gl.glVertex3f(v1.x, v1.y, v1.z)
             Gl.glVertex3f(v3.x, v3.y, v3.z)
             Gl.glEnd()
+            Gl.glDisable(Gl.GL_BLEND)
         End If
     End Sub
     Public Sub track_test()
@@ -6503,7 +6504,7 @@ make_this_tank:
 
     Private Sub m_sel_texture_Click(sender As Object, e As EventArgs) Handles m_sel_texture.Click
         If current_decal < 0 Then Return
-        If t_list Is Nothing Then
+        If t_list Is Nothing Then ' create text box and fill it with all the texture names if it hasn't been created already.
             t_list = New TextBox
             t_list.Multiline = True
             t_list.Parent = decal_panel
@@ -6517,7 +6518,6 @@ make_this_tank:
             t_list.ScrollBars = ScrollBars.Vertical
             For j = 0 To decal_textures.Length - 1
                 t_list.Text += decal_textures(j).colorMap_name + " :" + j.ToString + vbCrLf
-
             Next
             AddHandler t_list.Click, AddressOf handle_t_click
         End If

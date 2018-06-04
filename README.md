@@ -5,6 +5,9 @@
 
 #### This is an ongoing project by me.. Coffee_
 
+## Version 46:
+Fixed a bug with selection of a UV triangle in the texture view window.
+
 ## Version 45:
 I added code to clean the shader files of any non-ascii characters. Hopefully, this will help AMD cards load the shaders with no issues.
 
