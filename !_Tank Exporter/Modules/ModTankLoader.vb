@@ -531,7 +531,7 @@ Module ModTankLoader
             If entry IsNot Nothing Then
                 entry.Extract(r)
             Else
-                entry = frmMain.packages(11)(file_name)
+                entry = frmMain.packages_2(current_tank_package)(file_name)
                 If entry IsNot Nothing Then
                     entry.Extract(r)
                 Else
@@ -1538,13 +1538,14 @@ look_again:
                 If e IsNot Nothing Then
                     e.Extract(mstream)
                 Else
-                    If filename.Contains("Turret_01") Then
-                        filename = filename.Replace("Turret_01", "Turret_02")
-                        GoTo look_again
-                    End If
-                    e = frmMain.packages_1(11)(filename)
+                    e = frmMain.packages_2(current_tank_package)(filename)
                     If e IsNot Nothing Then
                         e.Extract(mstream)
+                    Else
+                        If filename.Contains("Turret_01") Then
+                            filename = filename.Replace("Turret_01", "Turret_02")
+                            GoTo look_again
+                        End If
                     End If
                 End If
             End If
@@ -1570,13 +1571,18 @@ get_visual:
             If e IsNot Nothing Then
                 e.Extract(mstream)
             Else
-                e = frmMain.packages(11)(filename)
+                e = frmMain.packages_2(current_tank_package)(filename)
                 If e IsNot Nothing Then
                     e.Extract(mstream)
                 Else
                     e = frmMain.packages(11)(filename)
                     If e IsNot Nothing Then
                         e.Extract(mstream)
+                    Else
+                        e = frmMain.packages_2(11)(filename)
+                        If e IsNot Nothing Then
+                            e.Extract(mstream)
+                        End If
                     End If
                 End If
             End If

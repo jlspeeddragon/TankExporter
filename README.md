@@ -5,6 +5,10 @@
 
 #### This is an ongoing project by me.. Coffee_
 
+## Version 47:
+Updated to work with the last version 1.0.2.0 of the game.
+Removed version 43 from GitHub. Its unusable with 1.0.2.0.
+
 ## Version 46:
 Fixed a bug with selection of a UV triangle in the texture view window.
 

@@ -55,9 +55,9 @@ Public Class frmMain
     Dim stepper As Integer = 0
 
     Public Shared packages(12) As ZipFile
-    Public Shared packages_1(12) As ZipFile
+    Public Shared packages_2(12) As ZipFile
     Public Shared packages_HD(12) As ZipFile
-    Public Shared packages_HD_1(12) As ZipFile
+    Public Shared packages_HD_2(12) As ZipFile
     Public Shared shared_pkg As Ionic.Zip.ZipFile
     Public Shared shared_sandbox_pkg As Ionic.Zip.ZipFile
     Public shared_contents_build As New Ionic.Zip.ZipFile
@@ -707,7 +707,7 @@ Public Class frmMain
                 Dim cnt = 0
                 Dim arc = ZipFile.Read(My.Settings.game_path + "\res\packages\shared_content-part1.pkg")
                 PG1.Maximum = arc.Count
-                start_up_log.AppendLine("reading: \res\packages\shared_content-part2.pkg")
+                start_up_log.AppendLine("reading: \res\packages\shared_content-part1.pkg")
 
                 For Each entry In arc
                     PG1.Value = cnt
@@ -1851,9 +1851,11 @@ tryagain:
             For i = 1 To 10
                 info_Label.Text = " Creating Nodes by tier (" + i.ToString("00") + ")"
                 Application.DoEvents()
-                Application.DoEvents()
                 store_in_treeview(i, treeviews(i))
-                'store_in_treeview_1(i, treeviews(i))
+                If i > 4 Then
+                    store_in_treeview_1(i, treeviews(i))
+                End If
+                Application.DoEvents()
             Next
             get_tanks_shared()
             'add count to log
@@ -1893,8 +1895,12 @@ tryagain:
         tn.ShowLines = False
         tn.Margin = New Padding(0)
         tn.BorderStyle = BorderStyle.None
+        Dim ext As String = "-part1.pkg"
+        If i < 5 Then
+            ext = ".pkg"
+        End If
         Dim cnt As Integer = 0
-        Dim fpath = My.Settings.game_path + "/res/packages/vehicles_level_" + i.ToString("00") + ".pkg"
+        Dim fpath = My.Settings.game_path + "/res/packages/vehicles_level_" + i.ToString("00") + ext
         If File.Exists(fpath) Then
             packages(i) = Ionic.Zip.ZipFile.Read(fpath)
             start_up_log.AppendLine("Getting Tank data from: " + fpath)
@@ -1902,7 +1908,7 @@ tryagain:
             start_up_log.AppendLine("Could not find: " + fpath)
             Return
         End If
-        Dim fpath_1 = My.Settings.game_path + "\res\packages\vehicles_level_" + i.ToString("00") + "_hd.pkg"
+        Dim fpath_1 = My.Settings.game_path + "\res\packages\vehicles_level_" + i.ToString("00") + "_hd" + ext
         If File.Exists(fpath_1) Then
             packages_HD(i) = Ionic.Zip.ZipFile.Read(fpath_1)
             start_up_log.AppendLine("Getting Tank data from: " + fpath_1)
@@ -1964,6 +1970,89 @@ tryagain:
 
     End Sub
 
+    Private Sub store_in_treeview_1(ByVal i As Integer, ByRef tn As TreeView)
+        'AddHandler tn.NodeMouseClick, AddressOf Me.tv_clicked
+        'AddHandler tn.NodeMouseHover, AddressOf Me.tv_mouse_enter
+        'AddHandler tn.MouseLeave, AddressOf Me.tv_mouse_leave
+        'tn.BackColor = Color.DimGray
+        'tn.CheckBoxes = False
+        'tn.ItemHeight = 17
+        'tn.HotTracking = True
+        'tn.ShowRootLines = False
+        'tn.ShowLines = False
+        'tn.Margin = New Padding(0)
+        'tn.BorderStyle = BorderStyle.None
+        Dim cnt As Integer = 0
+        Dim fpath = My.Settings.game_path + "/res/packages/vehicles_level_" + i.ToString("00") + "-part2.pkg"
+        If File.Exists(fpath) Then
+            packages_2(i) = Ionic.Zip.ZipFile.Read(fpath)
+            start_up_log.AppendLine("Getting Tank data from: " + fpath)
+        Else
+            start_up_log.AppendLine("Could not find: " + fpath)
+            Return
+        End If
+        Dim fpath_1 = My.Settings.game_path + "\res\packages\vehicles_level_" + i.ToString("00") + "_hd-part2.pkg"
+        If File.Exists(fpath_1) Then
+            packages_HD_2(i) = Ionic.Zip.ZipFile.Read(fpath_1)
+            start_up_log.AppendLine("Getting Tank data from: " + fpath_1)
+        Else
+            'todo
+        End If
+
+        get_tank_info_by_tier(i.ToString)
+        ReDim node_list(i).item(tier_list.Length)
+        ReDim icons(i).img(tier_list.Length)
+
+        For Each t In tier_list
+            Dim n As New TreeNode
+            Select Case t.type ' icon types
+                Case "Heavy"
+                    n.SelectedImageIndex = 0
+                    n.StateImageIndex = 0
+                    n.ImageIndex = 0
+                Case "Medium"
+                    n.SelectedImageIndex = 2
+                    n.StateImageIndex = 2
+                    n.ImageIndex = 2
+                Case "Light"
+                    n.SelectedImageIndex = 4
+                    n.StateImageIndex = 4
+                    n.ImageIndex = 4
+                Case "Destoryer"
+                    n.SelectedImageIndex = 6
+                    n.StateImageIndex = 6
+                    n.ImageIndex = 6
+                Case "Artillary"
+                    n.SelectedImageIndex = 8
+                    n.StateImageIndex = 8
+                    n.ImageIndex = 8
+
+            End Select
+            n.Name = t.nation
+            n.Text = t.tag
+            n.Tag = fpath + ":" + "vehicles/" + get_nation(t.nation) + "/" + t.tag
+            node_list(i).item(cnt).name = t.tag
+            node_list(i).item(cnt).node = n
+            node_list(i).item(cnt).package = packages_2(i).Name
+            icons(i).img(cnt) = get_tank_icon(n.Text).Clone
+            If icons(i).img(cnt) IsNot Nothing Then
+                node_list(i).item(cnt).icon = icons(i).img(cnt).Clone
+                node_list(i).item(cnt).icon.Tag = current_png_path
+                cnt += 1
+                TOTAL_TANKS_FOUND += 1
+            Else
+                start_up_log.AppendLine("!!!!! Missing Tank Icon PNG !!!!! :" + current_png_path)
+            End If
+        Next
+        ReDim Preserve node_list(i).item(cnt)
+
+        Application.DoEvents()
+        ReDim Preserve icons(i).img(cnt)
+        Application.DoEvents()
+        tn.Tag = i
+
+    End Sub
+
     Private Function get_nation(ByVal n As String) As String
         Select Case n
             Case "usa"
@@ -1993,103 +2082,7 @@ tryagain:
     End Function
 
 
-    Private Sub store_in_treeview_1(ByVal i As Integer, tn As TreeView)
 
-        Dim fpath = My.Settings.game_path + "\res\packages\vehicles_level_" + i.ToString("00") + "_1.pkg"
-        If File.Exists(fpath) Then ' check if it even exist.. some dont.
-            packages_1(i) = Ionic.Zip.ZipFile.Read(fpath)
-        Else
-            Return
-        End If
-        Try
-            Dim fpath_1 = My.Settings.game_path + "\res\packages\vehicles_level_" + i.ToString("00") + "_hd_1.pkg"
-            If File.Exists(fpath_1) Then
-                packages_HD_1(i) = Ionic.Zip.ZipFile.Read(fpath_1)
-            Else
-                'todo
-            End If
-        Catch ex As Exception
-            start_up_log.AppendLine("!!!!! vehicles_level HD package did not OPEN !!!!! :" + fpath)
-        End Try
-        start_up_log.AppendLine("Getting 2nd pkg Tank data from: " + fpath)
-        Dim cnt As Integer = icons(i).img.Length - 1
-        ReDim Preserve icons(i).img(150)
-        ReDim Preserve node_list(i).item(150)
-        alltanks.Append("# Tier " + i.ToString("00") + vbCrLf)
-        'Get tanks fron tier packages
-        For Each entry As ZipEntry In packages_1(i)
-            If entry.FileName.ToLower.Contains("collision_client/chassis.model") Then
-                Dim t_name = entry.FileName
-                Dim ta = t_name.Split("/")
-                t_name = ""
-                For j = 0 To 2
-                    t_name += ta(j) + "/"
-                Next
-                Dim n As New TreeNode
-                n.Text = ta(2)
-                n.Tag = fpath + ":" + t_name
-                'need this to look up actual tanks game name in the
-                '\res\packages\scripts.pkg\scripts\item_defs\vehicles\***poland***\list.xml
-                Dim s As String = ""
-                Select Case ta(1)
-                    Case "american"
-                        n.Name = "usa"
-                        s = get_user_name(n.Text)
-                    Case "british"
-                        n.Name = "uk"
-                        s = get_user_name(n.Text)
-                    Case "chinese"
-                        n.Name = "china"
-                        s = get_user_name(n.Text)
-                    Case "czech"
-                        n.Name = "czech"
-                        s = get_user_name(n.Text)
-                    Case "french"
-                        n.Name = "france"
-                        s = get_user_name(n.Text)
-                    Case "german"
-                        n.Name = "germany"
-                        s = get_user_name(n.Text)
-                    Case "japan"
-                        n.Name = "japan"
-                        s = get_user_name(n.Text)
-                    Case "poland"
-                        n.Name = "poland"
-                        s = get_user_name(n.Text)
-                    Case "russian"
-                        n.Name = "ussr"
-                        s = get_user_name(n.Text)
-                    Case "sweden"
-                        n.Name = "sweden"
-                        s = get_user_name(n.Text)
-                End Select
-                If s.Length > 0 Then ' only save what actually exist
-                    TOTAL_TANKS_FOUND += 1
-                    node_list(i).item(cnt) = New t_items_
-                    Dim na = n.Text.Split("_")
-                    If na(0).Length = 3 Then
-                        na(0) += "99"
-                    End If
-                    node_list(i).item(cnt).name = na(0)
-                    node_list(i).item(cnt).node = n
-                    node_list(i).item(cnt).package = packages(i).Name
-                    icons(i).img(cnt) = get_tank_icon(n.Text).Clone
-                    If icons(i).img(cnt) IsNot Nothing Then
-                        node_list(i).item(cnt).icon = icons(i).img(cnt).Clone
-                        node_list(i).item(cnt).icon.Tag = current_png_path
-                        cnt += 1
-                    Else
-                        start_up_log.AppendLine("!!!!! Missing Tank Icon PNG !!!!! :" + current_png_path)
-                    End If
-                End If
-            End If
-        Next
-        ReDim Preserve node_list(i).item(cnt)
-
-        Application.DoEvents()
-        ReDim Preserve icons(i).img(cnt)
-        Application.DoEvents()
-    End Sub
 
     Private Sub get_tanks_shared()
         For Each entry As ZipEntry In packages(11)
@@ -4393,6 +4386,10 @@ fuckit:
         If ent IsNot Nothing Then
             Return name
         End If
+        ent = packages_2(current_tank_package)(name)
+        If ent IsNot Nothing Then
+            Return name
+        End If
         Return ""
     End Function
 
@@ -4416,7 +4413,12 @@ fuckit:
         Next
         ar = ts.Split("_")
         ts = ar(2)
-        ar = ts.Split(".")
+        If ts.Contains("-part") Then
+            ar = ts.Split("-")
+        Else
+            ar = ts.Split(".")
+
+        End If
         Dim fd As String = "lod0"
         Try
             current_tank_package = CInt(ar(0))
@@ -4477,7 +4479,7 @@ fuckit:
         Dim chassis(10) As String
         ReDim hull_tile(10)
         ReDim gun_tile(10)
-        ReDim turret_tile(GLUT_BITMAP_HELVETICA_10)
+        ReDim turret_tile(10)
         Dim cnt As Integer = 0
 
         Dim tbl = t.Tables("gun")
@@ -5531,9 +5533,205 @@ fuckit:
                 End If ' filename match
             Next ' next entry
         Next 'next package
+        ' now check package_2 data
+        Dim start_from As Integer = 5 ' This might change and its used in 2 places
+        For i = start_from To 10
+            For Each ent In packages_2(i)
+                If ent.FileName.Contains(ar(2)) Then
+                    If Not ent.FileName.Contains("collision_client") Then
+                        If Not ent.FileName.Contains("crash") Then
+                            If Not models Then
+                                Select Case all_lods
+                                    Case True
+                                        Select Case frmExtract.ext_chassis.Checked
+                                            Case True
+                                                If ent.FileName.ToLower.Contains("chassis") Then
+                                                    ent.Extract(My.Settings.res_mods_path, ExtractExistingFileAction.DoNotOverwrite)
+                                                End If
+                                        End Select
+                                        Select Case frmExtract.ext_hull.Checked
+                                            Case True
+                                                If ent.FileName.ToLower.Contains("hull") Then
+                                                    ent.Extract(My.Settings.res_mods_path, ExtractExistingFileAction.DoNotOverwrite)
+                                                End If
+                                        End Select
+                                        Select Case frmExtract.ext_turret.Checked
+                                            Case True
+                                                If ent.FileName.ToLower.Contains("turret") Then
+                                                    ent.Extract(My.Settings.res_mods_path, ExtractExistingFileAction.DoNotOverwrite)
+                                                End If
+                                        End Select
+                                        Select Case frmExtract.ext_gun.Checked
+                                            Case True
+                                                If ent.FileName.ToLower.Contains("gun") Then
+                                                    ent.Extract(My.Settings.res_mods_path, ExtractExistingFileAction.DoNotOverwrite)
+                                                End If
+                                        End Select
+                                    Case False
+                                        If ent.FileName.ToLower.Contains("lod0") Then
+                                            Select Case frmExtract.ext_chassis.Checked
+                                                Case True
+                                                    If ent.FileName.ToLower.Contains("chassis") Then
+                                                        ent.Extract(My.Settings.res_mods_path, ExtractExistingFileAction.DoNotOverwrite)
+                                                    End If
+                                            End Select
+                                            Select Case frmExtract.ext_hull.Checked
+                                                Case True
+                                                    If ent.FileName.ToLower.Contains("hull") Then
+                                                        ent.Extract(My.Settings.res_mods_path, ExtractExistingFileAction.DoNotOverwrite)
+                                                    End If
+                                            End Select
+                                            Select Case frmExtract.ext_turret.Checked
+                                                Case True
+                                                    If ent.FileName.ToLower.Contains("turret") Then
+                                                        ent.Extract(My.Settings.res_mods_path, ExtractExistingFileAction.DoNotOverwrite)
+                                                    End If
+                                            End Select
+                                            Select Case frmExtract.ext_gun.Checked
+                                                Case True
+                                                    If ent.FileName.ToLower.Contains("gun") Then
+                                                        ent.Extract(My.Settings.res_mods_path, ExtractExistingFileAction.DoNotOverwrite)
+                                                    End If
+                                            End Select
+                                        End If
+                                End Select
+                            End If 'if model
+                            Select Case ent.FileName.Contains("dds")
+                                Case True
+                                    Select Case frmExtract.ext_chassis.Checked
+                                        Case True
+                                            If ent.FileName.ToLower.Contains("chassis") Then
+                                                ent.Extract(My.Settings.res_mods_path, ExtractExistingFileAction.DoNotOverwrite)
+                                            End If
+                                    End Select
+                                    Select Case frmExtract.ext_hull.Checked
+                                        Case True
+                                            If ent.FileName.ToLower.Contains("hull") Then
+                                                ent.Extract(My.Settings.res_mods_path, ExtractExistingFileAction.DoNotOverwrite)
+                                            End If
+                                    End Select
+                                    Select Case frmExtract.ext_turret.Checked
+                                        Case True
+                                            If ent.FileName.ToLower.Contains("turret") Then
+                                                ent.Extract(My.Settings.res_mods_path, ExtractExistingFileAction.DoNotOverwrite)
+                                            End If
+                                    End Select
+                                    Select Case frmExtract.ext_gun.Checked
+                                        Case True
+                                            If ent.FileName.ToLower.Contains("gun") Then
+                                                ent.Extract(My.Settings.res_mods_path, ExtractExistingFileAction.DoNotOverwrite)
+                                            End If
+                                    End Select
+                            End Select
+                        End If ' crash
+                    End If ' collision_client
+                End If ' filename match
+            Next ' next entry
+        Next 'next package
         ' now check package_hd data
         For i = 1 To packages_HD.Length - 2
             If packages_HD(i) IsNot Nothing Then
+
+                For Each ent In packages_HD(i)
+                    If ent.FileName.Contains(ar(2)) Then
+                        If Not ent.FileName.Contains("collision_client") Then
+                            If Not ent.FileName.Contains("crash") Then
+                                If Not models Then
+                                    Select Case all_lods
+                                        Case True
+                                            Select Case frmExtract.ext_chassis.Checked
+                                                Case True
+                                                    If ent.FileName.ToLower.Contains("chassis") Then
+                                                        ent.Extract(My.Settings.res_mods_path, ExtractExistingFileAction.DoNotOverwrite)
+                                                    End If
+                                            End Select
+                                            Select Case frmExtract.ext_hull.Checked
+                                                Case True
+                                                    If ent.FileName.ToLower.Contains("hull") Then
+                                                        ent.Extract(My.Settings.res_mods_path, ExtractExistingFileAction.DoNotOverwrite)
+                                                    End If
+                                            End Select
+                                            Select Case frmExtract.ext_turret.Checked
+                                                Case True
+                                                    If ent.FileName.ToLower.Contains("turret") Then
+                                                        ent.Extract(My.Settings.res_mods_path, ExtractExistingFileAction.DoNotOverwrite)
+                                                    End If
+                                            End Select
+                                            Select Case frmExtract.ext_gun.Checked
+                                                Case True
+                                                    If ent.FileName.ToLower.Contains("gun") Then
+                                                        ent.Extract(My.Settings.res_mods_path, ExtractExistingFileAction.DoNotOverwrite)
+                                                    End If
+                                            End Select
+                                        Case False
+                                            If ent.FileName.ToLower.Contains("lod0") Then
+                                                Select Case frmExtract.ext_chassis.Checked
+                                                    Case True
+                                                        If ent.FileName.ToLower.Contains("chassis") Then
+                                                            ent.Extract(My.Settings.res_mods_path, ExtractExistingFileAction.DoNotOverwrite)
+                                                        End If
+                                                End Select
+                                                Select Case frmExtract.ext_hull.Checked
+                                                    Case True
+                                                        If ent.FileName.ToLower.Contains("hull") Then
+                                                            ent.Extract(My.Settings.res_mods_path, ExtractExistingFileAction.DoNotOverwrite)
+                                                        End If
+                                                End Select
+                                                Select Case frmExtract.ext_turret.Checked
+                                                    Case True
+                                                        If ent.FileName.ToLower.Contains("turret") Then
+                                                            ent.Extract(My.Settings.res_mods_path, ExtractExistingFileAction.DoNotOverwrite)
+                                                        End If
+                                                End Select
+                                                Select Case frmExtract.ext_gun.Checked
+                                                    Case True
+                                                        If ent.FileName.ToLower.Contains("gun") Then
+                                                            ent.Extract(My.Settings.res_mods_path, ExtractExistingFileAction.DoNotOverwrite)
+                                                        End If
+                                                End Select
+                                            End If
+                                    End Select
+                                End If 'if model
+                                Select Case ent.FileName.Contains("dds")
+                                    Case True
+                                        Select Case frmExtract.ext_chassis.Checked
+                                            Case True
+                                                If ent.FileName.ToLower.Contains("chassis") Then
+                                                    ent.Extract(My.Settings.res_mods_path, ExtractExistingFileAction.DoNotOverwrite)
+                                                    p = ent.FileName
+                                                End If
+                                        End Select
+                                        Select Case frmExtract.ext_hull.Checked
+                                            Case True
+                                                If ent.FileName.ToLower.Contains("hull") Then
+                                                    ent.Extract(My.Settings.res_mods_path, ExtractExistingFileAction.DoNotOverwrite)
+                                                    p = ent.FileName
+                                                End If
+                                        End Select
+                                        Select Case frmExtract.ext_turret.Checked
+                                            Case True
+                                                If ent.FileName.ToLower.Contains("turret") Then
+                                                    ent.Extract(My.Settings.res_mods_path, ExtractExistingFileAction.DoNotOverwrite)
+                                                    p = ent.FileName
+                                                End If
+                                        End Select
+                                        Select Case frmExtract.ext_gun.Checked
+                                            Case True
+                                                If ent.FileName.ToLower.Contains("gun") Then
+                                                    ent.Extract(My.Settings.res_mods_path, ExtractExistingFileAction.DoNotOverwrite)
+                                                    p = ent.FileName
+                                                End If
+                                        End Select
+                                End Select
+                            End If ' crash
+                        End If ' collision_client
+                    End If ' filename match
+                Next ' next entry
+            End If 'isnot nothing
+        Next 'next package
+        'now check package_hd_2 data
+        For i = start_from To packages_HD.Length - 2
+            If packages_HD_2(i) IsNot Nothing Then
 
                 For Each ent In packages_HD(i)
                     If ent.FileName.Contains(ar(2)) Then

@@ -151,6 +151,12 @@ Module modTextures
             ent = frmMain.packages_HD(current_tank_package)(name.Replace(".dds", "_hd.dds")) ' look in tank package
         Catch ex As Exception
         End Try
+        If ent Is Nothing Then
+            Try 'look in HD packages
+                ent = frmMain.packages_HD_2(current_tank_package)(name.Replace(".dds", "_hd.dds")) ' look in tank package
+            Catch ex As Exception
+            End Try
+        End If
         If ent Is Nothing Then ' look in shared content
             ent = frmMain.packages(11)(name.Replace(".dds", "_hd.dds")) ' look in tank package
         End If
@@ -164,6 +170,11 @@ Module modTextures
         Else
             'look in current pkg for SD texture
             ent = frmMain.packages(current_tank_package)(name) ' look in tank package
+            If ent Is Nothing Then 'if not found in current pkg than look in shared
+                If frmMain.packages_2(current_tank_package) IsNot Nothing Then
+                    ent = frmMain.packages_2(current_tank_package)(name) ' look in 2nd tank package
+                End If
+            End If
             If ent Is Nothing Then 'if not found in current pkg than look in shared
                 If frmMain.packages(11) IsNot Nothing Then
                     ent = frmMain.packages(11)(name) ' look in 2nd tank package

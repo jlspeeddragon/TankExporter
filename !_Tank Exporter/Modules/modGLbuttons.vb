@@ -339,9 +339,9 @@ Module modGLbuttons
 
 
     Public Sub load_season_icons()
-        Dim sw = frmMain.gui_pkg("gui\maps\icons\customization\slots\empty_camouflage_winter.png")
-        Dim ss = frmMain.gui_pkg("gui\maps\icons\customization\slots\empty_camouflage_summer.png")
-        Dim sd = frmMain.gui_pkg("gui\maps\icons\customization\slots\empty_camouflage_desert.png")
+        Dim sw = frmMain.gui_pkg("gui\maps\icons\customization\property_sheet\winter_season_icon.png")
+        Dim ss = frmMain.gui_pkg("gui\maps\icons\customization\property_sheet\summer_season_icon.png")
+        Dim sd = frmMain.gui_pkg("gui\maps\icons\customization\property_sheet\desert_season_icon.png")
         Dim ms As New MemoryStream
         Try
             sw.Extract(ms)
