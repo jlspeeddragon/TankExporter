@@ -5,6 +5,9 @@
 
 #### This is an ongoing project by me.. Coffee_
 
+## Version 48:
+Added "Reload Textures" to the context menu on the tier tabs.
+
 ## Version 47:
 Updated to work with the last version 1.0.2.0 of the game.
 Removed version 43 from GitHub. Its unusable with 1.0.2.0.

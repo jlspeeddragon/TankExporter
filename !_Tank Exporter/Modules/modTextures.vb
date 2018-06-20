@@ -120,7 +120,7 @@ Module modTextures
 
     End Sub
 
-    Private Function get_texture_id(name As String) As Integer
+    Public Function get_texture_id(name As String) As Integer
         Dim id As Integer
         If name Is Nothing Then name = ""
         Dim ent As Ionic.Zip.ZipEntry = Nothing

@@ -6851,4 +6851,29 @@ make_this_tank:
         End If
         copy_decal()
     End Sub
+
+    Private Sub m_reload_textures_Click(sender As Object, e As EventArgs) Handles m_reload_textures.Click
+        If Not MODEL_LOADED Then
+            Return
+        End If
+        MODEL_LOADED = False ' stop drawing the tank
+        ' delete texture so we dont waste video memory!
+        For i = 0 To textures.Length - 1
+            Gl.glDeleteTextures(1, textures(i).c_id)
+            Gl.glDeleteTextures(1, textures(i).n_id)
+            If textures(i).ao_id > -1 Then
+                Gl.glDeleteTextures(1, textures(i).ao_id)
+            End If
+            Gl.glDeleteTextures(1, textures(i).gmm_id)
+            If textures(i).detail_id > -1 Then
+                Gl.glDeleteTextures(1, textures(i).detail_id)
+            End If
+        Next
+        ReDim textures(0) ' resize so it can be rebuild
+        For i = 1 To _group.Length - 1
+            build_textures(i) 'get the textures for this model. If its in the cache, use them.
+        Next
+        MODEL_LOADED = True ' enable drawing the tank
+        log_text.AppendLine("---- Reloading Textures -----")
+    End Sub
 End Class
