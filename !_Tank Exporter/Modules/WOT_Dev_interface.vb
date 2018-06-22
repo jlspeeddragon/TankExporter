@@ -90,15 +90,20 @@ Module WOT_Dev_interface
     End Sub
 
     Public Sub get_tank_names()
+        '================================================================
+        Dim application_id As String = "3e19101959e40173881a2f33e9bbe62c"
+        '================================================================
+
+
         frmMain.info_Label.Text = "Connecting to WoT Api Server"
         Application.DoEvents()
         Dim client As New WebClient
-        Dim tags As String = "https://api.worldoftanks.com/wot/encyclopedia/vehicles/?application_id=demo&fields=tag"
-        Dim tiers As String = "https://api.worldoftanks.com/wot/encyclopedia/vehicles/?application_id=demo&fields=tier"
-        Dim shortnames As String = "https://api.worldoftanks.com/wot/encyclopedia/vehicles/?application_id=demo&fields=short_name"
-        Dim nations As String = "https://api.worldoftanks.com/wot/encyclopedia/vehicles/?application_id=demo&fields=nation"
-        Dim types As String = "https://api.worldoftanks.com/wot/encyclopedia/vehicles/?application_id=demo&fields=type"
-        'Dim turrets As String = "https://api.worldoftanks.com/wot/encyclopedia/vehicles/?application_id=demo&fields=turrets"
+        Dim tags As String = "https://api.worldoftanks.com/wot/encyclopedia/vehicles/?application_id=" + application_id + "&fields=tag"
+        Dim tiers As String = "https://api.worldoftanks.com/wot/encyclopedia/vehicles/?application_id=" + application_id + "&fields=tier"
+        Dim shortnames As String = "https://api.worldoftanks.com/wot/encyclopedia/vehicles/?application_id=" + application_id + "&fields=short_name"
+        Dim nations As String = "https://api.worldoftanks.com/wot/encyclopedia/vehicles/?application_id=" + application_id + "&fields=nation"
+        Dim types As String = "https://api.worldoftanks.com/wot/encyclopedia/vehicles/?application_id=" + application_id + "&fields=type"
+        'Dim turrets As String = "https://api.worldoftanks.com/wot/encyclopedia/vehicles/?application_id=" + application_id + "&fields=turrets"
         ' change region if not NA
         Dim r_string = My.Settings.region_selection.ToLower
         If Not My.Settings.region_selection = "NA" Then

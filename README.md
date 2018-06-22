@@ -5,6 +5,10 @@
 
 #### This is an ongoing project by me.. Coffee_
 
+## Version 49:
+The World of Tanks Developers API now requires an Application_Id.
+This ID is asscoitated with the Application and the developer of said application. This ID is embeded in Tank Exporters code and there is nothing on your part that is required other than setting up the paths to the game and the current res_mods folder for the current game version.
+
 ## Version 48:
 Added "Reload Textures" to the context menu on the tier tabs.
 
