@@ -745,7 +745,9 @@ outahere:
         frmFBX.Label2.Visible = False
 
     End Sub
+
 #Region "Import helpers"
+
     Private Function fix_texture_path(s As String) As String
         If s.ToLower.Contains("vehicles") Then
             s = s.Replace("vehicles", "~")
@@ -755,7 +757,6 @@ outahere:
         End If
         Return s
     End Function
-
 
     Private Sub process_fbx_data()
         get_component_index() 'build indexing table
@@ -999,7 +1000,7 @@ whichone:
                       "There is no place to save this new Model." + vbCrLf + _
                        "Would you like to extract the data from the .PKG files?", MsgBoxStyle.YesNo, "Extract?") = MsgBoxResult.Yes Then
                 file_name = "1:dummy:" + Path.GetFileNameWithoutExtension(dp.Replace("/", "\"))
-                frmMain.m_create_and_extract.PerformClick()
+                frmMain.m_extract.PerformClick()
             End If
 
         End If

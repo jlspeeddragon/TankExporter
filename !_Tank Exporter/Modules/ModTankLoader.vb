@@ -48,6 +48,8 @@ Module ModTankLoader
     Public z_min As Single = 10000
     Public obj_start, master_cnt, object_start, stride, ind_scale, object_count As Integer
     Public file_name As String = "vehicles/american/A01_T1_Cunningham/"
+    Public current_tank_name As String = file_name
+    Public short_tank_name As String = ""
     Public bsp_data() As Byte
     Public color_data() As Byte
     Public bsp_materials_data() As Byte

@@ -18,6 +18,9 @@
         TT.SetToolTip(Me.ext_hull, "Extract Hull Texures and Models")
         TT.SetToolTip(Me.ext_turret, "Extract Turret Texures and Models")
         TT.SetToolTip(Me.ext_gun, "Extract Gun Texures and Models")
+        TT.SetToolTip(Me.m_customization, "Extract Customization.xml")
+        TT.SetToolTip(Me.create_work_area_cb, "Create Work Area folder")
+
     End Sub
 
     Private Sub cancel_btn_Click(sender As Object, e As EventArgs) Handles cancel_btn.Click

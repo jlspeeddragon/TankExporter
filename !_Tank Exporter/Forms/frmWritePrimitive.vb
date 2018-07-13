@@ -14,7 +14,7 @@ Public Class frmWritePrimitive
             If MsgBox("It appears You have not extracted data for this model." + vbCrLf + _
                        "Would you like to extract the data from the .PKG files?", MsgBoxStyle.YesNo, "Extract?") = MsgBoxResult.Yes Then
                 file_name = "1:dummy:" + Path.GetFileNameWithoutExtension(SAVE_NAME.Replace("/", "\"))
-                frmMain.m_create_and_extract.PerformClick()
+                frmMain.m_extract.PerformClick()
             Else
                 Me.Hide()
                 Return

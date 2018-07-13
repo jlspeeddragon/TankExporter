@@ -60,6 +60,9 @@ Partial Class frmMain
         Me.m_shadow_preview = New System.Windows.Forms.ToolStripMenuItem()
         Me.ToolStripSeparator10 = New System.Windows.Forms.ToolStripSeparator()
         Me.M_Exit = New System.Windows.Forms.ToolStripMenuItem()
+        Me.m_ExportExtract = New System.Windows.Forms.ToolStripMenuItem()
+        Me.m_extract = New System.Windows.Forms.ToolStripMenuItem()
+        Me.m_export_to_fbx = New System.Windows.Forms.ToolStripMenuItem()
         Me.m_show_model_info = New System.Windows.Forms.ToolStripMenuItem()
         Me.m_show_fbx = New System.Windows.Forms.ToolStripMenuItem()
         Me.m_show_bsp2 = New System.Windows.Forms.ToolStripMenuItem()
@@ -70,18 +73,10 @@ Partial Class frmMain
         Me.m_load_textures = New System.Windows.Forms.ToolStripMenuItem()
         Me.m_lighting = New System.Windows.Forms.ToolStripMenuItem()
         Me.m_decal = New System.Windows.Forms.ToolStripMenuItem()
-        Me.m_help = New System.Windows.Forms.ToolStripMenuItem()
         Me.ToolStripComboBox1 = New System.Windows.Forms.ToolStripComboBox()
         Me.FolderBrowserDialog1 = New System.Windows.Forms.FolderBrowserDialog()
         Me.SplitContainer1 = New System.Windows.Forms.SplitContainer()
         Me.SplitContainer3 = New System.Windows.Forms.SplitContainer()
-        Me.show_textures_cb = New System.Windows.Forms.CheckBox()
-        Me.wire_cb = New System.Windows.Forms.CheckBox()
-        Me.grid_cb = New System.Windows.Forms.CheckBox()
-        Me.gun_cb = New System.Windows.Forms.CheckBox()
-        Me.turret_cb = New System.Windows.Forms.CheckBox()
-        Me.hull_cb = New System.Windows.Forms.CheckBox()
-        Me.chassis_cb = New System.Windows.Forms.CheckBox()
         Me.decal_panel = New System.Windows.Forms.Panel()
         Me.copy_Decal_btn = New System.Windows.Forms.Button()
         Me.hide_BB_cb = New System.Windows.Forms.CheckBox()
@@ -102,15 +97,11 @@ Partial Class frmMain
         Me.d_texture_name = New System.Windows.Forms.Label()
         Me.Label1 = New System.Windows.Forms.Label()
         Me.mouse_pick_cb = New System.Windows.Forms.CheckBox()
-        Me.d_move_down = New System.Windows.Forms.Button()
-        Me.d_move_up = New System.Windows.Forms.Button()
         Me.m_sel_texture = New System.Windows.Forms.Button()
         Me.m_delete = New System.Windows.Forms.Button()
         Me.m_new = New System.Windows.Forms.Button()
         Me.d_list_tb = New System.Windows.Forms.TextBox()
         Me.current_decal_lable = New System.Windows.Forms.Label()
-        Me.PB3 = New System.Windows.Forms.PictureBox()
-        Me.pb1 = New System.Windows.Forms.PictureBox()
         Me.font_holder = New System.Windows.Forms.Label()
         Me.PG1 = New System.Windows.Forms.ProgressBar()
         Me.pb2 = New System.Windows.Forms.Panel()
@@ -128,16 +119,26 @@ Partial Class frmMain
         Me.TabPage9 = New System.Windows.Forms.TabPage()
         Me.TabPage10 = New System.Windows.Forms.TabPage()
         Me.tank_label = New System.Windows.Forms.Label()
-        Me.iconbox = New System.Windows.Forms.PictureBox()
         Me.conMenu = New System.Windows.Forms.ContextMenuStrip(Me.components)
         Me.m_load = New System.Windows.Forms.ToolStripMenuItem()
-        Me.m_export_fbx = New System.Windows.Forms.ToolStripMenuItem()
-        Me.ToolStripSeparator6 = New System.Windows.Forms.ToolStripSeparator()
         Me.m_reload_textures = New System.Windows.Forms.ToolStripMenuItem()
         Me.ToolStripSeparator13 = New System.Windows.Forms.ToolStripSeparator()
-        Me.m_create_and_extract = New System.Windows.Forms.ToolStripMenuItem()
         Me.SaveFileDialog1 = New System.Windows.Forms.SaveFileDialog()
         Me.OpenFileDialog1 = New System.Windows.Forms.OpenFileDialog()
+        Me.m_edit_camo = New System.Windows.Forms.ToolStripMenuItem()
+        Me.show_textures_cb = New System.Windows.Forms.CheckBox()
+        Me.wire_cb = New System.Windows.Forms.CheckBox()
+        Me.grid_cb = New System.Windows.Forms.CheckBox()
+        Me.gun_cb = New System.Windows.Forms.CheckBox()
+        Me.turret_cb = New System.Windows.Forms.CheckBox()
+        Me.hull_cb = New System.Windows.Forms.CheckBox()
+        Me.chassis_cb = New System.Windows.Forms.CheckBox()
+        Me.d_move_down = New System.Windows.Forms.Button()
+        Me.d_move_up = New System.Windows.Forms.Button()
+        Me.PB3 = New System.Windows.Forms.PictureBox()
+        Me.pb1 = New System.Windows.Forms.PictureBox()
+        Me.iconbox = New System.Windows.Forms.PictureBox()
+        Me.m_help = New System.Windows.Forms.ToolStripMenuItem()
         Me.MM.SuspendLayout()
         CType(Me.SplitContainer1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SplitContainer1.Panel1.SuspendLayout()
@@ -150,15 +151,15 @@ Partial Class frmMain
         Me.decal_panel.SuspendLayout()
         CType(Me.decal_alpha_slider, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.decal_level_slider, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.PB3, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.pb1, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.SplitContainer2, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SplitContainer2.Panel1.SuspendLayout()
         Me.SplitContainer2.Panel2.SuspendLayout()
         Me.SplitContainer2.SuspendLayout()
         Me.TC1.SuspendLayout()
-        CType(Me.iconbox, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.conMenu.SuspendLayout()
+        CType(Me.PB3, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.pb1, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.iconbox, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
         '
         'Startup_Timer
@@ -167,17 +168,17 @@ Partial Class frmMain
         '
         'MM
         '
-        Me.MM.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.m_file, Me.m_show_model_info, Me.m_show_fbx, Me.m_show_bsp2, Me.m_show_bsp2_tree, Me.m_export_tank_list, Me.m_clear_selected_tanks, Me.m_pick_camo, Me.m_load_textures, Me.m_lighting, Me.m_decal, Me.m_help, Me.ToolStripComboBox1})
+        Me.MM.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.m_file, Me.m_ExportExtract, Me.m_show_model_info, Me.m_show_fbx, Me.m_show_bsp2, Me.m_show_bsp2_tree, Me.m_export_tank_list, Me.m_clear_selected_tanks, Me.m_pick_camo, Me.m_edit_camo, Me.m_load_textures, Me.m_lighting, Me.m_decal, Me.m_help, Me.ToolStripComboBox1})
         Me.MM.Location = New System.Drawing.Point(0, 0)
         Me.MM.Name = "MM"
-        Me.MM.Size = New System.Drawing.Size(968, 24)
+        Me.MM.Size = New System.Drawing.Size(968, 27)
         Me.MM.TabIndex = 1
         '
         'm_file
         '
         Me.m_file.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.m_load_file, Me.m_save, Me.ToolStripSeparator7, Me.m_Import_FBX, Me.m_remove_fbx, Me.ToolStripSeparator1, Me.m_write_primitive, Me.ToolStripSeparator9, Me.m_edit_visual, Me.ToolStripSeparator8, Me.m_open_temp_folder, Me.ToolStripSeparator4, Me.m_region, Me.ToolStripSeparator11, Me.M_Path, Me.m_res_mods_path, Me.ToolStripSeparator2, Me.m_clear_temp_folder_data, Me.m_reload_api_data, Me.ToolStripSeparator3, Me.m_shadows, Me.m_select_light, Me.m_shadowQuality, Me.m_simple_lighting, Me.ToolStripSeparator5, Me.m_show_log, Me.ToolStripSeparator12, Me.m_edit_shaders, Me.m_Shader_Debug, Me.m_show_environment, Me.m_shadow_preview, Me.ToolStripSeparator10, Me.M_Exit})
         Me.m_file.Name = "m_file"
-        Me.m_file.Size = New System.Drawing.Size(37, 20)
+        Me.m_file.Size = New System.Drawing.Size(37, 23)
         Me.m_file.Text = "&File"
         '
         'm_load_file
@@ -375,10 +376,30 @@ Partial Class frmMain
         Me.M_Exit.Size = New System.Drawing.Size(222, 22)
         Me.M_Exit.Text = "Exit"
         '
+        'm_ExportExtract
+        '
+        Me.m_ExportExtract.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.m_extract, Me.m_export_to_fbx})
+        Me.m_ExportExtract.Enabled = False
+        Me.m_ExportExtract.Name = "m_ExportExtract"
+        Me.m_ExportExtract.Size = New System.Drawing.Size(92, 23)
+        Me.m_ExportExtract.Text = "Export/Extract"
+        '
+        'm_extract
+        '
+        Me.m_extract.Name = "m_extract"
+        Me.m_extract.Size = New System.Drawing.Size(210, 22)
+        Me.m_extract.Text = "Extract to res_mods folder"
+        '
+        'm_export_to_fbx
+        '
+        Me.m_export_to_fbx.Name = "m_export_to_fbx"
+        Me.m_export_to_fbx.Size = New System.Drawing.Size(210, 22)
+        Me.m_export_to_fbx.Text = "Export FBX"
+        '
         'm_show_model_info
         '
         Me.m_show_model_info.Name = "m_show_model_info"
-        Me.m_show_model_info.Size = New System.Drawing.Size(77, 20)
+        Me.m_show_model_info.Size = New System.Drawing.Size(77, 23)
         Me.m_show_model_info.Text = "Model Info"
         '
         'm_show_fbx
@@ -417,14 +438,14 @@ Partial Class frmMain
         '
         Me.m_clear_selected_tanks.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right
         Me.m_clear_selected_tanks.Name = "m_clear_selected_tanks"
-        Me.m_clear_selected_tanks.Size = New System.Drawing.Size(127, 20)
+        Me.m_clear_selected_tanks.Size = New System.Drawing.Size(127, 23)
         Me.m_clear_selected_tanks.Text = "Clear Selected Tanks"
         '
         'm_pick_camo
         '
         Me.m_pick_camo.Enabled = False
         Me.m_pick_camo.Name = "m_pick_camo"
-        Me.m_pick_camo.Size = New System.Drawing.Size(84, 20)
+        Me.m_pick_camo.Size = New System.Drawing.Size(84, 23)
         Me.m_pick_camo.Text = "Camouflage"
         '
         'm_load_textures
@@ -434,13 +455,13 @@ Partial Class frmMain
         Me.m_load_textures.CheckState = System.Windows.Forms.CheckState.Checked
         Me.m_load_textures.ForeColor = System.Drawing.Color.Red
         Me.m_load_textures.Name = "m_load_textures"
-        Me.m_load_textures.Size = New System.Drawing.Size(95, 20)
+        Me.m_load_textures.Size = New System.Drawing.Size(95, 23)
         Me.m_load_textures.Text = "Show Textures"
         '
         'm_lighting
         '
         Me.m_lighting.Name = "m_lighting"
-        Me.m_lighting.Size = New System.Drawing.Size(63, 20)
+        Me.m_lighting.Size = New System.Drawing.Size(63, 23)
         Me.m_lighting.Text = "Lighting"
         '
         'm_decal
@@ -448,16 +469,8 @@ Partial Class frmMain
         Me.m_decal.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right
         Me.m_decal.CheckOnClick = True
         Me.m_decal.Name = "m_decal"
-        Me.m_decal.Size = New System.Drawing.Size(75, 20)
+        Me.m_decal.Size = New System.Drawing.Size(75, 23)
         Me.m_decal.Text = "Decal Tool"
-        '
-        'm_help
-        '
-        Me.m_help.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image
-        Me.m_help.Image = Global.Tank_Exporter.My.Resources.Resources.question
-        Me.m_help.Name = "m_help"
-        Me.m_help.Size = New System.Drawing.Size(28, 20)
-        Me.m_help.Text = "Help"
         '
         'ToolStripComboBox1
         '
@@ -472,7 +485,7 @@ Partial Class frmMain
         Me.SplitContainer1.Dock = System.Windows.Forms.DockStyle.Fill
         Me.SplitContainer1.FixedPanel = System.Windows.Forms.FixedPanel.Panel2
         Me.SplitContainer1.IsSplitterFixed = True
-        Me.SplitContainer1.Location = New System.Drawing.Point(0, 24)
+        Me.SplitContainer1.Location = New System.Drawing.Point(0, 27)
         Me.SplitContainer1.Name = "SplitContainer1"
         '
         'SplitContainer1.Panel1
@@ -485,8 +498,8 @@ Partial Class frmMain
         '
         Me.SplitContainer1.Panel2.BackColor = System.Drawing.Color.FromArgb(CType(CType(30, Byte), Integer), CType(CType(30, Byte), Integer), CType(CType(30, Byte), Integer))
         Me.SplitContainer1.Panel2.Controls.Add(Me.SplitContainer2)
-        Me.SplitContainer1.Size = New System.Drawing.Size(968, 509)
-        Me.SplitContainer1.SplitterDistance = 780
+        Me.SplitContainer1.Size = New System.Drawing.Size(968, 506)
+        Me.SplitContainer1.SplitterDistance = 786
         Me.SplitContainer1.SplitterWidth = 1
         Me.SplitContainer1.TabIndex = 2
         '
@@ -520,134 +533,10 @@ Partial Class frmMain
         Me.SplitContainer3.Panel2.Controls.Add(Me.font_holder)
         Me.SplitContainer3.Panel2.Controls.Add(Me.PG1)
         Me.SplitContainer3.Panel2.Controls.Add(Me.pb2)
-        Me.SplitContainer3.Size = New System.Drawing.Size(780, 486)
+        Me.SplitContainer3.Size = New System.Drawing.Size(786, 483)
         Me.SplitContainer3.SplitterDistance = 56
         Me.SplitContainer3.SplitterWidth = 1
         Me.SplitContainer3.TabIndex = 3
-        '
-        'show_textures_cb
-        '
-        Me.show_textures_cb.Appearance = System.Windows.Forms.Appearance.Button
-        Me.show_textures_cb.BackColor = System.Drawing.Color.Gray
-        Me.show_textures_cb.BackgroundImage = Global.Tank_Exporter.My.Resources.Resources.images_off
-        Me.show_textures_cb.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center
-        Me.show_textures_cb.FlatAppearance.BorderSize = 2
-        Me.show_textures_cb.FlatAppearance.CheckedBackColor = System.Drawing.Color.Sienna
-        Me.show_textures_cb.FlatStyle = System.Windows.Forms.FlatStyle.Flat
-        Me.show_textures_cb.ForeColor = System.Drawing.Color.White
-        Me.show_textures_cb.Location = New System.Drawing.Point(2, 310)
-        Me.show_textures_cb.Name = "show_textures_cb"
-        Me.show_textures_cb.Size = New System.Drawing.Size(48, 48)
-        Me.show_textures_cb.TabIndex = 8
-        Me.show_textures_cb.UseVisualStyleBackColor = False
-        '
-        'wire_cb
-        '
-        Me.wire_cb.Appearance = System.Windows.Forms.Appearance.Button
-        Me.wire_cb.BackColor = System.Drawing.Color.Gray
-        Me.wire_cb.BackgroundImage = Global.Tank_Exporter.My.Resources.Resources.box_solid
-        Me.wire_cb.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center
-        Me.wire_cb.Checked = True
-        Me.wire_cb.CheckState = System.Windows.Forms.CheckState.Checked
-        Me.wire_cb.FlatAppearance.BorderSize = 2
-        Me.wire_cb.FlatAppearance.CheckedBackColor = System.Drawing.Color.Sienna
-        Me.wire_cb.FlatStyle = System.Windows.Forms.FlatStyle.Flat
-        Me.wire_cb.ForeColor = System.Drawing.Color.White
-        Me.wire_cb.Location = New System.Drawing.Point(2, 258)
-        Me.wire_cb.Name = "wire_cb"
-        Me.wire_cb.Size = New System.Drawing.Size(48, 48)
-        Me.wire_cb.TabIndex = 7
-        Me.wire_cb.UseVisualStyleBackColor = False
-        '
-        'grid_cb
-        '
-        Me.grid_cb.Appearance = System.Windows.Forms.Appearance.Button
-        Me.grid_cb.BackColor = System.Drawing.Color.Gray
-        Me.grid_cb.BackgroundImage = Global.Tank_Exporter.My.Resources.Resources.grid
-        Me.grid_cb.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center
-        Me.grid_cb.Checked = True
-        Me.grid_cb.CheckState = System.Windows.Forms.CheckState.Checked
-        Me.grid_cb.FlatAppearance.BorderSize = 2
-        Me.grid_cb.FlatAppearance.CheckedBackColor = System.Drawing.Color.Sienna
-        Me.grid_cb.FlatStyle = System.Windows.Forms.FlatStyle.Flat
-        Me.grid_cb.ForeColor = System.Drawing.Color.White
-        Me.grid_cb.Location = New System.Drawing.Point(2, 207)
-        Me.grid_cb.Name = "grid_cb"
-        Me.grid_cb.Size = New System.Drawing.Size(48, 48)
-        Me.grid_cb.TabIndex = 6
-        Me.grid_cb.UseVisualStyleBackColor = False
-        '
-        'gun_cb
-        '
-        Me.gun_cb.Appearance = System.Windows.Forms.Appearance.Button
-        Me.gun_cb.BackColor = System.Drawing.Color.Gray
-        Me.gun_cb.BackgroundImage = Global.Tank_Exporter.My.Resources.Resources.gun
-        Me.gun_cb.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center
-        Me.gun_cb.Checked = True
-        Me.gun_cb.CheckState = System.Windows.Forms.CheckState.Checked
-        Me.gun_cb.FlatAppearance.BorderSize = 2
-        Me.gun_cb.FlatAppearance.CheckedBackColor = System.Drawing.Color.Sienna
-        Me.gun_cb.FlatStyle = System.Windows.Forms.FlatStyle.Flat
-        Me.gun_cb.ForeColor = System.Drawing.Color.White
-        Me.gun_cb.Location = New System.Drawing.Point(2, 156)
-        Me.gun_cb.Name = "gun_cb"
-        Me.gun_cb.Size = New System.Drawing.Size(48, 48)
-        Me.gun_cb.TabIndex = 5
-        Me.gun_cb.UseVisualStyleBackColor = False
-        '
-        'turret_cb
-        '
-        Me.turret_cb.Appearance = System.Windows.Forms.Appearance.Button
-        Me.turret_cb.BackColor = System.Drawing.Color.Gray
-        Me.turret_cb.BackgroundImage = Global.Tank_Exporter.My.Resources.Resources.tower
-        Me.turret_cb.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center
-        Me.turret_cb.Checked = True
-        Me.turret_cb.CheckState = System.Windows.Forms.CheckState.Checked
-        Me.turret_cb.FlatAppearance.BorderSize = 2
-        Me.turret_cb.FlatAppearance.CheckedBackColor = System.Drawing.Color.Sienna
-        Me.turret_cb.FlatStyle = System.Windows.Forms.FlatStyle.Flat
-        Me.turret_cb.ForeColor = System.Drawing.Color.White
-        Me.turret_cb.Location = New System.Drawing.Point(2, 105)
-        Me.turret_cb.Name = "turret_cb"
-        Me.turret_cb.Size = New System.Drawing.Size(48, 48)
-        Me.turret_cb.TabIndex = 4
-        Me.turret_cb.UseVisualStyleBackColor = False
-        '
-        'hull_cb
-        '
-        Me.hull_cb.Appearance = System.Windows.Forms.Appearance.Button
-        Me.hull_cb.BackColor = System.Drawing.Color.Gray
-        Me.hull_cb.BackgroundImage = Global.Tank_Exporter.My.Resources.Resources.hull
-        Me.hull_cb.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center
-        Me.hull_cb.Checked = True
-        Me.hull_cb.CheckState = System.Windows.Forms.CheckState.Checked
-        Me.hull_cb.FlatAppearance.BorderSize = 2
-        Me.hull_cb.FlatAppearance.CheckedBackColor = System.Drawing.Color.Sienna
-        Me.hull_cb.FlatStyle = System.Windows.Forms.FlatStyle.Flat
-        Me.hull_cb.ForeColor = System.Drawing.Color.White
-        Me.hull_cb.Location = New System.Drawing.Point(2, 54)
-        Me.hull_cb.Name = "hull_cb"
-        Me.hull_cb.Size = New System.Drawing.Size(48, 48)
-        Me.hull_cb.TabIndex = 3
-        Me.hull_cb.UseVisualStyleBackColor = False
-        '
-        'chassis_cb
-        '
-        Me.chassis_cb.Appearance = System.Windows.Forms.Appearance.Button
-        Me.chassis_cb.BackColor = System.Drawing.Color.Gray
-        Me.chassis_cb.BackgroundImage = Global.Tank_Exporter.My.Resources.Resources.chassis
-        Me.chassis_cb.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center
-        Me.chassis_cb.Checked = True
-        Me.chassis_cb.CheckState = System.Windows.Forms.CheckState.Checked
-        Me.chassis_cb.FlatAppearance.BorderSize = 2
-        Me.chassis_cb.FlatAppearance.CheckedBackColor = System.Drawing.Color.Sienna
-        Me.chassis_cb.FlatStyle = System.Windows.Forms.FlatStyle.Flat
-        Me.chassis_cb.ForeColor = System.Drawing.Color.White
-        Me.chassis_cb.Location = New System.Drawing.Point(2, 3)
-        Me.chassis_cb.Name = "chassis_cb"
-        Me.chassis_cb.Size = New System.Drawing.Size(48, 48)
-        Me.chassis_cb.TabIndex = 2
-        Me.chassis_cb.UseVisualStyleBackColor = False
         '
         'decal_panel
         '
@@ -685,7 +574,7 @@ Partial Class frmMain
         Me.decal_panel.ForeColor = System.Drawing.Color.White
         Me.decal_panel.Location = New System.Drawing.Point(367, 54)
         Me.decal_panel.Name = "decal_panel"
-        Me.decal_panel.Size = New System.Drawing.Size(289, 385)
+        Me.decal_panel.Size = New System.Drawing.Size(301, 382)
         Me.decal_panel.TabIndex = 5
         '
         'copy_Decal_btn
@@ -896,32 +785,6 @@ Partial Class frmMain
         Me.mouse_pick_cb.Text = "Mouse Pick"
         Me.mouse_pick_cb.UseVisualStyleBackColor = True
         '
-        'd_move_down
-        '
-        Me.d_move_down.Anchor = CType((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-        Me.d_move_down.BackColor = System.Drawing.Color.Gray
-        Me.d_move_down.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center
-        Me.d_move_down.FlatStyle = System.Windows.Forms.FlatStyle.Popup
-        Me.d_move_down.Image = Global.Tank_Exporter.My.Resources.Resources.control_270
-        Me.d_move_down.Location = New System.Drawing.Point(244, 165)
-        Me.d_move_down.Name = "d_move_down"
-        Me.d_move_down.Size = New System.Drawing.Size(20, 20)
-        Me.d_move_down.TabIndex = 5
-        Me.d_move_down.UseVisualStyleBackColor = False
-        '
-        'd_move_up
-        '
-        Me.d_move_up.Anchor = CType((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-        Me.d_move_up.BackColor = System.Drawing.Color.Gray
-        Me.d_move_up.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center
-        Me.d_move_up.FlatStyle = System.Windows.Forms.FlatStyle.Popup
-        Me.d_move_up.Image = Global.Tank_Exporter.My.Resources.Resources.control_090
-        Me.d_move_up.Location = New System.Drawing.Point(244, 145)
-        Me.d_move_up.Name = "d_move_up"
-        Me.d_move_up.Size = New System.Drawing.Size(20, 20)
-        Me.d_move_up.TabIndex = 4
-        Me.d_move_up.UseVisualStyleBackColor = False
-        '
         'm_sel_texture
         '
         Me.m_sel_texture.AutoSize = True
@@ -966,7 +829,7 @@ Partial Class frmMain
         Me.d_list_tb.Multiline = True
         Me.d_list_tb.Name = "d_list_tb"
         Me.d_list_tb.ScrollBars = System.Windows.Forms.ScrollBars.Vertical
-        Me.d_list_tb.Size = New System.Drawing.Size(285, 240)
+        Me.d_list_tb.Size = New System.Drawing.Size(297, 237)
         Me.d_list_tb.TabIndex = 0
         '
         'current_decal_lable
@@ -979,27 +842,6 @@ Partial Class frmMain
         Me.current_decal_lable.Size = New System.Drawing.Size(24, 25)
         Me.current_decal_lable.TabIndex = 17
         Me.current_decal_lable.Text = "_"
-        '
-        'PB3
-        '
-        Me.PB3.Location = New System.Drawing.Point(33, 69)
-        Me.PB3.Name = "PB3"
-        Me.PB3.Size = New System.Drawing.Size(100, 50)
-        Me.PB3.TabIndex = 4
-        Me.PB3.TabStop = False
-        Me.PB3.Visible = False
-        '
-        'pb1
-        '
-        Me.pb1.BackColor = System.Drawing.Color.FromArgb(CType(CType(64, Byte), Integer), CType(CType(64, Byte), Integer), CType(CType(64, Byte), Integer))
-        Me.pb1.BackgroundImage = Global.Tank_Exporter.My.Resources.Resources.gradiant
-        Me.pb1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch
-        Me.pb1.Dock = System.Windows.Forms.DockStyle.Fill
-        Me.pb1.Location = New System.Drawing.Point(0, 23)
-        Me.pb1.Name = "pb1"
-        Me.pb1.Size = New System.Drawing.Size(719, 459)
-        Me.pb1.TabIndex = 0
-        Me.pb1.TabStop = False
         '
         'font_holder
         '
@@ -1018,7 +860,7 @@ Partial Class frmMain
         Me.PG1.Dock = System.Windows.Forms.DockStyle.Top
         Me.PG1.Location = New System.Drawing.Point(0, 0)
         Me.PG1.Name = "PG1"
-        Me.PG1.Size = New System.Drawing.Size(719, 23)
+        Me.PG1.Size = New System.Drawing.Size(725, 23)
         Me.PG1.TabIndex = 2
         Me.PG1.Visible = False
         '
@@ -1038,7 +880,7 @@ Partial Class frmMain
         Me.info_Label.ForeColor = System.Drawing.Color.Silver
         Me.info_Label.Location = New System.Drawing.Point(0, 0)
         Me.info_Label.Name = "info_Label"
-        Me.info_Label.Size = New System.Drawing.Size(780, 23)
+        Me.info_Label.Size = New System.Drawing.Size(786, 23)
         Me.info_Label.TabIndex = 1
         Me.info_Label.Text = "Label1"
         '
@@ -1061,8 +903,8 @@ Partial Class frmMain
         Me.SplitContainer2.Panel2.BackColor = System.Drawing.Color.FromArgb(CType(CType(30, Byte), Integer), CType(CType(30, Byte), Integer), CType(CType(30, Byte), Integer))
         Me.SplitContainer2.Panel2.Controls.Add(Me.tank_label)
         Me.SplitContainer2.Panel2.Controls.Add(Me.iconbox)
-        Me.SplitContainer2.Size = New System.Drawing.Size(187, 509)
-        Me.SplitContainer2.SplitterDistance = 483
+        Me.SplitContainer2.Size = New System.Drawing.Size(181, 506)
+        Me.SplitContainer2.SplitterDistance = 480
         Me.SplitContainer2.SplitterWidth = 1
         Me.SplitContainer2.TabIndex = 1
         '
@@ -1083,7 +925,7 @@ Partial Class frmMain
         Me.TC1.Location = New System.Drawing.Point(0, 0)
         Me.TC1.Name = "TC1"
         Me.TC1.SelectedIndex = 0
-        Me.TC1.Size = New System.Drawing.Size(187, 483)
+        Me.TC1.Size = New System.Drawing.Size(181, 480)
         Me.TC1.SizeMode = System.Windows.Forms.TabSizeMode.Fixed
         Me.TC1.TabIndex = 0
         '
@@ -1093,7 +935,7 @@ Partial Class frmMain
         Me.TabPage1.Location = New System.Drawing.Point(4, 25)
         Me.TabPage1.Name = "TabPage1"
         Me.TabPage1.Padding = New System.Windows.Forms.Padding(3)
-        Me.TabPage1.Size = New System.Drawing.Size(179, 454)
+        Me.TabPage1.Size = New System.Drawing.Size(173, 451)
         Me.TabPage1.TabIndex = 0
         Me.TabPage1.Text = "1"
         '
@@ -1103,7 +945,7 @@ Partial Class frmMain
         Me.TabPage2.Location = New System.Drawing.Point(4, 25)
         Me.TabPage2.Name = "TabPage2"
         Me.TabPage2.Padding = New System.Windows.Forms.Padding(3)
-        Me.TabPage2.Size = New System.Drawing.Size(179, 454)
+        Me.TabPage2.Size = New System.Drawing.Size(173, 451)
         Me.TabPage2.TabIndex = 1
         Me.TabPage2.Text = "2"
         '
@@ -1113,7 +955,7 @@ Partial Class frmMain
         Me.TabPage3.Location = New System.Drawing.Point(4, 25)
         Me.TabPage3.Name = "TabPage3"
         Me.TabPage3.Padding = New System.Windows.Forms.Padding(3)
-        Me.TabPage3.Size = New System.Drawing.Size(179, 454)
+        Me.TabPage3.Size = New System.Drawing.Size(173, 451)
         Me.TabPage3.TabIndex = 2
         Me.TabPage3.Text = "3"
         '
@@ -1123,7 +965,7 @@ Partial Class frmMain
         Me.TabPage4.Location = New System.Drawing.Point(4, 25)
         Me.TabPage4.Name = "TabPage4"
         Me.TabPage4.Padding = New System.Windows.Forms.Padding(3)
-        Me.TabPage4.Size = New System.Drawing.Size(179, 454)
+        Me.TabPage4.Size = New System.Drawing.Size(173, 451)
         Me.TabPage4.TabIndex = 3
         Me.TabPage4.Text = "4"
         '
@@ -1133,7 +975,7 @@ Partial Class frmMain
         Me.TabPage5.Location = New System.Drawing.Point(4, 25)
         Me.TabPage5.Name = "TabPage5"
         Me.TabPage5.Padding = New System.Windows.Forms.Padding(3)
-        Me.TabPage5.Size = New System.Drawing.Size(179, 454)
+        Me.TabPage5.Size = New System.Drawing.Size(173, 451)
         Me.TabPage5.TabIndex = 4
         Me.TabPage5.Text = "5"
         '
@@ -1143,7 +985,7 @@ Partial Class frmMain
         Me.TabPage6.Location = New System.Drawing.Point(4, 25)
         Me.TabPage6.Name = "TabPage6"
         Me.TabPage6.Padding = New System.Windows.Forms.Padding(3)
-        Me.TabPage6.Size = New System.Drawing.Size(179, 454)
+        Me.TabPage6.Size = New System.Drawing.Size(173, 451)
         Me.TabPage6.TabIndex = 5
         Me.TabPage6.Text = "6"
         '
@@ -1153,7 +995,7 @@ Partial Class frmMain
         Me.TabPage7.Location = New System.Drawing.Point(4, 25)
         Me.TabPage7.Name = "TabPage7"
         Me.TabPage7.Padding = New System.Windows.Forms.Padding(3)
-        Me.TabPage7.Size = New System.Drawing.Size(179, 454)
+        Me.TabPage7.Size = New System.Drawing.Size(173, 451)
         Me.TabPage7.TabIndex = 6
         Me.TabPage7.Text = "7"
         '
@@ -1163,7 +1005,7 @@ Partial Class frmMain
         Me.TabPage8.Location = New System.Drawing.Point(4, 25)
         Me.TabPage8.Name = "TabPage8"
         Me.TabPage8.Padding = New System.Windows.Forms.Padding(3)
-        Me.TabPage8.Size = New System.Drawing.Size(179, 454)
+        Me.TabPage8.Size = New System.Drawing.Size(173, 451)
         Me.TabPage8.TabIndex = 7
         Me.TabPage8.Text = "8"
         '
@@ -1173,7 +1015,7 @@ Partial Class frmMain
         Me.TabPage9.Location = New System.Drawing.Point(4, 25)
         Me.TabPage9.Name = "TabPage9"
         Me.TabPage9.Padding = New System.Windows.Forms.Padding(3)
-        Me.TabPage9.Size = New System.Drawing.Size(179, 454)
+        Me.TabPage9.Size = New System.Drawing.Size(173, 451)
         Me.TabPage9.TabIndex = 8
         Me.TabPage9.Text = "9"
         '
@@ -1183,7 +1025,7 @@ Partial Class frmMain
         Me.TabPage10.Location = New System.Drawing.Point(4, 25)
         Me.TabPage10.Name = "TabPage10"
         Me.TabPage10.Padding = New System.Windows.Forms.Padding(3)
-        Me.TabPage10.Size = New System.Drawing.Size(179, 454)
+        Me.TabPage10.Size = New System.Drawing.Size(173, 451)
         Me.TabPage10.TabIndex = 9
         Me.TabPage10.Text = "10"
         '
@@ -1199,6 +1041,211 @@ Partial Class frmMain
         Me.tank_label.TabIndex = 3
         Me.tank_label.Text = "Label1"
         '
+        'conMenu
+        '
+        Me.conMenu.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.m_load, Me.ToolStripSeparator13, Me.m_reload_textures})
+        Me.conMenu.Name = "conMenu"
+        Me.conMenu.Size = New System.Drawing.Size(158, 54)
+        '
+        'm_load
+        '
+        Me.m_load.Name = "m_load"
+        Me.m_load.Size = New System.Drawing.Size(157, 22)
+        Me.m_load.Text = "Load This.."
+        '
+        'm_reload_textures
+        '
+        Me.m_reload_textures.Name = "m_reload_textures"
+        Me.m_reload_textures.Size = New System.Drawing.Size(157, 22)
+        Me.m_reload_textures.Text = "Reload Textures"
+        '
+        'ToolStripSeparator13
+        '
+        Me.ToolStripSeparator13.Name = "ToolStripSeparator13"
+        Me.ToolStripSeparator13.Size = New System.Drawing.Size(154, 6)
+        '
+        'OpenFileDialog1
+        '
+        Me.OpenFileDialog1.FileName = "OpenFileDialog1"
+        '
+        'm_edit_camo
+        '
+        Me.m_edit_camo.Name = "m_edit_camo"
+        Me.m_edit_camo.Size = New System.Drawing.Size(107, 23)
+        Me.m_edit_camo.Text = "Edit Camouflage"
+        Me.m_edit_camo.Visible = False
+        '
+        'show_textures_cb
+        '
+        Me.show_textures_cb.Appearance = System.Windows.Forms.Appearance.Button
+        Me.show_textures_cb.BackColor = System.Drawing.Color.Gray
+        Me.show_textures_cb.BackgroundImage = Global.Tank_Exporter.My.Resources.Resources.images_off
+        Me.show_textures_cb.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center
+        Me.show_textures_cb.FlatAppearance.BorderSize = 2
+        Me.show_textures_cb.FlatAppearance.CheckedBackColor = System.Drawing.Color.Sienna
+        Me.show_textures_cb.FlatStyle = System.Windows.Forms.FlatStyle.Flat
+        Me.show_textures_cb.ForeColor = System.Drawing.Color.White
+        Me.show_textures_cb.Location = New System.Drawing.Point(2, 310)
+        Me.show_textures_cb.Name = "show_textures_cb"
+        Me.show_textures_cb.Size = New System.Drawing.Size(48, 48)
+        Me.show_textures_cb.TabIndex = 8
+        Me.show_textures_cb.UseVisualStyleBackColor = False
+        '
+        'wire_cb
+        '
+        Me.wire_cb.Appearance = System.Windows.Forms.Appearance.Button
+        Me.wire_cb.BackColor = System.Drawing.Color.Gray
+        Me.wire_cb.BackgroundImage = Global.Tank_Exporter.My.Resources.Resources.box_solid
+        Me.wire_cb.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center
+        Me.wire_cb.Checked = True
+        Me.wire_cb.CheckState = System.Windows.Forms.CheckState.Checked
+        Me.wire_cb.FlatAppearance.BorderSize = 2
+        Me.wire_cb.FlatAppearance.CheckedBackColor = System.Drawing.Color.Sienna
+        Me.wire_cb.FlatStyle = System.Windows.Forms.FlatStyle.Flat
+        Me.wire_cb.ForeColor = System.Drawing.Color.White
+        Me.wire_cb.Location = New System.Drawing.Point(2, 258)
+        Me.wire_cb.Name = "wire_cb"
+        Me.wire_cb.Size = New System.Drawing.Size(48, 48)
+        Me.wire_cb.TabIndex = 7
+        Me.wire_cb.UseVisualStyleBackColor = False
+        '
+        'grid_cb
+        '
+        Me.grid_cb.Appearance = System.Windows.Forms.Appearance.Button
+        Me.grid_cb.BackColor = System.Drawing.Color.Gray
+        Me.grid_cb.BackgroundImage = Global.Tank_Exporter.My.Resources.Resources.grid
+        Me.grid_cb.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center
+        Me.grid_cb.Checked = True
+        Me.grid_cb.CheckState = System.Windows.Forms.CheckState.Checked
+        Me.grid_cb.FlatAppearance.BorderSize = 2
+        Me.grid_cb.FlatAppearance.CheckedBackColor = System.Drawing.Color.Sienna
+        Me.grid_cb.FlatStyle = System.Windows.Forms.FlatStyle.Flat
+        Me.grid_cb.ForeColor = System.Drawing.Color.White
+        Me.grid_cb.Location = New System.Drawing.Point(2, 207)
+        Me.grid_cb.Name = "grid_cb"
+        Me.grid_cb.Size = New System.Drawing.Size(48, 48)
+        Me.grid_cb.TabIndex = 6
+        Me.grid_cb.UseVisualStyleBackColor = False
+        '
+        'gun_cb
+        '
+        Me.gun_cb.Appearance = System.Windows.Forms.Appearance.Button
+        Me.gun_cb.BackColor = System.Drawing.Color.Gray
+        Me.gun_cb.BackgroundImage = Global.Tank_Exporter.My.Resources.Resources.gun
+        Me.gun_cb.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center
+        Me.gun_cb.Checked = True
+        Me.gun_cb.CheckState = System.Windows.Forms.CheckState.Checked
+        Me.gun_cb.FlatAppearance.BorderSize = 2
+        Me.gun_cb.FlatAppearance.CheckedBackColor = System.Drawing.Color.Sienna
+        Me.gun_cb.FlatStyle = System.Windows.Forms.FlatStyle.Flat
+        Me.gun_cb.ForeColor = System.Drawing.Color.White
+        Me.gun_cb.Location = New System.Drawing.Point(2, 156)
+        Me.gun_cb.Name = "gun_cb"
+        Me.gun_cb.Size = New System.Drawing.Size(48, 48)
+        Me.gun_cb.TabIndex = 5
+        Me.gun_cb.UseVisualStyleBackColor = False
+        '
+        'turret_cb
+        '
+        Me.turret_cb.Appearance = System.Windows.Forms.Appearance.Button
+        Me.turret_cb.BackColor = System.Drawing.Color.Gray
+        Me.turret_cb.BackgroundImage = Global.Tank_Exporter.My.Resources.Resources.tower
+        Me.turret_cb.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center
+        Me.turret_cb.Checked = True
+        Me.turret_cb.CheckState = System.Windows.Forms.CheckState.Checked
+        Me.turret_cb.FlatAppearance.BorderSize = 2
+        Me.turret_cb.FlatAppearance.CheckedBackColor = System.Drawing.Color.Sienna
+        Me.turret_cb.FlatStyle = System.Windows.Forms.FlatStyle.Flat
+        Me.turret_cb.ForeColor = System.Drawing.Color.White
+        Me.turret_cb.Location = New System.Drawing.Point(2, 105)
+        Me.turret_cb.Name = "turret_cb"
+        Me.turret_cb.Size = New System.Drawing.Size(48, 48)
+        Me.turret_cb.TabIndex = 4
+        Me.turret_cb.UseVisualStyleBackColor = False
+        '
+        'hull_cb
+        '
+        Me.hull_cb.Appearance = System.Windows.Forms.Appearance.Button
+        Me.hull_cb.BackColor = System.Drawing.Color.Gray
+        Me.hull_cb.BackgroundImage = Global.Tank_Exporter.My.Resources.Resources.hull
+        Me.hull_cb.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center
+        Me.hull_cb.Checked = True
+        Me.hull_cb.CheckState = System.Windows.Forms.CheckState.Checked
+        Me.hull_cb.FlatAppearance.BorderSize = 2
+        Me.hull_cb.FlatAppearance.CheckedBackColor = System.Drawing.Color.Sienna
+        Me.hull_cb.FlatStyle = System.Windows.Forms.FlatStyle.Flat
+        Me.hull_cb.ForeColor = System.Drawing.Color.White
+        Me.hull_cb.Location = New System.Drawing.Point(2, 54)
+        Me.hull_cb.Name = "hull_cb"
+        Me.hull_cb.Size = New System.Drawing.Size(48, 48)
+        Me.hull_cb.TabIndex = 3
+        Me.hull_cb.UseVisualStyleBackColor = False
+        '
+        'chassis_cb
+        '
+        Me.chassis_cb.Appearance = System.Windows.Forms.Appearance.Button
+        Me.chassis_cb.BackColor = System.Drawing.Color.Gray
+        Me.chassis_cb.BackgroundImage = Global.Tank_Exporter.My.Resources.Resources.chassis
+        Me.chassis_cb.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center
+        Me.chassis_cb.Checked = True
+        Me.chassis_cb.CheckState = System.Windows.Forms.CheckState.Checked
+        Me.chassis_cb.FlatAppearance.BorderSize = 2
+        Me.chassis_cb.FlatAppearance.CheckedBackColor = System.Drawing.Color.Sienna
+        Me.chassis_cb.FlatStyle = System.Windows.Forms.FlatStyle.Flat
+        Me.chassis_cb.ForeColor = System.Drawing.Color.White
+        Me.chassis_cb.Location = New System.Drawing.Point(2, 3)
+        Me.chassis_cb.Name = "chassis_cb"
+        Me.chassis_cb.Size = New System.Drawing.Size(48, 48)
+        Me.chassis_cb.TabIndex = 2
+        Me.chassis_cb.UseVisualStyleBackColor = False
+        '
+        'd_move_down
+        '
+        Me.d_move_down.Anchor = CType((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me.d_move_down.BackColor = System.Drawing.Color.Gray
+        Me.d_move_down.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center
+        Me.d_move_down.FlatStyle = System.Windows.Forms.FlatStyle.Popup
+        Me.d_move_down.Image = Global.Tank_Exporter.My.Resources.Resources.control_270
+        Me.d_move_down.Location = New System.Drawing.Point(256, 165)
+        Me.d_move_down.Name = "d_move_down"
+        Me.d_move_down.Size = New System.Drawing.Size(20, 20)
+        Me.d_move_down.TabIndex = 5
+        Me.d_move_down.UseVisualStyleBackColor = False
+        '
+        'd_move_up
+        '
+        Me.d_move_up.Anchor = CType((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me.d_move_up.BackColor = System.Drawing.Color.Gray
+        Me.d_move_up.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center
+        Me.d_move_up.FlatStyle = System.Windows.Forms.FlatStyle.Popup
+        Me.d_move_up.Image = Global.Tank_Exporter.My.Resources.Resources.control_090
+        Me.d_move_up.Location = New System.Drawing.Point(256, 145)
+        Me.d_move_up.Name = "d_move_up"
+        Me.d_move_up.Size = New System.Drawing.Size(20, 20)
+        Me.d_move_up.TabIndex = 4
+        Me.d_move_up.UseVisualStyleBackColor = False
+        '
+        'PB3
+        '
+        Me.PB3.Location = New System.Drawing.Point(33, 69)
+        Me.PB3.Name = "PB3"
+        Me.PB3.Size = New System.Drawing.Size(100, 50)
+        Me.PB3.TabIndex = 4
+        Me.PB3.TabStop = False
+        Me.PB3.Visible = False
+        '
+        'pb1
+        '
+        Me.pb1.BackColor = System.Drawing.Color.FromArgb(CType(CType(64, Byte), Integer), CType(CType(64, Byte), Integer), CType(CType(64, Byte), Integer))
+        Me.pb1.BackgroundImage = Global.Tank_Exporter.My.Resources.Resources.gradiant
+        Me.pb1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch
+        Me.pb1.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.pb1.Location = New System.Drawing.Point(0, 23)
+        Me.pb1.Name = "pb1"
+        Me.pb1.Size = New System.Drawing.Size(725, 456)
+        Me.pb1.TabIndex = 0
+        Me.pb1.TabStop = False
+        '
         'iconbox
         '
         Me.iconbox.BackColor = System.Drawing.Color.Transparent
@@ -1206,53 +1253,17 @@ Partial Class frmMain
         Me.iconbox.Dock = System.Windows.Forms.DockStyle.Fill
         Me.iconbox.Location = New System.Drawing.Point(0, 0)
         Me.iconbox.Name = "iconbox"
-        Me.iconbox.Size = New System.Drawing.Size(187, 25)
+        Me.iconbox.Size = New System.Drawing.Size(181, 25)
         Me.iconbox.TabIndex = 2
         Me.iconbox.TabStop = False
         '
-        'conMenu
+        'm_help
         '
-        Me.conMenu.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.m_load, Me.m_export_fbx, Me.ToolStripSeparator6, Me.m_reload_textures, Me.ToolStripSeparator13, Me.m_create_and_extract})
-        Me.conMenu.Name = "conMenu"
-        Me.conMenu.Size = New System.Drawing.Size(211, 104)
-        '
-        'm_load
-        '
-        Me.m_load.Name = "m_load"
-        Me.m_load.Size = New System.Drawing.Size(210, 22)
-        Me.m_load.Text = "Load This.."
-        '
-        'm_export_fbx
-        '
-        Me.m_export_fbx.Name = "m_export_fbx"
-        Me.m_export_fbx.Size = New System.Drawing.Size(210, 22)
-        Me.m_export_fbx.Text = "Export FBX"
-        '
-        'ToolStripSeparator6
-        '
-        Me.ToolStripSeparator6.Name = "ToolStripSeparator6"
-        Me.ToolStripSeparator6.Size = New System.Drawing.Size(207, 6)
-        '
-        'm_reload_textures
-        '
-        Me.m_reload_textures.Name = "m_reload_textures"
-        Me.m_reload_textures.Size = New System.Drawing.Size(210, 22)
-        Me.m_reload_textures.Text = "Reload Textures"
-        '
-        'ToolStripSeparator13
-        '
-        Me.ToolStripSeparator13.Name = "ToolStripSeparator13"
-        Me.ToolStripSeparator13.Size = New System.Drawing.Size(207, 6)
-        '
-        'm_create_and_extract
-        '
-        Me.m_create_and_extract.Name = "m_create_and_extract"
-        Me.m_create_and_extract.Size = New System.Drawing.Size(210, 22)
-        Me.m_create_and_extract.Text = "Extract to res_mods folder"
-        '
-        'OpenFileDialog1
-        '
-        Me.OpenFileDialog1.FileName = "OpenFileDialog1"
+        Me.m_help.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image
+        Me.m_help.Image = Global.Tank_Exporter.My.Resources.Resources.question
+        Me.m_help.Name = "m_help"
+        Me.m_help.Size = New System.Drawing.Size(28, 23)
+        Me.m_help.Text = "Help"
         '
         'frmMain
         '
@@ -1282,16 +1293,16 @@ Partial Class frmMain
         Me.decal_panel.PerformLayout()
         CType(Me.decal_alpha_slider, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.decal_level_slider, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.PB3, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.pb1, System.ComponentModel.ISupportInitialize).EndInit()
         Me.SplitContainer2.Panel1.ResumeLayout(False)
         Me.SplitContainer2.Panel2.ResumeLayout(False)
         Me.SplitContainer2.Panel2.PerformLayout()
         CType(Me.SplitContainer2, System.ComponentModel.ISupportInitialize).EndInit()
         Me.SplitContainer2.ResumeLayout(False)
         Me.TC1.ResumeLayout(False)
-        CType(Me.iconbox, System.ComponentModel.ISupportInitialize).EndInit()
         Me.conMenu.ResumeLayout(False)
+        CType(Me.PB3, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.pb1, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.iconbox, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
         Me.PerformLayout()
 
@@ -1334,7 +1345,6 @@ Partial Class frmMain
     Friend WithEvents m_open_temp_folder As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents ToolStripSeparator4 As System.Windows.Forms.ToolStripSeparator
     Friend WithEvents SaveFileDialog1 As System.Windows.Forms.SaveFileDialog
-    Friend WithEvents m_export_fbx As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents m_load_textures As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents ToolStripSeparator5 As System.Windows.Forms.ToolStripSeparator
     Friend WithEvents m_show_log As System.Windows.Forms.ToolStripMenuItem
@@ -1342,8 +1352,6 @@ Partial Class frmMain
     Friend WithEvents m_pick_camo As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents m_edit_shaders As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents m_lighting As System.Windows.Forms.ToolStripMenuItem
-    Friend WithEvents ToolStripSeparator6 As System.Windows.Forms.ToolStripSeparator
-    Friend WithEvents m_create_and_extract As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents m_help As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents PG1 As System.Windows.Forms.ProgressBar
     Friend WithEvents ToolStripSeparator7 As System.Windows.Forms.ToolStripSeparator
@@ -1410,5 +1418,9 @@ Partial Class frmMain
     Friend WithEvents copy_Decal_btn As System.Windows.Forms.Button
     Friend WithEvents m_reload_textures As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents ToolStripSeparator13 As System.Windows.Forms.ToolStripSeparator
+    Friend WithEvents m_ExportExtract As System.Windows.Forms.ToolStripMenuItem
+    Friend WithEvents m_extract As System.Windows.Forms.ToolStripMenuItem
+    Friend WithEvents m_export_to_fbx As System.Windows.Forms.ToolStripMenuItem
+    Friend WithEvents m_edit_camo As System.Windows.Forms.ToolStripMenuItem
 
 End Class

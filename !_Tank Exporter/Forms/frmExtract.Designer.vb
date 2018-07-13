@@ -29,13 +29,14 @@ Partial Class frmExtract
         Me.lod_0_only = New System.Windows.Forms.RadioButton()
         Me.all_lods_rb = New System.Windows.Forms.RadioButton()
         Me.TT = New System.Windows.Forms.ToolTip(Me.components)
+        Me.create_work_area_cb = New System.Windows.Forms.CheckBox()
         Me.ext_chassis = New System.Windows.Forms.CheckBox()
         Me.ext_hull = New System.Windows.Forms.CheckBox()
         Me.ext_turret = New System.Windows.Forms.CheckBox()
         Me.ext_gun = New System.Windows.Forms.CheckBox()
         Me.extract_btn = New System.Windows.Forms.Button()
         Me.cancel_btn = New System.Windows.Forms.Button()
-        Me.create_work_area_cb = New System.Windows.Forms.CheckBox()
+        Me.m_customization = New System.Windows.Forms.CheckBox()
         Me.GroupBox1.SuspendLayout()
         Me.SuspendLayout()
         '
@@ -83,6 +84,21 @@ Partial Class frmExtract
         Me.all_lods_rb.TabIndex = 0
         Me.all_lods_rb.Text = "All available LODs"
         Me.all_lods_rb.UseVisualStyleBackColor = True
+        '
+        'create_work_area_cb
+        '
+        Me.create_work_area_cb.AutoSize = True
+        Me.create_work_area_cb.Checked = True
+        Me.create_work_area_cb.CheckState = System.Windows.Forms.CheckState.Checked
+        Me.create_work_area_cb.ForeColor = System.Drawing.Color.Red
+        Me.create_work_area_cb.Location = New System.Drawing.Point(27, 209)
+        Me.create_work_area_cb.Name = "create_work_area_cb"
+        Me.create_work_area_cb.Size = New System.Drawing.Size(111, 17)
+        Me.create_work_area_cb.TabIndex = 7
+        Me.create_work_area_cb.Text = "Create Work Area"
+        Me.TT.SetToolTip(Me.create_work_area_cb, "Creates a fold called Work Area in the tanks root folder." & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "It copies the AM map t" & _
+        "o this folder as a PNG for editing.")
+        Me.create_work_area_cb.UseVisualStyleBackColor = True
         '
         'ext_chassis
         '
@@ -135,7 +151,7 @@ Partial Class frmExtract
         'extract_btn
         '
         Me.extract_btn.ForeColor = System.Drawing.Color.Black
-        Me.extract_btn.Location = New System.Drawing.Point(12, 232)
+        Me.extract_btn.Location = New System.Drawing.Point(12, 254)
         Me.extract_btn.Name = "extract_btn"
         Me.extract_btn.Size = New System.Drawing.Size(53, 23)
         Me.extract_btn.TabIndex = 5
@@ -145,34 +161,34 @@ Partial Class frmExtract
         'cancel_btn
         '
         Me.cancel_btn.ForeColor = System.Drawing.Color.Black
-        Me.cancel_btn.Location = New System.Drawing.Point(92, 232)
+        Me.cancel_btn.Location = New System.Drawing.Point(92, 254)
         Me.cancel_btn.Name = "cancel_btn"
         Me.cancel_btn.Size = New System.Drawing.Size(52, 23)
         Me.cancel_btn.TabIndex = 6
         Me.cancel_btn.Text = "Cancel"
         Me.cancel_btn.UseVisualStyleBackColor = True
         '
-        'create_work_area_cb
+        'm_customization
         '
-        Me.create_work_area_cb.AutoSize = True
-        Me.create_work_area_cb.Checked = True
-        Me.create_work_area_cb.CheckState = System.Windows.Forms.CheckState.Checked
-        Me.create_work_area_cb.ForeColor = System.Drawing.Color.Red
-        Me.create_work_area_cb.Location = New System.Drawing.Point(27, 209)
-        Me.create_work_area_cb.Name = "create_work_area_cb"
-        Me.create_work_area_cb.Size = New System.Drawing.Size(111, 17)
-        Me.create_work_area_cb.TabIndex = 7
-        Me.create_work_area_cb.Text = "Create Work Area"
-        Me.TT.SetToolTip(Me.create_work_area_cb, "Creates a fold called Work Area in the tanks root folder." & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "It copies the AM map t" & _
-        "o this folder as a PNG for editing.")
-        Me.create_work_area_cb.UseVisualStyleBackColor = True
+        Me.m_customization.AutoSize = True
+        Me.m_customization.Checked = True
+        Me.m_customization.CheckState = System.Windows.Forms.CheckState.Checked
+        Me.m_customization.ForeColor = System.Drawing.Color.Red
+        Me.m_customization.Location = New System.Drawing.Point(27, 232)
+        Me.m_customization.Name = "m_customization"
+        Me.m_customization.Size = New System.Drawing.Size(109, 17)
+        Me.m_customization.TabIndex = 8
+        Me.m_customization.Text = "Customization.xml"
+        Me.TT.SetToolTip(Me.m_customization, "Extracts customization.xml if checked.")
+        Me.m_customization.UseVisualStyleBackColor = True
         '
         'frmExtract
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.BackColor = System.Drawing.Color.FromArgb(CType(CType(30, Byte), Integer), CType(CType(30, Byte), Integer), CType(CType(30, Byte), Integer))
-        Me.ClientSize = New System.Drawing.Size(156, 262)
+        Me.ClientSize = New System.Drawing.Size(156, 286)
+        Me.Controls.Add(Me.m_customization)
         Me.Controls.Add(Me.create_work_area_cb)
         Me.Controls.Add(Me.cancel_btn)
         Me.Controls.Add(Me.extract_btn)
@@ -206,4 +222,5 @@ Partial Class frmExtract
     Friend WithEvents extract_btn As System.Windows.Forms.Button
     Friend WithEvents cancel_btn As System.Windows.Forms.Button
     Friend WithEvents create_work_area_cb As System.Windows.Forms.CheckBox
+    Friend WithEvents m_customization As System.Windows.Forms.CheckBox
 End Class

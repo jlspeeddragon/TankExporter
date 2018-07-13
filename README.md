@@ -5,6 +5,13 @@
 
 #### This is an ongoing project by me.. Coffee_
 
+## Version 50:
+TE now exports the currently active camo texture.
+Added a camouflage editing tool. Edit Before exporting if you want changes to the camo to be saved.
+Moved fbx export and extract fucntions from the context menu to the main menu.
+TE exports the customization.xml file if told to do so.
+There is no editing done to the coustom customization.xml. You will need to do it manually if you want camo colors to be visiable in the game.
+
 ## Version 49:
 The World of Tanks Developers API now requires an Application_Id.
 This ID is asscoitated with the Application and the developer of said application. This ID is embeded in Tank Exporters code and there is nothing on your part that is required other than setting up the paths to the game and the current res_mods folder for the current game version.

@@ -2661,7 +2661,12 @@ tryagain:
         If m_shadows.Checked And Not frmComponents.Visible Then
             render_depth_to_depth_texture(0)
         End If
-
+        If is_camo_active() Then
+            m_edit_camo.Visible = True
+        Else
+            m_edit_camo.Visible = False
+            frmEditCamo.Visible = False
+        End If
 
         If Not (Wgl.wglMakeCurrent(pb1_hDC, pb1_hRC)) Then
             MessageBox.Show("Unable to make rendering context current")
@@ -2683,7 +2688,7 @@ tryagain:
 
         Gl.glPolygonMode(Gl.GL_FRONT_AND_BACK, Gl.GL_FILL)
 
-        Gl.glTexEnvf(Gl.GL_TEXTURE_ENV, Gl.GL_TEXTURE_ENV_MODE, Gl.GL_MODULATE)
+        Gl.glTexEnvi(Gl.GL_TEXTURE_ENV, Gl.GL_TEXTURE_ENV_MODE, Gl.GL_MODULATE)
         Dim er = Gl.glGetError
         Gl.glDepthFunc(Gl.GL_LEQUAL)
         Gl.glFrontFace(Gl.GL_CW)
@@ -3856,6 +3861,10 @@ fuckit:
 
 #End Region
 #Region "PB1 Mouse"
+
+    Private Sub pb1_MouseDoubleClick(sender As Object, e As MouseEventArgs) Handles pb1.MouseDoubleClick
+
+    End Sub
 
     Private Sub pb1_MouseDown(sender As Object, e As MouseEventArgs) Handles pb1.MouseDown
         'If M_SELECT_COLOR > 0 Then
@@ -5439,7 +5448,36 @@ fuckit:
         Dim p As String = ""
         TC1.Enabled = False
         Dim ar = file_name.Split(":")
-        'ar(2) = Path.GetFileNameWithoutExtension(ar(2))
+        If frmExtract.m_customization.Checked Then ' export customization?
+
+            Try ' catch any exception thrown
+
+                Dim nar = ar(2).Split("/")
+                Dim nation = nar(1)
+                Select Case nation
+                    Case "russian"
+                        nation = "ussr"
+                    Case "british"
+                        nation = "uk"
+                    Case "american"
+                        nation = "usa"
+                    Case "french"
+                        nation = "france"
+                    Case "german"
+                        nation = "germany"
+                    Case "chinese"
+                        nation = "china"
+                End Select
+                Dim cust_path As String = "scripts\item_defs\vehicles\" + nation + "\customization.xml"
+                Dim c_ent = scripts_pkg(cust_path)
+                If c_ent IsNot Nothing Then
+                    c_ent.Extract(My.Settings.res_mods_path, ExtractExistingFileAction.DoNotOverwrite)
+                End If
+            Catch ex As Exception
+
+            End Try
+        End If
+
         For i = 1 To packages.Length - 2
             For Each ent In packages(i)
                 If ent.FileName.Contains(ar(2)) Then
@@ -5860,7 +5898,10 @@ fuckit:
 #Region "menu_button_functions"
     Private Sub m_load_Click(sender As Object, e As EventArgs) Handles m_load.Click
         TC1.Enabled = False
+        current_tank_name = file_name
+        short_tank_name = tank_label.Text
         process_tank(False) 'false .. don't save the binary tank file
+        m_ExportExtract.Enabled = True
         TC1.Enabled = True
     End Sub
 
@@ -6000,7 +6041,7 @@ make_this_tank:
         m_load_textures.Checked = show_text_State
     End Sub
 
-    Private Sub m_create_and_extract_Click(sender As Object, e As EventArgs) Handles m_create_and_extract.Click
+    Private Sub m_create_and_extract_Click(sender As Object, e As EventArgs)
         frmExtract.ShowDialog(Me)
     End Sub
 
@@ -6277,7 +6318,7 @@ make_this_tank:
 
     End Sub
 
-    Private Sub m_export_fbx_Click(sender As Object, e As EventArgs) Handles m_export_fbx.Click
+    Private Sub m_export_fbx_Click(sender As Object, e As EventArgs)
 
         SaveFileDialog1.Filter = "AutoDesk (*.FBX)|*.fbx"
         SaveFileDialog1.Title = "Export FBX..."
@@ -6395,6 +6436,7 @@ make_this_tank:
     End Sub
 
     Private Sub m_remove_fbx_Click(sender As Object, e As EventArgs) Handles m_remove_fbx.Click
+        m_ExportExtract.Enabled = False
         clean_house()
         remove_loaded_fbx()
         If stop_updating Then draw_scene()
@@ -6875,5 +6917,35 @@ make_this_tank:
         Next
         MODEL_LOADED = True ' enable drawing the tank
         log_text.AppendLine("---- Reloading Textures -----")
+    End Sub
+
+    Private Sub m_extract_Click(sender As Object, e As EventArgs) Handles m_extract.Click
+        file_name = current_tank_name
+        frmExtract.ShowDialog(Me)
+
+    End Sub
+
+    Private Sub m_export_to_fbx_Click(sender As Object, e As EventArgs) Handles m_export_to_fbx.Click
+        SaveFileDialog1.Filter = "AutoDesk (*.FBX)|*.fbx"
+        SaveFileDialog1.Title = "Export FBX..."
+        SaveFileDialog1.InitialDirectory = My.Settings.fbx_path
+
+        SaveFileDialog1.FileName = short_tank_name.Replace("\/", "_") + ".fbx"
+
+        If SaveFileDialog1.ShowDialog = Forms.DialogResult.OK Then
+            My.Settings.fbx_path = SaveFileDialog1.FileName
+
+            'remove_loaded_fbx()
+            'clean_house()
+        Else
+            Return
+        End If
+        'ReDim textures(0)
+        frmFBX.ShowDialog(Me)
+
+    End Sub
+
+    Private Sub m_edit_camo_Click(sender As Object, e As EventArgs) Handles m_edit_camo.Click
+        frmEditCamo.Visible = True
     End Sub
 End Class

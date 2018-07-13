@@ -41,6 +41,11 @@ Module modCamouflage
 
     Public Sub apply_texture(ByVal id As Integer)
         SELECTED_CAMO_BUTTON = id
+        If frmEditCamo.Visible Then
+            frmEditCamo.camo_id = id
+            frmEditCamo.camo_change()
+            frmEditCamo.set_selected()
+        End If
         'current_camo_selection = id
         For i = 1 To object_count
             If Not _object(i).name.ToLower.Contains("chassis") Then
@@ -51,7 +56,7 @@ Module modCamouflage
                 _object(i).use_camo = 0
             End If
         Next
-
+        save_camo_texture(id, Temp_Storage)
         STOP_BUTTON_SCAN = False
     End Sub
 
@@ -265,6 +270,15 @@ skip:
         Next
     End Sub
 
+    Public Function is_camo_active() As Boolean
+        For i = 1 To object_count
+            If _object(i).use_camo = 1 Then
+                Return True
+            End If
+        Next
+        Return False
+    End Function
+
     Public Sub setup_camo_selection()
         If season_Buttons_VISIBLE Then
             CAMO_BUTTONS_VISIBLE = False
@@ -292,7 +306,87 @@ skip:
         season_Buttons_VISIBLE = True
     End Sub
 
-    Private Function make_mixed_texture(id As Integer) As Integer
+    Public Sub save_camo_texture(ByVal id As Integer, ByVal save_path As String)
+        frmMain.pb2.Visible = False
+        frmMain.pb2.BringToFront()
+        'frmMain.gl_stop = True
+        frmMain.update_thread.Suspend()
+        'While gl_busy
+        '    Application.DoEvents()
+        'End While
+        Dim w, h As Integer
+        Gl.glBindTexture(Gl.GL_TEXTURE_2D, bb_camo_texture_ids(id))
+        Gl.glGetTexLevelParameteriv(Gl.GL_TEXTURE_2D, 0, Gl.GL_TEXTURE_WIDTH, w)
+        Gl.glGetTexLevelParameteriv(Gl.GL_TEXTURE_2D, 0, Gl.GL_TEXTURE_HEIGHT, h)
+        Dim p As New Point(0.0!, 0.0!)
+        If Not (Wgl.wglMakeCurrent(pb2_hDC, pb2_hRC)) Then
+            MessageBox.Show("Unable to make rendering context current")
+            End
+        End If
+        frmMain.pb2.Width = w
+        frmMain.pb2.Height = h
+        Gl.glViewport(0, 0, w, h)
+        Gl.glViewport(0, 0, w, h)
+        Gl.glMatrixMode(Gl.GL_PROJECTION) 'Select Projection
+        Gl.glLoadIdentity() 'Reset The Matrix
+        Gl.glOrtho(0, w, -h, 0, -200.0, 100.0) 'Select Ortho Mode
+        Gl.glMatrixMode(Gl.GL_MODELVIEW)    'Select Modelview Matrix
+        Gl.glLoadIdentity() 'Reset The Matrix
+        Gl.glReadBuffer(Gl.GL_BACK)
+        Gl.glPolygonMode(Gl.GL_FRONT_AND_BACK, Gl.GL_FILL)
+        Gl.glDisable(Gl.GL_CULL_FACE)
+        Gl.glDisable(Gl.GL_DEPTH_TEST)
+        Dim e = Gl.glGetError
+        Gl.glUseProgram(shader_list.mixer_shader)
+        Gl.glUniform1i(mix_camoMap, 0)
+        Gl.glUniform4f(mix_armorColor, ARMORCOLOR.x, ARMORCOLOR.y, ARMORCOLOR.z, ARMORCOLOR.w)
+        Gl.glUniform4f(mix_c0, c0(id).x, c0(id).y, c0(id).z, c0(id).w)
+        Gl.glUniform4f(mix_c1, c1(id).x, c1(id).y, c1(id).z, c1(id).w)
+        Gl.glUniform4f(mix_c2, c2(id).x, c2(id).y, c2(id).z, c2(id).w)
+        Gl.glUniform4f(mix_c3, c3(id).x, c3(id).y, c3(id).z, c3(id).w)
+
+        Gl.glActiveTexture(Gl.GL_TEXTURE0)
+        Gl.glBindTexture(Gl.GL_TEXTURE_2D, bb_texture_ids(id))
+        Gl.glBegin(Gl.GL_QUADS)
+
+        '  CW...
+        '  1 ------ 2
+        '  |        |
+        '  |        |
+        '  4 ------ 3
+        '
+        Gl.glTexCoord2f(0.0!, 0.0!)
+        Gl.glVertex2f(p.X, p.Y)
+
+        Gl.glTexCoord2f(1.0!, 0.0!)
+        Gl.glVertex2f(p.X + w, p.Y)
+
+        Gl.glTexCoord2f(1.0!, 1.0!)
+        Gl.glVertex2f(p.X + w, p.Y - h)
+
+        Gl.glTexCoord2f(0.0!, 1.0!)
+        Gl.glVertex2f(p.X, p.Y - h)
+        Gl.glEnd()
+        Gl.glUseProgram(0)
+
+        Gl.glFinish()
+        Dim tId As Integer = Il.ilGenImage
+        Il.ilBindImage(tId)
+        Il.ilTexImage(w, h, 0, 4, Il.IL_RGBA, Il.IL_UNSIGNED_BYTE, Nothing)
+
+        Gl.glReadPixels(0, 0, w, h, Gl.GL_RGBA, Gl.GL_UNSIGNED_BYTE, Il.ilGetData())
+
+        Gl.glFinish()
+        Il.ilSave(Il.IL_PNG, save_path + "\camouflage.png") ' save to temp
+        Gl.glDisable(Gl.GL_TEXTURE_2D)
+
+        Il.ilBindImage(0)
+        Il.ilDeleteImage(tId)
+        Application.DoEvents()
+        frmMain.update_thread.Resume()
+
+    End Sub
+    Public Function make_mixed_texture(id As Integer) As Integer
         frmMain.pb2.Visible = False
         frmMain.pb2.BringToFront()
         'frmMain.gl_stop = True

@@ -49,6 +49,116 @@ Module modTextures
         End If
         Return id
     End Function
+    Public Sub export_fbx_textures()
+        Dim ar = TANK_NAME.Split(":")
+        Dim name As String = Path.GetFileName(ar(0))
+        FBX_Texture_path = Path.GetDirectoryName(My.Settings.fbx_path) + "\" + name
+        If Not IO.Directory.Exists(FBX_Texture_path) Then
+            System.IO.Directory.CreateDirectory(FBX_Texture_path)
+        End If
+        Dim abs_name As String = ""
+        frmMain.info_Label.Visible = True
+
+        frmMain.update_thread.Suspend()
+
+        For i = 0 To textures.Length - 2
+            With textures(i)
+                'color
+                abs_name = FBX_Texture_path + "\" + Path.GetFileNameWithoutExtension(.c_name)
+                save_fbx_texture(.c_id, abs_name)
+                'normal
+                abs_name = FBX_Texture_path + "\" + Path.GetFileNameWithoutExtension(.n_name)
+                save_fbx_texture(.n_id, abs_name)
+                'ao
+                abs_name = FBX_Texture_path + "\" + Path.GetFileNameWithoutExtension(.ao_name)
+                save_fbx_texture(.ao_id, abs_name)
+                'gmm
+                abs_name = FBX_Texture_path + "\" + Path.GetFileNameWithoutExtension(.gmm_name)
+                save_fbx_texture(.gmm_id, abs_name)
+                'detail
+                abs_name = FBX_Texture_path + "\" + Path.GetFileNameWithoutExtension(.detail_name)
+                save_fbx_texture(.detail_id, abs_name)
+
+            End With
+
+        Next
+        frmMain.info_Label.Visible = False
+        frmMain.update_thread.Resume()
+
+    End Sub
+
+    Public Sub save_fbx_texture(ByVal id As Integer, ByVal save_path As String)
+        'If File.Exists(save_path) Then Return ' dont write over existing files.. It's a waste of time!
+        frmMain.info_Label.Text = "Exporting : " + save_path + ".png"
+        frmMain.pb2.Visible = False
+        frmMain.pb2.BringToFront()
+        'frmMain.gl_stop = True
+        'While gl_busy
+        '    Application.DoEvents()
+        'End While
+        Dim w, h As Integer
+        Gl.glEnable(Gl.GL_TEXTURE_2D)
+        Gl.glActiveTexture(Gl.GL_TEXTURE0)
+        Gl.glBindTexture(Gl.GL_TEXTURE_2D, id)
+        Gl.glGetTexLevelParameteriv(Gl.GL_TEXTURE_2D, 0, Gl.GL_TEXTURE_WIDTH, w)
+        Gl.glGetTexLevelParameteriv(Gl.GL_TEXTURE_2D, 0, Gl.GL_TEXTURE_HEIGHT, h)
+        Dim p As New Point(0.0!, 0.0!)
+        If Not (Wgl.wglMakeCurrent(pb2_hDC, pb2_hRC)) Then
+            MessageBox.Show("Unable to make rendering context current")
+            End
+        End If
+        frmMain.pb2.Width = w
+        frmMain.pb2.Height = h
+        Gl.glViewport(0, 0, w, h)
+        Gl.glMatrixMode(Gl.GL_PROJECTION) 'Select Projection
+        Gl.glLoadIdentity() 'Reset The Matrix
+        Gl.glOrtho(0, w, -h, 0, -200.0, 100.0) 'Select Ortho Mode
+        Gl.glMatrixMode(Gl.GL_MODELVIEW)    'Select Modelview Matrix
+        Gl.glLoadIdentity() 'Reset The Matrix
+        Gl.glReadBuffer(Gl.GL_BACK)
+        Gl.glPolygonMode(Gl.GL_FRONT_AND_BACK, Gl.GL_FILL)
+        Gl.glDisable(Gl.GL_CULL_FACE)
+        Gl.glDisable(Gl.GL_DEPTH_TEST)
+        Gl.glTexEnvi(Gl.GL_TEXTURE_ENV, Gl.GL_TEXTURE_ENV_MODE, Gl.GL_REPLACE)
+        Dim e = Gl.glGetError
+        Gl.glBegin(Gl.GL_QUADS)
+
+        '  CW...
+        '  1 ------ 2
+        '  |        |
+        '  |        |
+        '  4 ------ 3
+        '
+        Gl.glTexCoord2f(0.0!, 0.0!)
+        Gl.glVertex2f(p.X, p.Y)
+
+        Gl.glTexCoord2f(1.0!, 0.0!)
+        Gl.glVertex2f(p.X + w, p.Y)
+
+        Gl.glTexCoord2f(1.0!, 1.0!)
+        Gl.glVertex2f(p.X + w, p.Y - h)
+
+        Gl.glTexCoord2f(0.0!, 1.0!)
+        Gl.glVertex2f(p.X, p.Y - h)
+        Gl.glEnd()
+        Gl.glUseProgram(0)
+
+        Gl.glFinish()
+        Dim tId As Integer = Il.ilGenImage
+        Il.ilBindImage(tId)
+        Il.ilTexImage(w, h, 0, 4, Il.IL_RGBA, Il.IL_UNSIGNED_BYTE, Nothing)
+
+        Gl.glReadPixels(0, 0, w, h, Gl.GL_RGBA, Gl.GL_UNSIGNED_BYTE, Il.ilGetData())
+
+        Gl.glFinish()
+        Il.ilSave(Il.IL_PNG, save_path + ".png") ' save to temp
+        Gl.glDisable(Gl.GL_TEXTURE_2D)
+        'Gdi.SwapBuffers(pb2_hDC)
+        Il.ilBindImage(0)
+        Il.ilDeleteImage(tId)
+        Application.DoEvents()
+
+    End Sub
 
     Public Sub build_textures(ByVal id As Integer)
 
