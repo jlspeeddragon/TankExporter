@@ -10,6 +10,7 @@ Public Class frmFBX
 
         If export_textures.Checked Then ' export textures and current camo?
             If is_camo_active() Then ' find out if there is a camouflage in use.
+                save_camo_texture(SELECTED_CAMO_BUTTON, Temp_Storage)
                 Dim ar = TANK_NAME.Split(":")
                 Dim name As String = Path.GetFileName(ar(0))
                 FBX_Texture_path = Path.GetDirectoryName(My.Settings.fbx_path) + "\" + name + "\camouflage.png"

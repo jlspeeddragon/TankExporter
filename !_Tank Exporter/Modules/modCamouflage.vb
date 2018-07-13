@@ -56,7 +56,7 @@ Module modCamouflage
                 _object(i).use_camo = 0
             End If
         Next
-        save_camo_texture(id, Temp_Storage)
+        'save_camo_texture(id, Temp_Storage)
         STOP_BUTTON_SCAN = False
     End Sub
 
